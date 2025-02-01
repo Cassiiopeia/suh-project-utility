@@ -1,0 +1,95 @@
+name: SUH-PROJECT-UTILITY-CICD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # application.yml 파일을 빌드 전에 생성
+      - name: Create application.yml from secret
+        run: |
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+
+      # prod 프로파일을 활성화하여 빌드
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test -Dspring.profiles.active=prod
+
+      - name: Docker setup
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:${{ github.ref_name }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:cache
+          cache-to: type=inline
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 2022
+          script: |
+            set -e  # 에러 발생 시 스크립트 중단
+
+            echo "환경 변수 설정 중..."
+            export PATH=$PATH:/usr/local/bin
+            export PW=${{ secrets.SERVER_PASSWORD }}
+            CONTAINER_NAME="suh-project-utility"
+            PORT=8090
+
+            echo "컨테이너 이름: $CONTAINER_NAME"
+            echo "포트: $PORT"
+
+            echo "도커 이미지 풀: ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main"
+            echo $PW | sudo -S docker pull ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main
+
+            echo "컨테이너 $CONTAINER_NAME 존재 여부 확인 중..."
+            if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^${CONTAINER_NAME}$"; then
+              echo "컨테이너 $CONTAINER_NAME 이(가) 존재합니다. 중지 및 삭제 중..."
+              echo $PW | sudo -S docker rm -f $CONTAINER_NAME
+              echo "컨테이너 $CONTAINER_NAME 이(가) 삭제되었습니다."
+            else
+              echo "존재하는 컨테이너 $CONTAINER_NAME 이(가) 없습니다."
+            fi
+
+            echo "새로운 컨테이너 $CONTAINER_NAME 실행 중..."
+            echo $PW | sudo -S docker run -d -p ${PORT}:8080 --name $CONTAINER_NAME \
+              -e TZ=Asia/Seoul \
+              -v /etc/localtime:/etc/localtime:ro \
+              -v /volume1/projects/suh-project-utility:/mnt/suh-project-utility \
+              ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main
+
+            echo "배포가 성공적으로 완료되었습니다."
