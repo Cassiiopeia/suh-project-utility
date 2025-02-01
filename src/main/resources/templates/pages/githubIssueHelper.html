@@ -4,7 +4,7 @@
 <body class="githubIssueHelper-page">
 <div th:replace="fragments/header :: header"></div>
 <div class="ui container">
-  <h2 class="ui header">GitHub Issue Helper</h2>
+  <h2 class="ui header">깃헙 이슈 도우미</h2>
   <form class="ui form" id="issueHelperForm" method="post" enctype="multipart/form-data"
         th:action="@{/api/issue-helper/create/commmit-branch}">
     <div class="field">
@@ -15,7 +15,7 @@
   </form>
 
   <div class="ui segment copy-box" id="resultBox" style="display: none;">
-    <h4 class="ui header">생성 결과</h4>
+    <h4 class="ui header">추론 결과</h4>
     <div class="ui form">
       <div class="field">
         <label>브랜치명</label>
@@ -35,6 +35,8 @@
   </div>
 </div>
 
+<!-- 토스트 컨테이너 (없으면 자동 생성) -->
+<div id="toast-container"></div>
 
 <div th:replace="fragments/footer :: footer"></div>
 
@@ -56,7 +58,7 @@
           $("#resultBox").show();
         },
         error: function(xhr, status, error) {
-          alert("오류 발생: " + error);
+          showToast("오류 발생: " + error);
         }
       });
     });
@@ -76,7 +78,7 @@
       $temp.val(text).select();
       document.execCommand("copy");
       $temp.remove();
-      alert(msg);
+      showToast(msg);
     }
   });
 </script>

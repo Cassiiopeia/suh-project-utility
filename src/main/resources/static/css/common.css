@@ -216,12 +216,14 @@ COMMON.CSS - 공통 컴포넌트 스타일
 ===========================
 */
 
-/* toast-container 위치 */
+/* Toast container 중앙정렬: 상단 중앙 */
 #toast-container {
   position: fixed;
-  top: 2rem;
-  right: 2rem;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 9999;
+  pointer-events: none;
 }
 
 /* Toast 개별 아이템 스타일 */
