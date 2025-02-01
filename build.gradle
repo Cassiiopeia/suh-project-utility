@@ -42,6 +42,10 @@ dependencies {
     // PostgreSQL
     runtimeOnly 'org.postgresql:postgresql'
 
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.20.0'
+
     // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -67,6 +71,9 @@ dependencies {
     // jsoup
     implementation 'org.jsoup:jsoup:1.15.4'
 
+    // Http
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
     // OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     // JavaNetCookieJar
@@ -77,9 +84,6 @@ dependencies {
     // Selenium
     implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
     implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
-
-    // Guava
-    implementation 'com.google.guava:guava:31.1-jre'
 
     // Spring Boot DevTools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

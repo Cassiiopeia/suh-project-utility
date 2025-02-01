@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='로그인 - 세종말싸미')}"></head>
+<body class="login-page" style="background: #f9f9f9;">
+<!-- 헤더 영역 -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- 로그인 폼 영역 -->
+<div class="ui container" style="margin-top: 3em; display: flex; justify-content: center;">
+  <div class="ui raised segment" style="width: 100%; max-width: 400px;">
+    <div class="ui center aligned" style="padding-bottom: 1em">
+      <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="ui huge image"
+           style="display: block; margin: 0 auto -2em;">
+<!--      <h2 class="ui header">로그인</h2>-->
+    </div>
+    <form class="ui form" th:action="@{/login}" method="post" id="loginForm">
+      <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+      <div class="field">
+        <label>아이디</label>
+        <div class="ui left icon input">
+          <i class="user icon"></i>
+          <input type="text" name="username" placeholder="아이디를 입력하세요">
+        </div>
+      </div>
+      <div class="field">
+        <label>비밀번호</label>
+        <div class="ui left icon input">
+          <i class="lock icon"></i>
+          <input type="password" name="password" placeholder="비밀번호를 입력하세요">
+        </div>
+      </div>
+      <button type="submit" class="ui fluid primary button">로그인</button>
+      <div class="ui error message" style="display: none;"></div>
+    </form>
+  </div>
+</div>
+
+<!-- 로그인 진행 시 보여줄 로딩 디머 -->
+<div class="ui dimmer" id="login-dimmer">
+  <div class="ui text loader">로그인 중...</div>
+</div>
+
+<script th:inline="javascript">
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+  });
+</script>
+
+<!-- footer fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

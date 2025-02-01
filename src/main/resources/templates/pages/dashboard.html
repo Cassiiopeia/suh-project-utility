@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: head(title='Dashboard')"></head>
+<body class="dashboard-page">
+<div th:replace="fragments/header :: header"></div>
+
+<div class="ui container">
+  <div class="ui segment">
+    <h3 class="ui header">대시보드</h3>
+  </div>
+
+  <!-- 기능 목록 카드-->
+  <div class="ui segment">
+    <h3 class="ui header">목록</h3>
+    <div class="ui cards" id="dockerStatsContainer"></div>
+  </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>
