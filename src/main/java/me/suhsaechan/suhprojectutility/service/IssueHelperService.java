@@ -117,19 +117,27 @@ public class IssueHelperService {
 
   /**
    * 브랜치명용 제목 가공
-   * - 맨 앞에 있는 대괄호 그룹(예, [기능추가], [대시보드] 등)과 이모지/특수문자 제거
-   * - 남은 단어들은 언더스코어(_)로 연결
-   * - 알파벳, 숫자, 한글, 그리고 언더스코어만 허용
+   * - 인접한 대괄호 사이에 공백이 없으면 먼저 공백을 삽입한 후,
+   *   대괄호는 제거하고 내부 텍스트는 유지합니다.
+   * - 특수문자는 제거하고, 남은 단어들은 공백을 언더스코어(_)로 변환합니다.
+   * - 허용 문자: 알파벳, 숫자, 한글, 공백 (최종 변환 시 공백은 언더스코어로 대체)
    */
   private String processTitleForBranch(String title) {
-    // 맨 앞에 있는 [~~] 그룹을 모두 제거 (여러 그룹일 경우 모두 제거)
-    String withoutLeadingBrackets = title.replaceFirst("^(\\[[^\\]]*\\]\\s*)+", "");
-    // 이모지나 기타 특수문자(알파벳, 숫자, 한글, 공백 제외) 제거
-    withoutLeadingBrackets = withoutLeadingBrackets.replaceAll("^[^\\p{L}\\p{Nd}\\s]+", "");
-    // 공백을 언더스코어로 변환
-    String replaced = withoutLeadingBrackets.trim().replaceAll("\\s+", "_");
-    // 알파벳, 숫자, 한글, 언더스코어 외의 문자는 제거
-    return replaced.replaceAll("[^\\p{L}\\p{Nd}_]", "");
+    if (title == null || title.isEmpty()) {
+      return "";
+    }
+
+    // 인접한 대괄호 사이에 공백 삽입 (예: "[기능추가][깃헙이슈도우미]" → "[기능추가] [깃헙이슈도우미]")
+    title = title.replaceAll("\\]\\s*\\[", "] [");
+
+    // 모든 대괄호를 제거하고 내부 텍스트만 남김 (예: "[기능추가]" → "기능추가")
+    String withoutBrackets = title.replaceAll("\\[([^\\]]+)\\]", "$1");
+
+    // 특수문자 제거 (알파벳, 숫자, 한글, 공백 외의 모든 문자 제거)
+    withoutBrackets = withoutBrackets.replaceAll("[^\\p{L}\\p{Nd}\\s]", "");
+
+    // 앞뒤 공백 제거 후, 공백을 언더스코어(_)로 변환
+    return withoutBrackets.trim().replaceAll("\\s+", "_");
   }
 
   /**
