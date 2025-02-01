@@ -40,7 +40,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     // PostgreSQL
-    runtimeOnly 'org.postgresql:postgresql:42.3.1'
+    runtimeOnly 'org.postgresql:postgresql'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
