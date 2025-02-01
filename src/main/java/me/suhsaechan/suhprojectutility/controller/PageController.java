@@ -21,4 +21,14 @@ public class PageController {
 	public String dashboardPage(Model model){
 		return "pages/dashboard";
 	}
+
+	@GetMapping("/issue-helper")
+	public String issueHelperPage(Model model){
+		return "pages/githubIssueHelper";
+	}
+
+	@GetMapping("/openai-chat")
+	public String openAiChatPage(Model model){
+		return "pages/openAiChat";
+	}
 }
