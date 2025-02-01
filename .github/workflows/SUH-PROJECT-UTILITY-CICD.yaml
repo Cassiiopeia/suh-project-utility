@@ -22,12 +22,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # application.yml 파일을 빌드 전에 생성
       - name: Create application.yml from secret
         run: |
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+          mkdir -p src/main/resources  # 디렉토리 없으면 생성
+          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application.yml
 
-      # prod 프로파일을 활성화하여 빌드
       - name: Build with Gradle
         run: ./gradlew clean build -x test -Dspring.profiles.active=prod
 
