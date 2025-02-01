@@ -179,6 +179,36 @@ COMMON.CSS - 공통 컴포넌트 스타일
 ===========================
 */
 
+.dashboard-page .ui.card {
+  width: 300px;
+  margin: 1em 0;
+}
+
+.dashboard-page .ui.card .header {
+  font-size: 1.2em;
+  margin-bottom: 0.8em;
+}
+
+.dashboard-page .ui.card .description {
+  color: rgba(0,0,0,0.7);
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+.dashboard-page .ui.card .button {
+  margin-top: 0.5em;
+  transition: all 0.3s ease;
+}
+
+.dashboard-page .ui.card .button:hover {
+  background-color: #f8f9fa !important;
+  color: rgba(0,0,0,0.8) !important;
+}
+
+.dashboard-page .ui.card .icon {
+  margin-right: 0.5em;
+}
+
 
 /*
 ===========================
@@ -258,5 +288,11 @@ COMMON.CSS - 공통 컴포넌트 스타일
 @media (min-width: 768px) and (max-width: 991px) {
   .table-container {
     margin: 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ui.card {
+    width: 100%;
   }
 }

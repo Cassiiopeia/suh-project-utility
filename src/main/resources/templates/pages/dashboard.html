@@ -12,12 +12,50 @@
   <!-- 기능 목록 카드-->
   <div class="ui segment">
     <h3 class="ui header">목록</h3>
-    <div class="ui cards" id="dockerStatsContainer"></div>
+    <div class="ui two column stackable grid">
+      <div class="column">
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header"><i class="github icon"></i>깃헙 이슈 도우미</div>
+            <div class="meta">
+              <span class="category">Git Helper</span>
+            </div>
+            <div class="description">
+              커밋, 브랜치 자동 생성
+            </div>
+          </div>
+          <div class="extra content">
+            <a href="/issue-helper" class="ui blue fluid button">
+              <i class="arrow alternate circle right icon"></i>
+              <span class=""> 바로가기</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header"> <i class="comment alternate icon"></i>OpenAI 챗봇</div>
+            <div class="meta">
+              <span class="category">AI Assistant</span>
+            </div>
+            <div class="description">
+              OpenAI GPT
+            </div>
+          </div>
+          <div class="extra content">
+            <a href="/openai-chat" class="ui blue fluid button">
+              <i class="arrow alternate circle right icon"></i>
+              <span class=""> 바로가기</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>
 
-<script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>
