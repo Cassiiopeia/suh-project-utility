@@ -1,61 +1,83 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: head(title='Dashboard')"></head>
-<body class="dashboard-page">
+<body class="githubIssueHelper-page">
 <div th:replace="fragments/header :: header"></div>
-
 <div class="ui container">
-  <div class="ui segment">
-    <h3 class="ui header">대시보드</h3>
-  </div>
+  <h2 class="ui header">GitHub Issue Helper</h2>
+  <form class="ui form" id="issueHelperForm" method="post" enctype="multipart/form-data"
+        th:action="@{/api/issue-helper/create/commmit-branch}">
+    <div class="field">
+      <label>GitHub Issue URL</label>
+      <input type="text" name="issueUrl" placeholder="https://github.com/owner/repo/issues/2" required>
+    </div>
+    <button class="ui primary button" type="submit">생성하기</button>
+  </form>
 
-  <!-- 기능 목록 카드-->
-  <div class="ui segment">
-    <h3 class="ui header">목록</h3>
-    <div class="ui two column stackable grid">
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header"><i class="github icon"></i>깃헙 이슈 도우미</div>
-            <div class="meta">
-              <span class="category">Git Helper</span>
-            </div>
-            <div class="description">
-              커밋, 브랜치 자동 생성
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="/issue-helper" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon"></i>
-              <span class=""> 바로가기</span>
-            </a>
-          </div>
+  <div class="ui segment copy-box" id="resultBox" style="display: none;">
+    <h4 class="ui header">생성 결과</h4>
+    <div class="ui form">
+      <div class="field">
+        <label>브랜치명</label>
+        <div class="ui action input">
+          <textarea id="branchName" readonly style="min-height: 50px; width: 100%;"></textarea>
+          <button class="ui button" id="copyBranch">복사</button>
         </div>
       </div>
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header"> <i class="comment alternate icon"></i>OpenAI 챗봇</div>
-            <div class="meta">
-              <span class="category">AI Assistant</span>
-            </div>
-            <div class="description">
-              OpenAI GPT
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="/openai-chat" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon"></i>
-              <span class=""> 바로가기</span>
-            </a>
-          </div>
+      <div class="field">
+        <label>커밋 메시지</label>
+        <div class="ui action input">
+          <textarea id="commitMessage" readonly style="min-height: 80px; width: 100%;"></textarea>
+          <button class="ui button" id="copyCommit">복사</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+
 <div th:replace="fragments/footer :: footer"></div>
 
 </body>
+<script>
+  $(function() {
+    $("#issueHelperForm").submit(function(event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+      $.ajax({
+        url: $(this).attr("action"),
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          $("#branchName").val(response.branchName);
+          $("#commitMessage").val(response.commitMessage);
+          $("#resultBox").show();
+        },
+        error: function(xhr, status, error) {
+          alert("오류 발생: " + error);
+        }
+      });
+    });
+
+    // 각 결과 항목마다 별도의 복사 버튼 동작 구현
+    $("#copyBranch").click(function() {
+      copyToClipboard($("#branchName").val(), "브랜치명이 복사되었습니다.");
+    });
+
+    $("#copyCommit").click(function() {
+      copyToClipboard($("#commitMessage").val(), "커밋 메시지가 복사되었습니다.");
+    });
+
+    function copyToClipboard(text, msg) {
+      var $temp = $("<textarea>");
+      $("body").append($temp);
+      $temp.val(text).select();
+      document.execCommand("copy");
+      $temp.remove();
+      alert(msg);
+    }
+  });
+</script>
 </html>
