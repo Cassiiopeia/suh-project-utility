@@ -21,9 +21,8 @@ import org.springframework.context.annotation.Profile;
         version = "1.0v"
     ),
     servers = {
-        @Server(url = "https://api.sejong-malsami.co.kr", description = "메인 서버"),
-        @Server(url = "https://api.test.sejong-malsami.co.kr", description = "테스트 서버"),
-        @Server(url = "http://localhost:8080", description = "로컬 서버")
+        @Server(url = "https://lab.suhsaechan.me", description = "메인 서버"),
+        @Server(url = "http://localhost:8090", description = "로컬 서버")
     }
 )
 @Profile("dev")
@@ -32,28 +31,26 @@ public class SwaggerConfig {
 
   @Bean
   public OpenAPI openAPI() {
-    SecurityScheme apiKey = new SecurityScheme()
-        .type(SecurityScheme.Type.HTTP)
-        .in(SecurityScheme.In.HEADER)
-        .name("Authorization")
-        .scheme("bearer")
-        .bearerFormat("JWT");
+    // cookie 세션 인증 스키마 문서 선언
+    SecurityScheme cookieAuthScheme = new SecurityScheme()
+        .type(SecurityScheme.Type.APIKEY)
+        .in(SecurityScheme.In.COOKIE)
+        .name("JSESSIONID"); // 세션 쿠키 이름
 
-    SecurityRequirement securityRequirement = new SecurityRequirement()
-        .addList("Bearer Token");
+    SecurityRequirement securityRequirement
+        = new SecurityRequirement().addList("sessionCookie");
 
     return new OpenAPI()
-        .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
+        .components(new Components()
+            .addSecuritySchemes("sessionCookie", cookieAuthScheme)
+        )
         .addSecurityItem(securityRequirement)
         .servers(List.of(
                 new io.swagger.v3.oas.models.servers.Server()
-                    .url("http://localhost:8080")
+                    .url("http://localhost:8090")
                     .description("로컬 서버"),
                 new io.swagger.v3.oas.models.servers.Server()
-                    .url("https://api.test.sejong-malsami.co.kr")
-                    .description("테스트 서버"),
-                new io.swagger.v3.oas.models.servers.Server()
-                    .url("https://api.sejong-malsami.co.kr")
+                    .url("https://lab.suhsaechan.me")
                     .description("메인 서버")
             )
         );
