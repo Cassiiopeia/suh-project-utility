@@ -91,6 +91,9 @@ dependencies {
     // OpenAPI 사용
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
+    // SSH
+    implementation 'com.jcraft:jsch:0.1.55'
+
 }
 
 tasks.named('test') {
