@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='번역기-SAECHAN-LAB')}"></head>
+<body class="translator-page">
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="ui container">
+  <h2 class="ui header">Custom AI Translator</h2>
+  <div class="ui stackable two column grid">
+    <div class="column">
+      <div class="ui segment">
+        <div class="field">
+          <label>원본 언어</label>
+          <select id="sourceLanguage" class="ui dropdown">
+            <option value="AUTO">언어 감지</option>
+            <option value="KO">한국어</option>
+            <option value="EN">영어</option>
+            <option value="JA">일본어</option>
+            <option value="ZH_CN">중국어 (간체)</option>
+            <option value="ZH_TW">중국어 (번체)</option>
+            <option value="ES">스페인어</option>
+            <option value="FR">프랑스어</option>
+            <option value="DE">독일어</option>
+            <option value="RU">러시아어</option>
+            <option value="PT">포르투갈어</option>
+            <option value="IT">이탈리아어</option>
+            <option value="VI">베트남어</option>
+            <option value="TH">태국어</option>
+            <option value="ID">인도네시아어</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top: 15px;">
+          <textarea id="sourceText" rows="8" placeholder="번역할 텍스트를 입력하세요"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="ui segment">
+        <div class="field">
+          <label>대상 언어</label>
+          <select id="targetLanguage" class="ui dropdown">
+            <option value="KO">한국어</option>
+            <option value="EN">영어</option>
+            <option value="JA">일본어</option>
+            <option value="ZH_CN">중국어 (간체)</option>
+            <option value="ZH_TW">중국어 (번체)</option>
+            <option value="ES">스페인어</option>
+            <option value="FR">프랑스어</option>
+            <option value="DE">독일어</option>
+            <option value="RU">러시아어</option>
+            <option value="PT">포르투갈어</option>
+            <option value="IT">이탈리아어</option>
+            <option value="VI">베트남어</option>
+            <option value="TH">태국어</option>
+            <option value="ID">인도네시아어</option>
+          </select>
+        </div>
+        <div class="field" style="margin-top: 15px;">
+          <div id="targetText" class="ui segment" style="min-height: 196px; overflow-y: auto;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align: center; margin-top: 20px;">
+    <button id="translateBtn" class="ui primary button">
+      <i class="language icon"></i>번역하기
+    </button>
+  </div>
+</div>
+<!-- 토스트 컨테이너 (없으면 자동 생성) -->
+<div id="toast-container"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+  $(function() {
+    // Semantic UI 드롭다운 초기화
+    $('.ui.dropdown').dropdown();
+
+    const sourceTextElement = document.getElementById('sourceText');
+    const targetTextElement = document.getElementById('targetText');
+    const translateButton = document.getElementById('translateBtn');
+    const sourceLanguageSelect = document.getElementById('sourceLanguage');
+    const targetLanguageSelect = document.getElementById('targetLanguage');
+
+    // Debounce 함수 (API 요청 제한)
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // 번역 API 호출 함수
+    function translateText() {
+      const sourceText = sourceTextElement.value.trim();
+      if (!sourceText) return;
+
+      // 로딩 표시
+      targetTextElement.innerHTML = '<div class="ui active centered inline loader"></div><div style="text-align: center; margin-top: 20px;">추론 중...</div>';
+
+      // FormData 객체 생성 (값은 select의 value를 그대로 사용하므로 모두 대문자로 전송됨)
+      var formData = new FormData();
+      formData.append("text", sourceText);
+      formData.append("translatorType", "PAPAGO");
+      formData.append("sourceLang", sourceLanguageSelect.value);
+      formData.append("targetLang", targetLanguageSelect.value);
+
+      // jQuery AJAX 요청
+      $.ajax({
+        url: '/api/translate',
+        type: 'POST',
+        data: formData,
+        processData: false, // FormData를 직렬화하지 않음
+        contentType: false, // multipart/form-data로 전송
+        success: function(response) {
+          targetTextElement.textContent = response.translatedText || '번역을 사용할 수 없습니다';
+        },
+        error: function(xhr, status, error) {
+          console.error('Translation error:', error);
+          targetTextElement.textContent = '오류: 번역을 완료할 수 없습니다.';
+          showToast("번역 중 오류가 발생했습니다.");
+        }
+      });
+    }
+
+    // 이벤트 리스너 설정
+    translateButton.addEventListener('click', translateText);
+
+    // 입력 후 자동 번역 (디바운스 처리)
+    sourceTextElement.addEventListener('input', debounce(function() {
+      if (sourceTextElement.value.trim().length > 0) {
+        translateText();
+      }
+    }, 1000));
+
+    // 언어 변경 시 자동 번역
+    sourceLanguageSelect.addEventListener('change', function() {
+      if (sourceTextElement.value.trim().length > 0) {
+        translateText();
+      }
+    });
+
+    targetLanguageSelect.addEventListener('change', function() {
+      if (sourceTextElement.value.trim().length > 0) {
+        translateText();
+      }
+    });
+
+    // 토스트 메시지 표시 함수
+    function showToast(message) {
+      if ($("#toast-container").length === 0) {
+        $("body").append('<div id="toast-container"></div>');
+      }
+      const toast = $('<div class="toast"></div>').text(message);
+      $("#toast-container").append(toast);
+      setTimeout(function() {
+        toast.remove();
+      }, 3000);
+    }
+  });
+</script>
+</body>
+</html>

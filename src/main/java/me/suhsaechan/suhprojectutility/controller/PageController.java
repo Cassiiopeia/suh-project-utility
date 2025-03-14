@@ -31,4 +31,9 @@ public class PageController {
 	public String openAiChatPage(Model model){
 		return "pages/openAiChat";
 	}
+
+	@GetMapping("/translator")
+	public String translatorPage(Model model){
+		return "pages/translator";
+	}
 }
