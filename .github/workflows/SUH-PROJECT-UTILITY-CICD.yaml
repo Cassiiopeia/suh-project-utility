@@ -82,13 +82,18 @@ jobs:
             export PW=${{ secrets.SERVER_PASSWORD }}
             CONTAINER_NAME="suh-project-utility"
             PORT=8090
+            
+            echo "application.yml 파일 원격 업로드 중..."
+            echo $PW | sudo -S mkdir -p /volume1/projects/suh-project-utility/github_secret
+            echo "${{ secrets.APPLICATION_YML }}" | sudo tee /volume1/projects/suh-project-utility/github_secret/application.yml > /dev/null
+            echo "application.yml 업로드 완료"
 
             echo "컨테이너 이름: $CONTAINER_NAME"
             echo "포트: $PORT"
 
             echo "도커 이미지 풀: ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main"
             echo $PW | sudo -S docker pull ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main
-
+            
             echo "컨테이너 $CONTAINER_NAME 존재 여부 확인 중..."
             if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^${CONTAINER_NAME}$"; then
               echo "컨테이너 $CONTAINER_NAME 이(가) 존재합니다. 중지 및 삭제 중..."
