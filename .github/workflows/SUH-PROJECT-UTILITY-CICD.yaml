@@ -104,7 +104,7 @@ jobs:
             fi
 
             echo "새로운 컨테이너 $CONTAINER_NAME 실행 중..."
-            echo $PW | sudo -S docker run -d -p ${PORT}:8080 --name $CONTAINER_NAME \
+            echo $PW | sudo -S docker run -d --network selenium-chrome-network -p ${PORT}:8080 --name $CONTAINER_NAME \
               -e TZ=Asia/Seoul \
               -v /etc/localtime:/etc/localtime:ro \
               -v /volume1/projects/suh-project-utility:/mnt/suh-project-utility \
