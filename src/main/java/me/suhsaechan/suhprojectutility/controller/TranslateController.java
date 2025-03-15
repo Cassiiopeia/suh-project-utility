@@ -2,8 +2,8 @@ package me.suhsaechan.suhprojectutility.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.suhprojectutility.object.TranslationRequest;
-import me.suhsaechan.suhprojectutility.object.TranslationResponse;
+import me.suhsaechan.suhprojectutility.object.request.TranslationRequest;
+import me.suhsaechan.suhprojectutility.object.response.TranslationResponse;
 import me.suhsaechan.suhprojectutility.service.TranslateService;
 import me.suhsaechan.suhprojectutility.util.log.LogMonitoringInvocation;
 import org.springframework.http.MediaType;

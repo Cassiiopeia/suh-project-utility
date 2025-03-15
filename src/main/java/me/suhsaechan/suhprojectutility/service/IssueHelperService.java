@@ -1,8 +1,8 @@
 package me.suhsaechan.suhprojectutility.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.suhprojectutility.object.IssueHelperRequest;
-import me.suhsaechan.suhprojectutility.object.IssueHelperResponse;
+import me.suhsaechan.suhprojectutility.object.request.IssueHelperRequest;
+import me.suhsaechan.suhprojectutility.object.response.IssueHelperResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

@@ -24,3 +24,36 @@ function showToast(message, duration = 3000) {
     container.removeChild(toast);
   });
 }
+
+
+// AJAX 요청에 자동으로 CSRF 토큰 추가
+$(function(){
+  var token = $('meta[name="_csrf"]').attr('content');
+  var header = $('meta[name="_csrf_header"]').attr('content');
+  $(document).ajaxSend(function(e, xhr, options){
+    xhr.setRequestHeader(header, token);
+  });
+});
+
+/**
+ * Formats a date string for display
+ * @param {string} dateString - ISO date string
+ * @returns {string} Formatted date string
+ */
+function formatDate(dateString) {
+  if (!dateString) return '';
+
+  try {
+    const date = new Date(dateString);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return dateString; // Return original if parsing fails
+    }
+
+    return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+  } catch (e) {
+    console.error('Error formatting date:', e);
+    return dateString; // Return original on error
+  }
+}

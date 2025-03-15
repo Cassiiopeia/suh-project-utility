@@ -1,15 +1,16 @@
 package me.suhsaechan.suhprojectutility.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 웹 보안 설정 클래스
@@ -51,6 +52,7 @@ public class WebSecurityConfig {
         .authorizeHttpRequests(auth -> auth
             // 인증 없이 접근 가능한 경로 설정
             .requestMatchers(allPublicEndpoints.toArray(new String[0])).permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/module/get/versions").hasAnyRole("USER", "ADMIN")
             .anyRequest().authenticated() // 나머지 경로는 인증 필요
         );
 

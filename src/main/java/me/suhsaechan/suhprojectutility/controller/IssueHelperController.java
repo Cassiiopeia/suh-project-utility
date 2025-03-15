@@ -2,8 +2,8 @@ package me.suhsaechan.suhprojectutility.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.suhprojectutility.object.IssueHelperRequest;
-import me.suhsaechan.suhprojectutility.object.IssueHelperResponse;
+import me.suhsaechan.suhprojectutility.object.request.IssueHelperRequest;
+import me.suhsaechan.suhprojectutility.object.response.IssueHelperResponse;
 import me.suhsaechan.suhprojectutility.service.IssueHelperService;
 import me.suhsaechan.suhprojectutility.util.log.LogMonitoringInvocation;
 import org.springframework.http.MediaType;

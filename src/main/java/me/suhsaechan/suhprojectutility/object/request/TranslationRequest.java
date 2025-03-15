@@ -1,4 +1,4 @@
-package me.suhsaechan.suhprojectutility.object;
+package me.suhsaechan.suhprojectutility.object.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

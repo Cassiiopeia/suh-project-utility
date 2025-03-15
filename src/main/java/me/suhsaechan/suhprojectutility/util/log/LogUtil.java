@@ -1,18 +1,23 @@
-package me.suhsaechan.suhprojectutility.util.log;
+package com.romrom.romback.global.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.suhprojectutility.util.TimeUtil;
 
 /**
  * 로그 유틸리티 클래스
  */
 @Slf4j
-public class LogUtils {
+public class LogUtil {
 
-	private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule()).enable(SerializationFeature.INDENT_OUTPUT);
+	private static final ObjectMapper objectMapper = new ObjectMapper()
+			.registerModule(new JavaTimeModule())
+			.enable(SerializationFeature.INDENT_OUTPUT);
 
 	private static final int LINE_LENGTH = 60; // "=" 줄에 대한 최대 길이 지정
 	private static final String SEPARATOR_CHAR = "=";
@@ -21,17 +26,18 @@ public class LogUtils {
 	 * 로그 레벨을 정의
 	 */
 	public enum LogLevel {
-		DEBUG, INFO, WARN, ERROR
+		DEBUG,
+		INFO,
+		WARN,
+		ERROR
 	}
 
 	public static void superLog(Object obj) {
 		superLogImpl(obj, LogLevel.INFO);
 	}
-
 	public static void superLogDebug(Object obj) {
 		superLogImpl(obj, LogLevel.DEBUG);
 	}
-
 	public static void superLogWarn(Object obj) {
 		superLogImpl(obj, LogLevel.WARN);
 	}
@@ -74,17 +80,23 @@ public class LogUtils {
 	public static void lineLog(String title) {
 		lineLogImpl(title, LogLevel.INFO);
 	}
-
 	public static void lineLogDebug(String title) {
 		lineLogImpl(title, LogLevel.DEBUG);
 	}
-
 	public static void lineLogWarn(String title) {
 		lineLogImpl(title, LogLevel.WARN);
 	}
-
 	public static void lineLogError(String title) {
 		lineLogImpl(title, LogLevel.ERROR);
+	}
+
+	public static void logServerInitDuration(LocalDateTime serverStartTime){
+		LocalDateTime overallEndTime = LocalDateTime.now();
+		Duration overallDuration = Duration.between(serverStartTime, overallEndTime);
+		lineLog(null);
+		lineLog("서버 데이터 초기화 및 업데이트 완료");
+		log.info("총 소요 시간: {}", TimeUtil.convertDurationToReadableTime(overallDuration));
+		lineLog(null);
 	}
 
 	/**
@@ -107,7 +119,7 @@ public class LogUtils {
 	private static void lineLogImpl(String title, LogLevel level) {
 		String separator;
 		if (title == null || title.isEmpty()) {
-			separator = repeat(SEPARATOR_CHAR, LINE_LENGTH);
+			separator = SEPARATOR_CHAR.repeat(LINE_LENGTH);
 		} else {
 			int textLength = title.length() + 2; // 양쪽 공백 포함
 			if (textLength >= LINE_LENGTH) {
@@ -115,7 +127,7 @@ public class LogUtils {
 				separator = title;
 			} else {
 				int sideLength = (LINE_LENGTH - textLength) / 2;
-				String side = repeat(SEPARATOR_CHAR, sideLength);
+				String side = SEPARATOR_CHAR.repeat(sideLength);
 				separator = side + " " + title + " " + side;
 
 				// 홀수 길이 조정을 위해 추가 '='
@@ -146,6 +158,33 @@ public class LogUtils {
 				break;
 			default:
 				log.info(message, args);
+		}
+	}
+
+	/**
+	 * 실행 가능한 인터페이스로 예외를 처리 구성
+	 */
+	@FunctionalInterface
+	public interface ThrowingRunnable {
+		void run() throws Exception;
+	}
+
+	/**
+	 * 메소드 실행 시간 측정
+	 */
+	public static void timeLog(ThrowingRunnable task) {
+		String methodName = new Throwable().getStackTrace()[0].getMethodName();
+		long startTime = System.currentTimeMillis();
+		try {
+			task.run();
+		} catch (Exception e) {
+			log.error("[{}] 실행 중 예외 발생: {}", methodName, e.getMessage());
+		} finally {
+			long endTime = System.currentTimeMillis();
+			long durationMillis = endTime - startTime;
+			String formattedTime = TimeUtil.convertMillisToReadableTime(durationMillis);
+			String log = "[" + methodName + "] 실행 시간: " + formattedTime;
+			lineLog(log);
 		}
 	}
 }

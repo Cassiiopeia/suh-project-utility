@@ -1,6 +1,7 @@
 package me.suhsaechan.suhprojectutility.config;
 
-import static me.suhsaechan.suhprojectutility.util.log.LogUtils.lineLog;
+
+import static com.romrom.romback.global.util.LogUtil.lineLog;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
