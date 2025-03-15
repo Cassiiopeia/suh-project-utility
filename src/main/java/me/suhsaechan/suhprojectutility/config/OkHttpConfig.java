@@ -10,13 +10,25 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class OkHttpConfig {
 
+  /**
+   * OkHttpClient.Builder 빈 등록
+   * (TranslateService에서 CookieJar와 함께 사용)
+   */
   @Bean
-  public OkHttpClient okHttpClient() {
+  public OkHttpClient.Builder okHttpClientBuilder() {
     return new OkHttpClient.Builder()
-        // 연결 유지시간, 풀 크기 등 필요에 따라 설정
-        .connectionPool(new ConnectionPool(5, 5, TimeUnit.MINUTES))
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .build();
+        .connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES))
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true);
+  }
+
+  /**
+   * 기본 OkHttpClient 빈 등록 (다른 서비스에서 사용)
+   */
+  @Bean
+  public OkHttpClient okHttpClient(OkHttpClient.Builder builder) {
+    return builder.build();
   }
 }

@@ -84,6 +84,7 @@ dependencies {
     // Selenium
     implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
     implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
+    implementation 'org.seleniumhq.selenium:selenium-devtools-v133:4.29.0'
 
     // Spring Boot DevTools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -4,32 +4,50 @@
 <body class="translator-page">
 <div th:replace="~{fragments/header :: header}"></div>
 <div class="ui container">
-  <h2 class="ui header">Custom AI Translator</h2>
+  <h2 class="ui header">SUH-AI 번역기</h2>
+  <div class="ui basic segment">
+    <div class="ui label">
+      <i class="code branch icon"></i>
+      버전
+      <div class="detail">1.0</div>
+    </div>
+  </div>
+
   <div class="ui stackable two column grid">
     <div class="column">
       <div class="ui segment">
         <div class="field">
           <label>원본 언어</label>
-          <select id="sourceLanguage" class="ui dropdown">
-            <option value="AUTO">언어 감지</option>
-            <option value="KO">한국어</option>
-            <option value="EN">영어</option>
-            <option value="JA">일본어</option>
-            <option value="ZH_CN">중국어 (간체)</option>
-            <option value="ZH_TW">중국어 (번체)</option>
-            <option value="ES">스페인어</option>
-            <option value="FR">프랑스어</option>
-            <option value="DE">독일어</option>
-            <option value="RU">러시아어</option>
-            <option value="PT">포르투갈어</option>
-            <option value="IT">이탈리아어</option>
-            <option value="VI">베트남어</option>
-            <option value="TH">태국어</option>
-            <option value="ID">인도네시아어</option>
-          </select>
+          <div id="sourceLanguage" class="ui selection clearable dropdown">
+            <input type="hidden" name="sourceLanguage" value="AUTO">
+            <i class="dropdown icon"></i>
+            <div class="default text">언어 선택</div>
+            <div class="menu">
+              <div class="item" data-value="AUTO"><i class="globe icon"></i>언어 감지</div>
+              <div class="item" data-value="KO"><i class="kr flag"></i>한국어</div>
+              <div class="item" data-value="EN"><i class="us flag"></i>영어</div>
+              <div class="item" data-value="JA"><i class="jp flag"></i>일본어</div>
+              <div class="item" data-value="ZH_CN"><i class="cn flag"></i>중국어 (간체)</div>
+              <div class="item" data-value="ZH_TW"><i class="tw flag"></i>중국어 (번체)</div>
+              <div class="item" data-value="ES"><i class="es flag"></i>스페인어</div>
+              <div class="item" data-value="FR"><i class="fr flag"></i>프랑스어</div>
+              <div class="item" data-value="DE"><i class="de flag"></i>독일어</div>
+              <div class="item" data-value="RU"><i class="ru flag"></i>러시아어</div>
+              <div class="item" data-value="PT"><i class="pt flag"></i>포르투갈어</div>
+              <div class="item" data-value="IT"><i class="it flag"></i>이탈리아어</div>
+              <div class="item" data-value="VI"><i class="vn flag"></i>베트남어</div>
+              <div class="item" data-value="TH"><i class="th flag"></i>태국어</div>
+              <div class="item" data-value="ID"><i class="id flag"></i>인도네시아어</div>
+            </div>
+          </div>
         </div>
         <div class="field" style="margin-top: 15px;">
-          <textarea id="sourceText" rows="8" placeholder="번역할 텍스트를 입력하세요"></textarea>
+          <div class="ui form">
+            <textarea id="sourceText" rows="8" placeholder="번역할 텍스트를 입력하세요..."></textarea>
+          </div>
+          <div class="ui mini right aligned basic segment">
+            <span id="charCount">0</span> 글자
+          </div>
         </div>
       </div>
     </div>
@@ -37,126 +55,239 @@
       <div class="ui segment">
         <div class="field">
           <label>대상 언어</label>
-          <select id="targetLanguage" class="ui dropdown">
-            <option value="KO">한국어</option>
-            <option value="EN">영어</option>
-            <option value="JA">일본어</option>
-            <option value="ZH_CN">중국어 (간체)</option>
-            <option value="ZH_TW">중국어 (번체)</option>
-            <option value="ES">스페인어</option>
-            <option value="FR">프랑스어</option>
-            <option value="DE">독일어</option>
-            <option value="RU">러시아어</option>
-            <option value="PT">포르투갈어</option>
-            <option value="IT">이탈리아어</option>
-            <option value="VI">베트남어</option>
-            <option value="TH">태국어</option>
-            <option value="ID">인도네시아어</option>
-          </select>
+          <div id="targetLanguage" class="ui selection dropdown">
+            <input type="hidden" name="targetLanguage" value="KO">
+            <i class="dropdown icon"></i>
+            <div class="default text">언어 선택</div>
+            <div class="menu">
+              <div class="item" data-value="KO"><i class="kr flag"></i>한국어</div>
+              <div class="item" data-value="EN"><i class="us flag"></i>영어</div>
+              <div class="item" data-value="JA"><i class="jp flag"></i>일본어</div>
+              <div class="item" data-value="ZH_CN"><i class="cn flag"></i>중국어 (간체)</div>
+              <div class="item" data-value="ZH_TW"><i class="tw flag"></i>중국어 (번체)</div>
+              <div class="item" data-value="ES"><i class="es flag"></i>스페인어</div>
+              <div class="item" data-value="FR"><i class="fr flag"></i>프랑스어</div>
+              <div class="item" data-value="DE"><i class="de flag"></i>독일어</div>
+              <div class="item" data-value="RU"><i class="ru flag"></i>러시아어</div>
+              <div class="item" data-value="PT"><i class="pt flag"></i>포르투갈어</div>
+              <div class="item" data-value="IT"><i class="it flag"></i>이탈리아어</div>
+              <div class="item" data-value="VI"><i class="vn flag"></i>베트남어</div>
+              <div class="item" data-value="TH"><i class="th flag"></i>태국어</div>
+              <div class="item" data-value="ID"><i class="id flag"></i>인도네시아어</div>
+            </div>
+          </div>
         </div>
         <div class="field" style="margin-top: 15px;">
-          <div id="targetText" class="ui segment" style="min-height: 196px; overflow-y: auto;"></div>
+          <div id="targetText" class="ui segment" style="min-height: 225px; overflow-y: auto; background-color: #f9f9f9;"></div>
         </div>
       </div>
     </div>
   </div>
-  <div style="text-align: center; margin-top: 20px;">
-    <button id="translateBtn" class="ui primary button">
-      <i class="language icon"></i>번역하기
+  <div class="ui center aligned basic segment">
+    <button id="translateBtn" class="ui primary animated button">
+      <div class="visible content">
+        <i class="language icon"></i>번역하기
+      </div>
+      <div class="hidden content">
+        <i class="arrow right icon"></i>
+      </div>
+    </button>
+    <button id="copyBtn" class="ui secondary button">
+      <i class="copy icon"></i>복사하기
     </button>
   </div>
 </div>
-<!-- 토스트 컨테이너 (없으면 자동 생성) -->
+
+<!-- 토스트 컨테이너 -->
 <div id="toast-container"></div>
 <div th:replace="~{fragments/footer :: footer}"></div>
+
 <script>
-  $(function() {
-    // Semantic UI 드롭다운 초기화
-    $('.ui.dropdown').dropdown();
+  document.addEventListener('DOMContentLoaded', function() {
+    // 초기화 함수들 호출
+    initSemantic();
+    initElements();
+    setupEventHandlers();
+  });
 
-    const sourceTextElement = document.getElementById('sourceText');
-    const targetTextElement = document.getElementById('targetText');
-    const translateButton = document.getElementById('translateBtn');
-    const sourceLanguageSelect = document.getElementById('sourceLanguage');
-    const targetLanguageSelect = document.getElementById('targetLanguage');
+  // Semantic UI 컴포넌트 초기화
+  function initSemantic() {
+    $('.ui.dropdown').dropdown({
+      clearable: true,
+      forceSelection: false
+    });
+  }
 
-    // Debounce 함수 (API 요청 제한)
-    function debounce(func, wait) {
-      let timeout;
-      return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-      };
-    }
+  // 요소 참조 및 초기 상태 설정
+  function initElements() {
+    // DOM 요소 참조
+    window.elements = {
+      sourceText: document.getElementById('sourceText'),
+      targetText: document.getElementById('targetText'),
+      translateBtn: document.getElementById('translateBtn'),
+      copyBtn: document.getElementById('copyBtn'),
+      sourceLanguage: $('#sourceLanguage'),
+      targetLanguage: $('#targetLanguage'),
+      charCount: document.getElementById('charCount')
+    };
 
-    // 번역 API 호출 함수
-    function translateText() {
-      const sourceText = sourceTextElement.value.trim();
-      if (!sourceText) return;
+    // 대상 언어 한국어로 기본 설정
+    window.elements.targetLanguage.dropdown('set selected', 'KO');
 
-      // 로딩 표시
-      targetTextElement.innerHTML = '<div class="ui active centered inline loader"></div><div style="text-align: center; margin-top: 20px;">추론 중...</div>';
+    // 자동 감지로 기본 설정
+    window.elements.sourceLanguage.dropdown('set selected', 'AUTO');
 
-      // FormData 객체 생성 (값은 select의 value를 그대로 사용하므로 모두 대문자로 전송됨)
-      var formData = new FormData();
-      formData.append("text", sourceText);
-      formData.append("translatorType", "PAPAGO");
-      formData.append("sourceLang", sourceLanguageSelect.value);
-      formData.append("targetLang", targetLanguageSelect.value);
+    // 텍스트 영역이 비어있을 때의 초기 상태 설정
+    updateTranslationPlaceholder();
+  }
 
-      // jQuery AJAX 요청
-      $.ajax({
-        url: '/api/translate',
-        type: 'POST',
-        data: formData,
-        processData: false, // FormData를 직렬화하지 않음
-        contentType: false, // multipart/form-data로 전송
-        success: function(response) {
-          targetTextElement.textContent = response.translatedText || '번역을 사용할 수 없습니다';
-        },
-        error: function(xhr, status, error) {
-          console.error('Translation error:', error);
-          targetTextElement.textContent = '오류: 번역을 완료할 수 없습니다.';
-          showToast("번역 중 오류가 발생했습니다.");
-        }
-      });
-    }
+  // 이벤트 핸들러 설정
+  function setupEventHandlers() {
+    // 번역 버튼 클릭
+    window.elements.translateBtn.addEventListener('click', translateText);
 
-    // 이벤트 리스너 설정
-    translateButton.addEventListener('click', translateText);
+    // 복사 버튼 클릭
+    window.elements.copyBtn.addEventListener('click', copyTranslatedText);
 
-    // 입력 후 자동 번역 (디바운스 처리)
-    sourceTextElement.addEventListener('input', debounce(function() {
-      if (sourceTextElement.value.trim().length > 0) {
+    // 입력 텍스트 변경 시 debounce 적용하여 자동 번역
+    window.elements.sourceText.addEventListener('input', debounce(function() {
+      // 글자 수 업데이트
+      updateCharCount();
+
+      if (window.elements.sourceText.value.trim().length > 0) {
         translateText();
+      } else {
+        updateTranslationPlaceholder();
       }
     }, 1000));
 
-    // 언어 변경 시 자동 번역
-    sourceLanguageSelect.addEventListener('change', function() {
-      if (sourceTextElement.value.trim().length > 0) {
+    // 언어 선택 변경 시 자동 번역
+    window.elements.sourceLanguage.on('change', function() {
+      if (window.elements.sourceText.value.trim().length > 0) {
         translateText();
       }
     });
 
-    targetLanguageSelect.addEventListener('change', function() {
-      if (sourceTextElement.value.trim().length > 0) {
+    window.elements.targetLanguage.on('change', function() {
+      if (window.elements.sourceText.value.trim().length > 0) {
         translateText();
       }
     });
+  }
 
-    // 토스트 메시지 표시 함수
-    function showToast(message) {
-      if ($("#toast-container").length === 0) {
-        $("body").append('<div id="toast-container"></div>');
-      }
-      const toast = $('<div class="toast"></div>').text(message);
-      $("#toast-container").append(toast);
-      setTimeout(function() {
-        toast.remove();
-      }, 3000);
+  // Debounce 함수 : API 요청 제한
+  function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  // 번역 API 호출 함수
+  function translateText() {
+    const sourceText = window.elements.sourceText.value.trim();
+    if (!sourceText) {
+      updateTranslationPlaceholder();
+      return;
     }
-  });
+
+    // 로딩 표시 (스트라이프 패턴 적용)
+    window.elements.targetText.innerHTML = `
+      <div class="ui active inverted dimmer">
+        <div class="ui small text loader">번역 중...</div>
+      </div>
+    `;
+
+    // API 호출을 위한 데이터 준비
+    var formData = new FormData();
+    formData.append("text", sourceText);
+    formData.append("translatorType", "PAPAGO");
+    formData.append("sourceLang", window.elements.sourceLanguage.dropdown('get value'));
+    formData.append("targetLang", window.elements.targetLanguage.dropdown('get value'));
+
+    // API 호출
+    $.ajax({
+      url: '/api/translate',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        window.elements.targetText.textContent = response.translatedText || '번역을 사용할 수 없습니다';
+      },
+      error: function(xhr, status, error) {
+        console.error('Translation error:', error);
+        window.elements.targetText.textContent = '오류: 번역을 완료할 수 없습니다.';
+        showToast("번역 중 오류가 발생했습니다.", "negative");
+      }
+    });
+  }
+
+  // 번역된 텍스트 복사 함수
+  function copyTranslatedText() {
+    const text = window.elements.targetText.textContent;
+    if (!text || text.includes('번역을 사용할 수 없습니다') || text.includes('오류:')) {
+      showToast("복사할 번역 텍스트가 없습니다.", "warning");
+      return;
+    }
+
+    // 임시 textarea 생성하여 복사
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+
+    showToast("번역 결과가 클립보드에 복사되었습니다.", "positive");
+  }
+
+  // 텍스트 영역이 비어있을 때 상태 업데이트
+  function updateTranslationPlaceholder() {
+    window.elements.targetText.innerHTML = '';
+  }
+
+  // 글자 수 업데이트
+  function updateCharCount() {
+    const count = window.elements.sourceText.value.length;
+    window.elements.charCount.textContent = count;
+  }
+
+  /**
+   * showToast(message, type, duration)
+   * @param {string} message - 표시할 메시지
+   * @param {string} type - 토스트 유형 (positive, negative, warning)
+   * @param {number} duration - 표시 후 사라질 때까지의 밀리초 (기본 3000)
+   */
+  function showToast(message, type = 'info', duration = 3000) {
+    // 토스트 컨테이너 확인
+    const container = document.getElementById('toast-container');
+    if (!container) {
+      document.body.appendChild(document.createElement('div')).id = 'toast-container';
+    }
+
+    // 토스트 메시지 생성
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+
+    // 타입에 따른 색상 지정
+    if (type === 'positive') {
+      toast.style.backgroundColor = '#21ba45';
+    } else if (type === 'negative') {
+      toast.style.backgroundColor = '#db2828';
+    } else if (type === 'warning') {
+      toast.style.backgroundColor = '#f2711c';
+    }
+
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    // 애니메이션 종료 후 제거
+    toast.addEventListener('animationend', () => {
+      container.removeChild(toast);
+    });
+  }
 </script>
 </body>
 </html>

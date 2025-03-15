@@ -1,3 +1,4 @@
+// src/main/resources/static/js/common.js
 /**
  * showToast(message, duration)
  * @param {string} message   - 표시할 메시지
