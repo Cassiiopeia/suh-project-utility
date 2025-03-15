@@ -370,3 +370,81 @@ COMMON.CSS - 공통 컴포넌트 스타일
     width: 100%;
   }
 }
+
+/*
+===========================
+   Version Info Styles
+===========================
+*/
+
+/* 버전 정보 섹션 스타일 */
+.version-info-segment {
+  margin-bottom: 2rem;
+}
+
+/* 버전 아코디언 스타일 */
+.version-accordion {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+  border-radius: 0.4rem !important;
+}
+
+/* 버전 행 레이아웃 */
+.version-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* 버전 라벨 스타일 */
+.version-label {
+  display: flex;
+  align-items: center;
+}
+
+/* 버전 태그 스타일 */
+.version-tag {
+  font-weight: bold;
+  color: #2185d0;
+  font-family: 'Courier New', monospace;
+  margin: 0 0.4rem;
+}
+
+/* 버전 날짜 스타일 */
+.version-date {
+  color: #767676;
+  font-size: 0.9em;
+  font-family: 'Courier New', monospace;
+}
+
+/* 아이콘 색상 */
+.version-accordion .icon.green {
+  color: #21ba45 !important;
+}
+
+.version-accordion .icon.blue {
+  color: #2185d0 !important;
+}
+
+.version-accordion .icon.orange {
+  color: #f2711c !important;
+}
+
+/* 반응형 스타일 */
+@media only screen and (max-width: 767px) {
+  .version-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .version-date {
+    margin-left: 1.5rem;
+    margin-top: 0.2rem;
+    font-size: 0.8em;
+  }
+
+  .version-info-segment {
+    margin-bottom: 1rem;
+    padding: 0 !important;
+  }
+}

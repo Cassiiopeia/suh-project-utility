@@ -5,11 +5,63 @@
 <div th:replace="~{fragments/header :: header}"></div>
 <div class="ui container">
   <h2 class="ui header">SUH-AI 번역기</h2>
-  <div class="ui basic segment">
-    <div class="ui label">
-      <i class="code branch icon"></i>
-      버전
-      <div class="detail">1.0</div>
+
+  <!-- 버전 정보 섹션 -->
+  <div class="ui basic segment version-info-segment">
+    <div class="ui styled fluid accordion version-accordion">
+      <!-- 현재 버전 (기본으로 펼쳐짐) -->
+      <div class="active title">
+        <div class="version-row">
+          <div class="version-label">
+            <i class="dropdown icon"></i>
+            <i class="code branch icon"></i>
+            버전 <span class="version-tag">1.1.0</span>
+            <div class="ui green mini label">최신</div>
+          </div>
+          <span class="version-date">2025-03-16</span>
+        </div>
+      </div>
+      <div class="active content">
+        <div class="ui relaxed divided list">
+          <div class="item">
+            <i class="lightning icon green"></i>
+            <div class="content">
+              <div class="header">성능 개선</div>
+              <div class="description">평균 응답시간: 22초 → 7초 (68% 개선)</div>
+            </div>
+          </div>
+          <div class="item">
+            <i class="microchip icon blue"></i>
+            <div class="content">
+              <div class="header">번역 품질 향상</div>
+              <div class="description">번역 엔진 최적화 및 정확도 개선</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 이전 버전 -->
+      <div class="title">
+        <div class="version-row">
+          <div class="version-label">
+            <i class="dropdown icon"></i>
+            <i class="code branch icon"></i>
+            버전 <span class="version-tag">1.0.0</span>
+          </div>
+          <span class="version-date">2025-03-15</span>
+        </div>
+      </div>
+      <div class="content">
+        <div class="ui relaxed divided list">
+          <div class="item">
+            <i class="rocket icon orange"></i>
+            <div class="content">
+              <div class="header">출시</div>
+              <div class="description">SUH-AI 번역기 서비스 시작</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -115,6 +167,11 @@
     $('.ui.dropdown').dropdown({
       clearable: true,
       forceSelection: false
+    });
+
+    // 버전 아코디언 초기화
+    $('.version-accordion').accordion({
+      exclusive: false  // 여러 섹션을 동시에 열 수 있도록 설정
     });
   }
 
