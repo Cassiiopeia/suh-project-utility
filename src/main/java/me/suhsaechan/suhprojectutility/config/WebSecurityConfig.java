@@ -1,42 +1,60 @@
 package me.suhsaechan.suhprojectutility.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * 웹 보안 설정 클래스
+ */
 @Configuration
 public class WebSecurityConfig {
 
+  private final PublicEndpointConfig publicEndpointConfig;
+
+  @Autowired
+  public WebSecurityConfig(PublicEndpointConfig publicEndpointConfig) {
+    this.publicEndpointConfig = publicEndpointConfig;
+  }
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    // 공개 API , 리소스 경로
+    List<String> publicApiEndpoints = publicEndpointConfig.getPublicApiEndpoints();
+    List<String> publicResourceEndpoints = publicEndpointConfig.getPublicResourceEndpoints();
+
+    List<String> allPublicEndpoints = new ArrayList<>();
+    allPublicEndpoints.addAll(publicResourceEndpoints);
+    allPublicEndpoints.addAll(publicApiEndpoints);
+
+    // API 경로 > AntPathRequestMatcher 목록 생성
+    List<AntPathRequestMatcher> apiMatchers = publicApiEndpoints.stream()
+        .map(AntPathRequestMatcher::new)
+        .collect(Collectors.toList());
+
     // CSRF 설정
     // CSRF 토큰을 사용할 경우, form에서 반드시 _csrf 필드를 사용해야 합니다.
     http
         .csrf(csrf -> csrf
-            // API 용으로 CSRF를 끔
-            .ignoringRequestMatchers(
-                new AntPathRequestMatcher("/api/**")
-            )
-        ); // 기본: _csrf 필드 필요
+            // API 경로에 대해 CSRF 토큰 검사 비활성화
+            .ignoringRequestMatchers(apiMatchers.toArray(new AntPathRequestMatcher[0]))
+        ); // 다른 경로는 기본적으로 _csrf 필드 필요
 
     http
         .authorizeHttpRequests(auth -> auth
-            // 로그인 없이 접근 가능
-            .requestMatchers(
-                "/login",         // 로그인 페이지
-                "/logout",        // 로그아웃 처리
-                "/css/**",
-                "/js/**",
-                "/images/**",
-                "/static/**"
-            ).permitAll()
-            .anyRequest().authenticated() // 기본: 인증 필요
+            // 인증 없이 접근 가능한 경로 설정
+            .requestMatchers(allPublicEndpoints.toArray(new String[0])).permitAll()
+            .anyRequest().authenticated() // 나머지 경로는 인증 필요
         );
 
-    // Form Login
+    // Form Login 설정
     http
         .formLogin(formLogin -> formLogin
             // 커스텀 로그인 페이지 경로
@@ -61,11 +79,10 @@ public class WebSecurityConfig {
         );
 
     // 세션 정책 설정
-    // sessionCreationPolicy를 IF_REQUIRED 로 두고, 만료 시 행동 -> TODO: 세션연장 팝업창 표시 필요
     http
         .sessionManagement(session -> session
             .invalidSessionUrl("/login?sessionExpired=true")
-            .maximumSessions(10)  // 중복 세션 방지: 한 계정당 세션 10개
+            .maximumSessions(20)  // 중복 세션 방지: 한 계정당 세션 20개
             .expiredUrl("/login?sessionExpired=true")
         );
 
