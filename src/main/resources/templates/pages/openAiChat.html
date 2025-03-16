@@ -1,9 +1,9 @@
 <!-- src/main/resources/templates/pages/openAiChat.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: head(title='챗지피티-SAECHAN-LAB')"></head>
+<head th:replace="~{fragments/header :: head(title='openAiChat-SAECHAN-LAB')}"></head>
 <body class="dashboard-page">
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="ui container">
   <div class="ui segment">
@@ -56,7 +56,7 @@
   </div>
 </div>
 
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>
