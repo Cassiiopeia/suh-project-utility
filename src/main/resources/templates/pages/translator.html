@@ -1,3 +1,4 @@
+<!-- src/main/resources/templates/pages/translator.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='번역기-SAECHAN-LAB')}"></head>
@@ -7,9 +8,7 @@
   <h2 class="ui header">SUH-AI 번역기</h2>
 
   <!-- 버전 정보 섹션 -->
-  <div class="ui basic segment version-info-segment">
-    <div class="ui styled fluid accordion version-accordion" id="versionAccordion"></div>
-  </div>
+  <div th:replace="~{fragments/versionInfo :: versionInfo(moduleType='TRANSLATOR')}"></div>
 
   <div class="ui stackable two column grid">
     <div class="column">
@@ -105,12 +104,10 @@
     initSemantic();
     initElements();
     setupEventHandlers();
-    loadModuleVersions();
   });
 
   function initSemantic() {
     $('.ui.dropdown').dropdown({ clearable: true, forceSelection: false });
-    $('.version-accordion').accordion({ exclusive: false });
   }
 
   function initElements() {
@@ -166,10 +163,10 @@
       return;
     }
     window.elements.targetText.innerHTML = `
-      <div class="ui active inverted dimmer">
-        <div class="ui small text loader">번역 중...</div>
-      </div>
-    `;
+    <div class="ui active inverted dimmer">
+      <div class="ui small text loader">번역 중...</div>
+    </div>
+  `;
     var formData = new FormData();
     formData.append("text", sourceText);
     formData.append("translatorType", "PAPAGO");
@@ -216,118 +213,6 @@
     const count = window.elements.sourceText.value.length;
     window.elements.charCount.textContent = count;
   }
-
-  function loadModuleVersions() {
-    var formData = new FormData();
-    formData.append("moduleType", "TRANSLATOR");
-
-    $.ajax({
-      url: '/api/module/get/versions',
-      type: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function(response) {
-        // Check the structure of the response
-        console.log("Version response:", response);
-
-        // Make sure we're accessing the correct property
-        if (response && response.versions) {
-          renderModuleVersions(response.versions);
-        } else {
-          console.error('Unexpected response structure:', response);
-          showToast("버전 정보 형식이 올바르지 않습니다.", "negative");
-        }
-
-        // Reinitialize the accordion
-        $('.version-accordion').accordion({ exclusive: false });
-      },
-      error: function(xhr, status, error) {
-        console.error('Error loading module versions:', xhr.status, xhr.responseText, error);
-        showToast("버전 정보를 불러오는 데 실패했습니다: " + xhr.status, "negative");
-      }
-    });
-  }
-
-  function renderModuleVersions(versions) {
-    if (!versions || !Array.isArray(versions) || versions.length === 0) {
-      console.warn("No versions to render or versions is not an array");
-      const accordion = document.getElementById('versionAccordion');
-      accordion.innerHTML = `
-      <div class="ui info message">
-        <div class="header">버전 정보가 없습니다</div>
-        <p>이 모듈에 대한 버전 정보가 아직 등록되지 않았습니다.</p>
-      </div>
-    `;
-      return;
-    }
-
-    const accordion = document.getElementById('versionAccordion');
-    accordion.innerHTML = '';
-
-    versions.forEach((version, index) => {
-      const isActive = index === 0 ? 'active' : '';
-      const titleDiv = document.createElement('div');
-      titleDiv.className = `title ${isActive}`;
-      titleDiv.innerHTML = `
-      <div class="version-row">
-        <div class="version-label">
-          <i class="dropdown icon"></i>
-          <i class="code branch icon"></i>
-          버전 <span class="version-tag">${version.versionNumber}</span>
-          ${version.isLatest ? '<div class="ui green mini label">최신</div>' : ''}
-        </div>
-        <span class="version-date">${formatDate(version.releaseDate)}</span>
-      </div>
-    `;
-
-      const contentDiv = document.createElement('div');
-      contentDiv.className = `content ${isActive}`;
-      const updateList = document.createElement('div');
-      updateList.className = 'ui relaxed divided list';
-
-      if (version.updates && Array.isArray(version.updates) && version.updates.length > 0) {
-        version.updates.forEach(update => {
-          const item = document.createElement('div');
-          item.className = 'item';
-
-          // Check if moduleUpdateType is directly a string or an object with properties
-          let iconName = update.iconName || (update.moduleUpdateType && update.moduleUpdateType.semanticUiIcon);
-          let colorName = update.colorName || (update.moduleUpdateType && update.moduleUpdateType.color);
-
-          if (!iconName || !colorName) {
-            // Fallback to defaults if we can't get icon info
-            iconName = "info circle";
-            colorName = "grey";
-          }
-
-          item.innerHTML = `
-          <i class="${iconName} icon ${colorName}"></i>
-          <div class="content">
-            <div class="header">${update.updateTitle}</div>
-            <div class="description">${update.updateDescription || ''}</div>
-          </div>
-        `;
-          updateList.appendChild(item);
-        });
-      } else {
-        updateList.innerHTML = `
-        <div class="item">
-          <div class="content">
-            <div class="header">업데이트 정보가 없습니다</div>
-          </div>
-        </div>
-      `;
-      }
-
-      contentDiv.appendChild(updateList);
-      accordion.appendChild(titleDiv);
-      accordion.appendChild(contentDiv);
-    });
-  }
-
-
-
 
 </script>
 </body>

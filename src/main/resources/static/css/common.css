@@ -377,6 +377,11 @@ COMMON.CSS - 공통 컴포넌트 스타일
 ===========================
 */
 
+/* 클릭 영역 확장 */
+.main-title, .version-title {
+  cursor: pointer;
+}
+
 /* 버전 정보 섹션 스타일 */
 .version-info-segment {
   margin-bottom: 2rem;
@@ -396,10 +401,11 @@ COMMON.CSS - 공통 컴포넌트 스타일
   width: 100%;
 }
 
-/* 버전 라벨 스타일 */
+/* 기존 스타일 개선 */
 .version-label {
   display: flex;
   align-items: center;
+  flex-grow: 1;
 }
 
 /* 버전 태그 스타일 */
@@ -430,11 +436,51 @@ COMMON.CSS - 공통 컴포넌트 스타일
   color: #f2711c !important;
 }
 
-/* 반응형 스타일 */
+/* 추가할 CSS - common.css 파일에 추가하세요 */
+
+/* 중첩 아코디언 스타일 */
+.nested-accordion {
+  margin-top: 10px !important;
+  margin-left: 10px !important;
+  box-shadow: none !important;
+  border-left: 2px solid #f0f0f0 !important;
+  padding-left: 10px !important;
+}
+
+/* 최신 버전 강조 */
+.version-accordion > .active.title:first-of-type {
+  border-left: 3px solid #21ba45 !important;
+  padding-left: 10px !important;
+  background-color: rgba(33, 186, 69, 0.05) !important;
+}
+
+/* 전체 버전 기록 아이콘 */
+.version-accordion .history.icon {
+  color: #767676 !important;
+}
+
+/* 가독성 개선을 위한 여백 조정 */
+.version-accordion .content {
+  padding-top: 0.5em !important;
+  padding-bottom: 1em !important;
+}
+
+/* 모바일 반응형 스타일 개선 */
+@media only screen and (max-width: 767px) {
+  .nested-accordion {
+    margin-left: 5px !important;
+    padding-left: 5px !important;
+  }
+
+  .version-accordion > .active.title:first-of-type {
+    padding-left: 5px !important;
+  }
+}
+
 @media only screen and (max-width: 767px) {
   .version-row {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row !important;
+    align-items: center !important;
   }
 
   .version-date {

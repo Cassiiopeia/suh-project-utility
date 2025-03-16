@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,4 +45,9 @@ public class ModuleVersionUpdate extends BasePostgresEntity {
 
   @Enumerated(EnumType.STRING)
   private ModuleUpdateType moduleUpdateType; // 업데이트 타입 (성능, 기능, 출시 등)
+
+  @Transient
+  private String moduleUpdateTypeIcon; // ModuleUpdateType.getSemanticUiIcon()
+
+
 }

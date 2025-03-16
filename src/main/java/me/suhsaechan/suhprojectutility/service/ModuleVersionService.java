@@ -23,17 +23,18 @@ public class ModuleVersionService {
   public ModuleVersionResponse getModuleVersions(ModuleVersionRequest request) {
     log.info("Getting module versions for module type: {}", request.getModuleType());
 
-    // Get all versions for the module type, ordered by release date
     List<ModuleVersion> moduleVersions = moduleVersionRepository.findByModuleTypeOrderByReleaseDateDesc(request.getModuleType());
 
-    // For each version, fetch its updates
     for (ModuleVersion version : moduleVersions) {
       List<ModuleVersionUpdate> updates = moduleVersionUpdateRepository.findByModuleVersionOrderByCreatedDateDesc(version);
-      version.setUpdates(updates); // Make sure ModuleVersion has a List<ModuleVersionUpdate> updates field
+      for(ModuleVersionUpdate moduleVersionUpdate : updates) {
+        moduleVersionUpdate.setModuleUpdateTypeIcon(moduleVersionUpdate.getModuleUpdateType().getSemanticUiIcon());
+      }
+      version.setUpdates(updates);
     }
 
     return ModuleVersionResponse.builder()
-        .versions(moduleVersions) // Changed from moduleVersions to versions to match frontend expectations
+        .versions(moduleVersions)
         .build();
   }
 }
