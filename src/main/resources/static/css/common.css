@@ -6,6 +6,100 @@ COMMON.CSS - 공통 컴포넌트 스타일
 ===========================================
 */
 
+/*
+===========================
+  Responsive, Mobile Styles
+===========================
+*/
+
+/* 카드 반응형 개선 */
+.ui.doubling.grid > .column {
+  padding: 1em !important;
+}
+
+/* 태블릿 반응형 개선 */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .ui.doubling.grid > .column {
+    padding: 0.8em !important;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .table-container .total-count {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .table-container {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .table-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+
+  .dashboard-container .ui.five.column.grid {
+    margin: 0 !important;
+  }
+
+  .dashboard-container .column {
+    padding: 0.5rem !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .table-container {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ui.card {
+    width: 100%;
+  }
+}
+
+/* 모바일 반응형 스타일 개선 */
+@media only screen and (max-width: 767px) {
+  .nested-accordion {
+    margin-left: 5px !important;
+    padding-left: 5px !important;
+  }
+
+  .version-accordion > .active.title:first-of-type {
+    padding-left: 5px !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .version-row {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .version-date {
+    margin-left: 1.5rem;
+    margin-top: 0.2rem;
+    font-size: 0.8em;
+  }
+
+  .version-info-segment {
+    margin-bottom: 1rem;
+    padding: 0 !important;
+  }
+}
 
 /*
 ===========================
@@ -247,40 +341,87 @@ COMMON.CSS - 공통 컴포넌트 스타일
 
 /*
 ===========================
-   Dashboard Common Styles
+   Dashboard CSS Fixes & Improvements
 ===========================
 */
 
+/* 기존 대시보드 카드 스타일 수정 - 카드 겹침 문제 해결 */
 .dashboard-page .ui.card {
-  width: 300px;
-  margin: 1em 0;
+  width: 100% !important; /* 고정 너비 제거하고 100%로 설정 */
+  min-width: auto !important; /* 최소 너비 제한 제거 */
+  margin: 0.5em 0 !important; /* 상하 마진 조정 */
 }
 
-.dashboard-page .ui.card .header {
-  font-size: 1.2em;
-  margin-bottom: 0.8em;
+/* 대시보드 섹션 헤더 개선 */
+.dashboard-section-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid #f0f0f0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
 }
 
-.dashboard-page .ui.card .description {
-  color: rgba(0,0,0,0.7);
-  font-size: 1em;
-  line-height: 1.4;
+/* 섹션 설명 스타일 */
+.dashboard-section-description {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 1rem;
 }
 
-.dashboard-page .ui.card .button {
-  margin-top: 0.5em;
+/* 프로젝트 섹션 스타일 */
+.dashboard-project-section {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* 프로젝트 타이틀 스타일 */
+.dashboard-project-title {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+  color: #444;
+  border-left: 4px solid #2185d0;
+  padding-left: 10px;
+}
+
+/* 카드 호버 이펙트 */
+.dashboard-page .ui.card:hover {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
   transition: all 0.3s ease;
 }
 
-.dashboard-page .ui.card .button:hover {
-  background-color: #f8f9fa !important;
-  color: rgba(0,0,0,0.8) !important;
+/* 카테고리 태그 스타일 개선 */
+.dashboard-page .ui.card .meta .category {
+  background-color: rgba(0,0,0,0.05);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: 500;
 }
 
-.dashboard-page .ui.card .icon {
-  margin-right: 0.5em;
-}
+/* 대시보드 모바일 반응형 개선 */
+@media only screen and (max-width: 767px) {
+  .dashboard-project-section {
+    padding: 1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
 
+  .dashboard-section-header {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-project-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+}
 
 /*
 ===========================
@@ -319,57 +460,6 @@ COMMON.CSS - 공통 컴포넌트 스타일
   100% { opacity: 0;   transform: translateY(-10px); }
 }
 
-/*
-===========================
-   Responsive Styles
-===========================
-*/
-
-@media (max-width: 767px) {
-  .table-container .total-count {
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
-
-  .table-container {
-    margin: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .table-container::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .table-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  .table-container::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-  }
-
-  .dashboard-container .ui.five.column.grid {
-    margin: 0 !important;
-  }
-
-  .dashboard-container .column {
-    padding: 0.5rem !important;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  .table-container {
-    margin: 0;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .ui.card {
-    width: 100%;
-  }
-}
 
 /*
 ===========================
@@ -463,34 +553,4 @@ COMMON.CSS - 공통 컴포넌트 스타일
 .version-accordion .content {
   padding-top: 0.5em !important;
   padding-bottom: 1em !important;
-}
-
-/* 모바일 반응형 스타일 개선 */
-@media only screen and (max-width: 767px) {
-  .nested-accordion {
-    margin-left: 5px !important;
-    padding-left: 5px !important;
-  }
-
-  .version-accordion > .active.title:first-of-type {
-    padding-left: 5px !important;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  .version-row {
-    flex-direction: row !important;
-    align-items: center !important;
-  }
-
-  .version-date {
-    margin-left: 1.5rem;
-    margin-top: 0.2rem;
-    font-size: 0.8em;
-  }
-
-  .version-info-segment {
-    margin-bottom: 1rem;
-    padding: 0 !important;
-  }
 }
