@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+@Profile("dev")
+@Configuration
 @OpenAPIDefinition(
     info = @Info(
         title = "📚 SUH-PROJECT-UTILITY 📚",
@@ -22,37 +24,33 @@ import org.springframework.context.annotation.Profile;
     ),
     servers = {
         @Server(url = "https://lab.suhsaechan.me", description = "메인 서버"),
-        @Server(url = "http://localhost:8090", description = "로컬 서버")
+        @Server(url = "http://localhost:8080", description = "로컬 서버") // 포트 수정
     }
 )
-@Profile("dev")
-@Configuration
 public class SwaggerConfig {
 
   @Bean
   public OpenAPI openAPI() {
-    // cookie 세션 인증 스키마 문서 선언
     SecurityScheme cookieAuthScheme = new SecurityScheme()
         .type(SecurityScheme.Type.APIKEY)
         .in(SecurityScheme.In.COOKIE)
-        .name("JSESSIONID"); // 세션 쿠키 이름
+        .name("JSESSIONID")
+        .description("로그인 후 브라우저에서 발급된 JSESSIONID를 입력하세요.");
 
-    SecurityRequirement securityRequirement
-        = new SecurityRequirement().addList("sessionCookie");
+    SecurityRequirement securityRequirement = new SecurityRequirement()
+        .addList("sessionCookie");
 
     return new OpenAPI()
         .components(new Components()
-            .addSecuritySchemes("sessionCookie", cookieAuthScheme)
-        )
+            .addSecuritySchemes("sessionCookie", cookieAuthScheme))
         .addSecurityItem(securityRequirement)
         .servers(List.of(
-                new io.swagger.v3.oas.models.servers.Server()
-                    .url("http://localhost:8090")
-                    .description("로컬 서버"),
-                new io.swagger.v3.oas.models.servers.Server()
-                    .url("https://lab.suhsaechan.me")
-                    .description("메인 서버")
-            )
-        );
+            new io.swagger.v3.oas.models.servers.Server()
+                .url("http://localhost:8080")
+                .description("로컬 서버"),
+            new io.swagger.v3.oas.models.servers.Server()
+                .url("https://lab.suhsaechan.me")
+                .description("메인 서버")
+        ));
   }
 }

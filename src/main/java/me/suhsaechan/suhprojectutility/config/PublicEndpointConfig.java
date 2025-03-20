@@ -30,7 +30,9 @@ public class PublicEndpointConfig {
         "/css/**",
         "/js/**",
         "/images/**",
-        "/static/**"
+        "/static/**",
+        "/swagger-ui/**",      // Swagger UI
+        "/v3/api-docs/**"      // OpenAPI 문서
     );
   }
 }

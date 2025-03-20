@@ -1,7 +1,9 @@
 package me.suhsaechan.suhprojectutility.util.log;
 
+import static com.romrom.romback.global.util.LogUtil.lineLog;
+import static com.romrom.romback.global.util.LogUtil.superLog;
+
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.suhprojectutility.util.exception.ErrorCode;
@@ -31,14 +33,31 @@ class MethodInvocationLoggingAspect {
 		HttpServletRequest request = attributes.getRequest();
 		String requestId = (String) request.getAttribute("RequestID");
 
-		LOGGER.info("[{}] RequestID: {}, Parameter: {}", signature.getMethod().getName(), requestId,
-				Arrays.toString(joinPoint.getArgs()));
+//		// 기존
+//		LOGGER.info("[{}] RequestID: {}, Parameter: {}", signature.getMethod().getName(), requestId,
+//				Arrays.toString(joinPoint.getArgs()));
+
+		// 신규 (LogUtil 존재시)
+		lineLog(signature.getMethod().getName());
+		log.info("RequestId : {} ", requestId);
+		log.info("Parameter : ");
+		superLog(joinPoint.getArgs());
+		lineLog(null);
+
 
 		Object result = ErrorCode.INTERNAL_SERVER_ERROR;
 		try {
 			result = joinPoint.proceed();
 		} finally {
-			LOGGER.info("[{}] RequestID: {}, Result: {}", signature.getMethod().getName(), requestId, result);
+//			// 기존
+//			LOGGER.info("[{}] RequestID: {}, Result: {}", signature.getMethod().getName(), requestId, result);
+
+			// 신규
+			lineLog(signature.getMethod().getName());
+			log.info("RequestId : {} ", requestId);
+			log.info("Parameter : ");
+			superLog(result);
+			lineLog(null);
 		}
 
 		return result;

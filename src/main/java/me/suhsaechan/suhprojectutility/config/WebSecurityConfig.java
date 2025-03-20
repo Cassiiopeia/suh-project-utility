@@ -46,12 +46,19 @@ public class WebSecurityConfig {
         .csrf(csrf -> csrf
             // API 경로에 대해 CSRF 토큰 검사 비활성화
             .ignoringRequestMatchers(apiMatchers.toArray(new AntPathRequestMatcher[0]))
+//            //FIXME: DEV 에서만 추가
+//                .ignoringRequestMatchers("/api/**")
+
+            // XSRF-TOKEN 쿠키 처리
+//            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+
         ); // 다른 경로는 기본적으로 _csrf 필드 필요
 
     http
         .authorizeHttpRequests(auth -> auth
             // 인증 없이 접근 가능한 경로 설정
             .requestMatchers(allPublicEndpoints.toArray(new String[0])).permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/docker/get/container-info").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/module/get/versions").hasAnyRole("USER", "ADMIN")
             .anyRequest().authenticated() // 나머지 경로는 인증 필요
         );
