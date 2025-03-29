@@ -5,14 +5,21 @@
   <meta name="_csrf" th:content="${_csrf.token}" />
   <meta name="_csrf_header" th:content="${_csrf.headerName}" />
   <title th:text="${title}">S.LAB</title>
+
   <!-- CDN Semantic UI CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+
   <!-- 커스텀 CSS -->
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" th:href="@{/css/semantic-custom-utilities.css}">
 
+  <!-- AES 값 meta 태그 추가 -->
+  <meta name="encryption-key" th:content="${encryptionKey}" />
+  <meta name="encryption-iv" th:content="${encryptionIV}" />
+
   <!-- 스크립트 파일 포함 -->
   <script th:src="@{/js/jquery.min.js}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script th:src="@{/js/semantic.min.js}"></script>
   <script th:src="@{/js/common.js}"></script>
 </head>

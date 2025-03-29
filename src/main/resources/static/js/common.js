@@ -57,3 +57,52 @@ function formatDate(dateString) {
     return dateString; // Return original on error
   }
 }
+
+// IP 주소 조회 함수
+async function getClientIp() {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('IP 조회 실패:', error);
+    return null;
+  }
+}
+
+// SHA-256 해시 함수
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// meta 태그로부터 암호화 키 및 IV 읽어오기
+function getEncryptionConfig() {
+  const keyMeta = document.querySelector('meta[name="encryption-key"]');
+  const ivMeta = document.querySelector('meta[name="encryption-iv"]');
+  return {
+    key: keyMeta ? keyMeta.getAttribute('content') : '',
+    iv: ivMeta ? ivMeta.getAttribute('content') : ''
+  };
+}
+
+/**
+ * ip 암호화 함수
+ * @param {string} ip - 암호화할 IP 값
+ * @returns {Promise<string>} 암호화된 문자열
+ */
+async function encryptIp(ip) {
+  const config = getEncryptionConfig();
+  const key = CryptoJS.enc.Utf8.parse(config.key);
+  const iv = CryptoJS.enc.Utf8.parse(config.iv);
+
+  const encrypted = CryptoJS.AES.encrypt(ip, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  });
+
+  return encrypted.toString();
+}

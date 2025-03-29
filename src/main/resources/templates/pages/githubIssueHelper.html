@@ -12,6 +12,7 @@
       <label>GitHub Issue URL</label>
       <input type="text" name="issueUrl" placeholder="https://github.com/owner/repo/issues/2" required>
     </div>
+    <input type="hidden" name="clientIpHash" id="clientIpHash">
     <button class="ui primary button" type="submit">생성하기</button>
   </form>
 
@@ -44,35 +45,49 @@
 </body>
 <script>
   $(function() {
-    $("#issueHelperForm").submit(function(event) {
+    $("#issueHelperForm").submit(async function(event) {
       event.preventDefault();
-      var formData = new FormData(this);
-      $.ajax({
-        url: $(this).attr("action"),
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-          $("#branchName").val(response.branchName);
-          $("#commitMessage").val(response.commitMessage);
-          $("#resultBox").show();
-        },
-        error: function(xhr, status, error) {
-          showToast("오류 발생: " + error);
-        }
-      });
+
+      try {
+        // IP 가져오기 및 암호화 처리
+        const clientIp = await getClientIp();
+        const encryptedIp = clientIp ? await encryptIp(clientIp) : '';  // IP 없어도 빈 값으로 진행
+        $("#clientIpHash").val(encryptedIp);
+
+        // FormData 생성 및 전송
+        var formData = new FormData(this);
+
+        $.ajax({
+          url: $(this).attr("action"),
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            $("#branchName").val(response.branchName);
+            $("#commitMessage").val(response.commitMessage);
+            $("#resultBox").show();
+          },
+          error: function(xhr, status, error) {
+            showToast("요청 처리에 실패했습니다.");  // 일반화된 에러 메시지
+          }
+        });
+      } catch (error) {
+        showToast("요청 처리에 실패했습니다.");  // 일반화된 에러 메시지
+      }
     });
 
-    // 각 결과 항목마다 별도의 복사 버튼 동작 구현
+    // 브랜치 명 복사 버튼 클릭 시 동작
     $("#copyBranch").click(function() {
       copyToClipboard($("#branchName").val(), "브랜치명이 복사되었습니다.");
     });
 
+    // 커밋 메시지 복사 버튼 클릭 시 동작
     $("#copyCommit").click(function() {
       copyToClipboard($("#commitMessage").val(), "커밋 메시지가 복사되었습니다.");
     });
 
+    // 복사 함수
     function copyToClipboard(text, msg) {
       var $temp = $("<textarea>");
       $("body").append($temp);
@@ -81,6 +96,7 @@
       $temp.remove();
       showToast(msg);
     }
+
   });
 </script>
 </html>

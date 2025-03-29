@@ -1,5 +1,11 @@
 package me.suhsaechan.suhprojectutility.service;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.suhprojectutility.object.request.IssueHelperRequest;
 import me.suhsaechan.suhprojectutility.object.response.IssueHelperResponse;
@@ -8,71 +14,93 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class IssueHelperService {
 
   private final OkHttpClient okHttpClient;
+
+  private final GithubService githubService;
+
   // 기본 commit type (필요시 확장 가능)
   private static final String DEFAULT_COMMIT_TYPE = "feat";
-
-  @Autowired
-  public IssueHelperService(OkHttpClient okHttpClient) {
-    this.okHttpClient = okHttpClient;
-  }
 
   /**
    * GitHub 이슈 URL로부터 페이지를 읽어 <title> 태그를 파싱한 후,
    * 커스텀 규칙에 따라 브랜치명과 커밋 메시지를 생성합니다.
    */
   public IssueHelperResponse createIssueCommmitBranch(IssueHelperRequest request) {
+    log.debug("이슈 도우미 요청 시작: {}", request);
+
     if (request == null || request.getIssueUrl() == null || request.getIssueUrl().trim().isEmpty()) {
+      log.error("잘못된 요청: request={}", request);
       throw new IllegalArgumentException("Issue URL이 비어있습니다.");
     }
 
     String issueUrl = request.getIssueUrl().trim();
-    String htmlContent = fetchPageContent(issueUrl);
-    String fullTitle = parseTitleFromHtml(htmlContent);
-    if (fullTitle == null || fullTitle.isEmpty()) {
-      throw new IllegalArgumentException("페이지에서 제목을 추출할 수 없습니다.");
+    log.debug("처리할 이슈 URL: {}", issueUrl);
+
+    String repositoryFullName = extractRepositoryFullName(issueUrl);
+    log.debug("추출된 저장소 이름: {}", repositoryFullName);
+
+    try {
+      String htmlContent = fetchPageContent(issueUrl);
+      log.debug("페이지 내용 크기: {} bytes", htmlContent.length());
+
+      String fullTitle = parseTitleFromHtml(htmlContent);
+      log.debug("파싱된 전체 제목: {}", fullTitle);
+
+      String rawTitle = fullTitle.split("·\\s*Issue")[0].trim();
+      log.debug("정제된 제목: {}", rawTitle);
+
+      String issueNumber = extractIssueNumber(issueUrl);
+      log.debug("추출된 이슈 번호: {}", issueNumber);
+
+      String branchName = generateBranchName(rawTitle, issueNumber);
+      log.debug("생성된 브랜치명: {}", branchName);
+
+      String commitMessage = generateCommitMessage(rawTitle, issueUrl);
+      log.debug("생성된 커밋 메시지: {}", commitMessage);
+
+      // DB 저장 추가
+      githubService.processIssueHelper(request, branchName, commitMessage, repositoryFullName);
+
+      IssueHelperResponse response = IssueHelperResponse.builder()
+          .branchName(branchName)
+          .commitMessage(commitMessage)
+          .build();
+
+      log.info("이슈 도우미 처리 완료: {}", response);
+      return response;
+
+    } catch (Exception e) {
+      log.error("이슈 도우미 처리 중 오류 발생: {}", e.getMessage(), e);
+      throw new RuntimeException("이슈 도우미 처리 실패", e);
     }
-
-    // 예제: "⚙️ [기능추가][대시보드] 로그인 이후 대시보드 페이지 구현 · Issue #1 · Cassiiopeia/suh-project-utility"
-    // "· Issue" 이전까지의 부분을 원본 제목으로 사용
-    String rawTitle = fullTitle.split("·\\s*Issue")[0].trim();
-
-    // 이슈 번호 추출 (URL에서 "issues/숫자" 형식)
-    String issueNumber = extractIssueNumber(issueUrl);
-    if (issueNumber == null) {
-      throw new IllegalArgumentException("URL에서 이슈 번호를 추출할 수 없습니다.");
-    }
-
-    // 현재 날짜 (yyyyMMdd)
+  }
+  private String generateBranchName(String rawTitle, String issueNumber) {
     String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-
-    // 브랜치명용 제목 가공: 맨 앞에 있는 대괄호 그룹과 이모지 등 불필요한 특수문자를 제거 후 언더스코어 처리
     String branchTitle = processTitleForBranch(rawTitle);
-    String branchName = String.format("%s_#%s_%s", currentDate, issueNumber, branchTitle);
+    return String.format("%s_#%s_%s", currentDate, issueNumber, branchTitle);
+  }
 
-    // 커밋 메시지용 제목 가공: 대괄호 그룹 전체 제거 후 특수문자 제거, 공백 정리
+  private String generateCommitMessage(String rawTitle, String issueUrl) {
     String commitTitle = processTitleForCommit(rawTitle);
-    // "[변경 사항에 대한 설명]"에서 대괄호를 제외하고 고정 메시지를 사용
-    String commitMessage = String.format("%s : %s : %s %s",
+    return String.format("%s : %s : %s %s",
         commitTitle, DEFAULT_COMMIT_TYPE, "변경 사항에 대한 설명", issueUrl);
+  }
 
-    return IssueHelperResponse.builder()
-        .branchName(branchName)
-        .commitMessage(commitMessage)
-        .build();
+  // URL에서 owner/repository 추출
+  private String extractRepositoryFullName(String url) {
+    Pattern pattern = Pattern.compile("github\\.com/([^/]+/[^/]+)/issues/\\d+");
+    Matcher matcher = pattern.matcher(url);
+    if (matcher.find()) {
+      return matcher.group(1);
+    }
+    return null;
   }
 
   /**
@@ -118,7 +146,7 @@ public class IssueHelperService {
   /**
    * 브랜치명용 제목 가공
    * - 인접한 대괄호 사이에 공백이 없으면 먼저 공백을 삽입한 후,
-   *   대괄호는 제거하고 내부 텍스트는 유지합니다.
+   * 대괄호는 제거하고 내부 텍스트는 유지합니다.
    * - 특수문자는 제거하고, 남은 단어들은 공백을 언더스코어(_)로 변환합니다.
    * - 허용 문자: 알파벳, 숫자, 한글, 공백 (최종 변환 시 공백은 언더스코어로 대체)
    */

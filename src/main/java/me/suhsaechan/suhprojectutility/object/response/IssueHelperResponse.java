@@ -17,3 +17,4 @@ public class IssueHelperResponse {
   private String branchName;
   private String commitMessage;
 }
+
