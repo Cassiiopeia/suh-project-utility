@@ -106,6 +106,7 @@ jobs:
             echo "새로운 컨테이너 $CONTAINER_NAME 실행 중..."
             echo $PW | sudo -S docker run -d --network selenium-chrome-network -p ${PORT}:8080 --name $CONTAINER_NAME \
               -e TZ=Asia/Seoul \
+              -e SPRING_PROFILES_ACTIVE=prod \
               -v /etc/localtime:/etc/localtime:ro \
               -v /volume1/projects/suh-project-utility:/mnt/suh-project-utility \
               ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main
