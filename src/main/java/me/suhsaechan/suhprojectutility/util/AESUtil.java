@@ -5,9 +5,11 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class AESUtil {
 
@@ -47,7 +49,8 @@ public class AESUtil {
       byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encrypted));
       return new String(decrypted);
     } catch (Exception e) {
-      throw new RuntimeException("복호화 실패", e);
+      log.warn("복호화 실패: {}. 원본 값을 반환합니다.", e.getMessage());
+      return encrypted;
     }
   }
 }
