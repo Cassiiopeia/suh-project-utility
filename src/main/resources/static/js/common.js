@@ -58,18 +58,6 @@ function formatDate(dateString) {
   }
 }
 
-// IP 주소 조회 함수
-async function getClientIp() {
-  try {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error('IP 조회 실패:', error);
-    return null;
-  }
-}
-
 // SHA-256 해시 함수
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
@@ -80,8 +68,8 @@ async function sha256(message) {
 
 // meta 태그로부터 암호화 키 및 IV 읽어오기
 function getEncryptionConfig() {
-  const keyMeta = document.querySelector('meta[name="encryption-key"]');
-  const ivMeta = document.querySelector('meta[name="encryption-iv"]');
+  const keyMeta = document.querySelector('meta[name="encryptionKey"]');
+  const ivMeta = document.querySelector('meta[name="encryptionIv"]');
   return {
     key: keyMeta ? keyMeta.getAttribute('content') : '',
     iv: ivMeta ? ivMeta.getAttribute('content') : ''
@@ -105,4 +93,9 @@ async function encryptIp(ip) {
   });
 
   return encrypted.toString();
+}
+
+function getClientHash() {
+  const hashMeta = document.querySelector('meta[name="clientHash"]');
+  return hashMeta ? hashMeta.getAttribute('content') : '';
 }

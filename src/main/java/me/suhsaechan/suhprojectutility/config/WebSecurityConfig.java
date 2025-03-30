@@ -3,7 +3,9 @@ package me.suhsaechan.suhprojectutility.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import me.suhsaechan.suhprojectutility.util.security.AESUtil;
+import me.suhsaechan.suhprojectutility.util.security.CustomAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,14 +18,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * 웹 보안 설정 클래스
  */
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
   private final PublicEndpointConfig publicEndpointConfig;
-
-  @Autowired
-  public WebSecurityConfig(PublicEndpointConfig publicEndpointConfig) {
-    this.publicEndpointConfig = publicEndpointConfig;
-  }
+  private final AESUtil aesUtil;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -71,7 +70,8 @@ public class WebSecurityConfig {
             // 실제 로그인을 처리할 URL (POST)
             .loginProcessingUrl("/login")
             // 로그인 성공시 이동할 페이지
-            .defaultSuccessUrl("/dashboard", true)
+//            .defaultSuccessUrl("/dashboard", true)
+            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil))
             // 로그인 실패시 이동할 페이지
             .failureUrl("/login?error=true")
             .permitAll()

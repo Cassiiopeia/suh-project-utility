@@ -17,5 +17,5 @@ public class IssueHelperRequest {
   // GitHub 이슈 URL
   private String issueUrl;
 
-  private String clientIpHash;
+  private String clientHash;
 }

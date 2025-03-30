@@ -2,16 +2,18 @@
 package me.suhsaechan.suhprojectutility.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.suhprojectutility.object.postgres.GithubIssueHelper;
 import me.suhsaechan.suhprojectutility.object.postgres.GithubRepository;
 import me.suhsaechan.suhprojectutility.object.request.IssueHelperRequest;
 import me.suhsaechan.suhprojectutility.repository.GithubIssueHelperRepository;
 import me.suhsaechan.suhprojectutility.repository.GithubRepositoryRepository;
-import me.suhsaechan.suhprojectutility.util.AESUtil;
+import me.suhsaechan.suhprojectutility.util.security.AESUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class GithubService {
 
@@ -29,8 +31,11 @@ public class GithubService {
       String commitMessage, String repositoryFullName) {
 
     // 복호화
-    String encryptedIp = request.getClientIpHash();
+    String encryptedIp = request.getClientHash();
     String decryptedIp = aesUtil.decrypt(encryptedIp);
+
+    //FIXME: 임시 로깅
+    log.info("Client IP: {}", decryptedIp);
 
     String issueUrl = request.getIssueUrl().trim();
 

@@ -12,7 +12,7 @@
       <label>GitHub Issue URL</label>
       <input type="text" name="issueUrl" placeholder="https://github.com/owner/repo/issues/2" required>
     </div>
-    <input type="hidden" name="clientIpHash" id="clientIpHash">
+    <input type="hidden" name="clientHash" id="clientHash">
     <button class="ui primary button" type="submit">생성하기</button>
   </form>
 
@@ -44,46 +44,66 @@
 
 </body>
 <script>
-  $(function() {
-    $("#issueHelperForm").submit(async function(event) {
+  $(function () {
+    $("#issueHelperForm").submit(async function (event) {
       event.preventDefault();
+      console.log("폼 제출 시작");
 
       try {
-        // IP 가져오기 및 암호화 처리
-        const clientIp = await getClientIp();
-        const encryptedIp = clientIp ? await encryptIp(clientIp) : '';  // IP 없어도 빈 값으로 진행
-        $("#clientIpHash").val(encryptedIp);
+        // ClientHash 불러오기
+        console.log("ClientInfo 불러오기 시도");
+        const clientInfo = await getClientHash();
+        console.log("ClientInfo 결과:", clientInfo);
+
+        // ClientHash 암호화 처리
+        console.log("ClientInfo 암호화 시도");
+        const encryptedIp = clientInfo ? await encryptIp(clientInfo) : '';
+        console.log("암호화된 IP:", encryptedIp);
+        $("#clientHash").val(encryptedIp);
 
         // FormData 생성 및 전송
         var formData = new FormData(this);
 
+        // FormData 내용 로깅
+        console.log("폼 액션 URL:", $(this).attr("action"));
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        console.log("AJAX 요청 시작");
         $.ajax({
           url: $(this).attr("action"),
           type: "POST",
           data: formData,
           processData: false,
           contentType: false,
-          success: function(response) {
+          success: function (response) {
+            console.log("AJAX 요청 성공:", response);
             $("#branchName").val(response.branchName);
             $("#commitMessage").val(response.commitMessage);
             $("#resultBox").show();
           },
-          error: function(xhr, status, error) {
-            showToast("요청 처리에 실패했습니다.");  // 일반화된 에러 메시지
+          error: function (xhr, status, error) {
+            console.error("AJAX 요청 실패");
+            console.error("상태:", status);
+            console.error("오류:", error);
+            console.error("응답:", xhr.responseText);
+            showToast("요청 처리에 실패했습니다.");
           }
         });
       } catch (error) {
-        showToast("요청 처리에 실패했습니다.");  // 일반화된 에러 메시지
+        console.error("처리 중 예외 발생:", error);
+        showToast("요청 처리에 실패했습니다.");
       }
     });
 
     // 브랜치 명 복사 버튼 클릭 시 동작
-    $("#copyBranch").click(function() {
+    $("#copyBranch").click(function () {
       copyToClipboard($("#branchName").val(), "브랜치명이 복사되었습니다.");
     });
 
     // 커밋 메시지 복사 버튼 클릭 시 동작
-    $("#copyCommit").click(function() {
+    $("#copyCommit").click(function () {
       copyToClipboard($("#commitMessage").val(), "커밋 메시지가 복사되었습니다.");
     });
 

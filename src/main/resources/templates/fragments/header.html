@@ -13,9 +13,8 @@
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" th:href="@{/css/semantic-custom-utilities.css}">
 
-  <!-- AES 값 meta 태그 추가 -->
-  <meta name="encryption-key" th:content="${encryptionKey}" />
-  <meta name="encryption-iv" th:content="${encryptionIV}" />
+  <!--  global 변수 추가 -->
+  <th:block th:replace="~{fragments/conf :: conf}"> </th:block>
 
   <!-- 스크립트 파일 포함 -->
   <script th:src="@{/js/jquery.min.js}"></script>
