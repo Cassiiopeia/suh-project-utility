@@ -21,21 +21,22 @@ public class AESUtil {
 
   private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
 
-  public String encrypt(String value) {
+  public static String encrypt(String data, String key) {
     try {
-      IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));
-      SecretKeySpec keySpec = new SecretKeySpec(
-          secretKey.getBytes(StandardCharsets.UTF_8), "AES");
-
-      Cipher cipher = Cipher.getInstance(ALGORITHM);
-      cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-
-      byte[] encrypted = cipher.doFinal(value.getBytes());
-      return Base64.getEncoder().encodeToString(encrypted);
+      SecretKeySpec secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "AES");
+      Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+      cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+      byte[] encryptedBytes = cipher.doFinal(data.getBytes("UTF-8"));
+      return Base64.getEncoder().encodeToString(encryptedBytes);
     } catch (Exception e) {
-      throw new RuntimeException("암호화 실패", e);
-    }
-  }
+      log.error("암호화 실패 - 상세 오류: {}", e.toString(), e);
+      // 암호화 실패 시 로그만 남기고 진행 (예외를 던지지 않음)
+      if (e.getCause() != null) {
+        log.error("원인: {}", e.getCause().toString());
+      }
+      // 암호화 실패 시 기본값 반환 (빈 문자열 또는 특정 표시)
+      return "encryption_failed";
+    }}
 
   public String decrypt(String encrypted) {
     try {
