@@ -47,30 +47,17 @@
   $(function () {
     $("#issueHelperForm").submit(async function (event) {
       event.preventDefault();
-      console.log("폼 제출 시작");
 
       try {
-        // ClientHash 불러오기
-        console.log("ClientInfo 불러오기 시도");
+        // 클라이언트 해시 처리
         const clientInfo = await getClientHash();
-        console.log("ClientInfo 결과:", clientInfo);
-
-        // ClientHash 암호화 처리
-        console.log("ClientInfo 암호화 시도");
         const encryptedIp = clientInfo ? await encryptIp(clientInfo) : '';
-        console.log("암호화된 IP:", encryptedIp);
         $("#clientHash").val(encryptedIp);
 
-        // FormData 생성 및 전송
+        // 폼 데이터 전송
         var formData = new FormData(this);
 
-        // FormData 내용 로깅
-        console.log("폼 액션 URL:", $(this).attr("action"));
-        for (let pair of formData.entries()) {
-          console.log(pair[0] + ': ' + pair[1]);
-        }
-
-        console.log("AJAX 요청 시작");
+        // AJAX 요청
         $.ajax({
           url: $(this).attr("action"),
           type: "POST",
@@ -78,36 +65,35 @@
           processData: false,
           contentType: false,
           success: function (response) {
-            console.log("AJAX 요청 성공:", response);
+            // 응답 처리
             $("#branchName").val(response.branchName);
             $("#commitMessage").val(response.commitMessage);
             $("#resultBox").show();
           },
           error: function (xhr, status, error) {
-            console.error("AJAX 요청 실패");
-            console.error("상태:", status);
-            console.error("오류:", error);
-            console.error("응답:", xhr.responseText);
+            // 오류 처리
+            console.error("AJAX 오류:", status, error);
             showToast("요청 처리에 실패했습니다.");
           }
         });
       } catch (error) {
+        // 예외 처리
         console.error("처리 중 예외 발생:", error);
         showToast("요청 처리에 실패했습니다.");
       }
     });
 
-    // 브랜치 명 복사 버튼 클릭 시 동작
+    // 복사 기능 - 브랜치명
     $("#copyBranch").click(function () {
       copyToClipboard($("#branchName").val(), "브랜치명이 복사되었습니다.");
     });
 
-    // 커밋 메시지 복사 버튼 클릭 시 동작
+    // 복사 기능 - 커밋 메시지
     $("#copyCommit").click(function () {
       copyToClipboard($("#commitMessage").val(), "커밋 메시지가 복사되었습니다.");
     });
 
-    // 복사 함수
+    // 클립보드 복사 유틸
     function copyToClipboard(text, msg) {
       var $temp = $("<textarea>");
       $("body").append($temp);
@@ -116,7 +102,6 @@
       $temp.remove();
       showToast(msg);
     }
-
   });
-</script>
+</script>>
 </html>
