@@ -12,7 +12,7 @@
     <div class="ui center aligned" style="padding-bottom: 1em">
       <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="ui huge image"
            style="display: block; margin: 0 auto -2em;">
-<!--      <h2 class="ui header">로그인</h2>-->
+      <!--      <h2 class="ui header">로그인</h2>-->
     </div>
     <form class="ui form" th:action="@{/login}" method="post" id="loginForm">
       <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -41,11 +41,27 @@
   <div class="ui text loader">로그인 중...</div>
 </div>
 
-<script th:inline="javascript">
-  $.getJSON('https://api.ipify.org?format=json', function(data) {
-    // IP 정보 불러오기
-    const clientIP = data.ip;
 
+<script th:inline="javascript">
+  // 페이지 로드 시 즉시 IP 정보 요청 시작
+  const getClientIPPromise = $.getJSON('https://api.ipify.org?format=json');
+
+  $(document).ready(function() {
+    // DOM 로드 후 이벤트 리스너 설정
+    setupLoginForm();
+
+    // IP 정보 처리 (이미 요청 시작)
+    getClientIPPromise
+    .done(function(data) {
+      processClientIP(data.ip);
+    })
+    .fail(function() {
+      console.error("IP 주소를 가져오는 데 실패했습니다");
+    });
+  });
+
+  function processClientIP(clientIP) {
+    console.log("실제 클라이언트 IP:", clientIP);
     // AES 암호화
     const key = CryptoJS.enc.Utf8.parse(window.encryptionKey);
     const iv = CryptoJS.enc.Utf8.parse(window.encryptionIv);
@@ -55,36 +71,36 @@
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7
     });
+
     console.log("ClientHash 값:", encrypted.toString());
-
-    // 암호화된 값을 전역 변수에 설정
     window.clientHash = encrypted.toString();
+  }
 
-  }).fail(function() {
-    console.error("IP 주소를 가져오는 데 실패했습니다");
-  });
+  function setupLoginForm() {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', function(e) {
+        // 기존 필드 제거
+        const existingField = this.querySelector('input[name="clientHash"]');
+        if (existingField) existingField.remove();
 
-  // 로그인 폼 제출 이벤트 리스너 구현
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    // 기존 clientHash hidden 필드가 있으면 제거
-    const existingField = this.querySelector('input[name="clientHash"]');
-    if (existingField) {
-      existingField.remove();
+        // clientHash 추가
+        if (window.clientHash) {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = 'clientHash';
+          hiddenField.value = window.clientHash;
+          this.appendChild(hiddenField);
+        } else {
+          console.warn("clientHash 값이 설정되지 않았습니다");
+        }
+
+        // 로딩 표시
+        $('#login-dimmer').dimmer('show');
+      });
     }
-
-    // 새 hidden 필드 추가 -> clientHash 전송
-    if (window.clientHash) {
-      const hiddenField = document.createElement('input');
-      hiddenField.type = 'hidden';
-      hiddenField.name = 'clientHash';
-      hiddenField.value = window.clientHash;
-      this.appendChild(hiddenField);
-    }
-
-    // 로딩 표시
-    $('#login-dimmer').dimmer('show');
-  });
-</script>>
+  }
+</script>
 
 <!-- footer fragment -->
 <div th:replace="~{fragments/footer :: footer}"></div>
