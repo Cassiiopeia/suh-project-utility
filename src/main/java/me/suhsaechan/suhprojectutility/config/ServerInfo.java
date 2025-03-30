@@ -17,7 +17,11 @@ public class ServerInfo {
   @Value("${aes.iv}")
   public String iv;
 
-  public String clientHash = "";
-
   public SystemType systemType = FileUtil.getCurrentSystem();
+
+  // 세션에서 사용할 clientHash 키 상수
+  public static final String CLIENT_HASH_SESSION_KEY = "clientHash";
+
+  // 사용자 인증 관련 정보를 위한 필드
+  private boolean authenticationRequired = true;
 }

@@ -42,9 +42,49 @@
 </div>
 
 <script th:inline="javascript">
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
+  $.getJSON('https://api.ipify.org?format=json', function(data) {
+    // IP 정보 불러오기
+    const clientIP = data.ip;
+
+    // AES 암호화
+    const key = CryptoJS.enc.Utf8.parse(window.encryptionKey);
+    const iv = CryptoJS.enc.Utf8.parse(window.encryptionIv);
+
+    const encrypted = CryptoJS.AES.encrypt(clientIP, key, {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    });
+    console.log("ClientHash 값:", encrypted.toString());
+
+    // 암호화된 값을 전역 변수에 설정
+    window.clientHash = encrypted.toString();
+
+  }).fail(function() {
+    console.error("IP 주소를 가져오는 데 실패했습니다");
   });
-</script>
+
+  // 로그인 폼 제출 이벤트 리스너 구현
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // 기존 clientHash hidden 필드가 있으면 제거
+    const existingField = this.querySelector('input[name="clientHash"]');
+    if (existingField) {
+      existingField.remove();
+    }
+
+    // 새 hidden 필드 추가 -> clientHash 전송
+    if (window.clientHash) {
+      const hiddenField = document.createElement('input');
+      hiddenField.type = 'hidden';
+      hiddenField.name = 'clientHash';
+      hiddenField.value = window.clientHash;
+      this.appendChild(hiddenField);
+    }
+
+    // 로딩 표시
+    $('#login-dimmer').dimmer('show');
+  });
+</script>>
 
 <!-- footer fragment -->
 <div th:replace="~{fragments/footer :: footer}"></div>
