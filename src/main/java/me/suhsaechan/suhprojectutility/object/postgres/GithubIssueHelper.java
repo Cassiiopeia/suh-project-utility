@@ -49,4 +49,13 @@ public class GithubIssueHelper extends BasePostgresEntity {
   private String clientIp;
 
   private Long count;
+
+  // count 증가 +1 메소드
+  public void incrementCount() {
+    if (this.count == null) {
+      this.count = 1L;
+    } else {
+      this.count++;
+    }
+  }
 }

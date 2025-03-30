@@ -52,8 +52,11 @@ public class AESUtil {
       byte[] decrypted = cipher.doFinal(Base64.getDecoder().decode(encrypted));
       return new String(decrypted);
     } catch (Exception e) {
-      log.warn("복호화 실패: {}. 원본 값을 반환합니다.", e.getMessage());
-      return encrypted;
+      log.error("복호화 실패 - 상세 오류: {}", e.toString(), e);
+      if (e.getCause() != null) {
+        log.error("원인: {}", e.getCause().toString());
+      }
+      return "decryption_failed_" + encrypted;
     }
   }
 }

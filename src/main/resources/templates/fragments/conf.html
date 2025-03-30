@@ -1,10 +1,14 @@
-<html xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="conf">
-
   <meta name="encryptionKey" th:content="${encryptionKey}" />
-
   <meta name="encryptionIv" th:content="${encryptionIV}" />
-
   <meta name="clientHash" th:content="${clientHash}" />
-</head>
-</html>
+
+  <script th:inline="javascript">
+    // ModelAttribute에서 받은 값 -> 전역 변수로 설정
+
+    window.encryptionKey = /*[[${encryptionKey}]]*/ '';
+
+    window.encryptionIv = /*[[${encryptionIV}]]*/ '';
+
+    window.clientHash = /*[[${clientHash}]]*/ '';
+  </script>

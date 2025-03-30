@@ -22,6 +22,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfig {
 
   private final PublicEndpointConfig publicEndpointConfig;
+  private final ServerInfo serverInfo;
   private final AESUtil aesUtil;
 
   @Bean
@@ -71,7 +72,7 @@ public class WebSecurityConfig {
             .loginProcessingUrl("/login")
             // 로그인 성공시 이동할 페이지
 //            .defaultSuccessUrl("/dashboard", true)
-            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil))
+            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil,serverInfo))
             // 로그인 실패시 이동할 페이지
             .failureUrl("/login?error=true")
             .permitAll()

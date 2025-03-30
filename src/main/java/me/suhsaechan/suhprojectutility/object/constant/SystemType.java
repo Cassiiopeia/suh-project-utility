@@ -2,9 +2,11 @@ package me.suhsaechan.suhprojectutility.object.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@ToString
 public enum SystemType {
   WINDOWS("윈도우 환경"),
   MAC("MAC 환경"),

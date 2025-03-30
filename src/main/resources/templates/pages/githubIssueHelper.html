@@ -49,10 +49,7 @@
       event.preventDefault();
 
       try {
-        // 클라이언트 해시 처리
-        const clientInfo = await getClientHash();
-        const encryptedIp = clientInfo ? await encryptIp(clientInfo) : '';
-        $("#clientHash").val(encryptedIp);
+        $("#clientHash").val(clientHash);
 
         // 폼 데이터 전송
         var formData = new FormData(this);

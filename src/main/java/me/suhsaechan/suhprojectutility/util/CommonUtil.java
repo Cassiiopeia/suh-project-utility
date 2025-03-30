@@ -123,5 +123,42 @@ public class CommonUtil {
     }
     return floatArray;
   }
+
+  /**
+   * Object 값이 null이면 기본값(빈 문자열) 반환
+   * - null → 빈 문자열 반환
+   * - "null" 문자열 → 빈 문자열 반환
+   * - 빈 문자열/공백 → 빈 문자열 반환
+   *
+   * @param obj 검증할 객체
+   * @return 문자열 변환 값 또는 빈 문자열
+   */
+  public static String nvl(Object obj) {
+    return nvl(obj, "");
+  }
+
+  /**
+   * Object 값이 null이면 기본값 반환
+   * - null → 기본값 반환
+   * - "null" 문자열 → 기본값 반환
+   * - 빈 문자열/공백 → 기본값 반환
+   *
+   * @param obj 검증할 객체
+   * @param defaultValue obj가 null인 경우 반환할 기본값
+   * @return 문자열 변환 값 또는 기본값
+   */
+  public static String nvl(Object obj, String defaultValue) {
+    if (obj == null) {
+      return defaultValue;
+    }
+
+    String str = obj.toString();
+    if (str.equals("null") || str.isBlank()) {
+      return defaultValue;
+    }
+
+    return str;
+  }
+
 }
 

@@ -30,43 +30,49 @@ public class GithubService {
   public GithubIssueHelper processIssueHelper(IssueHelperRequest request, String branchName,
       String commitMessage, String repositoryFullName) {
 
-    // 복호화
-    String encryptedIp = request.getClientHash();
-    String decryptedIp = aesUtil.decrypt(encryptedIp);
-
-    //FIXME: 임시 로깅
-    log.info("Client IP: {}", decryptedIp);
+    // clientHash -> clientIp
+    String clientIp = aesUtil.decrypt(request.getClientHash());
+    log.info("Client IP: {}", clientIp);
 
     String issueUrl = request.getIssueUrl().trim();
 
     // 먼저 issueUrl로 기존 이력이 있는지 조회
-    GithubIssueHelper existing = issueHelperRepository.findByIssueUrl(issueUrl);
-    if (existing != null) {
-      return existing;
-    }
+    return issueHelperRepository.findByIssueUrl(issueUrl)
+        .map(issueHelper -> {
+          // 기존 이력이 있는 경우, clientIp가 다르면 업데이트
+          if (!issueHelper.getClientIp().equals(clientIp)) {
+            issueHelper.setClientIp(clientIp);
+          }
+          // 카운트 증가
+          issueHelper.incrementCount();
+          return issueHelperRepository.save(issueHelper);
+        })
+        .orElseGet(() -> {
+          // 기존 이슈가 없는경우 -> 새로 생성
+          GithubRepository githubRepository = repositoryRepository.findByFullName(repositoryFullName);
+          if (githubRepository == null) {
+            githubRepository = GithubRepository.builder()
+                .fullName(repositoryFullName)
+                .starCount(0L)
+                .forkCount(0L)
+                .watcherCount(0L)
+                .description(null)
+                .build();
+            githubRepository = repositoryRepository.save(githubRepository);
+          }
 
-    // GithubRepository 조회 : 파라미터로 전달받은 repositoryFullName 사용
-    GithubRepository githubRepository = repositoryRepository.findByFullName(repositoryFullName);
-    if (githubRepository == null) {
-      githubRepository = GithubRepository.builder()
-          .fullName(repositoryFullName)
-          .starCount(0L)
-          .forkCount(0L)
-          .watcherCount(0L)
-          .description(null)
-          .build();
-      githubRepository = repositoryRepository.save(githubRepository);
-    }
+          // 이슈 Helper 생성
+          GithubIssueHelper newIssueHelper = GithubIssueHelper.builder()
+              .issueUrl(issueUrl)
+              .branchName(branchName)
+              .commitMessage(commitMessage)
+              .clientIp(clientIp)
+              .githubRepository(githubRepository)
+              .count(1L)
+              .build();
 
-    GithubIssueHelper newIssueHelper = GithubIssueHelper.builder()
-        .issueUrl(issueUrl)
-        .branchName(branchName)
-        .commitMessage(commitMessage)
-        .clientIp(decryptedIp)
-        .githubRepository(githubRepository)
-        .count(1L)
-        .build();
-
-    return issueHelperRepository.save(newIssueHelper);
+          return issueHelperRepository.save(newIssueHelper);
+        });
   }
+
 }

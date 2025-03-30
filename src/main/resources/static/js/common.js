@@ -66,36 +66,20 @@ async function sha256(message) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// meta 태그로부터 암호화 키 및 IV 읽어오기
-function getEncryptionConfig() {
-  const keyMeta = document.querySelector('meta[name="encryptionKey"]');
-  const ivMeta = document.querySelector('meta[name="encryptionIv"]');
-  return {
-    key: keyMeta ? keyMeta.getAttribute('content') : '',
-    iv: ivMeta ? ivMeta.getAttribute('content') : ''
-  };
-}
-
 /**
- * ip 암호화 함수
- * @param {string} ip - 암호화할 IP 값
+ * 암호화 함수
+ * @param {string} str - 암호화할 Str 값
  * @returns {Promise<string>} 암호화된 문자열
  */
-async function encryptIp(ip) {
-  const config = getEncryptionConfig();
-  const key = CryptoJS.enc.Utf8.parse(config.key);
-  const iv = CryptoJS.enc.Utf8.parse(config.iv);
+async function encryptStr(str) {
+  const key = CryptoJS.enc.Utf8.parse(window.key);
+  const iv = CryptoJS.enc.Utf8.parse(window.iv);
 
-  const encrypted = CryptoJS.AES.encrypt(ip, key, {
+  const encrypted = CryptoJS.AES.encrypt(str, key, {
     iv: iv,
     mode: CryptoJS.mode.CBC,
     padding: CryptoJS.pad.Pkcs7
   });
 
   return encrypted.toString();
-}
-
-function getClientHash() {
-  const hashMeta = document.querySelector('meta[name="clientHash"]');
-  return hashMeta ? hashMeta.getAttribute('content') : '';
 }
