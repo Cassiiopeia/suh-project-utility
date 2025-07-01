@@ -6,18 +6,18 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="ui container" id="main-content">
-  <!-- 스켈레톤 로딩 컨테이너 -->
+  <!-- 스켈레톤 로딩 컨테이너 - 페이지 로딩 시 임시 표시 -->
   <div id="skeleton-container">
     <!-- 메인 대시보드 스켈레톤 -->
     <div class="ui segment skeleton">
-      <div class="skeleton" style="height: 32px; width: 30%; margin-bottom: 15px;"></div>
-      <div class="skeleton" style="height: 18px; width: 60%;"></div>
+      <div class="skeleton skeleton-header-large"></div>
+      <div class="skeleton skeleton-text-medium"></div>
     </div>
     
     <!-- 기능 목록 카드 스켈레톤 -->
     <div class="ui segment skeleton">
-      <div class="skeleton" style="height: 28px; width: 25%; margin-bottom: 10px;"></div>
-      <div class="skeleton" style="height: 18px; width: 40%; margin-bottom: 20px;"></div>
+      <div class="skeleton skeleton-header-medium"></div>
+      <div class="skeleton skeleton-text-small"></div>
       <div class="ui four column doubling stackable grid">
         <div class="column" th:each="i : ${#numbers.sequence(1, 4)}">
           <div class="ui fluid card skeleton-card">
@@ -35,15 +35,15 @@
     </div>
   </div>
 
-  <!-- 실제 콘텐츠 (초기에 숨겨짐) -->
-  <div id="real-content" style="display: none;">
-    <!-- 메인 대시보드 -->
+  <!-- 실제 콘텐츠 - 로딩 후 표시 -->
+  <div id="real-content" class="hide">
+    <!-- 메인 대시보드 헤더 -->
     <div class="ui segment">
       <h2 class="ui header">새찬 서버 실험실</h2>
       <p>영감... 영감... 어.. 어기다 탁탇탁닥</p>
     </div>
 
-    <!-- 기능 목록 카드 -->
+    <!-- 유틸리티 애플리케이션 섹션 - 개발 도구 모음 -->
     <div class="ui segment">
       <h3 class="dashboard-section-header">UTILITY APPLICATION</h3>
       <p class="dashboard-section-description">개발 유틸리티 도구</p>
@@ -138,11 +138,11 @@
       </div>
     </div>
 
-    <!-- CUSTOM CHATGPT 섹션 -->
+    <!-- CUSTOM CHATGPT 섹션 - AI 모델 모음 -->
     <div class="ui segment">
       <h3 class="dashboard-section-header">CUSTOM CHATGPT</h3>
       <p class="dashboard-section-description">일상이 딸깍의 연속! 커스텀 AI 모델</p>
-     <!-- Project GPT 섹션 -->
+     <!-- Project GPT 섹션 - 개발 관련 GPT -->
       <div class="dashboard-project-section">
         <h4 class="dashboard-project-title">
           <i class="code icon"></i> PROJECT GPT </h4>
@@ -215,7 +215,7 @@
         </div>
       </div>
 
-      <!-- Somansa GPT 섹션 -->
+      <!-- Somansa GPT 섹션 - 소만사 관련 GPT -->
       <div class="dashboard-project-section">
         <h4 class="dashboard-project-title">
           <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
@@ -316,12 +316,12 @@
       </div>
     </div>
 
-    <!-- PROJECTS 섹션 -->
+    <!-- PROJECTS 섹션 - 진행 중인 프로젝트 리소스 -->
     <div class="ui segment">
       <h3 class="dashboard-section-header">PROJECTS</h3>
       <p class="dashboard-section-description">진행 중인 프로젝트 및 관련 리소스</p>
 
-      <!-- SEJONG-MALSAMI 프로젝트 -->
+      <!-- SEJONG-MALSAMI 프로젝트 섹션 -->
       <div class="dashboard-project-section">
         <h4 class="dashboard-project-title">
           <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
@@ -444,7 +444,7 @@
         </div>
       </div>
 
-      <!-- PLANE ACCIDENT FINDER 프로젝트 -->
+      <!-- PLANE ACCIDENT FINDER 프로젝트 섹션 -->
       <div class="dashboard-project-section">
         <h4 class="dashboard-project-title">
           <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
@@ -521,7 +521,7 @@
         </div>
       </div>
 
-      <!-- ROM ROM 프로젝트 -->
+      <!-- ROM ROM 프로젝트 섹션 -->
       <div class="dashboard-project-section">
         <h4 class="dashboard-project-title">
           <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
@@ -654,9 +654,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   // 페이지 로딩 시뮬레이션 (실제로는 자원 로드 완료 후 호출)
   setTimeout(function() {
-    document.getElementById('skeleton-container').style.display = 'none';
-    document.getElementById('real-content').style.display = 'block';
-  }, 1000); // 1초 후 실제 콘텐츠로 전환 (필요에 따라 조정)
+    document.getElementById('skeleton-container').classList.add('hide');
+    document.getElementById('real-content').classList.remove('hide');
+  }, 500); // 0.5초 후 실제 콘텐츠로 전환
 });
 </script>
 </body>

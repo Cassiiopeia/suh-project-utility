@@ -419,18 +419,28 @@ COMMON.CSS - 공통 컴포넌트 스타일
 .shortcut-btn {
   position: relative !important;
   height: 40px !important; /* 버튼 높이 고정 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.shortcut-btn i.arrow.right.icon {
+  margin-right: 8px !important;
+  position: static !important;
+  transform: none !important;
+  background-color: white !important;
+  color: #2185d0 !important;
+  border-radius: 50% !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .shortcut-btn span {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.shortcut-btn i {
-  position: absolute;
-  left: 30%;
-  transform: translateX(-50%);
+  position: static !important;
+  transform: none !important;
 }
 
 /* Figma 로고 스타일 */
@@ -515,8 +525,8 @@ COMMON.CSS - 공통 컴포넌트 스타일
   margin-bottom: 20px;
 }
 
-/* real-content 초기 숨김 */
-#real-content {
+/* 요소 숨김 클래스 (CSP 준수) */
+.hide {
   display: none;
 }
 
@@ -536,11 +546,6 @@ COMMON.CSS - 공통 컴포넌트 스타일
   .dashboard-project-title {
     font-size: 1.2rem;
     margin-bottom: 1rem;
-  }
-  
-  /* 모바일에서 바로가기 버튼 아이콘 위치 조정 */
-  .shortcut-btn i {
-    left: 25%;
   }
 }
 
