@@ -1,11 +1,10 @@
 package me.suhsaechan.suhprojectutility.config;
 
-
-import static com.romrom.romback.global.util.LogUtil.lineLog;
-import static com.romrom.romback.global.util.LogUtil.superLog;
+import static me.suhsaechan.suhlogger.util.SuhLogger.superLog;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.suhlogger.util.SuhLogger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,7 @@ public class SuhProjectUtilityInitiation implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-		lineLog("서버 시작");
+		SuhLogger.lineLog("서버 시작");
 		superLog(serverInfo);
 	}
 }

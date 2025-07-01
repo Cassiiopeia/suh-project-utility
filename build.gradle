@@ -21,6 +21,11 @@ configurations {
 
 repositories {
     mavenCentral()
+    // Suh-Nexus 추가
+    maven {
+        url "http://suh-project.synology.me:9999/repository/maven-releases/"
+        allowInsecureProtocol = true
+    }
 }
 
 dependencies {
@@ -95,6 +100,11 @@ dependencies {
 
     // SSH
     implementation 'com.jcraft:jsch:0.1.55'
+
+    // Suh Libraries 
+    implementation "me.suhsaechan:suh-random-engine:1.1.0"
+    implementation "me.suhsaechan:suh-logger:1.0.3"
+    implementation "me.suhsaechan:suh-api-log:1.0.3"
 
 }
 

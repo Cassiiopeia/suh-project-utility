@@ -3,8 +3,8 @@ package me.suhsaechan.suhprojectutility.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import me.suhsaechan.suhprojectutility.object.constant.SystemType;
-import me.suhsaechan.suhprojectutility.util.log.LogMonitoringInvocation;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -160,7 +160,7 @@ public class CommandLineUtil {
    *    - Linux가 아닐 경우 ""
    *    - 타임아웃 초과 시 예외(ExecuteException) 발생 → catch 후 빈 문자열 반환
    */
-  @LogMonitoringInvocation
+  @LogMonitor
   public String executeCommandWithTimeout(String cmd, long timeoutMillis) {
     if (!isLinux()) {
       log.warn("Not a Linux system. Skipping command: {}", cmd);
