@@ -2,282 +2,114 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='대시보드-SAECHAN-LAB')}"></head>
+<style>
+  /* 카드 고정 높이 설정 */
+  .equal-height-card.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .equal-height-card .content {
+    flex-grow: 1;
+  }
+  
+  /* 스켈레톤 로딩 효과 */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #EEEEEE;
+    border-radius: 4px;
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+    animation: skeleton-loading 1.5s infinite;
+  }
+  
+  @keyframes skeleton-loading {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  .skeleton-card .header {
+    height: 24px;
+    width: 80%;
+    margin-bottom: 8px;
+  }
+  .skeleton-card .meta {
+    height: 16px;
+    width: 60%;
+    margin-bottom: 12px;
+  }
+  .skeleton-card .description {
+    height: 18px;
+    width: 90%;
+  }
+  .skeleton-card .button {
+    height: 36px;
+    width: 100%;
+  }
+  
+  /* 카드 호버 효과 향상 */
+  .ui.card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+  
+  /* 바로가기 버튼 스타일 수정 */
+  .shortcut-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .shortcut-btn i {
+    margin-right: 5px;
+  }
+  
+  /* Figma 로고 스타일 */
+  .figma-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+</style>
 <body class="dashboard-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container">
-  <!-- 메인 대시보드 -->
-  <div class="ui segment">
-    <h2 class="ui header">새찬 서버 실험실</h2>
-    <p>영감... 영감... 어.. 어기다 탁탇탁닥</p>
-  </div>
-
-  <!-- 기능 목록 카드 -->
-  <div class="ui segment">
-    <h3 class="dashboard-section-header">UTILITY APPLICATION</h3>
-    <p class="dashboard-section-description">개발 유틸리티 도구</p>
-    <div class="ui four column doubling stackable grid">
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header">
-              <i class="github icon"></i> 깃헙 이슈 도우미
-            </div>
-            <div class="meta">
-              <span class="category">SUH-PROJECT</span>
-            </div>
-            <div class="description">
-              커밋, 브랜치 자동 생성
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="/issue-helper" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-              <span>바로가기</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header">
-              <i class="comment alternate icon"></i> OpenAI 챗봇
-            </div>
-            <div class="meta">
-              <span class="category">AI Assistant</span>
-            </div>
-            <div class="description">
-              (비싸서) 무기한 중단
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="https://chat.suhsaechan.me" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-              <span>바로가기</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header">
-              <i class="chrome icon"></i> 원격 크롬
-            </div>
-            <div class="meta">
-              <span class="category">Server Chrome</span>
-            </div>
-            <div class="description">
-              외부 크롬 원격 접속
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="https://web.suhsaechan.me" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-              <span>바로가기</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header">
-              <i class="language icon"></i>커스텀 AI 번역기
-            </div>
-            <div class="meta">
-              <span class="category">커스텀 API</span>
-            </div>
-            <div class="description">
-              API 사용 가능
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="/translator" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-              <span>바로가기</span>
-            </a>
-          </div>
-        </div>
-      </div>
+<div class="ui container" id="main-content">
+  <!-- 스켈레톤 로딩 컨테이너 -->
+  <div id="skeleton-container">
+    <!-- 메인 대시보드 스켈레톤 -->
+    <div class="ui segment skeleton">
+      <div class="skeleton" style="height: 32px; width: 30%; margin-bottom: 15px;"></div>
+      <div class="skeleton" style="height: 18px; width: 60%;"></div>
     </div>
-  </div>
-
-  <!-- CUSTOM CHATGPT 섹션 -->
-  <div class="ui segment">
-    <h3 class="dashboard-section-header">CUSTOM CHATGPT</h3>
-    <p class="dashboard-section-description">일상이 딸깍의 연속! 커스텀 AI 모델</p>
-   <!-- Project GPT 섹션 -->
-    <div class="dashboard-project-section">
-      <h4 class="dashboard-project-title">
-        <i class="code icon"></i> PROJECT GPT </h4>
+    
+    <!-- 기능 목록 카드 스켈레톤 -->
+    <div class="ui segment skeleton">
+      <div class="skeleton" style="height: 28px; width: 25%; margin-bottom: 10px;"></div>
+      <div class="skeleton" style="height: 18px; width: 40%; margin-bottom: 20px;"></div>
       <div class="ui four column doubling stackable grid">
-        <div class="column">
-          <div class="ui fluid card">
+        <div class="column" th:each="i : ${#numbers.sequence(1, 4)}">
+          <div class="ui fluid card skeleton-card">
             <div class="content">
-              <div class="header">
-                <i class="code icon"></i>Swaager Docs 생성기
-              </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                Controller, Service, Repo, Dto
-              </div>
+              <div class="header skeleton"></div>
+              <div class="meta skeleton"></div>
+              <div class="description skeleton"></div>
             </div>
             <div class="extra content">
-              <a href="https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <i class="code icon"></i>TypeScript API 변환기
-              </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                Spring > Typescript
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <i class="code icon"></i>변수명 초고수 변환기
-              </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                변수명 확실하게 알려줌
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Somansa GPT 섹션 -->
-    <div class="dashboard-project-section">
-      <h4 class="dashboard-project-title">
-        <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-        SOMANSA GPT </h4>
-      <div class="ui four column doubling stackable grid">
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                CM Tag Creator
-              </div>
-              <div class="meta">
-                <span class="category">Somansa 소만사</span>
-              </div>
-              <div class="description">
-                다국어 Tag Coder
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                CM Branch Creator
-              </div>
-              <div class="meta">
-                <span class="category">Somansa 소만사</span>
-              </div>
-              <div class="description">
-                일감 Info > 브랜치, 커밋 Msg
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                Issue PPT Guide
-              </div>
-              <div class="meta">
-                <span class="category">Somansa 소만사</span>
-              </div>
-              <div class="description">
-                일감 Info > PPT Template
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                SpringBooster
-              </div>
-              <div class="meta">
-                <span class="category">Somansa 소만사</span>
-              </div>
-              <div class="description">
-                Spring Improve Strategy By PPT
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
+              <div class="button skeleton"></div>
             </div>
           </div>
         </div>
@@ -285,34 +117,35 @@
     </div>
   </div>
 
-  <!-- PROJECTS 섹션 -->
-  <div class="ui segment">
-    <h3 class="dashboard-section-header">PROJECTS</h3>
-    <p class="dashboard-section-description">진행 중인 프로젝트 및 관련 리소스</p>
+  <!-- 실제 콘텐츠 (초기에 숨겨짐) -->
+  <div id="real-content" style="display: none;">
+    <!-- 메인 대시보드 -->
+    <div class="ui segment">
+      <h2 class="ui header">새찬 서버 실험실</h2>
+      <p>영감... 영감... 어.. 어기다 탁탇탁닥</p>
+    </div>
 
-    <!-- SEJONG-MALSAMI 프로젝트 -->
-    <div class="dashboard-project-section">
-      <h4 class="dashboard-project-title">
-        <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-        SEJONG-MALSAMI </h4>
+    <!-- 기능 목록 카드 -->
+    <div class="ui segment">
+      <h3 class="dashboard-section-header">UTILITY APPLICATION</h3>
+      <p class="dashboard-section-description">개발 유틸리티 도구</p>
       <div class="ui four column doubling stackable grid">
         <div class="column">
-          <div class="ui fluid card">
+          <div class="ui fluid card equal-height-card">
             <div class="content">
               <div class="header">
-                <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-                메인 페이지
+                <i class="github icon"></i> 깃헙 이슈 도우미
               </div>
               <div class="meta">
                 <span class="category">SUH-PROJECT</span>
               </div>
               <div class="description">
-                세종말싸미 메인 페이지
+                커밋, 브랜치 자동 생성
               </div>
             </div>
             <div class="extra content">
-              <a href="https://test.sejong-malsami.co.kr" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
+              <a href="/issue-helper" class="ui blue fluid button shortcut-btn" target="_blank">
+                <i class="arrow right icon"></i>
                 <span>바로가기</span>
               </a>
             </div>
@@ -320,22 +153,21 @@
         </div>
 
         <div class="column">
-          <div class="ui fluid card">
+          <div class="ui fluid card equal-height-card">
             <div class="content">
               <div class="header">
-                <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-                Swagger Docs
+                <i class="comment alternate icon"></i> OpenAI 챗봇
               </div>
               <div class="meta">
-                <span class="category">SUH-PROJECT</span>
+                <span class="category">AI Assistant</span>
               </div>
               <div class="description">
-                세종말싸미 Swagger Docs
+                (비싸서) 무기한 중단
               </div>
             </div>
             <div class="extra content">
-              <a href="https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
+              <a href="https://chat.suhsaechan.me" class="ui blue fluid button shortcut-btn" target="_blank">
+                <i class="arrow right icon"></i>
                 <span>바로가기</span>
               </a>
             </div>
@@ -343,22 +175,43 @@
         </div>
 
         <div class="column">
-          <div class="ui fluid card">
+          <div class="ui fluid card equal-height-card">
             <div class="content">
               <div class="header">
-                <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-                관리자 페이지
+                <i class="chrome icon"></i> 원격 크롬
               </div>
               <div class="meta">
-                <span class="category">SUH-PROJECT</span>
+                <span class="category">Server Chrome</span>
               </div>
               <div class="description">
-                세종말싸미 관리자 페이지
+                외부 크롬 원격 접속
               </div>
             </div>
             <div class="extra content">
-              <a href="https://api.sejong-malsami.co.kr" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
+              <a href="https://web.suhsaechan.me" class="ui blue fluid button shortcut-btn" target="_blank">
+                <i class="arrow right icon"></i>
+                <span>바로가기</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="ui fluid card equal-height-card">
+            <div class="content">
+              <div class="header">
+                <i class="language icon"></i>커스텀 AI 번역기
+              </div>
+              <div class="meta">
+                <span class="category">커스텀 API</span>
+              </div>
+              <div class="description">
+                API 사용 가능
+              </div>
+            </div>
+            <div class="extra content">
+              <a href="/translator" class="ui blue fluid button shortcut-btn" target="_blank">
+                <i class="arrow right icon"></i>
                 <span>바로가기</span>
               </a>
             </div>
@@ -367,154 +220,507 @@
       </div>
     </div>
 
-    <!-- PLANE ACCIDENT FINDER 프로젝트 -->
-    <div class="dashboard-project-section">
-      <h4 class="dashboard-project-title">
-        <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-        PLANE ACCIDENT FINDER </h4>
-      <div class="ui four column doubling stackable grid">
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-                DOWNLOAD APK
+    <!-- CUSTOM CHATGPT 섹션 -->
+    <div class="ui segment">
+      <h3 class="dashboard-section-header">CUSTOM CHATGPT</h3>
+      <p class="dashboard-section-description">일상이 딸깍의 연속! 커스텀 AI 모델</p>
+     <!-- Project GPT 섹션 -->
+      <div class="dashboard-project-section">
+        <h4 class="dashboard-project-title">
+          <i class="code icon"></i> PROJECT GPT </h4>
+        <div class="ui four column doubling stackable grid">
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <i class="code icon"></i>Swaager Docs 생성기
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  Controller, Service, Repo, Dto
+                </div>
               </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                APK Download Page
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
               </div>
             </div>
-            <div class="extra content">
-              <a href="http://suh-project.synology.me/plane-accident-finder/" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <i class="code icon"></i>TypeScript API 변환기
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  Spring > Typescript
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <i class="code icon"></i>변수명 초고수 변환기
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  변수명 확실하게 알려줌
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-                HTTPS Swagger
+      <!-- Somansa GPT 섹션 -->
+      <div class="dashboard-project-section">
+        <h4 class="dashboard-project-title">
+          <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
+          SOMANSA GPT </h4>
+        <div class="ui four column doubling stackable grid">
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
+                  CM Tag Creator
+                </div>
+                <div class="meta">
+                  <span class="category">Somansa 소만사</span>
+                </div>
+                <div class="description">
+                  다국어 Tag Coder
+                </div>
               </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
               </div>
-              <div class="description">
-                Swagger Docs
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
             </div>
           </div>
-        </div>
 
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-                HTTP Swagger
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
+                  CM Branch Creator
+                </div>
+                <div class="meta">
+                  <span class="category">Somansa 소만사</span>
+                </div>
+                <div class="description">
+                  일감 Info > 브랜치, 커밋 Msg
+                </div>
               </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                Swagger Docs
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
               </div>
             </div>
-            <div class="extra content">
-              <a href="http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
+                  Issue PPT Guide
+                </div>
+                <div class="meta">
+                  <span class="category">Somansa 소만사</span>
+                </div>
+                <div class="description">
+                  일감 Info > PPT Template
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
+                  SpringBooster
+                </div>
+                <div class="meta">
+                  <span class="category">Somansa 소만사</span>
+                </div>
+                <div class="description">
+                  Spring Improve Strategy By PPT
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ROM ROM 프로젝트 -->
-    <div class="dashboard-project-section">
-      <h4 class="dashboard-project-title">
-        <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-        ROM ROM </h4>
-      <div class="ui four column doubling stackable grid">
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-                DOWNLOAD APK
+    <!-- PROJECTS 섹션 -->
+    <div class="ui segment">
+      <h3 class="dashboard-section-header">PROJECTS</h3>
+      <p class="dashboard-section-description">진행 중인 프로젝트 및 관련 리소스</p>
+
+      <!-- SEJONG-MALSAMI 프로젝트 -->
+      <div class="dashboard-project-section">
+        <h4 class="dashboard-project-title">
+          <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
+          SEJONG-MALSAMI </h4>
+        <div class="ui four column doubling stackable grid">
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
+                  메인 페이지
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  세종말싸미 메인 페이지
+                </div>
               </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                [CICD] APK Download Page
+              <div class="extra content">
+                <a href="https://test.sejong-malsami.co.kr" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
               </div>
             </div>
-            <div class="extra content">
-              <a href="http://suh-project.synology.me/romrom" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
+                  Swagger Docs
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  세종말싸미 Swagger Docs
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
+                  관리자 페이지
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  세종말싸미 관리자 페이지
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://api.sejong-malsami.co.kr" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
+                  Figma 디자인 (Test)
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  세종말싸미 테스트 디자인
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://www.figma.com/design/g3TWHt8CvADqj2fXcf9uIA/%EC%84%B8%EC%A2%85%EB%B0%9C%EC%8B%B8%EB%AF%B9-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&p=f&t=LubXbhTDNNRuyQK6-0" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
+                  Figma 디자인 (Prod)
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  아직 미정
+                </div>
+              </div>
+              <div class="extra content">
+                <span class="ui grey fluid button shortcut-btn">
+                  <i class="clock icon"></i>
+                  <span>준비 중</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-                HTTPS Swagger
+      <!-- PLANE ACCIDENT FINDER 프로젝트 -->
+      <div class="dashboard-project-section">
+        <h4 class="dashboard-project-title">
+          <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
+          PLANE ACCIDENT FINDER </h4>
+        <div class="ui four column doubling stackable grid">
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
+                  DOWNLOAD APK
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  APK Download Page
+                </div>
               </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                Swagger Docs
+              <div class="extra content">
+                <a href="http://suh-project.synology.me/plane-accident-finder/" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
               </div>
             </div>
-            <div class="extra content">
-              <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
+                  HTTPS Swagger
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  Swagger Docs
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
+                  HTTP Swagger
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  Swagger Docs
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="column">
-          <div class="ui fluid card">
-            <div class="content">
-              <div class="header">
-                <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-                HTTP Swagger
+      <!-- ROM ROM 프로젝트 -->
+      <div class="dashboard-project-section">
+        <h4 class="dashboard-project-title">
+          <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
+          ROM ROM </h4>
+        <div class="ui four column doubling stackable grid">
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
+                  DOWNLOAD APK
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  [CICD] APK Download Page
+                </div>
               </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                Swagger Docs
+              <div class="extra content">
+                <a href="http://suh-project.synology.me/romrom" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
               </div>
             </div>
-            <div class="extra content">
-              <a href="http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/" class="ui blue fluid button">
-                <i class="arrow alternate circle right icon u-margin-right-tiny"></i>
-                <span>바로가기</span>
-              </a>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
+                  HTTPS Swagger
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  Swagger Docs
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
+                  HTTP Swagger
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  Swagger Docs
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
+                  Figma 디자인 (Test)
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  롬롬 테스트 디자인
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://www.figma.com/design/qXvwG0b5GYk9xkzgw9fdhb/%EB%A1%AC%EB%A1%AC-%ED%9A%8C%EC%9D%98?node-id=2049-5172&t=TFPO78n7GC2JipNk-0" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="column">
+            <div class="ui fluid card equal-height-card">
+              <div class="content">
+                <div class="header">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
+                  Figma 디자인 (Prod)
+                </div>
+                <div class="meta">
+                  <span class="category">SUH-PROJECT</span>
+                </div>
+                <div class="description">
+                  롬롬 프로덕션 디자인
+                </div>
+              </div>
+              <div class="extra content">
+                <a href="https://www.figma.com/design/dq4HUUqmTlVkmWr4cd2RE5/%F0%9F%94%84-romrom?node-id=1344-2435&t=lbULaVU0rbuntb79-0" class="ui blue fluid button shortcut-btn" target="_blank">
+                  <i class="arrow right icon"></i>
+                  <span>바로가기</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -524,5 +730,16 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+// 스켈레톤 로딩 효과
+document.addEventListener('DOMContentLoaded', function() {
+  // 페이지 로딩 시뮬레이션 (실제로는 자원 로드 완료 후 호출)
+  setTimeout(function() {
+    document.getElementById('skeleton-container').style.display = 'none';
+    document.getElementById('real-content').style.display = 'block';
+  }, 1000); // 1초 후 실제 콘텐츠로 전환 (필요에 따라 조정)
+});
+</script>
 </body>
 </html>
