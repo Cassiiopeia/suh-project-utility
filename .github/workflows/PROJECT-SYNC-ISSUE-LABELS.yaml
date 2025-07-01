@@ -5,9 +5,9 @@ on:
     paths:
       - ".github/ISSUE_TEMPLATE/issue-label.yml"
 
-permissions: 
-  contents: read # ALL read 권한
-  issues: write # issues 쓰기 권한
+permissions:         # 기본 토큰 권한 설정
+  issues: write      # 레이블 issues API 포함
+  contents: read     # 소스 읽기
 
 jobs:
   label-sync:
@@ -17,5 +17,5 @@ jobs:
       - name: Sync labels from config
         uses: crazy-max/ghaction-github-labeler@v5
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }} 
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           yaml-file: .github/ISSUE_TEMPLATE/issue-label.yml
