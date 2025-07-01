@@ -1,6 +1,6 @@
 - name: 긴급
   color: d73a4a
-  description: 긴급한 작업
+  description: 긴급(최우선) 작업
 
 - name: 문서
   color: 000000
