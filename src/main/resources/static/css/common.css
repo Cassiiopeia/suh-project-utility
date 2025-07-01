@@ -404,6 +404,122 @@ COMMON.CSS - 공통 컴포넌트 스타일
   font-weight: 500;
 }
 
+/* 카드 고정 높이 설정 */
+.equal-height-card.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.equal-height-card .content {
+  flex-grow: 1;
+}
+
+/* 바로가기 버튼 스타일 */
+.shortcut-btn {
+  position: relative !important;
+  height: 40px !important; /* 버튼 높이 고정 */
+}
+
+.shortcut-btn span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.shortcut-btn i {
+  position: absolute;
+  left: 30%;
+  transform: translateX(-50%);
+}
+
+/* Figma 로고 스타일 */
+.figma-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/* 스켈레톤 로딩 효과 */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: #EEEEEE;
+  border-radius: 4px;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-card .header {
+  height: 24px;
+  width: 80%;
+  margin-bottom: 8px;
+}
+
+.skeleton-card .meta {
+  height: 16px;
+  width: 60%;
+  margin-bottom: 12px;
+}
+
+.skeleton-card .description {
+  height: 18px;
+  width: 90%;
+}
+
+.skeleton-card .button {
+  height: 36px;
+  width: 100%;
+}
+
+/* 스켈레톤 로딩 사이즈 클래스 */
+.skeleton-header-large {
+  height: 32px;
+  width: 30%; 
+  margin-bottom: 15px;
+}
+
+.skeleton-text-medium {
+  height: 18px;
+  width: 60%;
+}
+
+.skeleton-header-medium {
+  height: 28px;
+  width: 25%; 
+  margin-bottom: 10px;
+}
+
+.skeleton-text-small {
+  height: 18px;
+  width: 40%; 
+  margin-bottom: 20px;
+}
+
+/* real-content 초기 숨김 */
+#real-content {
+  display: none;
+}
+
 /* 대시보드 모바일 반응형 개선 */
 @media only screen and (max-width: 767px) {
   .dashboard-project-section {
@@ -420,6 +536,11 @@ COMMON.CSS - 공통 컴포넌트 스타일
   .dashboard-project-title {
     font-size: 1.2rem;
     margin-bottom: 1rem;
+  }
+  
+  /* 모바일에서 바로가기 버튼 아이콘 위치 조정 */
+  .shortcut-btn i {
+    left: 25%;
   }
 }
 
@@ -525,8 +646,6 @@ COMMON.CSS - 공통 컴포넌트 스타일
 .version-accordion .icon.orange {
   color: #f2711c !important;
 }
-
-/* 추가할 CSS - common.css 파일에 추가하세요 */
 
 /* 중첩 아코디언 스타일 */
 .nested-accordion {

@@ -64,3 +64,6 @@ Thumbs.db
 
 ### Develop Application Yml ###
 /src/main/resources/application.yml
+
+### Credentials ###
+/src/main/resources/gen-lang-client-0511951522-e0dc1d68cbcb.json
