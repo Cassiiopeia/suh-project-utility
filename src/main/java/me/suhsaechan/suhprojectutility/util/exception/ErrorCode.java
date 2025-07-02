@@ -33,7 +33,13 @@ public enum ErrorCode {
 
   FILE_PATH_EMPTY(HttpStatus.BAD_REQUEST, "파일 경로가 비어 있거나 null입니다."),
 
-  PERCENTILE_CALCULATION_ERROR(HttpStatus.BAD_REQUEST, "백분위 계산 오류: 전체 기준이 0 일 수 없습니다.");
+  PERCENTILE_CALCULATION_ERROR(HttpStatus.BAD_REQUEST, "백분위 계산 오류: 전체 기준이 0 일 수 없습니다."),
+
+  // NOTICE
+
+  NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "공지사항을 찾을 수 없습니다."),
+
+  INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 파라미터입니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

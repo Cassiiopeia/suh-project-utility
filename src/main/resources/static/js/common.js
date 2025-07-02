@@ -36,6 +36,54 @@ $(function(){
 });
 
 /**
+ * 공통 AJAX 요청 함수 - FormData 방식
+ * @param {string} url - 요청 URL
+ * @param {Object} params - 요청 파라미터 (key-value 객체)
+ * @param {function} successCallback - 성공 시 콜백 함수
+ * @param {function} errorCallback - 에러 시 콜백 함수
+ */
+function sendFormRequest(url, params, successCallback, errorCallback) {
+  // FormData 객체 생성
+  const formData = new FormData();
+  
+  // 파라미터가 있으면 FormData에 추가
+  if (params) {
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null) {
+        formData.append(key, params[key]);
+      }
+    });
+  }
+  
+  // AJAX 요청 실행
+  $.ajax({
+    url: url,
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      if (successCallback) {
+        successCallback(response);
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('AJAX 요청 실패:', url, status, error);
+      if (errorCallback) {
+        errorCallback(xhr, status, error);
+      } else {
+        // 기본 에러 처리
+        if (typeof showToast === 'function') {
+          showToast('요청 처리 중 오류가 발생했습니다: ' + error);
+        } else {
+          console.error('요청 처리 중 오류가 발생했습니다:', error);
+        }
+      }
+    }
+  });
+}
+
+/**
  * Formats a date string for display
  * @param {string} dateString - ISO date string
  * @returns {string} Formatted date string
@@ -56,6 +104,64 @@ function formatDate(dateString) {
     console.error('Error formatting date:', e);
     return dateString; // Return original on error
   }
+}
+
+/**
+ * 날짜를 상대적 시간으로 표시 (예: "5분 전", "3일 전")
+ * @param {string|Date} dateInput - 날짜 문자열 또는 Date 객체
+ * @returns {string} 상대적 시간 문자열
+ */
+function timeAgo(dateInput) {
+  if (!dateInput) return '';
+  
+  const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  
+  // 날짜가 유효하지 않으면 원래 값 반환
+  if (isNaN(date.getTime())) {
+    return String(dateInput);
+  }
+  
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  // 1분 미만
+  if (diffInSeconds < 60) {
+    return '방금 전';
+  }
+  
+  // 1시간 미만
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}분 전`;
+  }
+  
+  // 1일 미만
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}시간 전`;
+  }
+  
+  // 1주일 미만
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) {
+    return `${diffInDays}일 전`;
+  }
+  
+  // 1개월 미만
+  if (diffInDays < 30) {
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    return `${diffInWeeks}주 전`;
+  }
+  
+  // 1년 미만
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return `${diffInMonths}개월 전`;
+  }
+  
+  // 1년 이상
+  const diffInYears = Math.floor(diffInMonths / 12);
+  return `${diffInYears}년 전`;
 }
 
 // SHA-256 해시 함수

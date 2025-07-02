@@ -36,4 +36,9 @@ public class PageController {
 	public String translatorPage(Model model){
 		return "pages/translator";
 	}
+	
+	@GetMapping("/notice-management")
+	public String noticeManagementPage(Model model){
+		return "pages/noticeManagement";
+	}
 }
