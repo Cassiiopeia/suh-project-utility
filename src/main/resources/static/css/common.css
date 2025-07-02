@@ -678,3 +678,289 @@ COMMON.CSS - 공통 컴포넌트 스타일
   padding-top: 0.5em !important;
   padding-bottom: 1em !important;
 }
+
+/*
+===========================
+   Notice Styles
+===========================
+*/
+
+/* 공지사항 아이템 스타일 */
+.notice-item {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 0.8rem !important;
+  border-radius: 0.28571429rem;
+}
+
+.notice-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.notice-meta {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9em;
+  margin-bottom: 0.5em;
+  display: block;
+}
+
+.notice-meta span {
+  margin-right: 1em;
+}
+
+.notice-preview {
+  margin-top: 0.5em;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.notice-empty {
+  color: rgba(0, 0, 0, 0.5);
+  padding: 1rem 0;
+}
+
+/* 공지사항 스켈레톤 로딩 스타일 */
+.skeleton-notice {
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.skeleton-notice .header {
+  height: 18px;
+  width: 70%;
+  margin-bottom: 10px;
+}
+
+.skeleton-notice .meta {
+  height: 14px;
+  width: 40%;
+  margin-bottom: 10px;
+}
+
+.skeleton-notice .description {
+  height: 14px;
+  width: 90%;
+}
+
+/* 공지사항 관리 페이지 스타일 */
+.notice-management-page .ui.action.input {
+  width: 100%;
+}
+
+/* 공지사항 상세 모달 스타일 */
+.notice-detail-modal .content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* 모달 관련 스타일 */
+.modal-table-container {
+  min-height: 400px;
+  position: relative;
+}
+
+/* 모달 중앙 정렬 및 크기 조정 */
+.ui.modal {
+  margin: 0 auto !important;
+  top: 10% !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
+}
+
+.ui.small.modal {
+  width: 500px;
+  max-width: 90%;
+}
+
+/* Tabulator 버튼 그룹 스타일 */
+.ui.mini.buttons {
+  display: inline-flex;
+  justify-content: center;
+}
+
+.ui.mini.buttons .button {
+  padding: 0.5em !important;
+  margin: 0 2px !important;
+}
+
+/* 스켈레톤 로딩 효과 */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-header-large {
+  height: 32px;
+  width: 70%;
+  margin-bottom: 15px;
+}
+
+.skeleton-header-medium {
+  height: 24px;
+  width: 50%;
+  margin-bottom: 10px;
+}
+
+.skeleton-text-medium {
+  height: 16px;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.skeleton-text-small {
+  height: 14px;
+  width: 60%;
+  margin-bottom: 20px;
+}
+
+.skeleton-card {
+  min-height: 180px;
+}
+
+.skeleton-card .header {
+  height: 24px;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.skeleton-card .meta {
+  height: 16px;
+  width: 60%;
+  margin-bottom: 10px;
+}
+
+.skeleton-card .description {
+  height: 16px;
+  width: 90%;
+  margin-bottom: 10px;
+}
+
+.skeleton-card .button {
+  height: 36px;
+  width: 100%;
+}
+
+/* 아코디언 스타일 개선 */
+.ui.styled.accordion .title {
+  font-size: 1em;
+  padding: 0.8em 1em;
+}
+
+.ui.styled.accordion .title .icon {
+  font-size: 0.9em;
+}
+
+.ui.styled.accordion .title .label {
+  margin-right: 0.5em;
+  vertical-align: middle;
+}
+
+.ui.styled.accordion .content {
+  padding: 1em 1.5em;
+}
+
+/* 유틸리티 클래스 */
+.hide {
+  display: none !important;
+}
+
+/* 공지사항 스타일 */
+.notice-meta-inline {
+  display: inline-block;
+  float: right;
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
+  margin-right: 10px;
+}
+
+.notice-meta-inline .notice-author,
+.notice-meta-inline .notice-date {
+  margin-left: 15px;
+}
+
+.notice-meta-inline i.icon {
+  margin-right: 3px;
+  opacity: 0.7;
+}
+
+/* 중요 공지사항 강조 */
+.ui.accordion .title[data-important="true"] {
+  background-color: rgba(255, 236, 236, 0.7);
+}
+
+/* 공지사항 페이지네이션 */
+.notice-pagination {
+  margin-top: 0.8em;
+}
+
+.notice-pagination .pagination {
+  box-shadow: none;
+  border: none;
+}
+
+.notice-pagination .pagination .item {
+  min-width: 2em;
+  text-align: center;
+}
+
+/* 아코디언 내 메타 정보 */
+.notice-meta {
+  margin-bottom: 0.8em;
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.notice-meta span {
+  margin-right: 15px;
+}
+
+/* 공지사항 미리보기 텍스트 */
+.notice-preview {
+  margin: 0.8em 0;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* 모바일 반응형 */
+@media only screen and (max-width: 767px) {
+  .notice-meta-inline {
+    display: block;
+    float: none;
+    margin-top: 5px;
+    margin-left: 25px; /* 드롭다운 아이콘 공간만큼 여백 */
+  }
+  
+  .notice-meta-inline .notice-author,
+  .notice-meta-inline .notice-date {
+    display: inline-block;
+    margin-left: 0;
+    margin-right: 10px;
+  }
+}

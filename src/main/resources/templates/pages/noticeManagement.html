@@ -1,0 +1,506 @@
+<!-- src/main/resources/templates/pages/noticeManagement.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='공지사항 관리-SAECHAN-LAB')}"></head>
+<body class="notice-management-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="ui container" id="main-content">
+  <!-- 페이지 헤더 -->
+  <div class="ui segment">
+    <h2 class="ui header">
+      <i class="bullhorn icon"></i>
+      <div class="content">
+        공지사항 관리
+        <div class="sub header">대시보드에 표시되는 공지사항을 관리합니다.</div>
+      </div>
+    </h2>
+  </div>
+
+  <!-- 공지사항 관리 툴바 -->
+  <div class="ui segment">
+    <div class="ui stackable grid">
+      <div class="eight wide column">
+        <div class="ui action input fluid">
+          <input type="text" id="search-keyword" placeholder="검색어를 입력하세요...">
+          <select class="ui compact selection dropdown" id="search-type">
+            <option value="title">제목</option>
+            <option value="content">내용</option>
+          </select>
+          <button class="ui button" id="search-btn">검색</button>
+        </div>
+      </div>
+      <div class="eight wide column">
+        <div class="ui right floated buttons">
+          <button class="ui primary button" id="create-btn">
+            <i class="plus icon"></i> 새 공지사항
+          </button>
+          <button class="ui button" id="refresh-btn">
+            <i class="sync icon"></i> 새로고침
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 공지사항 목록 테이블 -->
+  <div class="ui segment">
+    <div id="notice-table" class="modal-table-container"></div>
+    <div id="loading-indicator" class="ui active centered inline loader" style="margin-top: 2rem;"></div>
+    <div id="error-message" class="ui negative message hide">
+      <div class="header">데이터 로드 실패</div>
+      <p>공지사항을 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</p>
+    </div>
+  </div>
+
+  <!-- 공지사항 등록/수정 모달 -->
+  <div class="ui small modal" id="notice-modal">
+    <i class="close icon"></i>
+    <div class="header" id="modal-title">공지사항 등록</div>
+    <div class="scrolling content">
+      <form class="ui form" id="notice-form">
+        <input type="hidden" id="notice-id">
+        <div class="field">
+          <label>제목</label>
+          <input type="text" id="notice-title" placeholder="제목을 입력하세요">
+        </div>
+        <div class="field">
+          <label>내용</label>
+          <textarea id="notice-content" rows="10" placeholder="내용을 입력하세요"></textarea>
+        </div>
+        <div class="two fields">
+          <div class="field">
+            <label>게시 시작일</label>
+            <input type="datetime-local" id="notice-start-date">
+          </div>
+          <div class="field">
+            <label>게시 종료일</label>
+            <input type="datetime-local" id="notice-end-date">
+          </div>
+        </div>
+        <div class="two fields">
+          <div class="field">
+            <div class="ui checkbox">
+              <input type="checkbox" id="notice-important">
+              <label>중요 공지</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui checkbox">
+              <input type="checkbox" id="notice-active" checked>
+              <label>활성화</label>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>작성자</label>
+          <input type="text" id="notice-author" placeholder="작성자를 입력하세요">
+        </div>
+      </form>
+    </div>
+    <div class="actions">
+      <div class="ui deny button">취소</div>
+      <div class="ui positive button" id="save-btn">저장</div>
+    </div>
+  </div>
+
+  <!-- 공지사항 상세 모달 -->
+  <div class="ui small modal" id="notice-detail-modal">
+    <i class="close icon"></i>
+    <div class="header" id="detail-title"></div>
+    <div class="scrolling content">
+      <div class="ui segment">
+        <div class="ui two column stackable grid">
+          <div class="column">
+            <p><i class="user icon"></i> <strong>작성자:</strong> <span id="detail-author"></span></p>
+            <p><i class="calendar alternate outline icon"></i> <strong>작성일:</strong> <span id="detail-created-date"></span></p>
+          </div>
+          <div class="column">
+            <p><i class="eye icon"></i> <strong>조회수:</strong> <span id="detail-view-count"></span></p>
+            <p><i class="calendar icon"></i> <strong>게시 기간:</strong> <span id="detail-period"></span></p>
+            <p><i class="check circle icon"></i> <strong>상태:</strong> <span id="detail-status"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="ui divider"></div>
+      <div class="ui basic segment" id="detail-content"></div>
+    </div>
+    <div class="actions">
+      <div class="ui blue button" id="edit-btn">
+        <i class="edit icon"></i> 수정
+      </div>
+      <div class="ui red button" id="delete-btn">
+        <i class="trash icon"></i> 삭제
+      </div>
+      <div class="ui button" id="toggle-active-btn">
+        <i class="power off icon"></i> 활성화/비활성화
+      </div>
+      <div class="ui deny button">닫기</div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Tabulator 라이브러리 -->
+<link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // Semantic UI 초기화
+    $('.ui.dropdown').dropdown();
+    $('.ui.checkbox').checkbox();
+    
+    // Tabulator 테이블 초기화
+    const noticeTable = new Tabulator("#notice-table", {
+      height: "400px",
+      layout: "fitColumns",
+      pagination: true,
+      paginationSize: 10,
+      columns: [
+        {title: "제목", field: "title", width: 250, formatter: function(cell) {
+          const value = cell.getValue();
+          const isImportant = cell.getRow().getData().isImportant;
+          return isImportant ? 
+            `<i class="red announcement icon"></i> ${value}` : 
+            value;
+        }},
+        {title: "중요", field: "isImportant", formatter: "tickCross", width: 80},
+        {title: "활성화", field: "isActive", formatter: "tickCross", width: 80},
+        {title: "작성자", field: "author", width: 120},
+        {title: "게시 시작일", field: "startDate", formatter: function(cell) {
+          const value = cell.getValue();
+          return value ? new Date(value).toLocaleString() : '-';
+        }, width: 150},
+        {title: "게시 종료일", field: "endDate", formatter: function(cell) {
+          const value = cell.getValue();
+          return value ? new Date(value).toLocaleString() : '무기한';
+        }, width: 150},
+        {title: "조회수", field: "viewCount", width: 80},
+        {title: "작성일", field: "createdDate", formatter: function(cell) {
+          return new Date(cell.getValue()).toLocaleString();
+        }, width: 150},
+        {title: "관리", formatter: function() {
+          return '<div class="ui mini buttons"><button class="ui mini blue button view-btn"><i class="eye icon"></i></button><button class="ui mini green button edit-row-btn"><i class="edit icon"></i></button><button class="ui mini red button delete-row-btn"><i class="trash icon"></i></button></div>';
+        }, width: 120, headerSort: false, hozAlign: "center", cellClick: function(e, cell) {
+          // 버튼 클릭 이벤트 처리
+          const rowData = cell.getRow().getData();
+          const element = e.target;
+          
+          if ($(element).hasClass('view-btn') || $(element).parent().hasClass('view-btn')) {
+            showNoticeDetail(rowData);
+          } else if ($(element).hasClass('edit-row-btn') || $(element).parent().hasClass('edit-row-btn')) {
+            editNotice(rowData.noticeId);
+          } else if ($(element).hasClass('delete-row-btn') || $(element).parent().hasClass('delete-row-btn')) {
+            if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+              deleteNotice(rowData.noticeId);
+            }
+          }
+          
+          e.stopPropagation(); // 행 클릭 이벤트 방지
+        }}
+      ],
+      rowClick: function(e, row) {
+        showNoticeDetail(row.getData());
+      }
+    });
+    
+    // 공지사항 목록 로드
+    loadNotices();
+    
+    // 새로고침 버튼 클릭 이벤트
+    $('#refresh-btn').click(function() {
+      loadNotices();
+    });
+    
+    // 검색 버튼 클릭 이벤트
+    $('#search-btn').click(function() {
+      const keyword = $('#search-keyword').val();
+      const type = $('#search-type').val();
+      
+      if (keyword) {
+        searchNotices(keyword, type);
+      } else {
+        loadNotices();
+      }
+    });
+    
+    // 검색 입력 필드에서 엔터 키 이벤트
+    $('#search-keyword').keypress(function(e) {
+      if (e.which === 13) { // 엔터 키
+        $('#search-btn').click();
+      }
+    });
+    
+    // 새 공지사항 버튼 클릭 이벤트
+    $('#create-btn').click(function() {
+      resetNoticeForm();
+      $('#modal-title').text('공지사항 등록');
+      $('#notice-modal').modal({
+        centered: false,
+        closable: true
+      }).modal('show');
+    });
+    
+    // 저장 버튼 클릭 이벤트
+    $('#save-btn').click(function() {
+      saveNotice();
+    });
+    
+    // 수정 버튼 클릭 이벤트
+    $('#edit-btn').click(function() {
+      const noticeId = $('#detail-title').data('id');
+      editNotice(noticeId);
+    });
+    
+    // 삭제 버튼 클릭 이벤트
+    $('#delete-btn').click(function() {
+      const noticeId = $('#detail-title').data('id');
+      if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+        deleteNotice(noticeId);
+      }
+    });
+    
+    // 활성화/비활성화 버튼 클릭 이벤트
+    $('#toggle-active-btn').click(function() {
+      const noticeId = $('#detail-title').data('id');
+      toggleNoticeActive(noticeId);
+    });
+    
+    // 공지사항 목록 로드 함수
+    function loadNotices() {
+      // 로딩 표시
+      $('#loading-indicator').show();
+      $('#error-message').addClass('hide');
+      
+      // 공통 함수 사용
+      sendFormRequest(
+        '/api/notice/get/all',
+        null,
+        function(response) {
+          $('#loading-indicator').hide();
+          if (response && response.success) {
+            noticeTable.setData(response.notices);
+          } else {
+            $('#error-message').removeClass('hide');
+            console.error('공지사항 로드 실패:', response);
+          }
+        },
+        function(xhr, status, error) {
+          $('#loading-indicator').hide();
+          $('#error-message').removeClass('hide');
+          console.error('공지사항 로드 오류:', error);
+        }
+      );
+    }
+    
+    // 공지사항 검색 함수
+    function searchNotices(keyword, type) {
+      // 로딩 표시
+      $('#loading-indicator').show();
+      $('#error-message').addClass('hide');
+      
+      // 공통 함수 사용
+      sendFormRequest(
+        '/api/notice/search',
+        {
+          searchKeyword: keyword,
+          searchType: type
+        },
+        function(response) {
+          $('#loading-indicator').hide();
+          if (response && response.success) {
+            noticeTable.setData(response.notices);
+          } else {
+            $('#error-message').removeClass('hide');
+            console.error('검색 실패:', response);
+          }
+        },
+        function(xhr, status, error) {
+          $('#loading-indicator').hide();
+          $('#error-message').removeClass('hide');
+          console.error('검색 오류:', error);
+        }
+      );
+    }
+    
+    // 공지사항 저장 함수
+    function saveNotice() {
+      const noticeId = $('#notice-id').val();
+      const title = $('#notice-title').val();
+      const content = $('#notice-content').val();
+      const startDate = $('#notice-start-date').val();
+      const endDate = $('#notice-end-date').val();
+      const isImportant = $('#notice-important').prop('checked');
+      const isActive = $('#notice-active').prop('checked');
+      const author = $('#notice-author').val();
+      
+      if (!title || !content) {
+        alert('제목과 내용을 입력해주세요.');
+        return;
+      }
+      
+      // 공통 함수 사용
+      sendFormRequest(
+        noticeId ? '/api/notice/update' : '/api/notice/create',
+        {
+          noticeId: noticeId || undefined,
+          title: title,
+          content: content,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          isImportant: isImportant,
+          isActive: isActive,
+          author: author || undefined
+        },
+        function(response) {
+          if (response && response.success) {
+            alert(response.message);
+            $('#notice-modal').modal('hide');
+            loadNotices();
+          } else {
+            alert('저장 실패: ' + (response ? response.message : '알 수 없는 오류'));
+          }
+        },
+        function(xhr, status, error) {
+          alert('저장 오류: ' + error);
+        }
+      );
+    }
+    
+    // 공지사항 상세 정보 표시 함수
+    function showNoticeDetail(notice) {
+      $('#detail-title').text(notice.title).data('id', notice.noticeId);
+      $('#detail-author').text(notice.author || '익명');
+      $('#detail-view-count').text(notice.viewCount || 0);
+      $('#detail-created-date').text(new Date(notice.createdDate).toLocaleString());
+      
+      const startDate = notice.startDate ? new Date(notice.startDate).toLocaleString() : '-';
+      const endDate = notice.endDate ? new Date(notice.endDate).toLocaleString() : '무기한';
+      $('#detail-period').text(startDate + ' ~ ' + endDate);
+      
+      const statusClass = notice.isActive ? 'green' : 'red';
+      const statusText = notice.isActive ? '활성화' : '비활성화';
+      $('#detail-status').html(`<span class="ui ${statusClass} label">${statusText}</span>`);
+      
+      $('#detail-content').html(notice.content.replace(/\n/g, '<br>'));
+      
+      // 버튼 상태 업데이트
+      $('#toggle-active-btn').html(`<i class="power off icon"></i> ${notice.isActive ? '비활성화' : '활성화'}`);
+      
+      $('#notice-detail-modal').modal({
+        centered: false,
+        closable: true
+      }).modal('show');
+    }
+    
+    // 공지사항 수정 함수
+    function editNotice(noticeId) {
+      // 공통 함수 사용
+      sendFormRequest(
+        '/api/notice/get/detail',
+        { noticeId: noticeId },
+        function(response) {
+          if (response && response.success && response.notice) {
+            const notice = response.notice;
+            
+            $('#notice-id').val(notice.noticeId);
+            $('#notice-title').val(notice.title);
+            $('#notice-content').val(notice.content);
+            
+            if (notice.startDate) {
+              $('#notice-start-date').val(formatDateTimeForInput(notice.startDate));
+            } else {
+              $('#notice-start-date').val('');
+            }
+            
+            if (notice.endDate) {
+              $('#notice-end-date').val(formatDateTimeForInput(notice.endDate));
+            } else {
+              $('#notice-end-date').val('');
+            }
+            
+            $('#notice-important').prop('checked', notice.isImportant);
+            $('#notice-active').prop('checked', notice.isActive);
+            $('#notice-author').val(notice.author);
+            
+            $('#modal-title').text('공지사항 수정');
+            $('#notice-detail-modal').modal('hide');
+            $('#notice-modal').modal({
+              centered: false,
+              closable: true
+            }).modal('show');
+          } else {
+            alert('공지사항 정보를 불러올 수 없습니다.');
+          }
+        },
+        function(xhr, status, error) {
+          alert('공지사항 정보 로드 오류: ' + error);
+        }
+      );
+    }
+    
+    // 공지사항 삭제 함수
+    function deleteNotice(noticeId) {
+      // 공통 함수 사용
+      sendFormRequest(
+        '/api/notice/delete',
+        { noticeId: noticeId },
+        function(response) {
+          if (response && response.success) {
+            alert(response.message);
+            $('#notice-detail-modal').modal('hide');
+            loadNotices();
+          } else {
+            alert('삭제 실패: ' + (response ? response.message : '알 수 없는 오류'));
+          }
+        },
+        function(xhr, status, error) {
+          alert('삭제 오류: ' + error);
+        }
+      );
+    }
+    
+    // 공지사항 활성화/비활성화 함수
+    function toggleNoticeActive(noticeId) {
+      // 공통 함수 사용
+      sendFormRequest(
+        '/api/notice/toggle-active',
+        { noticeId: noticeId },
+        function(response) {
+          if (response && response.success) {
+            alert(response.message);
+            $('#notice-detail-modal').modal('hide');
+            loadNotices();
+          } else {
+            alert('상태 변경 실패: ' + (response ? response.message : '알 수 없는 오류'));
+          }
+        },
+        function(xhr, status, error) {
+          alert('상태 변경 오류: ' + error);
+        }
+      );
+    }
+    
+    // 공지사항 폼 초기화 함수
+    function resetNoticeForm() {
+      $('#notice-id').val('');
+      $('#notice-title').val('');
+      $('#notice-content').val('');
+      $('#notice-start-date').val('');
+      $('#notice-end-date').val('');
+      $('#notice-important').prop('checked', false);
+      $('#notice-active').prop('checked', true);
+      $('#notice-author').val('');
+    }
+    
+    // 날짜 포맷 변환 함수
+    function formatDateTimeForInput(dateTimeStr) {
+      const date = new Date(dateTimeStr);
+      return date.toISOString().slice(0, 16);
+    }
+  });
+</script>
+</body>
+</html> 

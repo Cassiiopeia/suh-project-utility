@@ -14,6 +14,21 @@
       <div class="skeleton skeleton-text-medium"></div>
     </div>
     
+    <!-- 공지사항 스켈레톤 -->
+    <div class="ui segment skeleton">
+      <div class="skeleton skeleton-header-medium"></div>
+      <div class="skeleton skeleton-text-small"></div>
+      <div class="ui items">
+        <div class="item skeleton-notice" th:each="i : ${#numbers.sequence(1, 3)}">
+          <div class="content">
+            <div class="header skeleton"></div>
+            <div class="meta skeleton"></div>
+            <div class="description skeleton"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- 기능 목록 카드 스켈레톤 -->
     <div class="ui segment skeleton">
       <div class="skeleton skeleton-header-medium"></div>
@@ -40,7 +55,34 @@
     <!-- 메인 대시보드 헤더 -->
     <div class="ui segment">
       <h2 class="ui header">새찬 서버 실험실</h2>
-      <p>영감... 영감... 어.. 어기다 탁탇탁닥</p>
+      
+      <!-- 공지사항 섹션 - 메인 헤더 바로 아래에 배치 -->
+      <div class="ui divider"></div>
+      <h6 class="ui horizontal divider header">
+        <i class="bullhorn icon"></i>
+        Notice
+      </h6>
+      
+      <!-- 공지사항 아코디언 -->
+      <div class="ui styled fluid accordion" id="notice-accordion">
+        <!-- 공지사항이 여기에 동적으로 로드됩니다 -->
+        <div class="notice-empty">
+          <div class="title">
+            <i class="info circle icon"></i>
+            등록된 공지사항이 없습니다.
+          </div>
+          <div class="content">
+            <p>새로운 공지사항이 등록되면 이곳에 표시됩니다.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 공지사항 페이지네이션 -->
+      <div class="ui center aligned container notice-pagination hide" style="margin-top: 1em;">
+        <div class="ui mini pagination menu">
+          <!-- 페이지네이션은 동적으로 생성됩니다 -->
+        </div>
+      </div>
     </div>
 
     <!-- 유틸리티 애플리케이션 섹션 - 개발 도구 모음 -->
@@ -649,15 +691,290 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
+<!-- 공지사항 상세 모달 -->
+<div class="ui small modal" id="notice-detail-modal">
+  <i class="close icon"></i>
+  <div class="header" id="modal-notice-title"></div>
+  <div class="content">
+    <div class="ui stackable grid">
+      <div class="eight wide column">
+        <p><i class="user icon"></i> <span id="modal-notice-author"></span></p>
+        <p><i class="calendar icon"></i> <span id="modal-notice-date"></span></p>
+      </div>
+      <div class="eight wide column">
+        <p><i class="eye icon"></i> 조회수: <span id="modal-notice-views"></span></p>
+        <p id="modal-notice-important" class="hide">
+          <i class="exclamation circle red icon"></i> <strong>중요 공지사항</strong>
+        </p>
+      </div>
+    </div>
+    <div class="ui divider"></div>
+    <div class="ui basic segment" id="modal-notice-content"></div>
+  </div>
+  <div class="actions">
+    <div class="ui positive button">확인</div>
+  </div>
+</div>
+
 <script>
-// 스켈레톤 로딩 효과
-document.addEventListener('DOMContentLoaded', function() {
-  // 페이지 로딩 시뮬레이션 (실제로는 자원 로드 완료 후 호출)
-  setTimeout(function() {
-    document.getElementById('skeleton-container').classList.add('hide');
-    document.getElementById('real-content').classList.remove('hide');
-  }, 500); // 0.5초 후 실제 콘텐츠로 전환
-});
+  $(document).ready(function() {
+    // 드롭다운 메뉴 초기화
+    $('.ui.dropdown').dropdown();
+    
+    // 공지사항 로드
+    loadActiveNotices();
+    
+    // 페이지 로딩 효과
+    setTimeout(function() {
+      document.getElementById('skeleton-container').classList.add('hide');
+      document.getElementById('real-content').classList.remove('hide');
+      
+      // 아코디언 초기화 - 기본적으로 모두 닫힌 상태로 시작
+      $('.ui.accordion').accordion({
+        exclusive: false,
+        closeNested: true
+      });
+    }, 500); // 0.5초 후 실제 콘텐츠로 전환
+    
+    // 페이지네이션 클릭 이벤트
+    $(document).on('click', '.notice-pagination .item', function(e) {
+      e.preventDefault();
+      if (!$(this).hasClass('active') && !$(this).hasClass('disabled')) {
+        const page = $(this).data('page');
+        loadActiveNoticesByPage(page);
+      }
+    });
+  });
+  
+  // 전역 변수 - 공지사항 데이터 및 페이지네이션 상태
+  let noticeData = {
+    notices: [],
+    currentPage: 1,
+    totalPages: 1,
+    noticesPerPage: 5
+  };
+  
+  // 활성화된 공지사항 로드 함수
+  function loadActiveNotices() {
+    // 공통 함수 사용
+    sendFormRequest(
+      '/api/notice/get/active',
+      null,
+      function(response) {
+        if (response && response.success && response.notices && response.notices.length > 0) {
+          // 공지사항 데이터 저장
+          noticeData.notices = response.notices;
+          
+          // 중요 공지사항 먼저 정렬
+          noticeData.notices.sort(function(a, b) {
+            if (a.isImportant && !b.isImportant) return -1;
+            if (!a.isImportant && b.isImportant) return 1;
+            return new Date(b.createdDate) - new Date(a.createdDate);
+          });
+          
+          // 총 페이지 수 계산
+          noticeData.totalPages = Math.ceil(noticeData.notices.length / noticeData.noticesPerPage);
+          
+          // 첫 페이지 로드
+          loadActiveNoticesByPage(1);
+        } else {
+          // 공지사항이 없으면 기본 메시지 표시
+          $('#notice-accordion').html(`
+            <div class="title">
+              <i class="info circle icon"></i>
+              등록된 공지사항이 없습니다.
+            </div>
+            <div class="content">
+              <p>새로운 공지사항이 등록되면 이곳에 표시됩니다.</p>
+            </div>
+          `);
+          
+          // 페이지네이션 숨김
+          $('.notice-pagination').addClass('hide');
+          
+          // 아코디언 초기화
+          $('#notice-accordion').accordion('refresh');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('공지사항 로드 오류:', error);
+        $('#notice-accordion').html(`
+          <div class="title">
+            <i class="warning circle icon"></i>
+            공지사항을 불러올 수 없습니다.
+          </div>
+          <div class="content">
+            <p>서버 오류가 발생했습니다. 나중에 다시 시도해주세요.</p>
+          </div>
+        `);
+        
+        // 페이지네이션 숨김
+        $('.notice-pagination').addClass('hide');
+        
+        // 아코디언 초기화
+        $('#notice-accordion').accordion('refresh');
+      }
+    );
+  }
+  
+  // 페이지별 공지사항 표시 함수
+  function loadActiveNoticesByPage(page) {
+    // 현재 페이지 업데이트
+    noticeData.currentPage = page;
+    
+    // 페이지에 해당하는 공지사항만 추출
+    const startIndex = (page - 1) * noticeData.noticesPerPage;
+    const endIndex = Math.min(startIndex + noticeData.noticesPerPage, noticeData.notices.length);
+    const pageNotices = noticeData.notices.slice(startIndex, endIndex);
+    
+    // 공지사항 아코디언 비우기
+    $('#notice-accordion').empty();
+    
+    // 공지사항 표시
+    if (pageNotices.length > 0) {
+      pageNotices.forEach(function(notice) {
+        const isImportant = notice.isImportant ? 
+          '<div class="ui red mini label">중요</div> ' : '';
+        
+        const noticeItem = `
+          <div class="title" data-id="${notice.noticeId}">
+            <i class="dropdown icon"></i>
+            ${isImportant}${notice.title}
+            <div class="notice-meta-inline">
+              <span class="notice-author"><i class="user outline icon"></i>${notice.author || '관리자'}</span>
+              <span class="notice-date"><i class="calendar outline icon"></i>${timeAgo(notice.createdDate)}</span>
+            </div>
+          </div>
+          <div class="content">
+            <div class="notice-meta">
+              <span><i class="user outline icon"></i> ${notice.author || '관리자'}</span>
+              <span><i class="calendar outline icon"></i> ${new Date(notice.createdDate).toLocaleDateString()}</span>
+              <span><i class="eye outline icon"></i> 조회수 ${notice.viewCount || 0}</span>
+            </div>
+            <p class="notice-preview">${notice.content.substring(0, 150)}${notice.content.length > 150 ? '...' : ''}</p>
+            <div class="ui right aligned container">
+              <button class="ui mini blue button view-notice-btn" data-id="${notice.noticeId}">
+                <i class="eye icon"></i> 상세보기
+              </button>
+            </div>
+          </div>
+        `;
+        
+        $('#notice-accordion').append(noticeItem);
+      });
+      
+      // 상세보기 버튼 이벤트 바인딩
+      $('.view-notice-btn').click(function(e) {
+        e.stopPropagation(); // 아코디언 토글 방지
+        const noticeId = $(this).data('id');
+        showNoticeDetail(noticeId);
+      });
+      
+      // 페이지네이션 업데이트
+      updatePagination();
+      
+      // 5개 이상이면 페이지네이션 표시
+      if (noticeData.notices.length > noticeData.noticesPerPage) {
+        $('.notice-pagination').removeClass('hide');
+      } else {
+        $('.notice-pagination').addClass('hide');
+      }
+    } else {
+      // 공지사항이 없으면 기본 메시지 표시
+      $('#notice-accordion').html(`
+        <div class="title">
+          <i class="info circle icon"></i>
+          등록된 공지사항이 없습니다.
+        </div>
+        <div class="content">
+          <p>새로운 공지사항이 등록되면 이곳에 표시됩니다.</p>
+        </div>
+      `);
+      
+      // 페이지네이션 숨김
+      $('.notice-pagination').addClass('hide');
+    }
+    
+    // 아코디언 초기화 - 기본적으로 모두 닫힌 상태로 시작
+    $('#notice-accordion').accordion('refresh');
+  }
+  
+  // 페이지네이션 업데이트 함수
+  function updatePagination() {
+    const paginationContainer = $('.notice-pagination .pagination');
+    paginationContainer.empty();
+    
+    // 페이지가 1개 이하면 페이지네이션 숨김
+    if (noticeData.totalPages <= 1) {
+      $('.notice-pagination').addClass('hide');
+      return;
+    }
+    
+    // 이전 페이지 버튼
+    const prevDisabled = noticeData.currentPage === 1 ? 'disabled' : '';
+    paginationContainer.append(`
+      <a class="item ${prevDisabled}" data-page="${noticeData.currentPage - 1}">
+        <i class="angle left icon"></i>
+      </a>
+    `);
+    
+    // 페이지 번호 버튼
+    for (let i = 1; i <= noticeData.totalPages; i++) {
+      const isActive = i === noticeData.currentPage ? 'active' : '';
+      paginationContainer.append(`
+        <a class="item ${isActive}" data-page="${i}">${i}</a>
+      `);
+    }
+    
+    // 다음 페이지 버튼
+    const nextDisabled = noticeData.currentPage === noticeData.totalPages ? 'disabled' : '';
+    paginationContainer.append(`
+      <a class="item ${nextDisabled}" data-page="${noticeData.currentPage + 1}">
+        <i class="angle right icon"></i>
+      </a>
+    `);
+  }
+  
+  // 공지사항 상세 보기 함수
+  function showNoticeDetail(noticeId) {
+    // 공통 함수 사용
+    sendFormRequest(
+      '/api/notice/get/detail',
+      { noticeId: noticeId },
+      function(response) {
+        if (response && response.success && response.notice) {
+          const notice = response.notice;
+          
+          // 모달 내용 채우기
+          $('#modal-notice-title').text(notice.title);
+          $('#modal-notice-author').text(notice.author || '관리자');
+          $('#modal-notice-date').text(new Date(notice.createdDate).toLocaleString());
+          $('#modal-notice-views').text(notice.viewCount || 0);
+          $('#modal-notice-content').html(notice.content.replace(/\n/g, '<br>'));
+          
+          // 중요 공지사항 표시
+          if (notice.isImportant) {
+            $('#modal-notice-important').removeClass('hide');
+          } else {
+            $('#modal-notice-important').addClass('hide');
+          }
+          
+          // 모달 표시
+          $('#notice-detail-modal').modal({
+            centered: false,
+            closable: true
+          }).modal('show');
+        } else {
+          alert('공지사항을 불러올 수 없습니다.');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('공지사항 상세 조회 오류:', error);
+      }
+    );
+  }
+
+
 </script>
 </body>
 </html>
