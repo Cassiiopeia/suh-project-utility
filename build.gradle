@@ -103,7 +103,7 @@ dependencies {
 
     // Suh Libraries 
     implementation "me.suhsaechan:suh-random-engine:1.1.0"
-    implementation "me.suhsaechan:suh-logger:1.0.3"
+    implementation "me.suhsaechan:suh-logger:1.0.7"
     implementation "me.suhsaechan:suh-api-log:1.0.3"
 
 }

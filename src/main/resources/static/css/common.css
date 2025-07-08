@@ -964,3 +964,113 @@ COMMON.CSS - 공통 컴포넌트 스타일
     margin-right: 10px;
   }
 }
+
+/*
+===========================
+   Docker Logs Styles
+===========================
+*/
+
+/* Docker 로그 컨테이너 스타일 */
+.log-output-container {
+  background-color: #282c34 !important;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  height: calc(100vh - 300px);
+  min-height: 400px;
+  overflow-y: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* 로그 출력 스타일 */
+#logOutput {
+  color: #abb2bf;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* 로그 라인 스타일 */
+.log-line {
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* 로그 타입별 색상 */
+.log-line.error {
+  color: #e06c75;
+}
+
+.log-line.warn {
+  color: #d19a66;
+}
+
+.log-line.info {
+  color: #98c379;
+}
+
+/* 로그 스켈레톤 효과 */
+.skeleton-output {
+  height: 300px;
+  width: 100%;
+  background-color: #f0f0f0;
+}
+
+/* 상태 라벨 색상 */
+.ui.label#logStatus.blue .icon {
+  color: #2185d0;
+}
+
+.ui.label#logStatus.green .icon {
+  color: #21ba45;
+}
+
+.ui.label#logStatus.yellow .icon {
+  color: #fbbd08;
+}
+
+.ui.label#logStatus.red .icon {
+  color: #db2828;
+}
+
+/* Docker 로그 페이지 모바일 반응형 */
+@media only screen and (max-width: 767px) {
+  .log-output-container {
+    height: calc(100vh - 350px);
+    min-height: 300px;
+  }
+  
+  #logOutput {
+    font-size: 0.8rem;
+  }
+  
+  .docker-logs-page .ui.form .fields {
+    flex-wrap: wrap;
+  }
+  
+  .docker-logs-page .ui.form .fields .field {
+    width: 100% !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  .docker-logs-page .ui.action.input {
+    flex-wrap: wrap;
+  }
+  
+  .docker-logs-page .ui.action.input input {
+    border-radius: 0.28571429rem !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  .docker-logs-page .ui.action.input .button {
+    margin-left: 0.2rem !important;
+    margin-right: 0.2rem !important;
+    margin-bottom: 0.5rem;
+  }
+}

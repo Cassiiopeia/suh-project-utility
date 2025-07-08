@@ -49,4 +49,23 @@ public class NoticeRequest {
   
   // 검색 타입 (제목, 내용)
   private String searchType;
+  
+  // 댓글 관련 필드
+  private UUID commentId;
+  private String commentAuthor;
+  private String commentContent;
+  private String commentAuthorIp;
+  
+  // 요청 타입 구분
+  private NoticeRequestType requestType;
+  
+  public enum NoticeRequestType {
+    GET_NOTICE,
+    CREATE_NOTICE,
+    UPDATE_NOTICE,
+    DELETE_NOTICE,
+    GET_COMMENTS,
+    ADD_COMMENT,
+    DELETE_COMMENT
+  }
 } 

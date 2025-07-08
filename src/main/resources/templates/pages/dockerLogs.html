@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/header :: head(title='Docker 로그-SAECHAN-LAB')}"></head>
+<body class="docker-logs-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="ui container" id="main-content">
+  <!-- 스켈레톤 로딩 컨테이너 - 페이지 로딩 시 임시 표시 -->
+  <div id="skeleton-container">
+    <div class="ui segment skeleton">
+      <div class="skeleton skeleton-header-large"></div>
+      <div class="skeleton skeleton-text-medium"></div>
+    </div>
+    <div class="ui segment skeleton">
+      <div class="skeleton skeleton-text-small"></div>
+      <div class="skeleton skeleton-output"></div>
+    </div>
+  </div>
+
+  <!-- 실제 콘텐츠 - 로딩 후 표시 -->
+  <div id="real-content" class="hide">
+    <!-- 메인 헤더 -->
+    <div class="ui segment">
+      <h2 class="ui header">
+        <i class="terminal icon"></i>
+        <div class="content">
+          Docker 컨테이너 로그
+          <div class="sub header">실시간으로 서버의 Docker 컨테이너 로그를 확인합니다</div>
+        </div>
+      </h2>
+      
+      <!-- 컨트롤 패널 -->
+      <div class="ui form">
+        <div class="fields">
+          <div class="eight wide field">
+            <label>컨테이너 이름</label>
+            <div class="ui action input">
+              <input type="text" id="containerName" placeholder="컨테이너 이름" value="sejong-malsami-back">
+              <button class="ui primary button" id="startLogBtn">로그 시작</button>
+              <button class="ui red button" id="stopLogBtn">중지</button>
+              <button class="ui button" id="clearLogBtn">화면 지우기</button>
+            </div>
+          </div>
+          <div class="four wide field">
+            <label>라인 제한</label>
+            <select class="ui dropdown" id="lineLimit">
+              <option value="100">100줄</option>
+              <option value="500">500줄</option>
+              <option value="1000">1000줄</option>
+              <option value="0">제한 없음</option>
+            </select>
+          </div>
+          <div class="four wide field">
+            <label>자동 스크롤</label>
+            <div class="ui toggle checkbox auto-scroll-checkbox">
+              <input type="checkbox" id="autoScroll" checked>
+              <label>켜기</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 로그 출력 화면 -->
+    <div class="ui inverted segment log-output-container">
+      <pre id="logOutput"><code class="language-bash"></code></pre>
+    </div>
+    
+    <!-- 상태 표시 -->
+    <div class="ui segment">
+      <div class="ui grid">
+        <div class="eight wide column">
+          <div class="ui label" id="logStatus">
+            <i class="circle icon"></i>
+            준비됨
+          </div>
+        </div>
+        <div class="eight wide column right aligned">
+          <div class="ui label" id="lineCount">
+            <i class="list ol icon"></i>
+            라인: 0
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Highlight.js 스타일 및 스크립트 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/bash.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // 변수 초기화
+    let eventSource = null;
+    let logLineCount = 0;
+    const logOutput = document.querySelector('#logOutput code');
+    const logStatusLabel = $('#logStatus');
+    const lineCountLabel = $('#lineCount');
+    
+    // UI 초기화
+    $('.ui.dropdown').dropdown();
+    $('.ui.checkbox').checkbox();
+    
+    // 페이지 로딩 효과
+    setTimeout(function() {
+      document.getElementById('skeleton-container').classList.add('hide');
+      document.getElementById('real-content').classList.remove('hide');
+    }, 500); // 0.5초 후 실제 콘텐츠로 전환
+    
+    // 로그 시작 버튼 클릭 이벤트
+    $('#startLogBtn').on('click', function() {
+      // 이미 연결 중이면 중지
+      if (eventSource) {
+        stopLogStream();
+      }
+      
+      // 새로운 로그 스트리밍 시작
+      startLogStream();
+    });
+    
+    // 로그 중지 버튼 클릭 이벤트
+    $('#stopLogBtn').on('click', function() {
+      stopLogStream();
+      updateStatus('중지됨', 'yellow');
+    });
+    
+    // 로그 지우기 버튼 클릭 이벤트
+    $('#clearLogBtn').on('click', function() {
+      clearLogOutput();
+      updateStatus('준비됨', 'blue');
+    });
+    
+    // 로그 스트리밍 시작 함수
+    function startLogStream() {
+      // 컨테이너 이름 가져오기
+      const containerName = $('#containerName').val() || 'sejong-malsami-back';
+      const lineLimit = $('#lineLimit').val() || 100;
+      
+      // 상태 업데이트
+      updateStatus('연결 중...', 'blue');
+      
+      // SSE 연결 설정
+      const url = `/api/docker-log/stream?containerName=${encodeURIComponent(containerName)}&lineLimit=${lineLimit}`;
+      console.log('SSE 연결 시작:', url);
+      
+      eventSource = new EventSource(url);
+      
+      // 로그 이벤트 리스너
+      eventSource.addEventListener('log', function(event) {
+        console.log('로그 이벤트 수신:', event.data.substring(0, 100) + (event.data.length > 100 ? '...' : ''));
+        appendToLog(event.data);
+        updateStatus('스트리밍 중', 'green');
+      });
+      
+      // 연결 열림 이벤트
+      eventSource.onopen = function() {
+        console.log('SSE 연결 성공');
+        updateStatus('연결됨', 'blue');
+      };
+      
+      // 에러 핸들러
+      eventSource.onerror = function(error) {
+        console.error('SSE 연결 오류:', error);
+        stopLogStream();
+        updateStatus('연결 오류', 'red');
+        appendToLog('\n연결이 중단되었습니다. 다시 시작하려면 "로그 시작" 버튼을 클릭하세요.\n');
+      };
+    }
+    
+    // 로그 스트리밍 중지 함수
+    function stopLogStream() {
+      if (eventSource) {
+        console.log('SSE 연결 종료');
+        eventSource.close();
+        eventSource = null;
+        
+        // 서버에 중지 요청 전송 (FormData 사용)
+        const containerName = $('#containerName').val() || 'sejong-malsami-back';
+        
+        // FormData 객체 생성 및 데이터 추가
+        const formData = new FormData();
+        formData.append('containerName', containerName);
+        
+        // 서버에 중지 요청 전송
+        $.ajax({
+          url: '/api/docker-log/stop',
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            console.log('로그 중지 요청 성공:', response);
+          },
+          error: function(xhr, status, error) {
+            console.error('로그 중지 요청 실패:', error);
+          }
+        });
+      }
+    }
+    
+    // 로그 출력 지우기 함수
+    function clearLogOutput() {
+      logOutput.innerHTML = '';
+      logLineCount = 0;
+      updateLineCount();
+    }
+    
+    // 로그 추가 함수
+    function appendToLog(text) {
+      if (!text) return;
+      
+      // 새로운 로그 라인 추가
+      const lines = text.split('\n');
+      for (const line of lines) {
+        if (!line) continue;
+        
+        // 최대 라인 수 제한 확인
+        const limit = parseInt($('#lineLimit').val()) || 0;
+        if (limit > 0 && logLineCount >= limit) {
+          // 첫 번째 라인 제거
+          const firstLine = logOutput.querySelector('.log-line:first-child');
+          if (firstLine) {
+            firstLine.remove();
+          }
+        } else {
+          logLineCount++;
+        }
+        
+        // 새 로그 라인 추가
+        const logLine = document.createElement('div');
+        logLine.className = 'log-line';
+        logLine.innerText = line;
+        
+        // 라인 타입 감지 (에러, 경고, 정보)
+        if (line.toLowerCase().includes('error') || line.toLowerCase().includes('exception')) {
+          logLine.classList.add('error');
+        } else if (line.toLowerCase().includes('warn')) {
+          logLine.classList.add('warn');
+        } else if (line.toLowerCase().includes('info')) {
+          logLine.classList.add('info');
+        }
+        
+        logOutput.appendChild(logLine);
+      }
+      
+      // 자동 스크롤
+      if ($('#autoScroll').is(':checked')) {
+        const container = document.querySelector('.log-output-container');
+        container.scrollTop = container.scrollHeight;
+      }
+      
+      // 라인 카운트 업데이트
+      updateLineCount();
+    }
+    
+    // 상태 업데이트 함수
+    function updateStatus(text, color) {
+      logStatusLabel.html(`<i class="circle ${color} icon"></i> ${text}`);
+      logStatusLabel.removeClass('blue green yellow red');
+      logStatusLabel.addClass(color);
+    }
+    
+    // 라인 카운트 업데이트 함수
+    function updateLineCount() {
+      lineCountLabel.html(`<i class="list ol icon"></i> 라인: ${logLineCount}`);
+    }
+  });
+</script>
+</body>
+</html> 
