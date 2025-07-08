@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -24,6 +26,7 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import me.suhsaechan.suhprojectutility.object.response.ContainerInfoResponse;
 
 /**
  * Docker 로그 스트리밍 서비스
@@ -324,5 +327,26 @@ public class DockerLogService {
             log.warn("로그 이벤트 전송 실패: {}", e.getMessage());
             throw e;
         }
+    }
+
+    /**
+     * 서버의 모든 Docker 컨테이너 목록 조회 (ps -a)
+     */
+    public List<ContainerInfoResponse> listContainers() {
+        String result = sshCommandExecutor.executeCommandWithSudoStdin(
+                "docker ps -a --format \\\"{{.Names}}|{{.Status}}\\\"" );
+        List<ContainerInfoResponse> list = new ArrayList<>();
+        if (result != null && !result.isEmpty()) {
+            for (String line : result.split("\n")) {
+                String[] parts = line.split("\\|");
+                if (parts.length == 2) {
+                    String name = parts[0].trim();
+                    String status = parts[1].trim();
+                    boolean running = status.toLowerCase().startsWith("up");
+                    list.add(new ContainerInfoResponse(name, status, running));
+                }
+            }
+        }
+        return list;
     }
 } 

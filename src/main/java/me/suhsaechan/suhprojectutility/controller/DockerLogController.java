@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import me.suhsaechan.suhprojectutility.object.response.ContainerInfoResponse;
+
+import java.util.List;
 
 /**
  * Docker 컨테이너 로그 스트리밍을 위한 컨트롤러
@@ -76,5 +79,13 @@ public class DockerLogController {
         String containerName = request.getContainerName() != null ? request.getContainerName() : "sejong-malsami-back";
         log.info("Docker 로그 화면 초기화 요청 - 컨테이너: {}", containerName);
         return ResponseEntity.ok("로그 화면이 초기화되었습니다.");
+    }
+
+    /**
+     * 실행 중/중지된 모든 컨테이너 목록 반환
+     */
+    @GetMapping(value = "/containers", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ContainerInfoResponse>> listContainers() {
+        return ResponseEntity.ok(dockerLogService.listContainers());
     }
 } 
