@@ -21,13 +21,21 @@
 
   <!-- 실제 콘텐츠 - 로딩 후 표시 -->
   <div id="real-content" class="hide">
+    <div class="ui stackable grid">
+      <!-- 컨테이너 목록 -->
+      <div class="three wide column">
+        <h4 class="ui header"><i class="cubes icon"></i> 컨테이너 목록</h4>
+        <div class="ui relaxed divided list" id="containerList" style="max-height:70vh;overflow-y:auto;"></div>
+      </div>
+      <!-- 로그 영역 -->
+      <div class="thirteen wide column">
     <!-- 메인 헤더 -->
     <div class="ui segment">
       <h2 class="ui header">
-        <i class="terminal icon"></i>
+        <i class="fab fa-docker fa-sm" style="color:#2185d0;"></i>
         <div class="content">
           Docker 컨테이너 로그
-          <div class="sub header">실시간으로 서버의 Docker 컨테이너 로그를 확인합니다</div>
+          <div class="sub header">실시간 서버 Docker 컨테이너 로그</div>
         </div>
       </h2>
       
@@ -85,6 +93,8 @@
         </div>
       </div>
     </div>
+    </div> <!-- column end -->
+    </div> <!-- grid end -->
   </div>
 </div>
 
@@ -107,6 +117,37 @@
     // UI 초기화
     $('.ui.dropdown').dropdown();
     $('.ui.checkbox').checkbox();
+    
+    // 컨테이너 목록 로드
+    loadContainerList();
+    
+    function loadContainerList() {
+      $('#containerList').html('<div class="ui active inline loader mini"></div>');
+      $.get('/api/docker-log/containers', function(data) {
+        const list = $('#containerList');
+        list.empty();
+        if (!data || data.length === 0) {
+          list.append('<div class="item">컨테이너 없음</div>');
+          return;
+        }
+        data.forEach(function(c) {
+          const color = c.running ? 'green' : 'grey';
+          const item = $(
+            `<a class="item container-item" data-name="${c.name}">
+               <i class="${color} circle icon"></i>
+               <div class="content">
+                 <div class="header">${c.name}</div>
+                 <div class="description" style="font-size:0.8em;">${c.status}</div>
+               </div>
+             </a>`);
+          item.on('click', function() {
+            $('#containerName').val(c.name);
+            $('#startLogBtn').click();
+          });
+          list.append(item);
+        });
+      });
+    }
     
     // 페이지 로딩 효과
     setTimeout(function() {

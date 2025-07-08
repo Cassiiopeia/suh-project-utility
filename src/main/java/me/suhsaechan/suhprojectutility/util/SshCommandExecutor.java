@@ -102,8 +102,10 @@ public class SshCommandExecutor {
     // (중요) docker 등 명령어를 찾기 위해 bash -c 에서 PATH 설정
     //   export PATH=$PATH:/usr/local/bin && <원래 command>
     //   예) "echo \"PW\" | sudo -S bash -c 'export PATH=$PATH:/usr/local/bin && /volume1/.../docker_info.sh ...'"
+    // bash -c 부분을 \"...\" 로 감싸서 내부에서 단일 따옴표(')가 포함된 명령도 안전하게 실행되도록 수정
+    //  ex) docker ps -a --format \"{{.Names}}|{{.Status}}\"
     String wrappedCommand = String.format(
-        "echo \"%s\" | sudo -S bash -c 'export PATH=$PATH:/usr/local/bin && %s'",
+        "echo \"%s\" | sudo -S bash -c \"export PATH=$PATH:/usr/local/bin && %s\"",
         sudoPassword, command
     );
 
