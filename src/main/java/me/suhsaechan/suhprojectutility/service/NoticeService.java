@@ -3,11 +3,21 @@ package me.suhsaechan.suhprojectutility.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.suhprojectutility.config.UserAuthority;
+import me.suhsaechan.suhprojectutility.object.postgres.NoticeComment;
 import me.suhsaechan.suhprojectutility.object.postgres.SuhProjectUtilityNotice;
+import me.suhsaechan.suhprojectutility.object.request.NoticeCommentRequest;
 import me.suhsaechan.suhprojectutility.object.request.NoticeRequest;
+import me.suhsaechan.suhprojectutility.object.request.NoticeRequest.NoticeRequestType;
+import me.suhsaechan.suhprojectutility.object.response.NoticeCommentResponse;
 import me.suhsaechan.suhprojectutility.object.response.NoticeResponse;
+import me.suhsaechan.suhprojectutility.repository.NoticeCommentRepository;
 import me.suhsaechan.suhprojectutility.repository.SuhProjectUtilityNoticeRepository;
 import me.suhsaechan.suhprojectutility.util.exception.CustomException;
 import me.suhsaechan.suhprojectutility.util.exception.ErrorCode;
@@ -20,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
   
   private final SuhProjectUtilityNoticeRepository noticeRepository;
+  private final NoticeCommentRepository commentRepository;
+  private final UserAuthority userAuthority;
   
   /**
    * 활성화된 공지사항 목록 조회
@@ -28,7 +40,11 @@ public class NoticeService {
   public NoticeResponse getActiveNotices() {
     log.info("활성화된 공지사항 목록 조회");
     List<SuhProjectUtilityNotice> notices = noticeRepository.findActiveNotices(LocalDateTime.now());
-    return NoticeResponse.ofList(notices, (long) notices.size());
+    return NoticeResponse.builder()
+        .notices(notices)
+        .totalCount((long) notices.size())
+        .success(true)
+        .build();
   }
   
   /**
@@ -39,7 +55,11 @@ public class NoticeService {
     log.info("중요 공지사항 목록 조회");
     List<SuhProjectUtilityNotice> notices = 
         noticeRepository.findByIsImportantTrueAndIsActiveTrueOrderByCreatedDateDesc();
-    return NoticeResponse.ofList(notices, (long) notices.size());
+    return NoticeResponse.builder()
+        .notices(notices)
+        .totalCount((long) notices.size())
+        .success(true)
+        .build();
   }
   
   /**
@@ -49,7 +69,11 @@ public class NoticeService {
   public NoticeResponse getAllNotices() {
     log.info("모든 공지사항 목록 조회");
     List<SuhProjectUtilityNotice> notices = noticeRepository.findAll();
-    return NoticeResponse.ofList(notices, (long) notices.size());
+    return NoticeResponse.builder()
+        .notices(notices)
+        .totalCount((long) notices.size())
+        .success(true)
+        .build();
   }
   
   /**
@@ -59,13 +83,25 @@ public class NoticeService {
   public NoticeResponse getNoticeDetail(UUID noticeId) {
     log.info("공지사항 상세 조회: {}", noticeId);
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOTICE_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     // 조회수 증가
     notice.incrementViewCount();
     noticeRepository.save(notice);
     
-    return NoticeResponse.ofSingle(notice);
+    return NoticeResponse.builder()
+        .noticeId(notice.getNoticeId())
+        .title(notice.getTitle())
+        .content(notice.getContent())
+        .author(notice.getAuthor())
+        .createdDate(notice.getCreatedDate())
+        .startDate(notice.getStartDate())
+        .endDate(notice.getEndDate())
+        .isImportant(notice.getIsImportant())
+        .isActive(notice.getIsActive())
+        .viewCount(notice.getViewCount())
+        .success(true)
+        .build();
   }
   
   /**
@@ -84,7 +120,11 @@ public class NoticeService {
       throw new CustomException(ErrorCode.INVALID_PARAMETER);
     }
     
-    return NoticeResponse.ofList(notices, (long) notices.size());
+    return NoticeResponse.builder()
+        .notices(notices)
+        .totalCount((long) notices.size())
+        .success(true)
+        .build();
   }
   
   /**
@@ -109,7 +149,9 @@ public class NoticeService {
         .build();
     
     noticeRepository.save(notice);
-    return NoticeResponse.ofSuccess("공지사항이 등록되었습니다.");
+    return NoticeResponse.builder()
+        .success(true)
+        .build();
   }
   
   /**
@@ -123,7 +165,7 @@ public class NoticeService {
     validateNoticeRequest(request);
     
     SuhProjectUtilityNotice notice = noticeRepository.findById(request.getNoticeId())
-        .orElseThrow(() -> new CustomException(ErrorCode.NOTICE_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     notice.setTitle(request.getTitle());
     notice.setContent(request.getContent());
@@ -134,7 +176,9 @@ public class NoticeService {
     notice.setAuthor(request.getAuthor());
     
     noticeRepository.save(notice);
-    return NoticeResponse.ofSuccess("공지사항이 수정되었습니다.");
+    return NoticeResponse.builder()
+        .success(true)
+        .build();
   }
   
   /**
@@ -145,10 +189,12 @@ public class NoticeService {
     log.info("공지사항 삭제: {}", noticeId);
     
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOTICE_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     noticeRepository.delete(notice);
-    return NoticeResponse.ofSuccess("공지사항이 삭제되었습니다.");
+    return NoticeResponse.builder()
+        .success(true)
+        .build();
   }
   
   /**
@@ -159,13 +205,14 @@ public class NoticeService {
     log.info("공지사항 활성화/비활성화: {}", noticeId);
     
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOTICE_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     notice.setIsActive(!notice.getIsActive());
     noticeRepository.save(notice);
     
-    String message = notice.getIsActive() ? "공지사항이 활성화되었습니다." : "공지사항이 비활성화되었습니다.";
-    return NoticeResponse.ofSuccess(message);
+    return NoticeResponse.builder()
+        .success(true)
+        .build();
   }
   
   /**

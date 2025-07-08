@@ -8,6 +8,7 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.suhprojectutility.config.ServerInfo;
+import me.suhsaechan.suhprojectutility.config.UserAuthority;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -17,6 +18,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
   private final AESUtil aesUtil;
   private final ServerInfo serverInfo;
+  private final UserAuthority userAuthority;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -38,6 +40,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     // 세션에 저장
     HttpSession session = request.getSession(true);
     session.setAttribute(ServerInfo.CLIENT_HASH_SESSION_KEY, clientHash);
+    
+    // IP 저장
+    userAuthority.saveUserIp(request, session);
+    
+    // 슈퍼관리자 권한 확인
+    String username = authentication.getName();
+    String password = request.getParameter("password");
+    userAuthority.checkAndSetSuperAdmin(username, password, session);
+    
     log.debug("로그인 성공: clientHash 세션 저장 - {}", clientHash);
 
     // 성공 후 리다이렉트

@@ -6,6 +6,7 @@ import java.util.UUID;
 import me.suhsaechan.suhprojectutility.object.postgres.SuhProjectUtilityNotice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,8 +20,8 @@ public interface SuhProjectUtilityNoticeRepository extends JpaRepository<SuhProj
          "AND (n.startDate IS NULL OR n.startDate <= :now) " +
          "AND (n.endDate IS NULL OR n.endDate >= :now) " +
          "ORDER BY n.isImportant DESC, n.createdDate DESC")
-  List<SuhProjectUtilityNotice> findActiveNotices(LocalDateTime now);
-  
+  List<SuhProjectUtilityNotice> findActiveNotices(@Param("now") LocalDateTime now);
+
   /**
    * 중요 공지사항 목록 조회
    */
@@ -35,4 +36,4 @@ public interface SuhProjectUtilityNoticeRepository extends JpaRepository<SuhProj
    * 내용으로 공지사항 검색
    */
   List<SuhProjectUtilityNotice> findByContentContainingOrderByCreatedDateDesc(String content);
-} 
+}

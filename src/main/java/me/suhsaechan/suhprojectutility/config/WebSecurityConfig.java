@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.suhprojectutility.util.security.AESUtil;
 import me.suhsaechan.suhprojectutility.util.security.CustomAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +20,18 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  */
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class WebSecurityConfig {
 
   private final PublicEndpointConfig publicEndpointConfig;
   private final ServerInfo serverInfo;
   private final AESUtil aesUtil;
+  private final UserAuthority userAuthority;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    log.info("설정 - SecurityFilterChain 초기화");
+
     // 공개 API , 리소스 경로
     List<String> publicApiEndpoints = publicEndpointConfig.getPublicApiEndpoints();
     List<String> publicResourceEndpoints = publicEndpointConfig.getPublicResourceEndpoints();
@@ -72,7 +77,7 @@ public class WebSecurityConfig {
             .loginProcessingUrl("/login")
             // 로그인 성공시 이동할 페이지
 //            .defaultSuccessUrl("/dashboard", true)
-            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil,serverInfo))
+            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil, serverInfo, userAuthority))
             // 로그인 실패시 이동할 페이지
             .failureUrl("/login?error=true")
             .permitAll()

@@ -124,6 +124,31 @@
       </div>
       <div class="ui divider"></div>
       <div class="ui basic segment" id="detail-content"></div>
+      
+      <!-- 댓글 섹션 추가 -->
+      <div class="ui divider"></div>
+      <h4 class="ui header"><i class="comments icon"></i>댓글</h4>
+      
+      <!-- 댓글 목록 -->
+      <div class="ui comments" id="comment-list">
+        <div id="comments-loading" class="ui active centered inline loader"></div>
+        <div id="no-comments-message" class="ui info message hide">
+          <p>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
+        </div>
+      </div>
+      
+      <!-- 댓글 작성 폼 -->
+      <form class="ui reply form" id="comment-form">
+        <div class="field">
+          <input type="text" id="comment-author" placeholder="이름을 입력하세요">
+        </div>
+        <div class="field">
+          <textarea id="comment-content" placeholder="댓글을 입력하세요"></textarea>
+        </div>
+        <button type="button" id="comment-submit" class="ui blue labeled submit icon button">
+          <i class="icon edit"></i> 댓글 작성
+        </button>
+      </form>
     </div>
     <div class="actions">
       <div class="ui blue button" id="edit-btn">
@@ -389,6 +414,13 @@
       // 버튼 상태 업데이트
       $('#toggle-active-btn').html(`<i class="power off icon"></i> ${notice.isActive ? '비활성화' : '활성화'}`);
       
+      // 댓글 목록 불러오기
+      loadComments(notice.noticeId);
+      
+      // 댓글 폼 초기화
+      $('#comment-author').val('');
+      $('#comment-content').val('');
+      
       $('#notice-detail-modal').modal({
         centered: false,
         closable: true
@@ -499,6 +531,122 @@
     function formatDateTimeForInput(dateTimeStr) {
       const date = new Date(dateTimeStr);
       return date.toISOString().slice(0, 16);
+    }
+    
+    // 댓글 목록 로드 함수
+    function loadComments(noticeId) {
+      $('#comments-loading').show();
+      $('#comment-list .comment').remove();
+      $('#no-comments-message').addClass('hide');
+      
+      // 댓글 로드 요청
+      sendFormRequest(
+        '/api/notice/comment/list',
+        { noticeId: noticeId },
+        function(comments) {
+          $('#comments-loading').hide();
+          
+          if (comments && comments.length > 0) {
+            // 댓글 목록 표시
+            comments.forEach(function(comment) {
+              const commentHtml = createCommentHtml(comment);
+              $('#comment-list').append(commentHtml);
+            });
+            
+            // 댓글 삭제 버튼 이벤트 연결
+            $('.delete-comment-btn').click(function() {
+              const commentId = $(this).data('id');
+              if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+                deleteComment(commentId);
+              }
+            });
+          } else {
+            // 댓글이 없는 경우
+            $('#no-comments-message').removeClass('hide');
+          }
+        },
+        function(xhr, status, error) {
+          $('#comments-loading').hide();
+          console.error('댓글 로드 오류:', error);
+          $('#no-comments-message').removeClass('hide')
+            .addClass('negative')
+            .html('<div class="header">댓글 로드 실패</div><p>댓글을 불러오는 중 오류가 발생했습니다.</p>');
+        }
+      );
+    }
+    
+    // 댓글 HTML 생성 함수
+    function createCommentHtml(comment) {
+      const date = new Date(comment.createdAt).toLocaleString();
+      const deleteButton = `<button class="ui mini red right floated button delete-comment-btn" data-id="${comment.id}">
+        <i class="trash icon"></i> 삭제
+      </button>`;
+      
+      return `
+        <div class="comment">
+          <div class="content">
+            <div class="author">${comment.authorName} <span class="ip">(${comment.anonymizedIpAddress})</span></div>
+            <div class="metadata">
+              <div class="date">${date}</div>
+            </div>
+            <div class="text">${comment.content}</div>
+            <div class="actions">
+              ${deleteButton}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // 댓글 작성 이벤트
+    $('#comment-submit').click(function() {
+      const noticeId = $('#detail-title').data('id');
+      const authorName = $('#comment-author').val() || '익명';
+      const content = $('#comment-content').val();
+      
+      if (!content) {
+        alert('댓글 내용을 입력해주세요.');
+        return;
+      }
+      
+      // 댓글 등록 요청
+      sendFormRequest(
+        '/api/notice/comment/create',
+        {
+          noticeId: noticeId,
+          authorName: authorName,
+          content: content
+        },
+        function(response) {
+          if (response) {
+            // 댓글 작성 성공
+            $('#comment-content').val('');
+            loadComments(noticeId); // 댓글 목록 새로고침
+          } else {
+            alert('댓글 등록 실패');
+          }
+        },
+        function(xhr, status, error) {
+          alert('댓글 등록 오류: ' + error);
+        }
+      );
+    });
+    
+    // 댓글 삭제 함수
+    function deleteComment(commentId) {
+      const noticeId = $('#detail-title').data('id');
+      
+      // 댓글 삭제 요청
+      sendFormRequest(
+        '/api/notice/comment/delete',
+        { noticeId: commentId }, // 댓글 ID를 noticeId 파라미터로 전달 (컨트롤러에서는 NoticeCommentRequest의 noticeId로 받음)
+        function() {
+          loadComments(noticeId); // 댓글 목록 새로고침
+        },
+        function(xhr, status, error) {
+          alert('댓글 삭제 오류: ' + error);
+        }
+      );
     }
   });
 </script>
