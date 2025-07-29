@@ -1,0 +1,163 @@
+# 공통 설정 (모든 환경에서 공통으로 사용)
+spring:
+  profiles:
+    active: dev  # 기본 활성 프로파일 (실행 시 변경 가능)
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+        open-in-view: false
+        use_sql_comments: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 1000MB
+      file-size-threshold: 10MB
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  thymeleaf:
+    cache: false
+
+server:
+  servlet:
+    session:
+      timeout: 12h
+
+springdoc:
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /docs/swagger
+
+ssh:
+  host: suh-project.synology.me
+  port: 2022
+  username: "kimchi"
+  password: "Kimchi123@"
+  docker-pg-control-path: "/volume1/projects/suh-project/script"
+
+selenium:
+  grid-url: http://selenium-chrome:4444/wd/hub
+
+aes:
+  secret-key: "Ab3kL9sDfG2qWZxC1vR7eM0nP5oQ2rTA"
+  iv: "Xy7eQ2Lp9tR5Fd3S"
+
+login:
+  id: kimchi
+  password: Kimchi123@
+
+# 슈퍼 관리자 설정
+admin:
+  super:
+    username: chan4760
+    password: Tjtocks178@
+    roles: SUPER_ADMIN
+
+suhapilog:
+  enable: true
+  github:
+    base-url: https://github.com/Cassiiopeia/suh-project-utility/issues
+
+smb:
+  host: suh-project.synology.me
+  port: 44445
+  username: kimchi
+  password: Kimchi123@
+  root-dir: web
+  dir: romrom/images
+
+ftp:
+  host: suh-project.synology.me
+  port: 21
+  username: kimchi
+  password: Kimchi123@
+  root-dir: projects
+  dir: romrom/images
+
+# Vertex AI 설정
+vertex:
+  ai:
+    project-id: gen-lang-client-0511951522
+    api-key: AIzaSyC-w_XhpKjd67fWlMaQL9tLQa_-oTuEGBM
+    credentials-file: gen-lang-client-0511951522-e0dc1d68cbcb.json
+    location: asia-northeast3
+    model: text-embedding-005
+    dimension: 384
+
+---
+# dev 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/suh_project_utility
+    username: postgres
+    password: "\\\\"  # 필요한 비밀번호로 교체하세요.
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: admin
+      connection-pool-size: 10
+      connection-minimum-size: 5
+      wait-time: 5
+      lease-time: 2
+
+logging:
+  level:
+    me:
+      suhsaechan:
+        suhprojectutility: DEBUG
+    org:
+      springframework.web.servlet.DispatcherServlet: INFO
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor: TRACE
+
+---
+# prod 환경 설정
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://suh-project.synology.me:5430/suh_project_utility
+    username: kimchi
+    password: Kimchi123@
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: suh-project.synology.me
+      port: 6379
+      password: Kimchi123@
+      connection-pool-size: 10
+      connection-minimum-size: 5
+      wait-time: 5
+      lease-time: 2
+
+logging:
+  level:
+    me:
+      suhsaechan:
+        suhprojectutility: INFO
+    org:
+      springframework.web.servlet.DispatcherServlet: INFO
+      hibernate:
+        SQL: INFO
+        type:
+          descriptor: INFO
+
+springdoc:
+  swagger-ui:
+    enabled: false

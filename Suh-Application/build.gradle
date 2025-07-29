@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+dependencies {
+    // 공통 모듈 의존성
+    implementation project(':Suh-Common')
+    
+    // 도메인 모듈들 - 복합 비즈니스 로직을 위해 필요한 모듈들 조합
+    implementation project(':Suh-Domain-Docker')
+    implementation project(':Suh-Domain-Github')
+    implementation project(':Suh-Module-Translate')
+    implementation project(':Suh-Domain-Notice')
+    implementation project(':Suh-Domain-Module')
+} 

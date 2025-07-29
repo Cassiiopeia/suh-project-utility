@@ -1,1 +1,10 @@
 rootProject.name = 'suh-project-utility'
+
+include 'Suh-Common'
+include 'Suh-Domain-Docker'
+include 'Suh-Domain-Github'
+include 'Suh-Module-Translate'
+include 'Suh-Domain-Notice'
+include 'Suh-Domain-Module'
+include 'Suh-Application'
+include 'Suh-Web'
