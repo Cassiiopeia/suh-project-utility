@@ -64,6 +64,19 @@ Thumbs.db
 
 ### Develop Application Yml ###
 /src/main/resources/application.yml
+**/src/main/resources/application.yml
+**/src/main/resources/application-*.yml
+**/src/main/resources/application-*.properties
 
 ### Credentials ###
 /src/main/resources/gen-lang-client-0511951522-e0dc1d68cbcb.json
+**/src/main/resources/*.json
+**/*.env
+**/.env
+**/*-key.json
+**/*-credentials.json
+
+### Security Files ###
+**/application-secret.yml
+**/application-prod.yml
+**/application-local.yml

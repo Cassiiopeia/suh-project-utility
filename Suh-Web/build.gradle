@@ -1,0 +1,20 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencies {
+    // 공통 모듈
+    implementation project(':Suh-Common')
+    
+    // 복합 비즈니스 로직 모듈
+    implementation project(':Suh-Application')
+    
+    // 개별 도메인 모듈들 (필요한 경우에만)
+    implementation project(':Suh-Domain-Docker')
+    implementation project(':Suh-Domain-Github')
+    implementation project(':Suh-Module-Translate')
+    implementation project(':Suh-Domain-Notice')
+    implementation project(':Suh-Domain-Module')
+}
