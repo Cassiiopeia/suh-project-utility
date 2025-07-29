@@ -1,113 +1,57 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.2'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.4.2' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
 }
 
-group = 'me.suhsaechan'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+allprojects {
+    group = 'me.suhsaechan'
+    version = '0.0.1-SNAPSHOT'
+    
+    repositories {
+        mavenCentral()
+        // Suh-Nexus 추가
+        maven {
+            url "http://suh-project.synology.me:9999/repository/maven-releases/"
+            allowInsecureProtocol = true
+        }
     }
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+    
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+    
+    dependencies {
+        // 모든 모듈 공통 기본 의존성
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+        
+        // 테스트 관련 기본 의존성
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.security:spring-security-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+    
+    tasks.named('test') {
+        useJUnitPlatform()
     }
 }
 
-repositories {
-    mavenCentral()
-    // Suh-Nexus 추가
-    maven {
-        url "http://suh-project.synology.me:9999/repository/maven-releases/"
-        allowInsecureProtocol = true
-    }
-}
 
-dependencies {
-    // Spring Boot Starters
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
-
-    // security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
-
-    // cache
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-
-    // PostgreSQL
-    runtimeOnly 'org.postgresql:postgresql'
-
-    // Redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.redisson:redisson-spring-boot-starter:3.20.0'
-
-    // lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-
-    // Development tools
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-    // Test dependencies
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // swagger
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
-
-    // Commons IO
-    implementation 'commons-io:commons-io:2.8.0'
-
-    // log4jdbc
-    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
-
-    // jsoup
-    implementation 'org.jsoup:jsoup:1.15.4'
-
-    // Http
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-
-    // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    // JavaNetCookieJar
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.3'
-    // HttpLoggingInterceptor
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
-
-    // Selenium
-    implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
-    implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
-    implementation 'org.seleniumhq.selenium:selenium-devtools-v133:4.29.0'
-
-    // Spring Boot DevTools
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-    // OpenAPI 사용
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-
-    // SSH
-    implementation 'com.jcraft:jsch:0.1.55'
-
-    // Suh Libraries 
-    implementation "me.suhsaechan:suh-random-engine:1.1.0"
-    implementation "me.suhsaechan:suh-logger:1.0.7"
-    implementation "me.suhsaechan:suh-api-log:1.0.3"
-
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
