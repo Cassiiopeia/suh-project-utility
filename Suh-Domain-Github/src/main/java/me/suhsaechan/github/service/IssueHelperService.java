@@ -15,6 +15,7 @@ import okhttp3.Response;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.github.entity.GithubRepository;
+import me.suhsaechan.github.repository.GithubRepositoryRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class IssueHelperService {
   private final OkHttpClient okHttpClient;
 
   private final GithubService githubService;
+  private final GithubRepositoryRepository githubRepositoryRepository;
 
   // 기본 commit type (필요시 확장 가능)
   private static final String DEFAULT_COMMIT_TYPE = "feat";
@@ -262,8 +264,8 @@ public class IssueHelperService {
       log.error("GitHub 레포지토리 이름을 추출할 수 없습니다: {}", repositoryFullName);
       throw new CustomException(ErrorCode.GITHUB_ISSUE_URL_INVALID);
     }
-    
-    GithubRepository githubRepository = githubService.githubRepositoryRepository.findByFullName(repositoryFullName);
+
+    GithubRepository githubRepository = githubRepositoryRepository.findByFullName(repositoryFullName); // 요렇게
     
     // 존재하지 않는 레포지토리인 경우
     if (githubRepository == null) {
