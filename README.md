@@ -7,4 +7,4 @@
 [전체 버전 기록 보기](CHANGELOG.md)
 
 ## 문서
-- [GitHub PR 코멘트 자동화 가이드](docs/pr_comment_workflow.md) - PR 생성 시 브랜치/커밋 가이드 자동 댓글 기능
+- [GitHub 이슈 코멘트 자동화 가이드](docs/issue_comment_workflow.md) - 이슈 생성 시 브랜치/커밋 가이드 자동 댓글 기능
