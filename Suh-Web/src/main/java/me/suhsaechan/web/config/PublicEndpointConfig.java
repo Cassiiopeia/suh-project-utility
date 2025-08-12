@@ -16,7 +16,8 @@ public class PublicEndpointConfig {
   public List<String> getPublicApiEndpoints() {
     return Arrays.asList(
         "/api/translate",   // 번역
-        "/api/status"       // 상태 확인
+        "/api/status",      // 상태 확인
+        "/api/issue-helper/create/commmit-branch/github-workflow"  // GitHub PR 자동 코멘트 엔드포인트
     );
   }
 

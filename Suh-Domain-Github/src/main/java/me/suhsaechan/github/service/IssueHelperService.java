@@ -211,8 +211,9 @@ public class IssueHelperService {
     // 시작 주석 추가
     markdown.append("<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->\n\n");
     
-    markdown.append("## 🛠️ 브랜치/커밋 가이드\n\n");
-    
+    markdown.append("Guide by SUH-LAB\n");
+    markdown.append("---\n\n");
+
     markdown.append("### 브랜치\n");
     markdown.append("```\n");
     markdown.append(branchName);
