@@ -33,7 +33,11 @@ public class GithubService {
       String commitMessage, String repositoryFullName) {
 
     // clientHash -> clientIp
-    String clientIp = aesUtil.decrypt(request.getClientHash());
+    String clientHash = request.getClientHash();
+    String clientIp = (clientHash == null || clientHash.isBlank())
+        ? "GITHUB_WORKFLOW"
+        : aesUtil.decrypt(clientHash);
+        
     log.info("Client IP: {}", clientIp);
 
     String issueUrl = request.getIssueUrl().trim();
