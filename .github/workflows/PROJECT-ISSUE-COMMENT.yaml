@@ -40,11 +40,12 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Debug API Response (safe)
-        shell: bash
+        env:
+          API_STATUS: ${{ steps.api-call.outputs.status }}
+          API_BODY: ${{ steps.api-call.outputs.body }}
         run: |
-          echo "API Status: ${{ steps.api-call.outputs.status }}"
-          echo "API Response Body (raw):"
-          echo "${{ steps.api-call.outputs.body }}"
+          printf 'API Status: %s\n' "$API_STATUS"
+          printf 'API Response Body (raw):\n%s\n' "$API_BODY"
 
       - name: Check API response
         id: check-response
