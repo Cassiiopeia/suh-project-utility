@@ -1,0 +1,57 @@
+name: PPROJECT-PR-COMMENT
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  add-comment:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Get PR information
+        id: pr-info
+        run: |
+          echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
+      
+      - name: Call Suh Project Utility API
+        id: api-call
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://lab.suhsaechan.me/api/issue-helper/create/commmit-branch/github-workflow'
+          method: 'POST'
+          contentType: 'multipart/form-data'
+          customHeaders: '{"Accept": "application/json"}'
+          data: |
+            {
+              "issueUrl": "${{ env.PR_URL }}"
+            }
+            
+      - name: Check API response
+        id: check-response
+        run: |
+          if [ "${{ steps.api-call.outputs.status }}" == "200" ]; then
+            echo "API call successful"
+            echo "COMMENT_BODY=$(echo '${{ steps.api-call.outputs.response }}' | jq -r '.commentMarkdown')" >> $GITHUB_ENV
+          else
+            echo "API call failed with status ${{ steps.api-call.outputs.status }}"
+            echo "COMMENT_BODY=API 호출에 실패했습니다. 레포지토리가 허용 목록에 있는지 확인하세요." >> $GITHUB_ENV
+          fi
+      
+      - name: Add comment to PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const commentBody = process.env.COMMENT_BODY;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody
+            });
