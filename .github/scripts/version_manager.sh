@@ -82,7 +82,7 @@ read_version_config() {
     echo "현재 버전: $CURRENT_VERSION"
 }
 
-# 버전 비교 함수 (v1 > v2이면 1 반환, v1 < v2이면 -1 반환, 같으면 0 반환)
+# 버전 비교 함수 (반환코드: 0 = 같음, 1 = v1>v2, 2 = v1<v2)
 compare_versions() {
     local v1=$1
     local v2=$2
@@ -93,17 +93,19 @@ compare_versions() {
     
     # 각 부분을 비교
     for i in 0 1 2; do
-        if [ "${v1_parts[$i]}" -gt "${v2_parts[$i]}" ]; then
+        local a=${v1_parts[$i]:-0}
+        local b=${v2_parts[$i]:-0}
+        if [ "$a" -gt "$b" ]; then
             return 1  # v1이 더 큼
-        elif [ "${v1_parts[$i]}" -lt "${v2_parts[$i]}" ]; then
-            return -1  # v2가 더 큼
+        elif [ "$a" -lt "$b" ]; then
+            return 2  # v2가 더 큼
         fi
     done
     
     return 0  # 동일함
 }
 
-# 두 버전 중 높은 버전 반환
+# 두 버전 중 높은 버전 반환 (같거나 v1이 크면 v1, v2가 크면 v2)
 get_higher_version() {
     local v1=$1
     local v2=$2
@@ -111,11 +113,10 @@ get_higher_version() {
     compare_versions "$v1" "$v2"
     result=$?
     
-    if [ $result -eq 1 ] || [ $result -eq 0 ]; then
-        echo "$v1"  # v1이 더 높거나 같음
-    else
-        echo "$v2"  # v2가 더 높음
-    fi
+    case "$result" in
+        0|1) echo "$v1" ;;  # v1이 더 높거나 같음
+        2)   echo "$v2" ;;  # v2가 더 높음
+    esac
 }
 
 # 실제 프로젝트 파일에서 버전 추출
@@ -347,9 +348,13 @@ update_project_file() {
 
     case "$PROJECT_TYPE" in
         "spring")
-            # build.gradle 업데이트
-            sed -i.bak "s/version = '.*'/version = '$new_version'/" "$VERSION_FILE"
-            rm -f "${VERSION_FILE}.bak"
+            # 모든 모듈의 build.gradle 업데이트 (루트 포함)
+            mapfile -t GRADLE_FILES < <(find . -maxdepth 2 -name build.gradle -type f)
+            for f in "${GRADLE_FILES[@]}"; do
+                sed -i.bak "s/version = '.*'/version = '$new_version'/" "$f" || true
+                sed -i.bak "s/version = \".*\"/version = \"$new_version\"/" "$f" || true
+                rm -f "$f.bak"
+            done
             ;;
         "flutter")
             # pubspec.yaml 업데이트 (x.x.x 형식 버전 업데이트)
@@ -424,6 +429,8 @@ main() {
             
             # 프로젝트 파일과 version.yml 모두 업데이트
             update_project_file "$new_version"
+            # 최종 확인용 출력 (CI 로그 수집)
+            echo "UPDATED_VERSION=$new_version"
             echo_success "버전 업데이트 완료: $new_version"
             echo "$new_version"
             ;;

@@ -140,7 +140,7 @@ jobs:
           # 파일들 스테이징
           if [ -n "$CHANGED_FILES" ]; then
             git add $CHANGED_FILES
-            
+          
             # 변경사항이 있는지 확인
             if git diff --staged --quiet; then
               echo "📝 변경사항이 없습니다."
@@ -148,7 +148,7 @@ jobs:
               # 커밋 메시지 생성
               REPO_NAME=$(basename "${{ github.repository }}")
               COMMIT_MSG="$REPO_NAME 버전 정보 관리 : chore: 버전 ${{ steps.version.outputs.new_version }} [skip ci]"
-              
+          
               git commit -m "$COMMIT_MSG" || exit 0
               git push
               echo "✅ 버전 업데이트 커밋 완료"
