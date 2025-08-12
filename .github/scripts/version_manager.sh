@@ -119,6 +119,27 @@ get_higher_version() {
     esac
 }
 
+# 프로젝트 파일의 실제 버전만 감지 (정책 적용 전, 원본값)
+detect_project_version() {
+    local project_version="$CURRENT_VERSION"
+
+    case "$PROJECT_TYPE" in
+        "spring")
+            if [ -f "$VERSION_FILE" ]; then
+                # 들여쓰기/공백/따옴표 모두 허용하여 version = 'x.y.z' 또는 "x.y.z" 추출
+                project_version=$(sed -nE "s/^[[:space:]]*version[[:space:]]*=[[:space:]]*['\"]([0-9]+\.[0-9]+\.[0-9]+)['\"][[:space:]]*.*/\1/p" "$VERSION_FILE" | head -1)
+                [ -z "$project_version" ] && project_version="$CURRENT_VERSION"
+            fi
+            ;;
+        *)
+            # 다른 타입은 기존 로직 유지(필요 시 확장)
+            project_version="$CURRENT_VERSION"
+            ;;
+    esac
+
+    echo "$project_version"
+}
+
 # 실제 프로젝트 파일에서 버전 추출
 get_version_from_project_file() {
     if [ "$PROJECT_TYPE" = "basic" ]; then
@@ -417,7 +438,17 @@ main() {
             echo "$version"
             ;;
         "increment")
-            # 실제 프로젝트 파일에서 현재 버전 가져오기
+            # 스프링: 최초 1회 version.yml을 프로젝트 버전으로 동기화 (선택 B)
+            if [ "$PROJECT_TYPE" = "spring" ]; then
+                local pv=$(detect_project_version)
+                if [ -n "$pv" ] && [ "$pv" != "$CURRENT_VERSION" ]; then
+                    echo_info "초기 동기화: version.yml → $pv (build.gradle 기준)"
+                    update_version_yml "$pv"
+                    CURRENT_VERSION="$pv"
+                fi
+            fi
+
+            # 실제 프로젝트 파일에서 현재 버전 가져오기 (정책 유지: 높은 버전 선택)
             local current_version=$(get_version_from_project_file)
             if ! validate_version "$current_version"; then
                 echo_error "잘못된 버전 형식: $current_version"
