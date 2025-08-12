@@ -51,5 +51,5 @@ public class GithubRepository extends BasePostgresEntity {
 
   // 허용된 저장소 여부(자동 Gihtub Workflow 화이트리스트 관리용)
   @Column(nullable = false)
-  private Boolean allowed;
+  private Boolean isGithubWorkflowResponseAllowed;
 }

@@ -4,7 +4,7 @@ FROM openjdk:17-jdk-slim
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 빌드된 JAR 파일을 복사 (Suh-Web bootJar 산출물 고정 파일명)
+# 빌드된 JAR 파일을 복사 (Suh-Web bootJar 고정 파일명)
 COPY Suh-Web/build/libs/app.jar app.jar
 
 # 환경 변수 설정 (서울)

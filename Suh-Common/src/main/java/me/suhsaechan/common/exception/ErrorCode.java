@@ -34,7 +34,14 @@ public enum ErrorCode {
   NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
   COMMENT_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "댓글 생성에 실패했습니다."),
   COMMENT_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "댓글 삭제에 실패했습니다."),
-  COMMENT_NO_PERMISSION(HttpStatus.FORBIDDEN, "댓글 삭제 권한이 없습니다.");
+  COMMENT_NO_PERMISSION(HttpStatus.FORBIDDEN, "댓글 삭제 권한이 없습니다."),
+  
+  // GITHUB
+  GITHUB_REPOSITORY_NOT_FOUND(HttpStatus.NOT_FOUND, "GitHub 레포지토리를 찾을 수 없습니다."),
+  GITHUB_REPOSITORY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "GitHub 레포지토리 접근이 거부되었습니다."),
+  GITHUB_ISSUE_URL_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 GitHub 이슈 URL입니다."),
+  GITHUB_ISSUE_NOT_FOUND(HttpStatus.NOT_FOUND, "GitHub 이슈를 찾을 수 없습니다."),
+  GITHUB_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GitHub API 호출 중 오류가 발생했습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

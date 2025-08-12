@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GithubService {
 
   private final GithubIssueHelperRepository issueHelperRepository;
-  private final GithubRepositoryRepository repositoryRepository;
+  public final GithubRepositoryRepository githubRepositoryRepository;
   private final AESUtil aesUtil;
 
   /**
@@ -51,21 +51,24 @@ public class GithubService {
         })
         .orElseGet(() -> {
           // 기존 이슈가 없는경우 -> 새로 생성
-          GithubRepository githubRepository = repositoryRepository.findByFullName(repositoryFullName);
+          GithubRepository githubRepository = githubRepositoryRepository.findByFullName(repositoryFullName);
           if (githubRepository == null) {
+            // 웹 UI에서 처음 호출된 경우 자동으로 레포지토리를 등록하고 허용 상태로 설정
+            log.info("새 레포지토리 등록: {} (웹 UI에서 첫 요청이므로 자동 허용)", repositoryFullName);
             githubRepository = GithubRepository.builder()
                 .fullName(repositoryFullName)
                 .starCount(0L)
                 .forkCount(0L)
                 .watcherCount(0L)
                 .description(null)
-                .allowed(Boolean.TRUE)
+                .isGithubWorkflowResponseAllowed(Boolean.TRUE) // 웹 UI에서의 첫 호출은 자동으로 허용
                 .build();
-            githubRepository = repositoryRepository.save(githubRepository);
+            githubRepository = githubRepositoryRepository.save(githubRepository);
           }
 
-          // 허용되지 않은 저장소인 경우 접근 차단
-          if (githubRepository.getAllowed() != null && !githubRepository.getAllowed()) {
+          // 웹 UI에서 호출 시에도, 명시적으로 차단된 저장소는 사용 불가
+          if (githubRepository.getIsGithubWorkflowResponseAllowed() != null && !githubRepository.getIsGithubWorkflowResponseAllowed()) {
+            log.warn("차단된 레포지토리에 대한 접근 시도: {}", repositoryFullName);
             throw new CustomException(ErrorCode.ACCESS_DENIED);
           }
 

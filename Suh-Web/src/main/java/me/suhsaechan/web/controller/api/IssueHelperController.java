@@ -34,7 +34,7 @@ public class IssueHelperController {
   @PostMapping(value = "/create/commmit-branch/github-workflow", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<IssueHelperResponse> createIssueCommmitBranchByGithubWorkflow(
       @ModelAttribute IssueHelperRequest request) {
-      IssueHelperResponse response = issueHelperService.createIssueCommmitBranch(request);
+      IssueHelperResponse response = issueHelperService.createIssueCommitBranchByGithubWorkflow(request);
       return ResponseEntity.ok(response);
   }
 }
