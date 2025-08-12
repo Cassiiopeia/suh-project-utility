@@ -18,3 +18,8 @@ dependencies {
     implementation project(':Suh-Domain-Notice')
     implementation project(':Suh-Domain-Module')
 }
+
+// Boot JAR 산출물명을 고정하여 Dockerfile 수정 없이 재사용 가능하도록 함
+tasks.named('bootJar') {
+    archiveFileName = 'app.jar'
+}
