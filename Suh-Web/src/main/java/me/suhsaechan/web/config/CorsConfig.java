@@ -1,4 +1,4 @@
-package me.suhsaechan.common.config;
+package me.suhsaechan.web.config;
 
 import java.util.List;
 import org.springframework.context.annotation.Bean;

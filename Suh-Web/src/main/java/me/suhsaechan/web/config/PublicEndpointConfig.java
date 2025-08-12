@@ -1,4 +1,4 @@
-package me.suhsaechan.common.config;
+package me.suhsaechan.web.config;
 
 import org.springframework.stereotype.Component;
 import java.util.List;

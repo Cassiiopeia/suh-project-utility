@@ -2,7 +2,7 @@ package me.suhsaechan.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.config.UserAuthority;
+import me.suhsaechan.web.config.UserAuthority;
 import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.MediaType;

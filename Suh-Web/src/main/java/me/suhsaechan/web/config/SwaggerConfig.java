@@ -1,4 +1,4 @@
-package me.suhsaechan.common.config;
+package me.suhsaechan.web.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;

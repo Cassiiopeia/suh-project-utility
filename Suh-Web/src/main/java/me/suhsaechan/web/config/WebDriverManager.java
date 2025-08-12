@@ -1,4 +1,4 @@
-package me.suhsaechan.common.config;
+package me.suhsaechan.web.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;

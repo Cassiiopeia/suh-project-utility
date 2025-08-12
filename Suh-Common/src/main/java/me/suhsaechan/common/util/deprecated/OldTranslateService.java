@@ -1,7 +1,7 @@
 //package me.suhsaechan.common.util.deprecated;
 //
 //import lombok.extern.slf4j.Slf4j;
-//import me.suhsaechan.common.config.WebDriverManager;
+//import me.suhsaechan.web.config.WebDriverManager;
 //import me.suhsaechan.suhprojectutility.object.request.TranslationRequest;
 //import me.suhsaechan.suhprojectutility.object.response.TranslationResponse;
 //import me.suhsaechan.common.constant.CommonStatus;

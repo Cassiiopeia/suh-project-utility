@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.config.ServerInfo;
+import me.suhsaechan.web.config.ServerInfo;
 import me.suhsaechan.common.util.security.AESUtil;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

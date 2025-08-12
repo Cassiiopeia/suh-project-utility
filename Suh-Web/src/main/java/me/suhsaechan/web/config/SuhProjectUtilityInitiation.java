@@ -1,4 +1,4 @@
-package me.suhsaechan.common.config;
+package me.suhsaechan.web.config;
 
 import static me.suhsaechan.suhlogger.util.SuhLogger.superLog;
 

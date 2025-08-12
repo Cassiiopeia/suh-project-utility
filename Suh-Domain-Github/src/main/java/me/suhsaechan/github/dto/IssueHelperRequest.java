@@ -1,4 +1,4 @@
-package me.suhsaechan.github.dto.request;
+package me.suhsaechan.github.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,4 +18,7 @@ public class IssueHelperRequest {
   private String issueUrl;
 
   private String clientHash;
+
+  // GIHub 저장소 이름
+  private String githubRepositoryName;
 }

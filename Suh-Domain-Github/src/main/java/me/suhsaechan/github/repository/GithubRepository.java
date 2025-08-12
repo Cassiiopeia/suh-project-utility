@@ -1,4 +1,4 @@
-package me.suhsaechan.common.entity;
+package me.suhsaechan.github.repository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
+import me.suhsaechan.common.entity.BasePostgresEntity;
 
 @Entity
 @Getter

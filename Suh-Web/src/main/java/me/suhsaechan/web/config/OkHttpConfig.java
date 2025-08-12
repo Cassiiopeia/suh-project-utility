@@ -1,4 +1,4 @@
-package me.suhsaechan.common.config;
+package me.suhsaechan.web.config;
 
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;

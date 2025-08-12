@@ -1,4 +1,4 @@
-package me.suhsaechan.github.dto.response;
+package me.suhsaechan.github.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

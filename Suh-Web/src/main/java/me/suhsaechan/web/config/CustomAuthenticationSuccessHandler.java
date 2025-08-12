@@ -1,4 +1,4 @@
-package me.suhsaechan.common.util.security;
+package me.suhsaechan.web.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.config.ServerInfo;
-import me.suhsaechan.common.config.UserAuthority;
+import me.suhsaechan.common.util.security.AESUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -17,7 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
   private final AESUtil aesUtil;
-  private final ServerInfo serverInfo;
   private final UserAuthority userAuthority;
 
   @Override

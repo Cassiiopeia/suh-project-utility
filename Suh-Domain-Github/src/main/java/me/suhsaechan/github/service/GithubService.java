@@ -3,11 +3,12 @@ package me.suhsaechan.github.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.entity.GithubIssueHelper;
-import me.suhsaechan.common.entity.GithubRepository;
+import me.suhsaechan.github.entity.GithubIssueHelper;
+import me.suhsaechan.github.repository.GithubRepository;
 import me.suhsaechan.common.repository.GithubIssueHelperRepository;
 import me.suhsaechan.common.repository.GithubRepositoryRepository;
 import me.suhsaechan.common.util.security.AESUtil;
+import me.suhsaechan.github.dto.IssueHelperRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class GithubService {
    * 새로 생성 후 저장합니다.
    */
   @Transactional
-  public GithubIssueHelper processIssueHelper(me.suhsaechan.github.dto.request.IssueHelperRequest request, String branchName,
+  public GithubIssueHelper processIssueHelper(IssueHelperRequest request, String branchName,
       String commitMessage, String repositoryFullName) {
 
     // clientHash -> clientIp

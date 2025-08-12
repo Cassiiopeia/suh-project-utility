@@ -7,6 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.github.dto.IssueHelperRequest;
+import me.suhsaechan.github.dto.IssueHelperResponse;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,8 +32,8 @@ public class IssueHelperService {
    * GitHub 이슈 URL로부터 페이지를 읽어 <title> 태그를 파싱한 후,
    * 커스텀 규칙에 따라 브랜치명과 커밋 메시지를 생성합니다.
    */
-  public me.suhsaechan.github.dto.response.IssueHelperResponse createIssueCommmitBranch(
-      me.suhsaechan.github.dto.request.IssueHelperRequest request) {
+  public IssueHelperResponse createIssueCommmitBranch(
+      IssueHelperRequest request) {
     log.debug("이슈 도우미 요청 시작: {}", request);
 
     if (request == null || request.getIssueUrl() == null || request.getIssueUrl().trim().isEmpty()) {
@@ -67,7 +69,7 @@ public class IssueHelperService {
       // DB 저장 추가
       githubService.processIssueHelper(request, branchName, commitMessage, repositoryFullName);
 
-      me.suhsaechan.github.dto.response.IssueHelperResponse response = me.suhsaechan.github.dto.response.IssueHelperResponse.builder()
+      IssueHelperResponse response = IssueHelperResponse.builder()
           .branchName(branchName)
           .commitMessage(commitMessage)
           .build();
