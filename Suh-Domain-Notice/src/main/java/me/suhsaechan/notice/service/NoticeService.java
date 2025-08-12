@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.config.UserAuthority;
 import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
-import me.suhsaechan.common.repository.NoticeCommentRepository;
 import me.suhsaechan.common.repository.SuhProjectUtilityNoticeRepository;
-import me.suhsaechan.common.util.exception.CustomException;
-import me.suhsaechan.common.util.exception.ErrorCode;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
   
   private final SuhProjectUtilityNoticeRepository noticeRepository;
-  private final NoticeCommentRepository commentRepository;
-  private final UserAuthority userAuthority;
-  
+
   /**
    * 활성화된 공지사항 목록 조회
    */

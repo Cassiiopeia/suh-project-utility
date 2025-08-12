@@ -1,16 +1,10 @@
 package me.suhsaechan.common.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.SystemType;
-import me.suhsaechan.common.util.exception.CustomException;
-import me.suhsaechan.common.util.exception.ErrorCode;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 파일 관련 유틸리티 클래스
