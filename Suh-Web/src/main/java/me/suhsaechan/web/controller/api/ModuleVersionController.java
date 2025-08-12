@@ -1,4 +1,4 @@
-package me.suhsaechan.web.controller;
+package me.suhsaechan.web.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import me.suhsaechan.module.service.ModuleVersionService;

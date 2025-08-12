@@ -15,7 +15,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import me.suhsaechan.common.entity.BasePostgresEntity;
-import me.suhsaechan.github.repository.GithubRepository;
 
 @Entity
 @Getter

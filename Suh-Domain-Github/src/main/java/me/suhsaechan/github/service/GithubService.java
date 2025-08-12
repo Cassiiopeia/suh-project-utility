@@ -4,10 +4,12 @@ package me.suhsaechan.github.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.github.entity.GithubIssueHelper;
-import me.suhsaechan.github.repository.GithubRepository;
-import me.suhsaechan.common.repository.GithubIssueHelperRepository;
-import me.suhsaechan.common.repository.GithubRepositoryRepository;
-import me.suhsaechan.common.util.security.AESUtil;
+import me.suhsaechan.github.entity.GithubRepository;
+import me.suhsaechan.github.repository.GithubIssueHelperRepository;
+import me.suhsaechan.github.repository.GithubRepositoryRepository;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.common.util.AESUtil;
 import me.suhsaechan.github.dto.IssueHelperRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +59,14 @@ public class GithubService {
                 .forkCount(0L)
                 .watcherCount(0L)
                 .description(null)
+                .allowed(Boolean.TRUE)
                 .build();
             githubRepository = repositoryRepository.save(githubRepository);
+          }
+
+          // 허용되지 않은 저장소인 경우 접근 차단
+          if (githubRepository.getAllowed() != null && !githubRepository.getAllowed()) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
           }
 
           // 이슈 Helper 생성

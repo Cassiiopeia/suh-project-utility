@@ -1,4 +1,4 @@
-package me.suhsaechan.github.repository;
+package me.suhsaechan.github.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,4 +48,8 @@ public class GithubRepository extends BasePostgresEntity {
   // 설명
   @Column(columnDefinition = "TEXT")
   private String description;
+
+  // 허용된 저장소 여부(자동 Gihtub Workflow 화이트리스트 관리용)
+  @Column(nullable = false)
+  private Boolean allowed;
 }

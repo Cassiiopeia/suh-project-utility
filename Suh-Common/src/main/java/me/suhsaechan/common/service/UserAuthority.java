@@ -1,4 +1,4 @@
-package me.suhsaechan.web.config;
+package me.suhsaechan.common.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

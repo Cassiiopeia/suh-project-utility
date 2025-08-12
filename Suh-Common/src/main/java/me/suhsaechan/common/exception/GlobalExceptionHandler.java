@@ -1,4 +1,4 @@
-package me.suhsaechan.common.util.exception;
+package me.suhsaechan.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

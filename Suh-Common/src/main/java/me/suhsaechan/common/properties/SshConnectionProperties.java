@@ -1,4 +1,4 @@
-package me.suhsaechan.web.config;
+package me.suhsaechan.common.properties;
 
 import lombok.Getter;
 import lombok.Setter;

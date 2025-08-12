@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.util.security.AESUtil;
+import me.suhsaechan.common.service.UserAuthority;
+import me.suhsaechan.common.util.AESUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -76,7 +77,7 @@ public class WebSecurityConfig {
             .loginProcessingUrl("/login")
             // 로그인 성공시 이동할 페이지
 //            .defaultSuccessUrl("/dashboard", true)
-            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil, serverInfo, userAuthority))
+            .successHandler(new CustomAuthenticationSuccessHandler(aesUtil, userAuthority))
             // 로그인 실패시 이동할 페이지
             .failureUrl("/login?error=true")
             .permitAll()

@@ -7,7 +7,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.util.security.AESUtil;
+import me.suhsaechan.common.service.UserAuthority;
+import me.suhsaechan.common.util.AESUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 

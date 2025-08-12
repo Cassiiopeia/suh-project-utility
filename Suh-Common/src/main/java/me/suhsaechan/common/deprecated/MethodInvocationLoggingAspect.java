@@ -6,7 +6,7 @@
 //import jakarta.servlet.http.HttpServletRequest;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;
-//import me.suhsaechan.common.util.exception.ErrorCode;
+//import me.suhsaechan.common.exception.ErrorCode;
 //import org.aspectj.lang.ProceedingJoinPoint;
 //import org.aspectj.lang.annotation.Around;
 //import org.aspectj.lang.annotation.Aspect;

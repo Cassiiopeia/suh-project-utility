@@ -1,4 +1,4 @@
-package me.suhsaechan.common.util.exception;
+package me.suhsaechan.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

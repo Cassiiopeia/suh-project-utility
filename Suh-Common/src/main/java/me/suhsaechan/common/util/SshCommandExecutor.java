@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.config.SshConnectionProperties;
+import me.suhsaechan.common.properties.SshConnectionProperties;
 import org.springframework.stereotype.Component;
 
 @Slf4j

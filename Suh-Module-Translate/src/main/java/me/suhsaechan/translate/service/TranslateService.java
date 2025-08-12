@@ -2,10 +2,10 @@ package me.suhsaechan.translate.service;
 
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.config.WebDriverManager;
 import me.suhsaechan.common.constant.CommonStatus;
 import me.suhsaechan.common.constant.TranslatorLanguage;
 import me.suhsaechan.common.constant.TranslatorType;
+import me.suhsaechan.common.service.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;

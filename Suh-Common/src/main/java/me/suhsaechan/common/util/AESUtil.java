@@ -1,4 +1,4 @@
-package me.suhsaechan.common.util.security;
+package me.suhsaechan.common.util;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

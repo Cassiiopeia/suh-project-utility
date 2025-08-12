@@ -1,4 +1,4 @@
-package me.suhsaechan.web.controller;
+package me.suhsaechan.web.controller.api;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

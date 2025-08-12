@@ -1,9 +1,9 @@
-package me.suhsaechan.web.controller;
+package me.suhsaechan.web.controller.view;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.web.config.UserAuthority;
+import me.suhsaechan.common.service.UserAuthority;
 import me.suhsaechan.notice.service.NoticeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
