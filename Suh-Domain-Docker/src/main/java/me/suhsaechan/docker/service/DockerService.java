@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.util.SshCommandExecutor;
-import me.suhsaechan.common.util.exception.CustomException;
-import me.suhsaechan.common.util.exception.ErrorCode;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.docker.dto.DockerScriptResponse;
 import org.springframework.stereotype.Service;
 

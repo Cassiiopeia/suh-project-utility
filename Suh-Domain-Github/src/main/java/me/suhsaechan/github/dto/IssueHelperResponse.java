@@ -1,4 +1,4 @@
-package me.suhsaechan.github.dto.response;
+package me.suhsaechan.github.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +16,8 @@ import lombok.ToString;
 public class IssueHelperResponse {
   private String branchName;
   private String commitMessage;
+  
+  // PR 댓글용 Markdown 형식 문자열
+  private String commentMarkdown;
 }
 

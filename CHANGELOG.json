@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "lastUpdated": "2025-08-12T14:47:47Z",
+    "currentVersion": "1.0.0",
+    "projectType": "spring",
+    "totalReleases": 1
+  },
+  "releases": [
+    {
+      "version": "1.0.0",
+      "project_type": "spring",
+      "date": "2025-08-12",
+      "pr_number": 50,
+      "raw_summary": "Summary by CodeRabbit\n\nNew Features\n\n이슈 생성/재오픈 시 브랜치/커밋 가이드를 자동 댓글로 남기는 기능 추가\n이슈 기반 브랜치·커밋 생성 API와 GitHub 워크플로우 전용 공개 엔드포인트 추가\n\n\nDocumentation\n\nv1.0.0로 버전 업데이트 및 이슈 코멘트 자동화 가이드 추가\n버그 해결 정리 템플릿(한글) 추가, 코드 스타일 가이드 보완\n\n\nChores\n\nDocker 빌드 산출물 고정(app.jar) 및 Dockerfile 정리\n리뷰 자동화 설정 보완\n\n\nRefactor\n\n패키지 구조 재정비 및 예외/보안 유틸 경로 정리 (기능 동일)",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "이슈 생성/재오픈 시 브랜치/커밋 가이드를 자동 댓글로 남기는 기능 추가",
+            "이슈 기반 브랜치·커밋 생성 API와 GitHub 워크플로우 전용 공개 엔드포인트 추가"
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "v1.0.0로 버전 업데이트 및 이슈 코멘트 자동화 가이드 추가",
+            "버그 해결 정리 템플릿(한글) 추가, 코드 스타일 가이드 보완"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "Docker 빌드 산출물 고정(app.jar) 및 Dockerfile 정리",
+            "리뷰 자동화 설정 보완"
+          ]
+        },
+        "refactor": {
+          "title": "Refactor",
+          "items": [
+            "패키지 구조 재정비 및 예외/보안 유틸 경로 정리 (기능 동일)"
+          ]
+        }
+      }
+    }
+  ]
+}

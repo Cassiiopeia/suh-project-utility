@@ -3,11 +3,14 @@ package me.suhsaechan.github.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.entity.GithubIssueHelper;
-import me.suhsaechan.common.entity.GithubRepository;
-import me.suhsaechan.common.repository.GithubIssueHelperRepository;
-import me.suhsaechan.common.repository.GithubRepositoryRepository;
-import me.suhsaechan.common.util.security.AESUtil;
+import me.suhsaechan.github.entity.GithubIssueHelper;
+import me.suhsaechan.github.entity.GithubRepository;
+import me.suhsaechan.github.repository.GithubIssueHelperRepository;
+import me.suhsaechan.github.repository.GithubRepositoryRepository;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.common.util.AESUtil;
+import me.suhsaechan.github.dto.IssueHelperRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GithubService {
 
   private final GithubIssueHelperRepository issueHelperRepository;
-  private final GithubRepositoryRepository repositoryRepository;
+  public final GithubRepositoryRepository githubRepositoryRepository;
   private final AESUtil aesUtil;
 
   /**
@@ -26,7 +29,7 @@ public class GithubService {
    * 새로 생성 후 저장합니다.
    */
   @Transactional
-  public GithubIssueHelper processIssueHelper(me.suhsaechan.github.dto.request.IssueHelperRequest request, String branchName,
+  public GithubIssueHelper processIssueHelper(IssueHelperRequest request, String branchName,
       String commitMessage, String repositoryFullName) {
 
     // clientHash -> clientIp
@@ -48,16 +51,25 @@ public class GithubService {
         })
         .orElseGet(() -> {
           // 기존 이슈가 없는경우 -> 새로 생성
-          GithubRepository githubRepository = repositoryRepository.findByFullName(repositoryFullName);
+          GithubRepository githubRepository = githubRepositoryRepository.findByFullName(repositoryFullName);
           if (githubRepository == null) {
+            // 웹 UI에서 처음 호출된 경우 자동으로 레포지토리를 등록하고 허용 상태로 설정
+            log.info("새 레포지토리 등록: {} (웹 UI에서 첫 요청이므로 자동 허용)", repositoryFullName);
             githubRepository = GithubRepository.builder()
                 .fullName(repositoryFullName)
                 .starCount(0L)
                 .forkCount(0L)
                 .watcherCount(0L)
                 .description(null)
+                .isGithubWorkflowResponseAllowed(Boolean.TRUE) // 웹 UI에서의 첫 호출은 자동으로 허용
                 .build();
-            githubRepository = repositoryRepository.save(githubRepository);
+            githubRepository = githubRepositoryRepository.save(githubRepository);
+          }
+
+          // 웹 UI에서 호출 시에도, 명시적으로 차단된 저장소는 사용 불가
+          if (githubRepository.getIsGithubWorkflowResponseAllowed() != null && !githubRepository.getIsGithubWorkflowResponseAllowed()) {
+            log.warn("차단된 레포지토리에 대한 접근 시도: {}", repositoryFullName);
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
           }
 
           // 이슈 Helper 생성
