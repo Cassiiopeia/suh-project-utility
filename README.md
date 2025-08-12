@@ -5,3 +5,6 @@
 ## 최신 버전 : v1.0.0 (2025-08-12)
 
 [전체 버전 기록 보기](CHANGELOG.md)
+
+## 문서
+- [GitHub PR 코멘트 자동화 가이드](docs/pr_comment_workflow.md) - PR 생성 시 브랜치/커밋 가이드 자동 댓글 기능
