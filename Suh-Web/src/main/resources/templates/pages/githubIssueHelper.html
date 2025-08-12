@@ -11,7 +11,7 @@
   <div th:replace="~{fragments/versionInfo :: versionInfo(moduleType='GITHUB_ISSUE_HELPER')}"></div>
 
   <form class="ui form" id="issueHelperForm" method="post" enctype="multipart/form-data"
-        th:action="@{/api/issue-helper/create/commmit-branch}">
+        th:action="@{/api/issue-helper/create/commit-branch}">
     <div class="field">
       <label>GitHub Issue URL</label>
       <input type="text" name="issueUrl" placeholder="https://github.com/owner/repo/issues/2" required>

@@ -44,7 +44,7 @@ jobs:
         id: api-call
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://lab.suhsaechan.me/api/issue-helper/create/commmit-branch/github-workflow'
+          url: 'https://lab.suhsaechan.me/api/issue-helper/create/commit-branch/github-workflow'
           method: 'POST'
           contentType: 'multipart/form-data'
           customHeaders: '{"Accept": "application/json"}'
