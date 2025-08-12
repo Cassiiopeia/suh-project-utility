@@ -47,7 +47,7 @@ jobs:
           printf 'API Status: %s\n' "$API_STATUS"
           printf 'API Response Body (raw):\n%s\n' "$API_BODY"
 
-      - name: Check API response
+      - name: Check API response (use server-provided markdown only)
         id: check-response
         shell: bash
         run: |
@@ -56,26 +56,13 @@ jobs:
           BODY='${{ steps.api-call.outputs.body }}'
           if [ "${STATUS}" = "200" ]; then
             echo "API call successful"
-            # JSON 시도 파싱 (실패시 무시)
-            MARKDOWN=$(printf '%s' "${BODY}" | jq -e -r 'try .commentMarkdown // empty' 2>/dev/null || true)
-            if [ -n "${MARKDOWN}" ]; then
-              {
-                echo "COMMENT_BODY<<'EOF'"
-                echo "${MARKDOWN}"
-                echo "EOF"
-              } >> "$GITHUB_ENV"
-            else
-              BRANCH=$(printf '%s' "${BODY}" | jq -e -r 'try .branchName // empty' 2>/dev/null || true)
-              COMMIT=$(printf '%s' "${BODY}" | jq -e -r 'try .commitMessage // empty' 2>/dev/null || true)
-              [ -z "${BRANCH}" ] && BRANCH='브랜치명을 가져올 수 없습니다'
-              [ -z "${COMMIT}" ] && COMMIT='커밋 메시지를 가져올 수 없습니다'
-              COMMENT_MD="<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->\n\n## 🛠️ 브랜치/커밋 가이드\n\n### 브랜치\n\`\`\`\n${BRANCH}\n\`\`\`\n\n### 커밋 메시지\n\`\`\`\n${COMMIT}\n\`\`\`\n\n<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->"
-              {
-                echo "COMMENT_BODY<<'EOF'"
-                echo -e "${COMMENT_MD}"
-                echo "EOF"
-              } >> "$GITHUB_ENV"
-            fi
+            MARKDOWN=$(printf '%s' "${BODY}" | jq -e -r '.commentMarkdown')
+            DELIM="GHENV_$(date +%s%N)"
+            {
+              echo "COMMENT_BODY<<${DELIM}"
+              printf "%s\n" "${MARKDOWN}"
+              echo "${DELIM}"
+            } >> "$GITHUB_ENV"
           else
             echo "API call failed with status ${STATUS}"
             echo "COMMENT_BODY=API 호출에 실패했습니다. 레포지토리가 허용 목록에 있는지 확인하세요." >> "$GITHUB_ENV"
