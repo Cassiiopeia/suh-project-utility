@@ -1,11 +1,49 @@
 {
   "metadata": {
-    "lastUpdated": "2025-08-12T14:47:47Z",
-    "currentVersion": "1.0.0",
+    "lastUpdated": "2025-08-12T16:41:36Z",
+    "currentVersion": "0.0.4",
     "projectType": "spring",
-    "totalReleases": 1
+    "totalReleases": 2
   },
   "releases": [
+    {
+      "version": "0.0.4",
+      "project_type": "spring",
+      "date": "2025-08-12",
+      "pr_number": 59,
+      "raw_summary": "Summary by CodeRabbit\n\n\n신규 기능\n\nCI 로그에 최신 버전 표시(Updated Version 출력).\n\n\n\n버그 수정\n\n오타로 잘못된 API 경로(commmit → commit) 전반 수정(백엔드/템플릿/공개 엔드포인트).\nCSRF 예외 범위를 해당 엔드포인트로 한정.\n클라이언트 해시 누락 시 안전한 기본 처리 적용.\n\n\n\n작업(Chores)\n\n이슈 코멘트 워크플로우가 올바른 엔드포인트로 호출하고 응답 마크다운을 안정적으로 처리.\n버전 관리 워크플로우가 변경 사항을 일괄 스테이징하고 조건부 커밋.\n스프링 프로젝트의 버전 동기화·다중 모듈 업데이트 개선.\n프로젝트 버전 0.0.4로 업데이트.\n\n\n\n문서\n\n문서 내 API 경로 오타 수정.",
+      "parsed_changes": {
+        "신규_기능": {
+          "title": "신규 기능",
+          "items": [
+            "CI 로그에 최신 버전 표시(Updated Version 출력)."
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "오타로 잘못된 API 경로(commmit → commit) 전반 수정(백엔드/템플릿/공개 엔드포인트).",
+            "CSRF 예외 범위를 해당 엔드포인트로 한정.",
+            "클라이언트 해시 누락 시 안전한 기본 처리 적용."
+          ]
+        },
+        "작업_chores": {
+          "title": "작업(Chores)",
+          "items": [
+            "이슈 코멘트 워크플로우가 올바른 엔드포인트로 호출하고 응답 마크다운을 안정적으로 처리.",
+            "버전 관리 워크플로우가 변경 사항을 일괄 스테이징하고 조건부 커밋.",
+            "스프링 프로젝트의 버전 동기화·다중 모듈 업데이트 개선.",
+            "프로젝트 버전 0.0.4로 업데이트."
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "문서 내 API 경로 오타 수정."
+          ]
+        }
+      }
+    },
     {
       "version": "1.0.0",
       "project_type": "spring",

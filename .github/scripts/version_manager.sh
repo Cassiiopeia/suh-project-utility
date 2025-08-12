@@ -82,7 +82,7 @@ read_version_config() {
     echo "현재 버전: $CURRENT_VERSION"
 }
 
-# 버전 비교 함수 (v1 > v2이면 1 반환, v1 < v2이면 -1 반환, 같으면 0 반환)
+# 버전 비교 함수 (반환코드: 0 = 같음, 1 = v1>v2, 2 = v1<v2)
 compare_versions() {
     local v1=$1
     local v2=$2
@@ -93,17 +93,19 @@ compare_versions() {
     
     # 각 부분을 비교
     for i in 0 1 2; do
-        if [ "${v1_parts[$i]}" -gt "${v2_parts[$i]}" ]; then
+        local a=${v1_parts[$i]:-0}
+        local b=${v2_parts[$i]:-0}
+        if [ "$a" -gt "$b" ]; then
             return 1  # v1이 더 큼
-        elif [ "${v1_parts[$i]}" -lt "${v2_parts[$i]}" ]; then
-            return -1  # v2가 더 큼
+        elif [ "$a" -lt "$b" ]; then
+            return 2  # v2가 더 큼
         fi
     done
     
     return 0  # 동일함
 }
 
-# 두 버전 중 높은 버전 반환
+# 두 버전 중 높은 버전 반환 (같거나 v1이 크면 v1, v2가 크면 v2)
 get_higher_version() {
     local v1=$1
     local v2=$2
@@ -111,11 +113,31 @@ get_higher_version() {
     compare_versions "$v1" "$v2"
     result=$?
     
-    if [ $result -eq 1 ] || [ $result -eq 0 ]; then
-        echo "$v1"  # v1이 더 높거나 같음
-    else
-        echo "$v2"  # v2가 더 높음
-    fi
+    case "$result" in
+        0|1) echo "$v1" ;;  # v1이 더 높거나 같음
+        2)   echo "$v2" ;;  # v2가 더 높음
+    esac
+}
+
+# 프로젝트 파일의 실제 버전만 감지 (정책 적용 전, 원본값)
+detect_project_version() {
+    local project_version="$CURRENT_VERSION"
+
+    case "$PROJECT_TYPE" in
+        "spring")
+            if [ -f "$VERSION_FILE" ]; then
+                # 들여쓰기/공백/따옴표 모두 허용하여 version = 'x.y.z' 또는 "x.y.z" 추출
+                project_version=$(sed -nE "s/^[[:space:]]*version[[:space:]]*=[[:space:]]*['\"]([0-9]+\.[0-9]+\.[0-9]+)['\"][[:space:]]*.*/\1/p" "$VERSION_FILE" | head -1)
+                [ -z "$project_version" ] && project_version="$CURRENT_VERSION"
+            fi
+            ;;
+        *)
+            # 다른 타입은 기존 로직 유지(필요 시 확장)
+            project_version="$CURRENT_VERSION"
+            ;;
+    esac
+
+    echo "$project_version"
 }
 
 # 실제 프로젝트 파일에서 버전 추출
@@ -347,9 +369,13 @@ update_project_file() {
 
     case "$PROJECT_TYPE" in
         "spring")
-            # build.gradle 업데이트
-            sed -i.bak "s/version = '.*'/version = '$new_version'/" "$VERSION_FILE"
-            rm -f "${VERSION_FILE}.bak"
+            # 모든 모듈의 build.gradle 업데이트 (루트 포함)
+            mapfile -t GRADLE_FILES < <(find . -maxdepth 2 -name build.gradle -type f)
+            for f in "${GRADLE_FILES[@]}"; do
+                sed -i.bak "s/version = '.*'/version = '$new_version'/" "$f" || true
+                sed -i.bak "s/version = \".*\"/version = \"$new_version\"/" "$f" || true
+                rm -f "$f.bak"
+            done
             ;;
         "flutter")
             # pubspec.yaml 업데이트 (x.x.x 형식 버전 업데이트)
@@ -412,7 +438,17 @@ main() {
             echo "$version"
             ;;
         "increment")
-            # 실제 프로젝트 파일에서 현재 버전 가져오기
+            # 스프링: 최초 1회 version.yml을 프로젝트 버전으로 동기화 (선택 B)
+            if [ "$PROJECT_TYPE" = "spring" ]; then
+                local pv=$(detect_project_version)
+                if [ -n "$pv" ] && [ "$pv" != "$CURRENT_VERSION" ]; then
+                    echo_info "초기 동기화: version.yml → $pv (build.gradle 기준)"
+                    update_version_yml "$pv"
+                    CURRENT_VERSION="$pv"
+                fi
+            fi
+
+            # 실제 프로젝트 파일에서 현재 버전 가져오기 (정책 유지: 높은 버전 선택)
             local current_version=$(get_version_from_project_file)
             if ! validate_version "$current_version"; then
                 echo_error "잘못된 버전 형식: $current_version"
@@ -424,6 +460,8 @@ main() {
             
             # 프로젝트 파일과 version.yml 모두 업데이트
             update_project_file "$new_version"
+            # 최종 확인용 출력 (CI 로그 수집)
+            echo "UPDATED_VERSION=$new_version"
             echo_success "버전 업데이트 완료: $new_version"
             echo "$new_version"
             ;;
