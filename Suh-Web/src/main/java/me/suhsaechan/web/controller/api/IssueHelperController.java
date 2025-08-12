@@ -22,7 +22,7 @@ public class IssueHelperController {
   private final IssueHelperService issueHelperService;
 
   @LogMonitor
-  @PostMapping(value = "/create/commmit-branch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/create/commit-branch", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<IssueHelperResponse> createIssueCommmitBranch(
       @ModelAttribute IssueHelperRequest request) {
       IssueHelperResponse response = issueHelperService.createIssueCommmitBranch(request);
@@ -31,7 +31,7 @@ public class IssueHelperController {
 
   // GITHUB_WORKFLOW 에서 호출되는 API
   @LogMonitor
-  @PostMapping(value = "/create/commmit-branch/github-workflow", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/create/commit-branch/github-workflow", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<IssueHelperResponse> createIssueCommmitBranchByGithubWorkflow(
       @ModelAttribute IssueHelperRequest request) {
       IssueHelperResponse response = issueHelperService.createIssueCommitBranchByGithubWorkflow(request);

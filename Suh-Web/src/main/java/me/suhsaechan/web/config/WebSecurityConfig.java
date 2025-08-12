@@ -50,7 +50,7 @@ public class WebSecurityConfig {
     http
         .csrf(csrf -> csrf
             // API 경로에 대해 CSRF 토큰 검사 비활성화
-                .ignoringRequestMatchers("/api/issue-helper/create/commmit-branch/github-workflow")
+                .ignoringRequestMatchers("/api/issue-helper/create/commit-branch/github-workflow")
 //            //FIXME: DEV 에서만 추가
 //                .ignoringRequestMatchers("/api/**")
 
