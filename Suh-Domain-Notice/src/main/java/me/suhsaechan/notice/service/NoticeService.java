@@ -29,7 +29,6 @@ public class NoticeService {
     return me.suhsaechan.notice.object.response.NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
-        .success(true)
         .build();
   }
   
@@ -44,7 +43,6 @@ public class NoticeService {
     return me.suhsaechan.notice.object.response.NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
-        .success(true)
         .build();
   }
   
@@ -58,7 +56,6 @@ public class NoticeService {
     return me.suhsaechan.notice.object.response.NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
-        .success(true)
         .build();
   }
   
@@ -86,7 +83,6 @@ public class NoticeService {
         .isImportant(notice.getIsImportant())
         .isActive(notice.getIsActive())
         .viewCount(notice.getViewCount())
-        .success(true)
         .build();
   }
   
@@ -110,7 +106,6 @@ public class NoticeService {
     return me.suhsaechan.notice.object.response.NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
-        .success(true)
         .build();
   }
   
@@ -137,9 +132,7 @@ public class NoticeService {
         .build();
     
     noticeRepository.save(notice);
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
-        .success(true)
-        .build();
+    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
   }
   
   /**
@@ -165,9 +158,7 @@ public class NoticeService {
     notice.setAuthor(request.getAuthor());
     
     noticeRepository.save(notice);
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
-        .success(true)
-        .build();
+    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
   }
   
   /**
@@ -181,9 +172,7 @@ public class NoticeService {
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     noticeRepository.delete(notice);
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
-        .success(true)
-        .build();
+    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
   }
   
   /**
@@ -199,9 +188,7 @@ public class NoticeService {
     notice.setIsActive(!notice.getIsActive());
     noticeRepository.save(notice);
     
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
-        .success(true)
-        .build();
+    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
   }
   
   /**

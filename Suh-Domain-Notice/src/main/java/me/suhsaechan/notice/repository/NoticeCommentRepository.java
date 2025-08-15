@@ -1,7 +1,7 @@
-package me.suhsaechan.common.repository;
+package me.suhsaechan.notice.repository;
 
 import java.util.UUID;
-import me.suhsaechan.common.entity.NoticeComment;
+import me.suhsaechan.notice.entity.NoticeComment;
 import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +24,4 @@ public interface NoticeCommentRepository extends JpaRepository<NoticeComment, UU
      */
     @Query("SELECT c FROM NoticeComment c WHERE c.notice.noticeId = :noticeId ORDER BY c.createdDate DESC")
     List<NoticeComment> findByNoticeIdOrderByCreatedDateDesc(@Param("noticeId") UUID noticeId);
-} 
+}

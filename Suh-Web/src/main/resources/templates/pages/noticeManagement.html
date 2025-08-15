@@ -305,7 +305,7 @@
         null,
         function(response) {
           $('#loading-indicator').hide();
-          if (response && response.success) {
+          if (response) {
             noticeTable.setData(response.notices);
           } else {
             $('#error-message').removeClass('hide');
@@ -335,7 +335,7 @@
         },
         function(response) {
           $('#loading-indicator').hide();
-          if (response && response.success) {
+          if (response) {
             noticeTable.setData(response.notices);
           } else {
             $('#error-message').removeClass('hide');
@@ -380,7 +380,7 @@
           author: author || undefined
         },
         function(response) {
-          if (response && response.success) {
+          if (response) {
             alert(response.message);
             $('#notice-modal').modal('hide');
             loadNotices();
@@ -434,7 +434,7 @@
         '/api/notice/get/detail',
         { noticeId: noticeId },
         function(response) {
-          if (response && response.success) {
+          if (response) {
             const notice = response;
             
             $('#notice-id').val(notice.noticeId);
@@ -480,7 +480,7 @@
         '/api/notice/delete',
         { noticeId: noticeId },
         function(response) {
-          if (response && response.success) {
+          if (response) {
             alert(response.message);
             $('#notice-detail-modal').modal('hide');
             loadNotices();
@@ -501,7 +501,7 @@
         '/api/notice/toggle-active',
         { noticeId: noticeId },
         function(response) {
-          if (response && response.success) {
+          if (response) {
             alert(response.message);
             $('#notice-detail-modal').modal('hide');
             loadNotices();
@@ -543,12 +543,12 @@
       sendFormRequest(
         '/api/notice/comment/list',
         { noticeId: noticeId },
-        function(comments) {
+        function(response) {
           $('#comments-loading').hide();
           
-          if (comments && comments.length > 0) {
+          if (response && response.noticeCommentDtos && response.noticeCommentDtos.length > 0) {
             // 댓글 목록 표시
-            comments.forEach(function(comment) {
+            response.noticeCommentDtos.forEach(function(comment) {
               const commentHtml = createCommentHtml(comment);
               $('#comment-list').append(commentHtml);
             });
@@ -582,20 +582,24 @@
         <i class="trash icon"></i> 삭제
       </button>`;
       
-      return `
-        <div class="comment">
-          <div class="content">
-            <div class="author">${comment.author} <span class="ip">(${comment.anonymizedIp})</span></div>
-            <div class="metadata">
-              <div class="date">${date}</div>
-            </div>
-            <div class="text">${comment.content}</div>
-            <div class="actions">
-              ${deleteButton}
-            </div>
+          return `
+      <div class="comment modern-comment">
+        <div class="avatar">
+          <i class="big user circle icon"></i>
+        </div>
+        <div class="content">
+          <div class="comment-header">
+            <span class="author">${comment.author}</span>
+            ${comment.anonymizedIp ? `<span class="metadata">(${comment.anonymizedIp})</span>` : ''}
+            <span class="metadata">${date}</span>
+          </div>
+          <div class="text">${comment.content}</div>
+          <div class="actions">
+            ${deleteButton}
           </div>
         </div>
-      `;
+      </div>
+    `;
     }
     
     // 댓글 작성 이벤트
@@ -614,8 +618,8 @@
         '/api/notice/comment/create',
         {
           noticeId: noticeId,
-          authorName: authorName,
-          content: content
+          commentAuthor: authorName,
+          commentContent: content
         },
         function(response) {
           if (response) {
@@ -640,8 +644,12 @@
       sendFormRequest(
         '/api/notice/comment/delete',
         { commentId: commentId }, // 댓글 ID를 commentId 파라미터로 전달
-        function() {
-          loadComments(noticeId); // 댓글 목록 새로고침
+        function(response) {
+          if (response) {
+            loadComments(noticeId); // 댓글 목록 새로고침
+          } else {
+            alert('댓글 삭제 실패');
+          }
         },
         function(xhr, status, error) {
           alert('댓글 삭제 오류: ' + error);

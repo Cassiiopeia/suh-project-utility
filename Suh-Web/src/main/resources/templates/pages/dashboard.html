@@ -736,6 +736,33 @@
     </div>
     <div class="ui divider"></div>
     <div class="ui basic segment" id="modal-notice-content"></div>
+    
+    <!-- 댓글 섹션 -->
+    <div class="ui divider"></div>
+    <h4 class="ui header"><i class="comments icon"></i>댓글</h4>
+    
+    <!-- 댓글 목록 -->
+    <div class="ui comments" id="comment-list">
+      <div id="comments-loading" class="ui active centered inline loader"></div>
+      <div id="no-comments-message" class="ui message hide">
+        <p>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
+      </div>
+    </div>
+    
+    <!-- 댓글 작성 폼 -->
+    <form class="ui reply form" id="comment-form">
+      <div class="field">
+        <div class="ui fluid action input">
+          <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)">
+        </div>
+      </div>
+      <div class="field">
+        <textarea id="comment-content" placeholder="댓글을 입력하세요" rows="3"></textarea>
+      </div>
+      <button type="button" id="comment-submit" class="ui blue labeled submit icon button">
+        <i class="icon edit"></i> 댓글 작성
+      </button>
+    </form>
   </div>
   <div class="actions">
     <div class="ui positive button">확인</div>
@@ -787,7 +814,7 @@
       '/api/notice/get/active',
       null,
       function(response) {
-        if (response && response.success && response.notices && response.notices.length > 0) {
+        if (response && response.notices && response.notices.length > 0) {
           // 공지사항 데이터 저장
           noticeData.notices = response.notices;
           
@@ -968,12 +995,11 @@
       '/api/notice/get/detail',
       { noticeId: noticeId },
       function(response) {
-        if (response && response.success) {
-          // Use response directly as it contains notice fields at root level
+        if (response) {
           const notice = response;
           
           // 모달 내용 채우기
-          $('#modal-notice-title').text(notice.title);
+          $('#modal-notice-title').text(notice.title).data('id', notice.noticeId);
           $('#modal-notice-author').text(notice.author || '관리자');
           $('#modal-notice-date').text(new Date(notice.createdDate).toLocaleString());
           $('#modal-notice-views').text(notice.viewCount || 0);
@@ -985,6 +1011,13 @@
           } else {
             $('#modal-notice-important').addClass('hide');
           }
+          
+          // 댓글 목록 로드
+          loadComments(notice.noticeId);
+          
+          // 댓글 폼 초기화
+          $('#comment-author').val('');
+          $('#comment-content').val('');
           
           // 모달 표시
           $('#notice-detail-modal').modal({
@@ -1000,7 +1033,137 @@
       }
     );
   }
-
+  
+  // 댓글 목록 로드 함수
+  function loadComments(noticeId) {
+    $('#comments-loading').show();
+    $('#comment-list .comment').remove();
+    $('#no-comments-message').addClass('hide');
+    
+    // 댓글 로드 요청
+    sendFormRequest(
+      '/api/notice/comment/list',
+      { noticeId: noticeId },
+      function(response) {
+        $('#comments-loading').hide();
+        
+        if (response && response.noticeCommentDtos && response.noticeCommentDtos.length > 0) {
+          // 댓글 목록 표시
+          response.noticeCommentDtos.forEach(function(comment) {
+            const commentHtml = createCommentHtml(comment);
+            $('#comment-list').append(commentHtml);
+          });
+          
+          // 댓글 삭제 버튼 이벤트 연결
+          $('.delete-comment-btn').click(function() {
+            const commentId = $(this).data('id');
+            if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+              deleteComment(commentId, noticeId);
+            }
+          });
+        } else {
+          // 댓글이 없는 경우
+          $('#no-comments-message').removeClass('hide');
+        }
+      },
+      function(xhr, status, error) {
+        $('#comments-loading').hide();
+        console.error('댓글 로드 오류:', error);
+        $('#no-comments-message').removeClass('hide')
+          .addClass('negative')
+          .html('<div class="header">댓글 로드 실패</div><p>댓글을 불러오는 중 오류가 발생했습니다.</p>');
+      }
+    );
+  }
+  
+  // 댓글 HTML 생성 함수
+  function createCommentHtml(comment) {
+    const date = new Date(comment.createdDate).toLocaleString();
+    const clientHashFromSession = getClientHashFromStorage(); // 세션에 저장된 클라이언트 해시값 가져오기
+    const isMyComment = clientHashFromSession && clientHashFromSession === comment.clientHash; // 내 댓글인지 확인
+    
+    const deleteButton = isMyComment ? 
+      `<button class="ui mini red right floated button delete-comment-btn" data-id="${comment.noticeCommentId}">
+        <i class="trash icon"></i> 삭제
+      </button>` : '';
+    
+    return `
+      <div class="comment modern-comment">
+        <div class="avatar">
+          <i class="big user circle icon"></i>
+        </div>
+        <div class="content">
+          <div class="comment-header">
+            <span class="author">${comment.author}</span>
+            ${comment.anonymizedIp ? `<span class="metadata">(${comment.anonymizedIp})</span>` : ''}
+            <span class="metadata">${date}</span>
+          </div>
+          <div class="text">${comment.content}</div>
+          <div class="actions">
+            ${deleteButton}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // 클라이언트 해시값 가져오기 (세션 또는 로컬 스토리지에서)
+  function getClientHashFromStorage() {
+    return sessionStorage.getItem('clientHash');
+  }
+  
+  // 댓글 작성 이벤트
+  $(document).on('click', '#comment-submit', function() {
+    const noticeId = $('#modal-notice-title').data('id');
+    const authorName = $('#comment-author').val() || '익명';
+    const content = $('#comment-content').val();
+    
+    if (!content) {
+      alert('댓글 내용을 입력해주세요.');
+      return;
+    }
+    
+    // 댓글 등록 요청
+    sendFormRequest(
+      '/api/notice/comment/create',
+      {
+        noticeId: noticeId,
+        commentAuthor: authorName,
+        commentContent: content
+      },
+      function(response) {
+        if (response) {
+          // 댓글 작성 성공
+          $('#comment-content').val('');
+          loadComments(noticeId); // 댓글 목록 새로고침
+        } else {
+          alert('댓글 등록 실패');
+        }
+      },
+      function(xhr, status, error) {
+        alert('댓글 등록 오류: ' + error);
+      }
+    );
+  });
+  
+  // 댓글 삭제 함수
+  function deleteComment(commentId, noticeId) {
+    // 댓글 삭제 요청
+    sendFormRequest(
+      '/api/notice/comment/delete',
+      { commentId: commentId },
+      function(response) {
+        if (response) {
+          loadComments(noticeId); // 댓글 목록 새로고침
+        } else {
+          alert('댓글 삭제 실패');
+        }
+      },
+      function(xhr, status, error) {
+        alert('댓글 삭제 오류: ' + error);
+      }
+    );
+  }
 
 </script>
 </body>

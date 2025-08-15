@@ -1,8 +1,12 @@
 package me.suhsaechan.web.controller.api;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.service.UserAuthority;
+import me.suhsaechan.notice.object.request.NoticeRequest;
+import me.suhsaechan.notice.object.response.NoticeResponse;
+import me.suhsaechan.notice.service.NoticeCommentService;
 import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.MediaType;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NoticeController {
 
   private final NoticeService noticeService;
+  private final NoticeCommentService noticeCommentService;
   private final UserAuthority userAuthority;
 
   /**
@@ -94,5 +99,43 @@ public class NoticeController {
   @LogMonitor
   public ResponseEntity<me.suhsaechan.notice.object.response.NoticeResponse> toggleNoticeActive(@ModelAttribute me.suhsaechan.notice.object.request.NoticeRequest request) {
     return ResponseEntity.ok(noticeService.toggleNoticeActive(request.getNoticeId()));
+  }
+
+  /**
+   * 공지사항 댓글 목록 조회
+   */
+  @PostMapping(value = "/comment/list", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<NoticeResponse> getComments(@ModelAttribute NoticeRequest request) {
+    return ResponseEntity.ok(noticeCommentService.getCommentsByNoticeId(request.getNoticeId()));
+  }
+
+  /**
+   * 공지사항 댓글 등록
+   */
+  @PostMapping(value = "/comment/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<NoticeResponse> createComment(@ModelAttribute NoticeRequest request,
+                                                     HttpServletRequest httpRequest) {
+    // IP 주소 설정
+    String clientIp = httpRequest.getRemoteAddr();
+    request.setAuthorIp(clientIp);
+    
+    // 클라이언트 해시 설정
+    String clientHash = (String) httpRequest.getSession().getAttribute("clientHash");
+    if (clientHash != null) {
+      request.setClientHash(clientHash);
+    }
+    
+    return ResponseEntity.ok(noticeCommentService.createComment(request));
+  }
+
+  /**
+   * 공지사항 댓글 삭제
+   */
+  @PostMapping(value = "/comment/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<NoticeResponse> deleteComment(@ModelAttribute NoticeRequest request) {
+    return ResponseEntity.ok(noticeCommentService.deleteComment(request.getCommentId()));
   }
 }

@@ -55,6 +55,12 @@ public class NoticeRequest {
   private String commentAuthor;
   private String commentContent;
   private String commentAuthorIp;
+  private String clientHash;
+
+  private String authorIp;
+
+  @Builder.Default
+  private String authorName = "익명";
   
   // 요청 타입 구분
   private NoticeRequestType requestType;
