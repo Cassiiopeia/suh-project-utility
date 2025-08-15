@@ -6,14 +6,17 @@ plugins {
 
 allprojects {
     group = 'me.suhsaechan'
-    version = '0.0.4'
+    version = '0.0.7'
     
     repositories {
         mavenCentral()
-        // Suh-Nexus 추가
         maven {
-            url "http://suh-project.synology.me:9999/repository/maven-releases/"
-            allowInsecureProtocol = true
+            name = 'SUH-NEXUS'
+            url "https://nexus.suhsaechan.me/repository/maven-releases/"
+            metadataSources {
+                mavenPom()
+                artifact()
+            }
         }
     }
 }

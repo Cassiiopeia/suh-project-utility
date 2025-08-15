@@ -1,4 +1,4 @@
-package me.suhsaechan.suhprojectutility.service;
+package me.suhsaechan.module.service;
 
 import static me.suhsaechan.suhlogger.util.SuhLogger.lineLog;
 import static me.suhsaechan.suhlogger.util.SuhLogger.superLog;
@@ -12,13 +12,13 @@ import me.suhsaechan.common.entity.ModuleVersion;
 import me.suhsaechan.common.entity.ModuleVersionUpdate;
 import me.suhsaechan.common.repository.ModuleVersionRepository;
 import me.suhsaechan.common.repository.ModuleVersionUpdateRepository;
-import me.suhsaechan.module.service.ModuleVersionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import me.suhsaechan.web.SuhProjectUtilityApplication;
 
-@SpringBootTest
+@SpringBootTest(classes = SuhProjectUtilityApplication.class)
 @ActiveProfiles("dev")
 //@Transactional
 @Slf4j
