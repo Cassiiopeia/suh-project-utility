@@ -333,7 +333,7 @@ jobs:
               
               # PR 병합 처리 시도
               gh pr merge ${{ github.event.pull_request.number }} --merge --admin --delete-branch=false || \
-              gh pr comment ${{ github.event.pull_request.number }} --body "GitHub Actions 봇: 변경사항이 deploy 브랜치에 적용되었습니다."
+              gh pr comment ${{ github.event.pull_request.number }} --body "GITHUB-ACTIONS-AUTO-CHANGELOG: 변경사항이 자동으로 deploy 브랜치에 적용되었습니다."
             fi
           fi
 
