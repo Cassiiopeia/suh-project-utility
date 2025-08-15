@@ -639,7 +639,7 @@
       // 댓글 삭제 요청
       sendFormRequest(
         '/api/notice/comment/delete',
-        { noticeId: commentId }, // 댓글 ID를 noticeId 파라미터로 전달 (컨트롤러에서는 NoticeCommentRequest의 noticeId로 받음)
+        { commentId: commentId }, // 댓글 ID를 commentId 파라미터로 전달
         function() {
           loadComments(noticeId); // 댓글 목록 새로고침
         },
