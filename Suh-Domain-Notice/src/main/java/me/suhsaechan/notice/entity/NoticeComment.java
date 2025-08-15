@@ -1,4 +1,4 @@
-package me.suhsaechan.common.entity;
+package me.suhsaechan.notice.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.suhsaechan.common.entity.BasePostgresEntity;
+import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
 
 @Entity
 @Table(name = "notice_comment")
@@ -39,6 +41,8 @@ public class NoticeComment extends BasePostgresEntity {
     private String author;
     
     private String authorIp;
+    
+    private String clientHash;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -59,4 +63,4 @@ public class NoticeComment extends BasePostgresEntity {
         
         return authorIp.replaceAll(".$", "x");
     }
-} 
+}
