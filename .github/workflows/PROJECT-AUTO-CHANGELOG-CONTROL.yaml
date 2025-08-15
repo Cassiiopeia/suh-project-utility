@@ -287,10 +287,20 @@ jobs:
           GH_TOKEN: ${{ secrets._GITHUB_PAT_TOKEN }}
         run: |
           PR_HEAD=$(gh pr view ${{ github.event.pull_request.number }} --json headRefName -q .headRefName)
+          PR_BASE=$(gh pr view ${{ github.event.pull_request.number }} --json baseRefName -q .baseRefName)
+          
+          echo "PR head branch: $PR_HEAD"
+          echo "PR base branch: $PR_BASE"
+          
+          # Checkout the PR head branch
           git fetch origin $PR_HEAD
           git checkout $PR_HEAD
-          git fetch origin deploy:deploy
-          git merge --no-edit deploy || true
+          
+          # Make sure we have the latest from the base branch
+          git fetch origin $PR_BASE
+          
+          # Update PR head branch with latest from base branch
+          git merge --no-edit origin/$PR_BASE || true
           git push origin HEAD
 
       - name: 자동 PR Merge

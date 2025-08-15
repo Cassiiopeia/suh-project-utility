@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2025-08-15T08:59:33Z",
-    "currentVersion": "0.0.7",
+    "lastUpdated": "2025-08-15T09:20:36Z",
+    "currentVersion": "0.0.8",
     "projectType": "spring",
-    "totalReleases": 3
+    "totalReleases": 4
   },
   "releases": [
+    {
+      "version": "0.0.8",
+      "project_type": "spring",
+      "date": "2025-08-15",
+      "pr_number": 68,
+      "raw_summary": "Summary by CodeRabbit\n\n\nChores\n\nPR 병합 자동화가 기본 브랜치와의 동기화 흐름으로 조정되어 병합 안정성과 일관성이 향상되었습니다.\n프로젝트 버전이 0.0.8로 업데이트되었으며 릴리스 메타데이터가 최신 상태로 갱신되었습니다.\n\n\n\nDocumentation\n\nREADME의 최신 버전 표기가 최신 릴리스(0.0.7 → 0.0.8 기준 정보 포함)로 업데이트되었습니다.",
+      "parsed_changes": {
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "PR 병합 자동화가 기본 브랜치와의 동기화 흐름으로 조정되어 병합 안정성과 일관성이 향상되었습니다.",
+            "프로젝트 버전이 0.0.8로 업데이트되었으며 릴리스 메타데이터가 최신 상태로 갱신되었습니다."
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "README의 최신 버전 표기가 최신 릴리스(0.0.7 → 0.0.8 기준 정보 포함)로 업데이트되었습니다."
+          ]
+        }
+      }
+    },
     {
       "version": "0.0.7",
       "project_type": "spring",
