@@ -8,6 +8,28 @@ import java.util.UUID;
 
 public class CommonUtil {
 
+  /**
+   * IP 주소를 익명화하여 반환합니다.
+   * IPv4 주소의 경우 마지막 옥텟을 'x'로 변경합니다.
+   * 
+   * @param ipAddress 원본 IP 주소
+   * @return 익명화된 IP 주소
+   */
+  public static String anonymizeIpAddress(String ipAddress) {
+    if (ipAddress == null || ipAddress.isEmpty()) {
+      return "알 수 없음";
+    }
+    
+    // IPv4 형식인 경우 (예: 192.168.0.1)
+    String[] parts = ipAddress.split("\\.");
+    if (parts.length == 4) {
+      return parts[0] + "." + parts[1] + "." + parts[2] + ".x";
+    }
+    
+    // 다른 형식의 IP인 경우 마지막 문자만 x로 변경
+    return ipAddress.replaceAll(".$", "x");
+  }
+
   public static <T> T nullIfBlank(T value) {
 
     // 값이 null인 경우 바로 null 반환
