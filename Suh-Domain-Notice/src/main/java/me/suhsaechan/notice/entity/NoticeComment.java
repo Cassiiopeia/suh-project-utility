@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.suhsaechan.common.entity.BasePostgresEntity;
 import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
+import me.suhsaechan.common.util.CommonUtil;
 
 @Entity
 @Table(name = "notice_comment")
@@ -52,15 +53,6 @@ public class NoticeComment extends BasePostgresEntity {
      * @return 익명화된 IP 주소 (마지막 자리 'x'로 처리)
      */
     public String getAnonymizedIp() {
-        if (authorIp == null || authorIp.isEmpty()) {
-            return "알 수 없음";
-        }
-        
-        String[] parts = authorIp.split("\\.");
-        if (parts.length == 4) {
-            return parts[0] + "." + parts[1] + "." + parts[2] + ".x";
-        }
-        
-        return authorIp.replaceAll(".$", "x");
+        return CommonUtil.anonymizeIpAddress(authorIp);
     }
 }

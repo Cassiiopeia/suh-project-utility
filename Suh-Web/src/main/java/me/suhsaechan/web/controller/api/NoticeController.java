@@ -117,8 +117,8 @@ public class NoticeController {
   @LogMonitor
   public ResponseEntity<NoticeResponse> createComment(@ModelAttribute NoticeRequest request,
                                                      HttpServletRequest httpRequest) {
-    // IP 주소 설정
-    String clientIp = httpRequest.getRemoteAddr();
+    // IP 주소 설정 (프록시 등을 고려한 실제 클라이언트 IP 추출)
+    String clientIp = userAuthority.extractIpFromRequest(httpRequest);
     request.setAuthorIp(clientIp);
     
     // 클라이언트 해시 설정
