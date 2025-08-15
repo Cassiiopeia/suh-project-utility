@@ -60,7 +60,7 @@ project_configs:
     # basic 타입은 특정 프레임워크에 종속되지 않는 기본 타입으로, version.yml만 관리합니다
 # 메타데이터
 metadata:
-  last_updated: "2025-08-15 23:04:28"
-  last_updated_by: "cassiiopeia"
+  last_updated: "2025-08-15 13:18:44"
+  last_updated_by: "Cassiiopeia"
   auto_increment: true # patch 버전 자동 증가 여부
   changelog_enabled: true # 체인지로그 자동 생성 여부
