@@ -2,12 +2,13 @@ package me.suhsaechan.docker.service;
 
 import static me.suhsaechan.suhlogger.util.SuhLogger.lineLog;
 
+import me.suhsaechan.web.SuhProjectUtilityApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(classes = SuhProjectUtilityApplication.class)
 @ActiveProfiles("dev")
 class DockerServiceTest {
    @Autowired
