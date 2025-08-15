@@ -521,21 +521,12 @@ main() {
             echo "$version"
             ;;
         "increment")
-            # 버전 비교 테스트 실행
-            echo_info "버전 비교 테스트"
-            echo "테스트1: 1.0.0 vs 0.0.12"
-            get_higher_version "1.0.0" "0.0.12"
-            echo "테스트2: 1.0.0 vs 0.21.0"
-            get_higher_version "1.0.0" "0.21.0"
-            echo "테스트3: 0.2.1 vs 0.1.9"
-            get_higher_version "0.2.1" "0.1.9"
-            
             # 먼저 수동으로 변경된 버전 감지 (version.yml vs build.gradle 비교)
             echo_info "버전 동기화 점검 중..."
             # version.yml에서 버전 가져오기
             local yml_version=""
             if [ -f "version.yml" ]; then
-                yml_version=$(grep -E "^version:" version.yml | sed 's/version: *"\([^"]*\)".*/\1/' | head -1)
+                yml_version=$(grep -E "^version:" version.yml | sed 's/version: *"\([^"\)]*\)".*/\1/' | head -1)
                 echo "🔍 version.yml 버전: $yml_version"
             fi
             
@@ -559,7 +550,6 @@ main() {
                 CURRENT_VERSION="$higher_version"
                 
                 # build.gradle 업데이트 (루트 및 모든 하위 모듈)
-                # macOS와 리눅스 모두 호환되도록 mapfile 대신 for 루프 사용
                 for f in $(find . -maxdepth 2 -name build.gradle -type f); do
                     echo "  📝 버전 업데이트 중: $f"
                     sed -i.bak "s/version = '.*'/version = '$higher_version'/" "$f" 2>/dev/null || true
