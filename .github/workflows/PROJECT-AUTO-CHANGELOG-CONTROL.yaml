@@ -307,7 +307,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets._GITHUB_PAT_TOKEN }}
         run: |
-          gh pr merge ${{ github.event.pull_request.number }} --merge --admin --body "auto-merge after rebasing"
+          # PR 상태 확인
+          PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state -q .state)
+          echo "PR 상태: $PR_STATE"
+          
+          # PR이 이미 닫혔는지 확인
+          if [ "$PR_STATE" = "CLOSED" ] || [ "$PR_STATE" = "MERGED" ]; then
+            echo "PR이 이미 닫혔거나 병합되었습니다. 건너뜁니다."
+          else
+            # deploy 브랜치로 직접 변경사항 푸시 (PR 병합 대신)
+            git checkout deploy
+            git pull origin deploy
+            git merge --no-edit $PR_HEAD
+            git push origin deploy
+            
+            # PR 닫기
+            gh pr close ${{ github.event.pull_request.number }} --comment "자동으로 변경사항이 deploy 브랜치에 적용되었습니다."
+          fi
 
       - name: 배포 완료 알림
         run: |
