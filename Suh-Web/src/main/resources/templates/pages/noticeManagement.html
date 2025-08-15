@@ -434,8 +434,8 @@
         '/api/notice/get/detail',
         { noticeId: noticeId },
         function(response) {
-          if (response && response.success && response.notice) {
-            const notice = response.notice;
+          if (response && response.success) {
+            const notice = response;
             
             $('#notice-id').val(notice.noticeId);
             $('#notice-title').val(notice.title);
@@ -577,15 +577,15 @@
     
     // 댓글 HTML 생성 함수
     function createCommentHtml(comment) {
-      const date = new Date(comment.createdAt).toLocaleString();
-      const deleteButton = `<button class="ui mini red right floated button delete-comment-btn" data-id="${comment.id}">
+      const date = new Date(comment.createdDate).toLocaleString();
+      const deleteButton = `<button class="ui mini red right floated button delete-comment-btn" data-id="${comment.noticeCommentId}">
         <i class="trash icon"></i> 삭제
       </button>`;
       
       return `
         <div class="comment">
           <div class="content">
-            <div class="author">${comment.authorName} <span class="ip">(${comment.anonymizedIpAddress})</span></div>
+            <div class="author">${comment.author} <span class="ip">(${comment.anonymizedIp})</span></div>
             <div class="metadata">
               <div class="date">${date}</div>
             </div>

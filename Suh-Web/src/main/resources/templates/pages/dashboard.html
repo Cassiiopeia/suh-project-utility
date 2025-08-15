@@ -968,8 +968,9 @@
       '/api/notice/get/detail',
       { noticeId: noticeId },
       function(response) {
-        if (response && response.success && response.notice) {
-          const notice = response.notice;
+        if (response && response.success) {
+          // Use response directly as it contains notice fields at root level
+          const notice = response;
           
           // 모달 내용 채우기
           $('#modal-notice-title').text(notice.title);
