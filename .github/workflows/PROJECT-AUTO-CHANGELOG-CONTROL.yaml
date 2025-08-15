@@ -320,7 +320,7 @@ jobs:
             git pull origin deploy
             git merge --no-edit $PR_HEAD
             git push origin deploy
-          
+
             # PR 닫기
             gh pr close ${{ github.event.pull_request.number }} --comment "자동으로 변경사항이 deploy 브랜치에 적용되었습니다."
           fi
