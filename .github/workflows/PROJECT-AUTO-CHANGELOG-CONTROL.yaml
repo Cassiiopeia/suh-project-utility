@@ -308,21 +308,33 @@ jobs:
           GH_TOKEN: ${{ secrets._GITHUB_PAT_TOKEN }}
         run: |
           # PR 상태 확인
-          PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state -q .state)
-          echo "PR 상태: $PR_STATE"
+          PR_STATE=$(gh pr view ${{ github.event.pull_request.number }} --json state,mergeable -q '.state + "," + (.mergeable | tostring)')
+          PR_STATE_VALUE=$(echo "$PR_STATE" | cut -d',' -f1)
+          PR_MERGEABLE=$(echo "$PR_STATE" | cut -d',' -f2)
           
-          # PR이 이미 닫혔는지 확인
-          if [ "$PR_STATE" = "CLOSED" ] || [ "$PR_STATE" = "MERGED" ]; then
+          echo "PR 상태: $PR_STATE_VALUE (병합 가능: $PR_MERGEABLE)"
+          
+          # PR이 이미 닫혔거나 병합되었는지 확인
+          if [ "$PR_STATE_VALUE" = "CLOSED" ] || [ "$PR_STATE_VALUE" = "MERGED" ]; then
             echo "PR이 이미 닫혔거나 병합되었습니다. 건너뜁니다."
           else
-            # deploy 브랜치로 직접 변경사항 푸시 (PR 병합 대신)
-            git checkout deploy
-            git pull origin deploy
-            git merge --no-edit $PR_HEAD
-            git push origin deploy
-          
-            # PR 닫기
-            gh pr close ${{ github.event.pull_request.number }} --comment "자동으로 변경사항이 deploy 브랜치에 적용되었습니다."
+            # PR 머지 시도
+            if [ "$PR_MERGEABLE" = "true" ]; then
+              echo "PR을 병합합니다..."
+              gh pr merge ${{ github.event.pull_request.number }} --merge --admin --delete-branch=false
+              echo "PR이 성공적으로 병합되었습니다."
+            else
+              echo "PR을 병합할 수 없습니다. 직접 변경사항을 적용합니다."
+              # deploy 브랜치로 직접 변경사항 푸시
+              git checkout deploy
+              git pull origin deploy
+              git merge --no-edit $PR_HEAD
+              git push origin deploy
+              
+              # PR 병합 처리 시도
+              gh pr merge ${{ github.event.pull_request.number }} --merge --admin --delete-branch=false || \
+              gh pr comment ${{ github.event.pull_request.number }} --body "GitHub Actions 봇: 변경사항이 deploy 브랜치에 적용되었습니다."
+            fi
           fi
 
       - name: 배포 완료 알림
