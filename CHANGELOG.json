@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2025-08-12T16:41:36Z",
-    "currentVersion": "0.0.4",
+    "lastUpdated": "2025-08-15T08:59:33Z",
+    "currentVersion": "0.0.7",
     "projectType": "spring",
-    "totalReleases": 2
+    "totalReleases": 3
   },
   "releases": [
+    {
+      "version": "0.0.7",
+      "project_type": "spring",
+      "date": "2025-08-15",
+      "pr_number": 65,
+      "raw_summary": "Summary by CodeRabbit\n\nChores\n\n프로젝트 버전을 0.0.7로 갱신하고 아티팩트 저장소를 HTTPS Nexus로 전환했습니다.\n버전 메타데이터(갱신 시간 포함)를 업데이트했습니다.\n\n\nTests\n\n여러 모듈에 테스트 범위 의존성을 추가해 웹 모듈을 테스트에서 활용 가능하게 했습니다.\n테스트 패키지 경로와 부트스트랩 설정을 정리하고 @SpringBootTest 대상 클래스를 명시했습니다.\n\n\nDocumentation\n\nREADME의 최신 버전 표기를 조정했습니다.\n이슈 코멘트 워크플로 문서의 경미한 서식을 수정했습니다.",
+      "parsed_changes": {
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "프로젝트 버전을 0.0.7로 갱신하고 아티팩트 저장소를 HTTPS Nexus로 전환했습니다.",
+            "버전 메타데이터(갱신 시간 포함)를 업데이트했습니다."
+          ]
+        },
+        "tests": {
+          "title": "Tests",
+          "items": [
+            "여러 모듈에 테스트 범위 의존성을 추가해 웹 모듈을 테스트에서 활용 가능하게 했습니다.",
+            "테스트 패키지 경로와 부트스트랩 설정을 정리하고@SpringBootTest대상 클래스를 명시했습니다."
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "README의 최신 버전 표기를 조정했습니다.",
+            "이슈 코멘트 워크플로 문서의 경미한 서식을 수정했습니다."
+          ]
+        }
+      }
+    },
     {
       "version": "0.0.4",
       "project_type": "spring",
