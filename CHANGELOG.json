@@ -1,11 +1,48 @@
 {
   "metadata": {
-    "lastUpdated": "2025-08-15T09:43:45Z",
-    "currentVersion": "0.0.10",
+    "lastUpdated": "2025-08-15T12:50:39Z",
+    "currentVersion": "0.0.11",
     "projectType": "spring",
-    "totalReleases": 6
+    "totalReleases": 7
   },
   "releases": [
+    {
+      "version": "0.0.11",
+      "project_type": "spring",
+      "date": "2025-08-15",
+      "pr_number": 71,
+      "raw_summary": "Summary by CodeRabbit\n\n신기능\n\n공지 댓글 기능 추가: 목록 조회·작성·삭제 지원, 본인 작성 댓글만 삭제 가능.\n공지 상세 모달에 댓글 섹션·작성 폼 및 자동 새로고침 연동.\n클라이언트 해시 조회 API 추가 및 프론트에서 세션 저장.\n응답 형식 단순화(성공 플래그 제거) 및 도메인 단일 Request/Response 패턴 적용.\n\n\n스타일\n\n댓글 UI 모던 카드형으로 개선, 반응형 최적화.\nDocker 로그 화면 가독성 향상(색상, 스켈레톤, 상태 아이콘).\n\n\n문서\n\n코드 스타일 가이드 REST 섹션 갱신, README 버전 표기 업데이트.\n\n\n작업\n\n버전 0.0.11으로 상향.",
+      "parsed_changes": {
+        "신기능": {
+          "title": "신기능",
+          "items": [
+            "공지 댓글 기능 추가: 목록 조회·작성·삭제 지원, 본인 작성 댓글만 삭제 가능.",
+            "공지 상세 모달에 댓글 섹션·작성 폼 및 자동 새로고침 연동.",
+            "클라이언트 해시 조회 API 추가 및 프론트에서 세션 저장.",
+            "응답 형식 단순화(성공 플래그 제거) 및 도메인 단일 Request/Response 패턴 적용."
+          ]
+        },
+        "스타일": {
+          "title": "스타일",
+          "items": [
+            "댓글 UI 모던 카드형으로 개선, 반응형 최적화.",
+            "Docker 로그 화면 가독성 향상(색상, 스켈레톤, 상태 아이콘)."
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "코드 스타일 가이드 REST 섹션 갱신, README 버전 표기 업데이트."
+          ]
+        },
+        "작업": {
+          "title": "작업",
+          "items": [
+            "버전 0.0.11으로 상향."
+          ]
+        }
+      }
+    },
     {
       "version": "0.0.10",
       "project_type": "spring",
