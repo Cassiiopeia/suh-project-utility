@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2025-08-15T13:20:46Z",
-    "currentVersion": "0.0.12",
+    "lastUpdated": "2025-08-15T14:33:39Z",
+    "currentVersion": "1.1.2",
     "projectType": "spring",
-    "totalReleases": 8
+    "totalReleases": 9
   },
   "releases": [
+    {
+      "version": "1.1.2",
+      "project_type": "spring",
+      "date": "2025-08-15",
+      "pr_number": 74,
+      "raw_summary": "Summary by CodeRabbit\n\nNew Features\n\n버전 형식 검증 강화(x.y.z) 및 다중 소스 간 자동 정합성 확인/동기화\nReact Native(iOS/Android/Expo) 버전 갱신 지원 추가\n비교·진행 상황에 대한 로그 가시성 개선\n\n\nChores\n\n프로젝트 전역 버전을 1.1.3으로 상향하고 관련 구성에 일괄 반영\nCI 워크플로우의 사소한 정리(동작 변화 없음)\n\n\nDocumentation\n\nREADME 최신 버전 배지 업데이트",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "버전 형식 검증 강화(x.y.z) 및 다중 소스 간 자동 정합성 확인/동기화",
+            "React Native(iOS/Android/Expo) 버전 갱신 지원 추가",
+            "비교·진행 상황에 대한 로그 가시성 개선"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "프로젝트 전역 버전을 1.1.3으로 상향하고 관련 구성에 일괄 반영",
+            "CI 워크플로우의 사소한 정리(동작 변화 없음)"
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "README 최신 버전 배지 업데이트"
+          ]
+        }
+      }
+    },
     {
       "version": "0.0.12",
       "project_type": "spring",
