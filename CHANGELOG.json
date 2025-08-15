@@ -1,11 +1,44 @@
 {
   "metadata": {
-    "lastUpdated": "2025-08-15T12:50:39Z",
-    "currentVersion": "0.0.11",
+    "lastUpdated": "2025-08-15T13:20:46Z",
+    "currentVersion": "0.0.12",
     "projectType": "spring",
-    "totalReleases": 7
+    "totalReleases": 8
   },
   "releases": [
+    {
+      "version": "0.0.12",
+      "project_type": "spring",
+      "date": "2025-08-15",
+      "pr_number": 73,
+      "raw_summary": "Summary by CodeRabbit\n\nBug Fixes\n\n프록시 환경에서도 댓글 작성 시 실제 클라이언트 IP를 더 정확하게 인식합니다.\n\n\nRefactor\n\nIP 주소 익명화 로직을 공통화해 표시 일관성과 안정성을 개선했습니다.\n\n\nDocumentation\n\nREADME의 최신 버전 표기를 업데이트했습니다.\n\n\nChores\n\n애플리케이션 버전을 0.0.12로 업데이트하고 관련 메타데이터를 갱신했습니다.",
+      "parsed_changes": {
+        "bug_fixes": {
+          "title": "Bug Fixes",
+          "items": [
+            "프록시 환경에서도 댓글 작성 시 실제 클라이언트 IP를 더 정확하게 인식합니다."
+          ]
+        },
+        "refactor": {
+          "title": "Refactor",
+          "items": [
+            "IP 주소 익명화 로직을 공통화해 표시 일관성과 안정성을 개선했습니다."
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "README의 최신 버전 표기를 업데이트했습니다."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "애플리케이션 버전을 0.0.12로 업데이트하고 관련 메타데이터를 갱신했습니다."
+          ]
+        }
+      }
+    },
     {
       "version": "0.0.11",
       "project_type": "spring",
