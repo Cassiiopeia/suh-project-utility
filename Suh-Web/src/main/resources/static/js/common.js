@@ -33,7 +33,35 @@ $(function(){
   $(document).ajaxSend(function(e, xhr, options){
     xhr.setRequestHeader(header, token);
   });
+  
+  // 세션에서 clientHash 가져와 저장
+  fetchAndStoreClientHash();
 });
+
+/**
+ * 서버 세션에 저장된 clientHash를 가져와 세션 스토리지에 저장
+ */
+function fetchAndStoreClientHash() {
+  // 서버로부터 clientHash 가져오기
+  var formData = new FormData();
+  $.ajax({
+    url: '/api/member/client-hash',
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      if (response && response.clientHash) {
+        // 세션 스토리지에 저장
+        sessionStorage.setItem('clientHash', response.clientHash);
+        console.log('Client hash stored in session storage');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.log('Unable to fetch client hash');
+    }
+  });
+}
 
 /**
  * 공통 AJAX 요청 함수 - FormData 방식

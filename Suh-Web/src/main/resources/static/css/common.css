@@ -965,6 +965,128 @@ COMMON.CSS - 공통 컴포넌트 스타일
   }
 }
 
+/* 댓글 스타일 - 모던한 디자인 */
+.ui.comments {
+  max-width: 100%;
+  width: 100%;
+}
+
+.ui.comments .comment.modern-comment {
+  display: flex;
+  margin-bottom: 1.5em;
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ui.comments .comment.modern-comment:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: rgba(33, 133, 208, 0.2);
+}
+
+.ui.comments .comment .avatar {
+  margin-right: 15px;
+}
+
+.ui.comments .comment .avatar i.big.user.circle.icon {
+  color: #2185d0;
+  font-size: 2.5em;
+}
+
+.ui.comments .comment .content {
+  flex-grow: 1;
+  margin-left: 0 !important; /* Semantic UI 기본 스타일 덮어쓰기 */
+}
+
+.ui.comments .comment .comment-header {
+  margin-bottom: 0.5em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ui.comments .comment .author {
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-right: 10px;
+  font-size: 1.1em;
+}
+
+.ui.comments .comment .metadata {
+  color: #767676;
+  margin-right: 10px;
+  font-size: 0.9em;
+}
+
+.ui.comments .comment .text {
+  font-size: 1em;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 0.8em;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+.ui.comments .comment .actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ui.comments .comment .actions .button {
+  margin-left: 10px;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.ui.comments .comment .actions .button:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* 댓글 작성 폼 개선 */
+.ui.reply.form {
+  background-color: #f5f8fa;
+  padding: 1.2em;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
+  margin-top: 2em;
+  transition: all 0.3s ease;
+}
+
+.ui.reply.form:focus-within {
+  box-shadow: 0 2px 12px rgba(33, 133, 208, 0.1);
+}
+
+.ui.reply.form textarea {
+  border-color: rgba(34, 36, 38, 0.1);
+  border-radius: 6px;
+}
+
+.ui.reply.form textarea:focus {
+  border-color: #2185d0;
+}
+
+.ui.reply.form .field {
+  margin-bottom: 1em;
+}
+
+.ui.reply.form .button {
+  border-radius: 20px;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.ui.reply.form .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(33, 133, 208, 0.2);
+}
+
 /*
 ===========================
    Docker Logs Styles
