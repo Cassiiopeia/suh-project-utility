@@ -1202,4 +1202,287 @@ COMMON.CSS - 공통 컴포넌트 스타일
     margin-right: 0.2rem !important;
     margin-bottom: 0.5rem;
   }
+
+
+/*
+===========================
+   Study-Management Styles
+===========================
+*/
+
+/* Semantic UI 오버라이드 - 수평 리스트 아이템 inline-flex로 설정 */
+.ui.horizontal.list > .item {
+  display: inline-flex !important;
+  align-items: center;
+}
+
+/* 공통 스타일 */
+.study-page {
+  background-color: #f9f9f9;
+}
+
+.study-page .ui.segment {
+  margin-bottom: 2em;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.study-description {
+  color: #666;
+  margin-bottom: 1.5em;
+}
+
+/* 카테고리 트리 스타일 */
+.category-tree {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.category-tree .parent-category {
+  cursor: pointer;
+}
+
+.category-tree .parent-category .header {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.category-tree .parent-category .header a {
+  flex-grow: 1;
+  margin-left: 5px;
+}
+
+.category-tree .parent-category .header .label {
+  margin-left: auto;
+}
+
+.category-tree .child-categories {
+  padding-left: 1.5em;
+  margin-top: 0.5em;
+}
+
+/* 포스트 목록 스타일 */
+.posts-section .item {
+  padding: 1.5em;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.posts-section .item:hover {
+  background-color: #f0f0f0;
+}
+
+.posts-section .item .image {
+  max-width: 150px;
+}
+
+.posts-section .item .meta {
+  margin-bottom: 0.5em;
+  color: #888;
+}
+
+.posts-section .item .meta > span {
+  margin-right: 1em;
+}
+
+.posts-section .item .description {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+.posts-section .item .extra .label {
+  margin-left: 0.5em;
+}
+
+/* 카테고리 헤더 스타일 */
+.category-header {
+  margin-bottom: 2em;
+}
+
+.category-header .category-breadcrumb {
+  margin-top: 0.5em;
+}
+
+.category-header .category-actions {
+  margin-top: 1em;
+}
+
+/* 마크다운 에디터 스타일 */
+.markdown-editor-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.EasyMDEContainer {
+  border: none !important;
+}
+
+.editor-toolbar {
+  border: none !important;
+  border-bottom: 1px solid #ddd !important;
+}
+
+.CodeMirror {
+  border: none !important;
+}
+
+/* 마크다운 뷰어 스타일 */
+.post-content.markdown-body {
+  padding: 1.5em;
+  line-height: 1.8;
+}
+
+.post-content.markdown-body img {
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 1em 0;
+}
+
+.post-content.markdown-body code {
+  background-color: #f0f0f0;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+.post-content.markdown-body pre {
+  background-color: #f5f5f5;
+  padding: 1em;
+  border-radius: 4px;
+}
+
+/* 파일 업로드 드롭존 스타일 */
+#dropzone {
+  border: 2px dashed #ccc;
+  padding: 2em;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#dropzone.active {
+  border-color: #4183c4;
+  background-color: #f8f9fa;
+}
+
+#dropzone .icon {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+  color: #ccc;
+}
+
+#dropzone:hover {
+  border-color: #4183c4;
+}
+
+/* 포스트 뷰 페이지 스타일 */
+.post-view-page .post-header {
+  margin-bottom: 2em;
+}
+
+.post-view-page .post-meta {
+  margin: 1em 0;
+  color: #666;
+}
+
+.post-view-page .post-tags {
+  margin: 1em 0;
+}
+
+.post-view-page .post-actions {
+  margin-top: 1.5em;
+}
+
+.post-view-page .post-attachments {
+  margin-top: 2em;
+}
+
+.post-view-page .image-attachments .images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.post-view-page .image-attachments img {
+  max-height: 150px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* 포스트 폼 페이지 스타일 */
+.post-form-page #uploaded-files-list,
+.post-form-page #existing-files-list {
+  margin-top: 1em;
+}
+
+.post-form-page #delete-selected-files {
+  margin-top: 0.5em;
+}
+
+/* 스터디 카테고리 관리 스타일 */
+.category-management-page .category-form {
+  margin-bottom: 2em;
+}
+
+.category-management-page .category-list {
+  margin-top: 2em;
+}
+
+.category-management-page .category-item {
+  padding: 1em;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  margin-bottom: 1em;
+  transition: all 0.2s ease;
+}
+
+.category-management-page .category-item:hover {
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.category-management-page .category-item .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5em;
+}
+
+.category-management-page .category-item .meta {
+  color: #888;
+  font-size: 0.9em;
+  margin-bottom: 0.5em;
+}
+
+.category-management-page .category-item .actions {
+  margin-top: 1em;
+}
+
+.category-management-page .subcategories {
+  margin-left: 2em;
+  padding-left: 1em;
+  border-left: 2px solid #f0f0f0;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 767px) {
+  .posts-section .item .image {
+    display: none;
+  }
+
+  .category-tree {
+    margin-bottom: 2em;
+  }
+  
+  .category-management-page .category-item .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .category-management-page .category-item .actions {
+    margin-top: 0.5em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+}
 }

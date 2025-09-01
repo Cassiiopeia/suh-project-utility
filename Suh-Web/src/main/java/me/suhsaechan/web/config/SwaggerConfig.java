@@ -11,8 +11,6 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Profile("dev")
 @Configuration
@@ -29,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         @Server(url = "http://localhost:8080", description = "로컬 서버") // 포트 수정
     }
 )
-public class SwaggerConfig implements WebMvcConfigurer {
+public class SwaggerConfig {
 
   @Bean
   public OpenAPI openAPI() {
@@ -54,14 +52,5 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .url("https://lab.suhsaechan.me")
                 .description("메인 서버")
         ));
-  }
-
-  // Swagger Static 리소스
-  @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/docs/swagger**")
-        .addResourceLocations("classpath:/META-INF/resources/swagger-ui.html");
-    registry.addResourceHandler("/docs/webjars/**")
-        .addResourceLocations("classpath:/META-INF/resources/webjars/");
   }
 }

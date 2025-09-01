@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.util.SshCommandExecutor;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.docker.dto.DockerRequest;
 import me.suhsaechan.docker.dto.DockerScriptResponse;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class DockerService {
   private final ObjectMapper objectMapper;
 
   // 컨테이너 정보 확인
-  public DockerScriptResponse getContainerInfo(me.suhsaechan.docker.dto.request.DockerRequest request) {
+  public DockerScriptResponse getContainerInfo(DockerRequest request) {
     String command
         = String.format("/volume1/projects/suh-project/bin/docker_manager.sh %s %s", "status", request.getContainerName());
     String output = sshCommandExecutor.executeCommandWithSudoStdin(command);
