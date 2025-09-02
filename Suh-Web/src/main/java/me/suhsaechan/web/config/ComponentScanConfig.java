@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
     "me.suhsaechan.notice",
     "me.suhsaechan.module",
     "me.suhsaechan.application",
+    "me.suhsaechan.study",
     "me.suhsaechan.web"
 })
 public class ComponentScanConfig {

@@ -32,6 +32,10 @@ public class PublicEndpointConfig {
         "/js/**",
         "/images/**",
         "/static/**",
+        "/upload/**",         // 업로드된 파일 접근
+        "/uploads/**",        // 업로드된 파일 접근 (legacy)
+        "/suh-project-utility/dev-uploads/**", // 시놀로지 연결용 URL
+        "/suh-project-utility/upload/**",     // 시놀로지 연결용 URL
         "/swagger-ui/**",      // Swagger UI
         "/v3/api-docs/**"      // OpenAPI 문서
     );

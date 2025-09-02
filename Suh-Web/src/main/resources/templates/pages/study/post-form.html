@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/header :: head(title=${isEdit != null && isEdit ? '포스트 수정 - SAECHAN-LAB' : '새 포스트 작성 - SAECHAN-LAB'})}">
+  <title>새 포스트 작성</title>
+  <!-- 마크다운 에디터 관련 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown-light.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+</head>
+<body class="study-page post-form-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="ui container" id="main-content">
+  <div class="ui segment">
+    <h2 class="ui header" th:text="${isEdit != null && isEdit ? '포스트 수정' : '새 포스트 작성'}"></h2>
+    
+    <form id="post-form" class="ui form">
+      <!-- 포스트 ID (수정 시에만 사용) -->
+      <input type="hidden" id="post-id" name="id" th:if="${post != null}" th:value="${post.id}">
+      
+      <!-- 제목 필드 -->
+      <div class="field">
+        <label>제목</label>
+        <input type="text" id="post-title" name="postTitle" placeholder="포스트 제목을 입력하세요" 
+               required th:value="${post != null ? post.title : ''}">
+      </div>
+      
+      <!-- 카테고리 선택 -->
+      <div class="field">
+        <label>카테고리</label>
+        <select class="ui dropdown" id="post-category" name="categoryId" required>
+          <option value="">카테고리 선택</option>
+          <!-- 최상위 카테고리 -->
+          <option th:each="category : ${categoriesResponse.categories}"
+                  th:value="${category.id}"
+                  th:selected="${post != null && post.categoryId == category.id}"
+                  th:text="${category.name}"></option>
+          <!-- 하위 카테고리 (들여쓰기로 표시) -->
+          <th:block th:each="parentCat : ${categoriesResponse.categories}" th:if="${!parentCat.children.isEmpty()}">
+            <option th:each="childCat : ${parentCat.children}"
+                    th:value="${childCat.id}"
+                    th:selected="${post != null && post.categoryId == childCat.id}"
+                    th:text="${'└ ' + childCat.name}"></option>
+          </th:block>
+        </select>
+      </div>
+      
+      <div class="two fields">
+        <!-- 작성자 필드 -->
+        <div class="field">
+          <label>작성자</label>
+          <input type="text" id="post-author" name="postAuthor" placeholder="작성자명"
+                 th:value="${post != null ? post.author : ''}">
+        </div>
+        
+        <!-- 태그 필드 -->
+        <div class="field">
+          <label>태그 (쉼표로 구분)</label>
+          <input type="text" id="post-tags" name="postTags" placeholder="태그1, 태그2, 태그3"
+                 th:value="${post != null ? post.tags : ''}">
+        </div>
+      </div>
+      
+      <!-- 요약 필드 -->
+      <div class="field">
+        <label>요약 (선택사항)</label>
+        <textarea id="post-summary" name="postSummary" rows="2" 
+                  placeholder="포스트 내용 요약 (150자 이내)"
+                  th:text="${post != null ? post.summary : ''}"></textarea>
+      </div>
+      
+      <!-- 마크다운 에디터 -->
+      <div class="field">
+        <label>내용</label>
+        <div class="markdown-editor-container">
+          <textarea id="markdown-editor" name="postContent"
+                    th:text="${post != null ? post.content : ''}"></textarea>
+        </div>
+      </div>
+      
+      <!-- 첨부 파일 업로드 -->
+      <div class="field">
+        <label>첨부 파일</label>
+        <div id="dropzone" class="ui placeholder segment">
+          <div class="ui icon header">
+            <i class="cloud upload icon"></i>
+            파일을 여기에 드래그하거나 클릭하여 업로드
+          </div>
+          <input type="file" id="file-input" name="files" multiple hidden>
+        </div>
+      </div>
+      
+      <!-- 업로드된 파일 목록 -->
+      <div class="field" id="uploaded-files-container" style="display: none;">
+        <label>업로드된 파일</label>
+        <div class="ui list" id="uploaded-files-list"></div>
+      </div>
+      
+      <!-- 기존 첨부 파일 목록 (수정 시에만 표시) -->
+      <div class="field" th:if="${post != null && post.attachments != null && !post.attachments.isEmpty()}">
+        <label>기존 첨부 파일</label>
+        <div class="ui list" id="existing-files-list">
+          <div class="item" th:each="attachment : ${post.attachments}">
+            <div class="ui checkbox">
+              <input type="checkbox" th:data-id="${attachment.id}" class="existing-file-checkbox">
+              <label>
+                <i th:class="${attachment.isImage ? 'image' : (attachment.isVideo ? 'video' : 'file')} + ' icon'"></i>
+                <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}"></a>
+                (<span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>)
+              </label>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="delete-selected-files" class="ui small red button">선택 파일 삭제</button>
+      </div>
+      
+      <!-- 공개 여부 -->
+      <div class="field">
+        <div class="ui checkbox">
+          <input type="checkbox" id="is-public" name="isPublic" 
+                 th:checked="${post == null || post.isPublic == null || post.isPublic}">
+          <label>공개글로 설정</label>
+        </div>
+      </div>
+      
+      <!-- 버튼 영역 -->
+      <div class="ui divider"></div>
+      <div class="ui buttons">
+        <button type="submit" class="ui primary button">저장</button>
+        <button type="button" id="cancel-btn" class="ui button">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- 마크다운 에디터 스크립트 -->
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // 드롭다운 초기화
+    $('.ui.dropdown').dropdown();
+    
+    // EasyMDE 마크다운 에디터 초기화
+    const easyMDE = new EasyMDE({
+      element: document.getElementById('markdown-editor'),
+      autofocus: true,
+      spellChecker: false,
+      renderingConfig: {
+        codeSyntaxHighlighting: true,
+      },
+      toolbar: [
+        'bold', 'italic', 'strikethrough', 'heading', '|',
+        'code', 'quote', 'unordered-list', 'ordered-list', '|',
+        'link', 'image', 'table', '|',
+        'preview', 'side-by-side', 'fullscreen', '|',
+        'guide'
+      ],
+      status: ['autosave', 'lines', 'words', 'cursor'],
+      uploadImage: true,
+      imageUploadFunction: function(file, onSuccess, onError) {
+        // 이미지 파일 업로드 처리
+        uploadFile(file, function(fileUrl) {
+          onSuccess(fileUrl);
+        }, function(error) {
+          onError(error);
+        });
+      }
+    });
+    
+    // 이미지 드래그 앤 드롭 영역
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('file-input');
+    
+    // 드롭존 클릭 시 파일 선택 다이얼로그
+    dropzone.addEventListener('click', function() {
+      fileInput.click();
+    });
+    
+    // 드래그 앤 드롭 이벤트 처리
+    dropzone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dropzone.classList.add('active');
+    });
+    
+    dropzone.addEventListener('dragleave', function() {
+      dropzone.classList.remove('active');
+    });
+    
+    dropzone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropzone.classList.remove('active');
+      handleFiles(e.dataTransfer.files);
+    });
+    
+    // 파일 선택 시 처리
+    fileInput.addEventListener('change', function() {
+      handleFiles(this.files);
+    });
+    
+    // 클립보드에서 붙여넣기 처리
+    document.addEventListener('paste', function(e) {
+      // 이미 처리된 붙여넣기 이벤트 방지 (중복 방지)
+      if (e.defaultPrevented) return;
+      
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      let fileFound = false;
+      
+      for (const item of items) {
+        if (item.kind === 'file') {
+          // 한 번만 처리
+          if (fileFound) continue;
+          fileFound = true;
+          
+          const file = item.getAsFile();
+          if (!file.type.startsWith('image/')) continue;
+          
+          e.preventDefault(); // 기본 붙여넣기 동작 방지
+          
+          uploadFile(file, function(fileUrl) {
+            // 현재 커서 위치에 이미지 마크다운 삽입
+            const cm = easyMDE.codemirror;
+            const cursor = cm.getCursor();
+            
+            // 시놀로지 도메인 기반 URL로 변환 (인증서 문제로 HTTP 프로토콜 사용)
+            const domainUrl = 'http://suh-project.synology.me';
+            const fullFileUrl = fileUrl.startsWith('/') ? `${domainUrl}${fileUrl}` : fileUrl;
+            
+            const imageMarkdown = `![${file.name || 'image'}](${fullFileUrl})`;
+            cm.replaceRange(imageMarkdown, cursor);
+          });
+        }
+      }
+    });
+    
+    // 파일 처리 함수
+    function handleFiles(files) {
+      for (const file of files) {
+        uploadFile(file, function(fileUrl) {
+          // 파일 목록에 추가
+          addFileToList(file, fileUrl);
+          
+          // 이미지인 경우 에디터에도 삽입
+          if (file.type.startsWith('image/')) {
+            const cm = easyMDE.codemirror;
+            const cursor = cm.getCursor();
+            
+            // 시놀로지 도메인 기반 URL로 변환 (인증서 문제로 HTTP 프로토콜 사용)
+            const domainUrl = 'http://suh-project.synology.me';
+            const fullFileUrl = fileUrl.startsWith('/') ? `${domainUrl}${fileUrl}` : fileUrl;
+            
+            const imageMarkdown = `![${file.name}](${fullFileUrl})`;
+            cm.replaceRange(imageMarkdown, cursor);
+          }
+        });
+      }
+    }
+    
+    // 파일 업로드 함수
+    function uploadFile(file, onSuccess, onError = console.error) {
+      const formData = new FormData();
+      formData.append('files', file);
+      formData.append('id', $('#post-id').val() || '');
+      
+      $.ajax({
+        url: '/api/study/attachment/upload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          if (response && response.fileUrl) {
+            onSuccess(response.fileUrl);
+          } else {
+            onError('파일 업로드 응답에 fileUrl이 없습니다.');
+          }
+        },
+        error: function(xhr, status, error) {
+          onError('파일 업로드 오류: ' + error);
+        }
+      });
+    }
+    
+    // 파일 목록에 추가
+    function addFileToList(file, fileUrl) {
+      const fileSize = (file.size / 1024).toFixed(2) + ' KB';
+      const isImage = file.type.startsWith('image/');
+      const isVideo = file.type.startsWith('video/');
+      
+      const fileItem = `
+        <div class="item">
+          <i class="${isImage ? 'image' : (isVideo ? 'video' : 'file')} icon"></i>
+          <div class="content">
+            <a href="${fileUrl}" target="_blank">${file.name}</a>
+            <div class="description">${fileSize}</div>
+          </div>
+        </div>
+      `;
+      
+      $('#uploaded-files-container').show();
+      $('#uploaded-files-list').append(fileItem);
+    }
+    
+    // 선택 파일 삭제 버튼
+    $('#delete-selected-files').on('click', function() {
+      const selectedFiles = $('.existing-file-checkbox:checked').map(function() {
+        return $(this).data('id');
+      }).get();
+      
+      if (selectedFiles.length === 0) {
+        alert('삭제할 파일을 선택해주세요.');
+        return;
+      }
+      
+      if (confirm('선택한 파일을 삭제하시겠습니까?')) {
+        // 삭제 요청 처리
+        // attachmentIds를 포함하여 포스트 업데이트 API에서 처리
+      }
+    });
+    
+    // 포스트 저장
+    $('#post-form').on('submit', function(e) {
+      e.preventDefault();
+      
+      // 폼 데이터 수집
+      const formData = new FormData();
+      
+      // 수정 시 포스트 ID 추가
+      if ($('#post-id').val()) {
+        formData.append('id', $('#post-id').val());
+      }
+      
+      // 나머지 폼 필드 추가
+      formData.append('postTitle', $('#post-title').val());
+      formData.append('categoryId', $('#post-category').val());
+      formData.append('postAuthor', $('#post-author').val());
+      formData.append('postTags', $('#post-tags').val());
+      formData.append('postSummary', $('#post-summary').val());
+      formData.append('postContent', easyMDE.value());
+      formData.append('isPublic', $('#is-public').is(':checked'));
+      
+      // 첨부 파일 추가
+      const files = $('#file-input')[0].files;
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+      
+      // 삭제할 첨부 파일 ID 추가
+      const attachmentIds = $('.existing-file-checkbox:checked').map(function() {
+        return $(this).data('id');
+      }).get();
+      
+      attachmentIds.forEach(function(id, index) {
+        formData.append(`attachmentIds[${index}]`, id);
+      });
+      
+      // API 호출 URL 결정 (생성 또는 수정)
+      const apiUrl = $('#post-id').val() ? 
+        '/api/study/post/update' : '/api/study/post/create';
+      
+      // API 호출
+      $.ajax({
+        url: apiUrl,
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+          if (response && response.post && response.post.id) {
+            // 저장 성공 시 포스트 상세 페이지로 이동
+            window.location.href = `/study-management/post/${response.post.id}`;
+          } else {
+            alert('포스트 저장 중 오류가 발생했습니다.');
+          }
+        },
+        error: function(xhr, status, error) {
+          alert('포스트 저장 중 오류가 발생했습니다: ' + error);
+          console.error('포스트 저장 오류:', xhr.responseText);
+        }
+      });
+    });
+    
+    // 취소 버튼
+    $('#cancel-btn').on('click', function() {
+      history.back();
+    });
+  });
+</script>
+</body>
+</html>

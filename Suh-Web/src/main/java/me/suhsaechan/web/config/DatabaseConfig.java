@@ -15,7 +15,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "me.suhsaechan.translate.repository",
     "me.suhsaechan.notice.repository",
     "me.suhsaechan.module.repository",
-    "me.suhsaechan.application.repository"
+    "me.suhsaechan.application.repository",
+    "me.suhsaechan.study.repository"
 })
 @EntityScan(basePackages = {
     "me.suhsaechan.common.entity",
@@ -23,7 +24,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "me.suhsaechan.github.entity",
     "me.suhsaechan.translate.entity", 
     "me.suhsaechan.notice.entity",
-    "me.suhsaechan.module.entity"
+    "me.suhsaechan.module.entity",
+    "me.suhsaechan.study.entity"
 })
 public class DatabaseConfig {
 } 

@@ -9,6 +9,8 @@ import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
 import me.suhsaechan.common.repository.SuhProjectUtilityNoticeRepository;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.notice.dto.NoticeRequest;
+import me.suhsaechan.notice.dto.NoticeResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +25,10 @@ public class NoticeService {
    * 활성화된 공지사항 목록 조회
    */
   @Transactional(readOnly = true)
-  public me.suhsaechan.notice.object.response.NoticeResponse getActiveNotices() {
+  public NoticeResponse getActiveNotices() {
     log.info("활성화된 공지사항 목록 조회");
     List<SuhProjectUtilityNotice> notices = noticeRepository.findActiveNotices(LocalDateTime.now());
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
+    return NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
         .build();
@@ -36,11 +38,11 @@ public class NoticeService {
    * 중요 공지사항 목록 조회
    */
   @Transactional(readOnly = true)
-  public me.suhsaechan.notice.object.response.NoticeResponse getImportantNotices() {
+  public NoticeResponse getImportantNotices() {
     log.info("중요 공지사항 목록 조회");
     List<SuhProjectUtilityNotice> notices = 
         noticeRepository.findByIsImportantTrueAndIsActiveTrueOrderByCreatedDateDesc();
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
+    return NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
         .build();
@@ -50,10 +52,10 @@ public class NoticeService {
    * 모든 공지사항 목록 조회 (관리자용)
    */
   @Transactional(readOnly = true)
-  public me.suhsaechan.notice.object.response.NoticeResponse getAllNotices() {
+  public NoticeResponse getAllNotices() {
     log.info("모든 공지사항 목록 조회");
     List<SuhProjectUtilityNotice> notices = noticeRepository.findAll();
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
+    return NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
         .build();
@@ -63,7 +65,7 @@ public class NoticeService {
    * 공지사항 상세 조회
    */
   @Transactional
-  public me.suhsaechan.notice.object.response.NoticeResponse getNoticeDetail(UUID noticeId) {
+  public NoticeResponse getNoticeDetail(UUID noticeId) {
     log.info("공지사항 상세 조회: {}", noticeId);
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
@@ -72,7 +74,7 @@ public class NoticeService {
     notice.incrementViewCount();
     noticeRepository.save(notice);
     
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
+    return NoticeResponse.builder()
         .noticeId(notice.getNoticeId())
         .title(notice.getTitle())
         .content(notice.getContent())
@@ -90,8 +92,8 @@ public class NoticeService {
    * 공지사항 검색
    */
   @Transactional(readOnly = true)
-  public me.suhsaechan.notice.object.response.NoticeResponse searchNotices(
-      me.suhsaechan.notice.object.request.NoticeRequest request) {
+  public NoticeResponse searchNotices(
+      NoticeRequest request) {
     log.info("공지사항 검색: {}", request.getSearchKeyword());
     List<SuhProjectUtilityNotice> notices;
     
@@ -103,7 +105,7 @@ public class NoticeService {
       throw new CustomException(ErrorCode.INVALID_PARAMETER);
     }
     
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder()
+    return NoticeResponse.builder()
         .notices(notices)
         .totalCount((long) notices.size())
         .build();
@@ -113,8 +115,8 @@ public class NoticeService {
    * 공지사항 등록
    */
   @Transactional
-  public me.suhsaechan.notice.object.response.NoticeResponse createNotice(
-      me.suhsaechan.notice.object.request.NoticeRequest request) {
+  public NoticeResponse createNotice(
+      NoticeRequest request) {
     log.info("공지사항 등록: {}", request.getTitle());
     
     // 유효성 검사
@@ -132,15 +134,15 @@ public class NoticeService {
         .build();
     
     noticeRepository.save(notice);
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
+    return NoticeResponse.builder().build();
   }
   
   /**
    * 공지사항 수정
    */
   @Transactional
-  public me.suhsaechan.notice.object.response.NoticeResponse updateNotice(
-      me.suhsaechan.notice.object.request.NoticeRequest request) {
+  public NoticeResponse updateNotice(
+      NoticeRequest request) {
     log.info("공지사항 수정: {}", request.getNoticeId());
     
     // 유효성 검사
@@ -158,28 +160,28 @@ public class NoticeService {
     notice.setAuthor(request.getAuthor());
     
     noticeRepository.save(notice);
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
+    return NoticeResponse.builder().build();
   }
   
   /**
    * 공지사항 삭제
    */
   @Transactional
-  public me.suhsaechan.notice.object.response.NoticeResponse deleteNotice(UUID noticeId) {
+  public NoticeResponse deleteNotice(UUID noticeId) {
     log.info("공지사항 삭제: {}", noticeId);
     
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     noticeRepository.delete(notice);
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
+    return NoticeResponse.builder().build();
   }
   
   /**
    * 공지사항 활성화/비활성화
    */
   @Transactional
-  public me.suhsaechan.notice.object.response.NoticeResponse toggleNoticeActive(UUID noticeId) {
+  public NoticeResponse toggleNoticeActive(UUID noticeId) {
     log.info("공지사항 활성화/비활성화: {}", noticeId);
     
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
@@ -188,13 +190,13 @@ public class NoticeService {
     notice.setIsActive(!notice.getIsActive());
     noticeRepository.save(notice);
     
-    return me.suhsaechan.notice.object.response.NoticeResponse.builder().build();
+    return NoticeResponse.builder().build();
   }
   
   /**
    * 공지사항 요청 유효성 검사
    */
-  private void validateNoticeRequest(me.suhsaechan.notice.object.request.NoticeRequest request) {
+  private void validateNoticeRequest(NoticeRequest request) {
     if (request.getTitle() == null || request.getTitle().trim().isEmpty()) {
       throw new CustomException(ErrorCode.INVALID_PARAMETER);
     }

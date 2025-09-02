@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title=${'포스트: ' + post.title + ' - SAECHAN-LAB'})}">
+  <!-- 마크다운 렌더링을 위한 외부 라이브러리 추가 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown-light.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+</head>
+<body class="study-page post-view-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="ui container" id="main-content">
+  <!-- 포스트 내용 -->
+  <div class="ui segment">
+    <!-- 포스트 헤더 -->
+    <div class="post-header">
+      <h1 class="ui header" th:text="${post.title}"></h1>
+      <div class="post-meta">
+        <div class="ui horizontal list">
+          <div class="item">
+            <i class="user circle icon"></i>
+            <div class="content" th:text="${post.author != null ? post.author : '익명'}"></div>
+          </div>
+          <div class="item">
+            <i class="calendar icon"></i>
+            <div class="content" th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></div>
+          </div>
+          <div class="item">
+            <i class="eye icon"></i>
+            <div class="content" th:text="${post.viewCount + ' 조회'}"></div>
+          </div>
+          <div class="item">
+            <i class="folder icon"></i>
+            <div class="content">
+              <a th:href="@{/study-management/category/{id}(id=${post.categoryId})}" 
+                 th:text="${post.categoryName}"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 태그 목록 -->
+      <div class="post-tags" th:if="${post.tagList != null && !post.tagList.isEmpty()}">
+        <div class="ui horizontal list">
+          <div class="item" th:each="tag : ${post.tagList}">
+            <a th:href="@{/study-management/search(tag=${tag})}" class="ui tiny label" th:text="${tag}"></a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 작업 버튼 -->
+      <div class="post-actions">
+        <a th:href="@{/study-management/post/{id}/edit(id=${post.id})}" class="ui blue button">
+          <i class="edit icon"></i> 수정
+        </a>
+        <button class="ui red button" id="delete-post-btn">
+          <i class="trash icon"></i> 삭제
+        </button>
+        <a th:href="@{/study-management/category/{id}(id=${post.categoryId})}" class="ui button">
+          <i class="arrow left icon"></i> 목록으로
+        </a>
+      </div>
+    </div>
+    
+    <div class="ui divider"></div>
+    
+    <!-- 포스트 내용 (마크다운 렌더링) -->
+    <div class="post-content markdown-body" id="post-content" th:data-content="${post.content}"></div>
+    
+    <!-- 첨부 파일 목록 -->
+    <div class="post-attachments" th:if="${post.attachments != null && !post.attachments.isEmpty()}">
+      <div class="ui divider"></div>
+      <h3 class="ui header">첨부 파일</h3>
+      
+      <!-- 이미지 첨부 파일 갤러리 -->
+      <div class="image-attachments" th:if="${post.attachments.?[isImage == true].size() > 0}">
+        <h4 class="ui header">이미지</h4>
+        <div class="ui small images">
+          <div th:each="attachment : ${post.attachments}" th:if="${attachment.isImage}">
+            <a th:href="${attachment.fileUrl}" target="_blank">
+              <img th:src="${attachment.fileUrl}" th:alt="${attachment.originalFilename}">
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 비이미지 첨부 파일 목록 -->
+      <div class="file-attachments" th:if="${post.attachments.?[isImage != true].size() > 0}">
+        <h4 class="ui header">파일</h4>
+        <div class="ui list">
+          <div class="item" th:each="attachment : ${post.attachments}" th:unless="${attachment.isImage}">
+            <i th:class="${attachment.isVideo ? 'video' : 'file'} + ' icon'"></i>
+            <div class="content">
+              <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}"></a>
+              <div class="description">
+                <span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="ui small modal" id="delete-confirm-modal">
+  <div class="header">포스트 삭제</div>
+  <div class="content">
+    <p>정말로 이 포스트를 삭제하시겠습니까? 삭제된 포스트는 복구할 수 없습니다.</p>
+  </div>
+  <div class="actions">
+    <button class="ui negative button" id="confirm-delete-btn">삭제</button>
+    <button class="ui button" id="cancel-delete-btn">취소</button>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- 마크다운 렌더링 라이브러리 추가 -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    // 마크다운 렌더링
+    const postContent = $('#post-content').attr('data-content');
+    if (postContent) {
+      $('#post-content').html(marked.parse(postContent));
+      
+      // 코드 블록에 하이라이트 적용
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+      });
+    }
+    
+    // 삭제 버튼 클릭 시 모달 표시
+    $('#delete-post-btn').on('click', function() {
+      $('#delete-confirm-modal').modal('show');
+    });
+    
+    // 삭제 취소
+    $('#cancel-delete-btn').on('click', function() {
+      $('#delete-confirm-modal').modal('hide');
+    });
+    
+    // 삭제 확인
+    $('#confirm-delete-btn').on('click', function() {
+      const postId = '[[${post.id}]]';
+      const categoryId = '[[${post.categoryId}]]';
+      
+      // 포스트 삭제 API 호출
+      const formData = new FormData();
+      formData.append('id', postId);
+      
+      $.ajax({
+        url: '/api/study/post/delete',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function() {
+          // 삭제 성공 시 카테고리 페이지로 이동
+          window.location.href = `/study-management/category/${categoryId}`;
+        },
+        error: function(xhr, status, error) {
+          alert('포스트 삭제 중 오류가 발생했습니다.');
+          console.error('포스트 삭제 오류:', error);
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

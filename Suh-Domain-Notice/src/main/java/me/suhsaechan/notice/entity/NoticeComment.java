@@ -16,17 +16,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import me.suhsaechan.common.entity.BasePostgresEntity;
 import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
 import me.suhsaechan.common.util.CommonUtil;
 
 @Entity
-@Table(name = "notice_comment")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 public class NoticeComment extends BasePostgresEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

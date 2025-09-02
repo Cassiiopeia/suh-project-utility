@@ -15,6 +15,11 @@
   <!-- 커스텀 CSS -->
   <link rel="stylesheet" href="/css/common.css">
   <link rel="stylesheet" th:href="@{/css/semantic-custom-utilities.css}">
+  
+  <!-- 스터디 모듈 관련 CSS (마크다운 에디터 등) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown-light.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
 
   <!-- 전역 변수 추가 -->
   <th:block th:replace="~{fragments/conf :: conf}"> </th:block>
@@ -54,6 +59,9 @@
             </a>
             <a href="/docker-logs" class="item">
               <i class="terminal icon"></i> 컨테이너 로그
+            </a>
+            <a href="/study-management" class="item">
+              <i class="book icon"></i> 스터디 플랜
             </a>
             <div class="divider"></div>
             <a href="/logout" class="item">
