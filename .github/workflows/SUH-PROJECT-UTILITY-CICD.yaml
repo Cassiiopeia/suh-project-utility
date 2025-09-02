@@ -109,6 +109,7 @@ jobs:
               -e SPRING_PROFILES_ACTIVE=prod \
               -v /etc/localtime:/etc/localtime:ro \
               -v /volume1/projects/suh-project-utility:/mnt/suh-project-utility \
+              -v /volume1/web/suh-project-utility/upload:/app/uploads \
               ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:main
 
             echo "배포가 성공적으로 완료되었습니다."

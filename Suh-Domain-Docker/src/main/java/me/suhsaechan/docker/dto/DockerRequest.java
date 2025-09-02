@@ -1,4 +1,4 @@
-package me.suhsaechan.docker.dto.request;
+package me.suhsaechan.docker.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

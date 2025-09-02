@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    implementation project(':Suh-Common')
+
+    // Spring Boot 기본 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // Markdown 처리를 위한 의존성
+    implementation 'com.atlassian.commonmark:commonmark:0.17.0'
+    implementation 'com.atlassian.commonmark:commonmark-ext-gfm-tables:0.17.0'
+    implementation 'com.atlassian.commonmark:commonmark-ext-heading-anchor:0.17.0'
+    
+    // 유틸리티 라이브러리
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'commons-io:commons-io:2.11.0'
+    
+    // 파일 전송 관련 라이브러리
+    implementation 'org.springframework.integration:spring-integration-file:6.2.1'
+    implementation 'org.springframework.integration:spring-integration-ftp:6.2.1'
+    implementation 'commons-net:commons-net:3.9.0'
+    implementation 'com.hierynomus:smbj:0.11.5'  // SMB 프로토콜 사용
+    
+    // 롬복
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

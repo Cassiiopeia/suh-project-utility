@@ -10,6 +10,10 @@ allprojects {
     
     repositories {
         mavenCentral()
+
+        // spring-integration-smb 문제로 인해 주석 처리
+        // maven { url 'https://repo.spring.io/plugins-release/' }
+
         maven {
             name = 'SUH-NEXUS'
             url "https://nexus.suhsaechan.me/repository/maven-releases/"
@@ -54,6 +58,16 @@ subprojects {
     
     tasks.named('test') {
         useJUnitPlatform()
+    }
+}
+
+// 루트 프로젝트 테스트 설정
+if (project == rootProject) {
+    tasks.register('testAll') {
+        dependsOn subprojects.test
+        doLast {
+            println 'All tests completed'
+        }
     }
 }
 

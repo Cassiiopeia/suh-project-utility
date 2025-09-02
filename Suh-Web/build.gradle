@@ -17,6 +17,7 @@ dependencies {
     implementation project(':Suh-Module-Translate')
     implementation project(':Suh-Domain-Notice')
     implementation project(':Suh-Domain-Module')
+    implementation project(':Suh-Domain-Study')
 }
 
 // Boot JAR 고정 > Dockerfile 재사용

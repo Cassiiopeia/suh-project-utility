@@ -33,10 +33,11 @@ dependencies {
     api 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
     
     // Utilities - API로 제공
-    api 'commons-io:commons-io:2.8.0'
+    api 'commons-io:commons-io:2.11.0'
+    api 'org.apache.commons:commons-lang3:3.12.0'
     api 'org.jsoup:jsoup:1.15.4'
     api 'com.fasterxml.jackson.core:jackson-databind'
-    
+
     // HTTP Client - API로 제공
     api 'com.squareup.okhttp3:okhttp:4.9.3'
     api 'com.squareup.okhttp3:okhttp-urlconnection:4.9.3'
@@ -63,6 +64,11 @@ dependencies {
     api 'org.seleniumhq.selenium:selenium-java:3.141.59'
     api 'io.github.bonigarcia:webdrivermanager:5.7.0'
     api 'org.seleniumhq.selenium:selenium-devtools-v133:4.29.0'
+
+    // Markdown 처리
+    api 'com.atlassian.commonmark:commonmark:0.17.0'
+    api 'com.atlassian.commonmark:commonmark-ext-gfm-tables:0.17.0'
+    api 'com.atlassian.commonmark:commonmark-ext-heading-anchor:0.17.0'
 
     // Thymeleaf - API로 제공
     api 'org.springframework.boot:spring-boot-starter-thymeleaf'

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.service.UserAuthority;
+import me.suhsaechan.notice.dto.NoticeResponse;
 import me.suhsaechan.notice.service.NoticeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,7 @@ public class PageController {
 
 	@GetMapping("/")
 	public String indexPage(Model model) {
-		me.suhsaechan.notice.object.response.NoticeResponse noticeResponse = noticeService.getActiveNotices();
+		NoticeResponse noticeResponse = noticeService.getActiveNotices();
 		model.addAttribute("notices", noticeResponse.getNotices());
 		return "pages/dashboard";
 	}
@@ -31,7 +32,7 @@ public class PageController {
 
 	@GetMapping("/dashboard")
 	public String dashboardPage(Model model){
-		me.suhsaechan.notice.object.response.NoticeResponse noticeResponse = noticeService.getActiveNotices();
+		NoticeResponse noticeResponse = noticeService.getActiveNotices();
 		model.addAttribute("notices", noticeResponse.getNotices());
 		return "pages/dashboard";
 	}

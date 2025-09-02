@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragments/header :: head(title='스터디 관리-SAECHAN-LAB')}">
+  <title>스터디 관리</title>
+  <!-- 추가 스타일 -->
+  <style>
+    .category-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body class="study-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="ui container" id="main-content">
+  <!-- 스터디 관리 메인 헤더 -->
+  <div class="ui segment">
+    <h2 class="ui header">스터디 플랜</h2>
+    <p class="study-description">지식 공유와 학습을 위한 마크다운 기반 스터디 노트 시스템입니다.</p>
+
+    <!-- 주요 기능 버튼 모음 -->
+    <div class="ui buttons">
+      <a href="/study-management/post/create" class="ui primary button">
+        <i class="plus icon"></i> 새 포스트 작성
+      </a>
+      <a href="/study-management/category-management" class="ui button">
+        <i class="folder icon"></i> 카테고리 관리
+      </a>
+    </div>
+  </div>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <div class="ui stackable grid">
+    <!-- 좌측 사이드바: 카테고리 트리 -->
+    <div class="four wide column">
+      <div class="ui segment">
+        <h3 class="ui header">카테고리</h3>
+        <div class="ui vertical menu fluid category-tree">
+          <!-- 카테고리가 없는 경우 -->
+          <div th:if="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}" class="item">
+            <p>등록된 카테고리가 없습니다.</p>
+          </div>
+          
+          <!-- 카테고리 목록 -->
+          <div th:unless="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}">
+            <div th:each="category : ${categoriesResponse.categories}" class="item parent-category">
+              <div class="header">
+                <i th:class="${category.icon != null ? category.icon : 'folder'} + ' icon'" 
+                   th:style="${category.color != null ? 'color:' + category.color : ''}"></i>
+                <a th:href="@{/study-management/category/{id}(id=${category.id})}" th:text="${category.name}"></a>
+                <span class="ui mini circular label" th:text="${category.postCount}"></span>
+              </div>
+              
+              <!-- 하위 카테고리 -->
+              <div class="menu child-categories" th:if="${!category.children.isEmpty()}">
+                <div th:each="child : ${category.children}" class="item">
+                  <i th:class="${child.icon != null ? child.icon : 'file'} + ' icon'"
+                     th:style="${child.color != null ? 'color:' + child.color : ''}"></i>
+                  <a th:href="@{/study-management/category/{id}(id=${child.id})}" th:text="${child.name}"></a>
+                  <span class="ui mini circular label" th:text="${child.postCount}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 우측 메인 영역 -->
+    <div class="twelve wide column">
+      <!-- 최근 작성된 포스트 -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="clock outline icon"></i>
+          최근 작성된 포스트
+        </h3>
+        <div class="ui divided items">
+          <!-- 포스트가 없는 경우 -->
+          <div th:if="${recentPosts == null || recentPosts.isEmpty()}" class="item">
+            <p>최근 작성된 포스트가 없습니다.</p>
+          </div>
+          
+          <!-- 포스트 목록 -->
+          <div th:unless="${recentPosts == null || recentPosts.isEmpty()}" 
+               th:each="post : ${recentPosts}" class="item">
+            <div class="content">
+              <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="header" th:text="${post.title}"></a>
+              <div class="meta">
+                <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+                <span class="category-label" th:text="${post.categoryName}"></span>
+              </div>
+              <div class="description" th:text="${post.summary != null ? post.summary : (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content)}"></div>
+              <div class="extra">
+                <i class="eye icon"></i> <span th:text="${post.viewCount}"></span> 조회
+                <div class="ui right floated">
+                  <span th:if="${post.tagList != null && !post.tagList.isEmpty()}" 
+                        th:each="tag : ${post.tagList}" class="ui tiny label" th:text="${tag}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 인기 포스트 -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="star outline icon"></i>
+          인기 포스트
+        </h3>
+        <div class="ui divided items">
+          <!-- 포스트가 없는 경우 -->
+          <div th:if="${popularPosts == null || popularPosts.isEmpty()}" class="item">
+            <p>인기 포스트가 없습니다.</p>
+          </div>
+          
+          <!-- 포스트 목록 -->
+          <div th:unless="${popularPosts == null || popularPosts.isEmpty()}" 
+               th:each="post : ${popularPosts}" class="item">
+            <div class="content">
+              <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="header" th:text="${post.title}"></a>
+              <div class="meta">
+                <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+                <span class="category-label" th:text="${post.categoryName}"></span>
+              </div>
+              <div class="description" th:text="${post.summary != null ? post.summary : (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content)}"></div>
+              <div class="extra">
+                <i class="eye icon"></i> <span th:text="${post.viewCount}"></span> 조회
+                <div class="ui right floated">
+                  <span th:if="${post.tagList != null && !post.tagList.isEmpty()}" 
+                        th:each="tag : ${post.tagList}" class="ui tiny label" th:text="${tag}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 검색 폼 -->
+      <div class="ui segment">
+        <h3 class="ui header">포스트 검색</h3>
+        <form class="ui form" method="GET" action="/study-management/search">
+          <div class="field">
+            <div class="ui icon input">
+              <input type="text" name="keyword" placeholder="검색어를 입력하세요..." required>
+              <i class="search icon"></i>
+            </div>
+          </div>
+          <button type="submit" class="ui blue button">검색</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+  $(document).ready(function() {
+    // 카테고리 트리 토글
+    $('.parent-category .header').on('click', function(e) {
+      if($(e.target).is('a')) return; // 링크 클릭 시 이벤트 전파 중단
+      
+      $(this).siblings('.child-categories').toggle();
+    });
+  });
+</script>
+</body>
+</html>
