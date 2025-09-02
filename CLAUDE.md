@@ -264,10 +264,58 @@ source ~/.zshrc && ./gradlew clean build
 - IDE의 코드 인스펙션 기능 활용 권장
 
 ## 보안 고려사항
-- **비밀번호**: application.yml의 민감 정보는 환경변수로 관리
+- **민감 정보 관리**: application.yml의 민감 정보는 `@Value` 어노테이션으로 주입
 - **인증**: Spring Security 기반 폼 로그인
 - **CSP**: 인라인 스크립트/스타일 금지
 - **파일 업로드**: 확장자 및 크기 제한 (200MB)
+
+### @Value 어노테이션 사용 예시
+민감한 정보들은 application.yml에서 환경변수로 관리하고 @Value로 주입합니다:
+
+```java
+@Service
+@RequiredArgsConstructor
+public class ExampleService {
+    @Value("${admin.super.username}")
+    private String superAdminUsername;
+    
+    @Value("${admin.super.password}")
+    private String superAdminPassword;
+    
+    @Value("${aes.secret-key}")
+    private String aesSecretKey;
+    
+    @Value("${spring.data.redis.password}")
+    private String redisPassword;
+    
+    @Value("${file.username}")
+    private String fileUsername;
+    
+    @Value("${file.password}")
+    private String filePassword;
+}
+```
+
+### application.yml 설정 예시
+```yaml
+admin:
+  super:
+    username: ${ADMIN_USERNAME:defaultUser}
+    password: ${ADMIN_PASSWORD:defaultPass}
+
+aes:
+  secret-key: ${AES_SECRET_KEY:defaultKey}
+  iv: ${AES_IV:defaultIV}
+
+spring:
+  data:
+    redis:
+      password: ${REDIS_PASSWORD:}
+
+file:
+  username: ${FILE_USERNAME:user}
+  password: ${FILE_PASSWORD:pass}
+```
 
 ## 테스트 전략
 - **단위 테스트**: Service 레이어 중심
