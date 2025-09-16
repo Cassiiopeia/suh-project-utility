@@ -903,7 +903,6 @@ html, body, button, input, select, textarea {
 
 /* 공지사항 스타일 */
 .notice-meta-inline {
-  display: inline-block;
   float: right;
   font-size: 0.85em;
   color: rgba(0, 0, 0, 0.6);
@@ -1714,4 +1713,5 @@ html, body, button, input, select, textarea {
   .grass-section-header {
     font-size: 1.2rem !important;
   }
+}
 }
