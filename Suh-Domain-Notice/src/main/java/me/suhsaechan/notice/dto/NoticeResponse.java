@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
+import me.suhsaechan.notice.entity.SuhProjectUtilityNotice;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

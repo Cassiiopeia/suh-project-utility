@@ -3,6 +3,8 @@ package me.suhsaechan.web.controller.api;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.docker.dto.DockerRequest;
+import me.suhsaechan.docker.dto.ContainerInfoDto;
 import me.suhsaechan.docker.service.DockerLogService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class DockerLogController {
      * @return SSE Emitter 객체
      */
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamContainerLogs(@ModelAttribute me.suhsaechan.docker.dto.request.DockerLogRequest request) {
+    public SseEmitter streamContainerLogs(@ModelAttribute DockerRequest request) {
         String containerName = request.getContainerName() != null ? request.getContainerName() : "sejong-malsami-back";
         Integer lineLimit = request.getLineLimit() != null ? request.getLineLimit() : 100;
         
@@ -53,7 +55,7 @@ public class DockerLogController {
      * @return 응답 엔티티
      */
     @PostMapping(value = "/stop", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> stopContainerLogs(@ModelAttribute me.suhsaechan.docker.dto.request.DockerLogRequest request) {
+    public ResponseEntity<String> stopContainerLogs(@ModelAttribute DockerRequest request) {
         String containerName = request.getContainerName() != null ? request.getContainerName() : "sejong-malsami-back";
         log.info("Docker 로그 스트리밍 중지 요청 - 컨테이너: {}", containerName);
         
@@ -72,7 +74,7 @@ public class DockerLogController {
      * @return 응답 엔티티
      */
     @PostMapping(value = "/clear", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> clearContainerLogs(@ModelAttribute me.suhsaechan.docker.dto.request.DockerLogRequest request) {
+    public ResponseEntity<String> clearContainerLogs(@ModelAttribute DockerRequest request) {
         String containerName = request.getContainerName() != null ? request.getContainerName() : "sejong-malsami-back";
         log.info("Docker 로그 화면 초기화 요청 - 컨테이너: {}", containerName);
         return ResponseEntity.ok("로그 화면이 초기화되었습니다.");
@@ -82,7 +84,7 @@ public class DockerLogController {
      * 실행 중/중지된 모든 컨테이너 목록 반환
      */
     @GetMapping(value = "/containers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<me.suhsaechan.docker.dto.response.ContainerInfoResponse>> listContainers() {
+    public ResponseEntity<List<ContainerInfoDto>> listContainers() {
         return ResponseEntity.ok(dockerLogService.listContainers());
     }
 } 

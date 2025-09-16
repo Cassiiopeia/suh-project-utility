@@ -1,4 +1,4 @@
-package me.suhsaechan.module.object.response;
+package me.suhsaechan.module.dto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;

@@ -9,6 +9,7 @@ import me.suhsaechan.study.entity.StudyPost;
 import me.suhsaechan.study.repository.StudyPostRepository;
 import me.suhsaechan.study.service.StudyFileService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,55 +43,43 @@ public class StudyAttachmentController {
                                                         @RequestParam(value = "id", required = false) UUID postId) {
         Map<String, String> response = new HashMap<>();
         
-        try {
-            // 파일 확장자 처리
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-            
-            // UUID 생성 (StudyFileService와 동일한 파일명 사용)
-            String storedFilename = UUID.randomUUID().toString() + "." + extension;
-            
-            // 특정 포스트에 파일 첨부 (포스트 ID가 있는 경우)
-            String fileUrlPath = "/" + fileDir + "/" + storedFilename;
-            
-            if (postId != null) {
-                StudyPost post = postRepository.findById(postId).orElse(null);
-                if (post != null) {
-                    List<MultipartFile> files = new ArrayList<>();
-                    files.add(file);
-                    List<AttachmentDto> attachments = fileService.processAndSaveFiles(files, post);
-                    
-                    // StudyFileService에서 생성한 파일 URL 사용
-                    if (!attachments.isEmpty()) {
-                        fileUrlPath = attachments.get(0).getFileUrl();
-                    } else {
-                        throw new RuntimeException("첨부 파일 저장 실패");
-                    }
-                }
-            } else {
-                // 포스트 없는 경우 (임시 업로드)
-                // 직접 파일 저장 (서비스 통해)
-                try {
-                    fileService.saveFile(file, storedFilename);
-                } catch (Exception e) {
-                    log.error("임시 파일 저장 오류: {}", e.getMessage(), e);
-                    throw e;
+        // 파일 확장자 처리
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        
+        // UUID 생성 (StudyFileService와 동일한 파일명 사용)
+        String storedFilename = UUID.randomUUID().toString() + "." + extension;
+        
+        // 특정 포스트에 파일 첨부 (포스트 ID가 있는 경우)
+        String fileUrlPath = "/" + fileDir + "/" + storedFilename;
+        
+        if (postId != null) {
+            StudyPost post = postRepository.findById(postId).orElse(null);
+            if (post != null) {
+                List<MultipartFile> files = new ArrayList<>();
+                files.add(file);
+                List<AttachmentDto> attachments = fileService.processAndSaveFiles(files, post);
+                
+                // StudyFileService에서 생성한 파일 URL 사용
+                if (!attachments.isEmpty()) {
+                    fileUrlPath = attachments.get(0).getFileUrl();
+                } else {
+                    throw new RuntimeException("첨부 파일 저장 실패");
                 }
             }
-            
-            // URL 응답에 추가
-            response.put("fileUrl", fileUrlPath);
-            
-            // 디버깅용
-            String fullFileUrl = fileDomain + fileUrlPath;
-            log.info("업로드 파일 경로: {}", fileUrlPath);
-            log.info("업로드 파일 전체 URL: {}", fullFileUrl);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("파일 업로드 오류: {}", e.getMessage(), e);
-            response.put("error", "파일 업로드 중 오류가 발생했습니다");
-            return ResponseEntity.badRequest().body(response);
+        } else {
+            // 포스트 없는 경우 (임시 업로드)
+            log.info("포스트 ID 없이 파일 업로드 - 임시 저장: {}", originalFilename);
         }
+        
+        // URL 응답에 추가
+        response.put("fileUrl", fileUrlPath);
+        
+        // 디버깅용
+        String fullFileUrl = fileDomain + fileUrlPath;
+        log.info("업로드 파일 경로: {}", fileUrlPath);
+        log.info("업로드 파일 전체 URL: {}", fullFileUrl);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -107,6 +96,6 @@ public class StudyAttachmentController {
     @PostMapping(value = "/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> deleteAttachment(@ModelAttribute StudyRequest request) {
         fileService.deleteAttachment(request.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

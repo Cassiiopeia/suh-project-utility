@@ -6,6 +6,16 @@ COMMON.CSS - 공통 컴포넌트 스타일
 ===========================================
 */
 
+/* Pretendard 폰트 적용 */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css");
+
+/* 전역 폰트 설정 */
+html, body, button, input, select, textarea {
+  font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif !important;
+  letter-spacing: -0.03em;
+  word-break: keep-all;
+}
+
 /*
 ===========================
   Responsive, Mobile Styles
@@ -1485,4 +1495,223 @@ COMMON.CSS - 공통 컴포넌트 스타일
     gap: 0.5em;
   }
 }
+
+/*
+===========================
+   GrassPlanter Styles
+===========================
+*/
+
+/* Grass Planter 페이지 전용 섹션 헤더 */
+.grass-section-header {
+  font-size: 1.4rem !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin-bottom: 0.8rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.grass-section-header i.icon {
+  color: #6366f1 !important;
+  font-size: 1.2rem !important;
+}
+
+/* 헤더와 버튼 레이아웃 개선 */
+.header-with-button {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.header-with-button > div:first-child {
+  flex: 1 !important;
+}
+
+.header-with-button .dashboard-section-description {
+  margin-bottom: 0 !important;
+  margin-top: 0.3rem !important;
+}
+
+/* 커밋 레벨 표시 */
+.contribution-level {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 3px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.level-0 { background: #ebedf0; }
+.level-1 { background: #9be9a8; }
+.level-2 { background: #40c463; }
+.level-3 { background: #30a14e; }
+.level-4 { background: #216e39; }
+
+/* 헤더 영역의 버튼 위치 조정 */
+.header-with-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.header-with-button .dashboard-section-header {
+  margin-bottom: 0;
+}
+
+.header-with-button .ui.button {
+  margin-left: 1rem;
+}
+
+/* 커밋 로그 테이블 스타일 */
+.commit-log-table th {
+  background-color: #f9fafb;
+}
+
+.commit-log-table .contribution-level-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Grass Planter 카드 스타일 - 다른 페이지와 통일성 유지 */
+.grass-planter-dashboard .equal-height-card {
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+}
+
+.grass-planter-dashboard .equal-height-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Grass Profile 헤더 */
+.grass-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #eee;
+}
+
+.grass-profile-header .profile-name {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.grass-profile-header .profile-name i.github.icon {
+  color: #2185d0;
+  margin-right: 8px;
+}
+
+/* 저장소 정보 */
+.grass-planter-dashboard .meta {
+  margin: 0.8rem 0;
+  padding: 0.5rem;
+  background: rgba(33, 133, 208, 0.05);
+  border-radius: 4px;
+  border-left: 3px solid #2185d0;
+}
+
+.grass-planter-dashboard .meta .date {
+  color: #2185d0;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* 프로필 정보 영역 */
+.grass-profile-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.grass-profile-info .info-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 0.3rem;
+}
+
+.grass-profile-info .info-item i.icon {
+  color: #2185d0;
+  font-size: 1.1rem;
+}
+
+.grass-profile-info .info-item span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.contribution-level-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.contribution-level-display .level-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
+}
+
+/* 프로필 액션 버튼 */
+.grass-profile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.grass-profile-actions .ui.circular.icon.button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.grass-profile-actions .ui.circular.icon.button:hover {
+  transform: translateY(-2px);
+}
+
+/* Grass Planter 반응형 개선 */
+@media (max-width: 768px) {
+  .grass-profile-info {
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+  }
+  
+  .grass-profile-actions {
+    gap: 0.4rem;
+  }
+  
+  .grass-profile-actions .ui.circular.icon.button {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .grass-profile-header .profile-name {
+    font-size: 1.1rem;
+  }
+  
+  .grass-section-header {
+    font-size: 1.2rem !important;
+  }
 }

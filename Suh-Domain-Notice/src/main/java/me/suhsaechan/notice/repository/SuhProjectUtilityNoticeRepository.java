@@ -1,9 +1,9 @@
-package me.suhsaechan.common.repository;
+package me.suhsaechan.notice.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
+import me.suhsaechan.notice.entity.SuhProjectUtilityNotice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
