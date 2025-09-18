@@ -36,6 +36,6 @@ public class IssueHelperController {
   public ResponseEntity<IssueHelperResponse> createIssueCommmitBranchByGithubWorkflow(
       @ModelAttribute IssueHelperRequest request) {
       IssueHelperResponse response = issueHelperService.createIssueCommitBranchByGithubWorkflow(request);
-      return ResponseEntity.status(HttpStatus.CREATED).body(response);
+      return ResponseEntity.status(HttpStatus.OK).body(response);
   }
 }

@@ -1714,4 +1714,21 @@ html, body, button, input, select, textarea {
     font-size: 1.2rem !important;
   }
 }
+
+/*
+===========================
+   Dashboard NEW Badge Styles (CSP 준수)
+===========================
+*/
+
+/* NEW 배지 공통 스타일 */
+.dashboard-badge-new {
+  margin-left: 6px;
+}
+
+/* NEW 배지 색상 통일 - 초록색으로 통일 */
+.dashboard-page .ui.green.tiny.label.dashboard-badge-new {
+  background-color: #21ba45 !important;
+  color: white !important;
+}
 }
