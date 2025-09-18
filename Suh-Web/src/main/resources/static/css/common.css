@@ -1497,6 +1497,374 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
+   AI Server Page Styles
+===========================
+*/
+
+/* AI 서버 페이지 전체 스타일 */
+.ai-server-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.ai-server-page #main-content {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+/* AI 서버 메인 헤더 */
+.ai-server-main-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white !important;
+  border-radius: 15px !important;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
+  margin-bottom: 2rem !important;
+  padding: 2rem !important;
+  border: none !important;
+}
+
+.ai-server-main-header .ui.header {
+  color: white !important;
+}
+
+.ai-server-main-header .ui.header .sub.header {
+  color: rgba(255, 255, 255, 0.8) !important;
+  margin-top: 0.5rem;
+}
+
+.ai-server-main-header .robot.icon {
+  color: #ffd700 !important;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* AI 서버 상태 카드 */
+.ai-server-status-card {
+  background: white !important;
+  border-radius: 20px !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease !important;
+}
+
+.ai-server-status-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.ai-server-status-card .content {
+  padding: 2rem !important;
+}
+
+.ai-server-status-card .header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.ai-server-status-card .header h3 {
+  margin: 0 !important;
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+/* 상태 배지 스타일 */
+.ai-server-status-badge {
+  padding: 0.8rem 1.2rem !important;
+  border-radius: 25px !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ai-server-status-badge.active {
+  background: linear-gradient(45deg, #56ab2f, #a8e6cf) !important;
+  color: white !important;
+}
+
+.ai-server-status-badge.inactive {
+  background: linear-gradient(45deg, #ff6b6b, #ffa8a8) !important;
+  color: white !important;
+}
+
+.ai-server-status-badge.loading {
+  background: linear-gradient(45deg, #4ecdc4, #44a08d) !important;
+  color: white !important;
+}
+
+/* 정보 리스트 스타일 */
+.ai-server-info-list .item {
+  padding: 1.2rem 0 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.ai-server-info-list .item:last-child {
+  border-bottom: none !important;
+}
+
+.ai-server-info-list .item .icon {
+  background: linear-gradient(45deg, #667eea, #764ba2) !important;
+  color: white !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 1rem !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.ai-server-info-list .item .content .header {
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.ai-server-info-list .item .content .description {
+  color: #7f8c8d !important;
+  font-size: 0.95rem !important;
+  line-height: 1.4 !important;
+}
+
+/* URL 링크 스타일 */
+.ai-server-url-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.6rem 1rem !important;
+  background: linear-gradient(45deg, #3498db, #2980b9) !important;
+  color: white !important;
+  text-decoration: none !important;
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3) !important;
+}
+
+.ai-server-url-link:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4) !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* 컨트롤 버튼 스타일 */
+.ai-server-controls {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 15px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 2rem !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ai-server-control-btn {
+  border-radius: 25px !important;
+  padding: 0.8rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ai-server-control-btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.ai-server-control-btn.primary {
+  background: linear-gradient(45deg, #667eea, #764ba2) !important;
+}
+
+.ai-server-control-btn.teal {
+  background: linear-gradient(45deg, #4ecdc4, #44a08d) !important;
+}
+
+/* 로딩 상태 */
+.ai-server-loading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  color: #7f8c8d !important;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .ai-server-main-header {
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .ai-server-status-card .content {
+    padding: 1.5rem !important;
+  }
+  
+  .ai-server-status-card .header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  
+  .ai-server-controls {
+    padding: 1rem !important;
+  }
+  
+  .ai-server-control-btn {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+}
+
+/*
+===========================
+   Dashboard Tunnel Status Styles (Modern Horizontal)
+===========================
+*/
+
+/* 모던 터널 상태 컨테이너 */
+.tunnel-status-modern {
+  position: relative;
+}
+
+/* 상태 버튼 그룹 스타일링 */
+.tunnel-status-modern .ui.labeled.button {
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+}
+
+.tunnel-status-modern .ui.labeled.button:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  transform: translateY(-1px);
+}
+
+/* 메인 상태 버튼 */
+.status-main-btn {
+  flex: 1 !important;
+  padding: 12px 16px !important;
+  border: none !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  transition: all 0.3s ease !important;
+}
+
+/* 로딩 상태 */
+.status-main-btn.loading {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+  color: #6c757d !important;
+  border-right: 1px solid #dee2e6 !important;
+}
+
+/* 활성 상태 */
+.status-main-btn.active {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  color: white !important;
+  border-right: 1px solid rgba(255,255,255,0.2) !important;
+  animation: status-pulse-active 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse-active {
+  0%, 100% { box-shadow: inset 0 0 0 0 rgba(255,255,255,0.2); }
+  50% { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.3); }
+}
+
+/* 비활성 상태 */
+.status-main-btn.inactive {
+  background: linear-gradient(135deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border-right: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* 경고 상태 */
+.status-main-btn.warning {
+  background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+  color: #212529 !important;
+  border-right: 1px solid rgba(0,0,0,0.1) !important;
+  animation: status-pulse-warning 1.5s ease-in-out infinite;
+}
+
+@keyframes status-pulse-warning {
+  0%, 100% { box-shadow: inset 0 0 0 0 rgba(0,0,0,0.1); }
+  50% { box-shadow: inset 0 0 0 2px rgba(0,0,0,0.2); }
+}
+
+/* 시간 라벨 */
+.status-time-label {
+  padding: 12px 14px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  min-width: 80px !important;
+  text-align: center !important;
+  background: rgba(255,255,255,0.9) !important;
+  color: #6c757d !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+}
+
+/* 상태별 시간 라벨 색상 */
+.tunnel-status-modern .ui.labeled.button:has(.status-main-btn.active) .status-time-label {
+  background: rgba(40, 167, 69, 0.1) !important;
+  color: #28a745 !important;
+}
+
+.tunnel-status-modern .ui.labeled.button:has(.status-main-btn.inactive) .status-time-label {
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+.tunnel-status-modern .ui.labeled.button:has(.status-main-btn.warning) .status-time-label {
+  background: rgba(255, 193, 7, 0.1) !important;
+  color: #856404 !important;
+}
+
+/* 헤더 아이콘 애니메이션 */
+.tunnel-status-modern .ui.header .signal.icon {
+  animation: signal-pulse 2s ease-in-out infinite;
+}
+
+@keyframes signal-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .status-main-btn {
+    padding: 10px 12px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .status-time-label {
+    padding: 10px 8px !important;
+    font-size: 0.7rem !important;
+    min-width: 60px !important;
+  }
+  
+  .tunnel-status-modern .ui.tiny.header {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) {
+  .tunnel-status-modern .ui.labeled.button:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  }
+}
+
+/*
+===========================
    GrassPlanter Styles
 ===========================
 */

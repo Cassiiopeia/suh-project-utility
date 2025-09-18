@@ -244,6 +244,291 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- JavaScript 로직은 common.js에서 처리됩니다 -->
+<!-- Grass Planter 전용 JavaScript -->
+<script>
+$(document).ready(function() {
+    // 페이지 로드 시 커밋 로그 로드
+    loadCommitLogs();
+    
+    // 드롭다운 초기화
+    $('.ui.dropdown').dropdown();
+    
+    // 체크박스 초기화
+    $('.ui.checkbox').checkbox();
+});
+
+/**
+ * UUID 생성 헬퍼
+ */
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+/**
+ * 프로필 추가 모달 표시
+ */
+function showAddProfileModal() {
+    $('#profileForm')[0].reset();
+    $('#profileId').val('');
+    $('#profileModal').modal('show');
+}
+
+/**
+ * 프로필 수정
+ */
+function editProfile(profileId) {
+    // TODO: 프로필 정보 로드 후 모달 표시
+    $('#profileId').val(profileId);
+    $('#profileModal').modal('show');
+}
+
+/**
+ * 프로필 저장
+ */
+function saveProfile() {
+    const formData = new FormData($('#profileForm')[0]);
+    
+    // 체크박스 값들을 명시적으로 설정
+    formData.set('isActive', $('#isActive').is(':checked'));
+    formData.set('isAutoCommitEnabled', $('#isAutoCommitEnabled').is(':checked'));
+    
+    // 프로필 ID가 있으면 수정, 없으면 생성
+    const profileId = $('#profileId').val();
+    const url = profileId ? '/api/grass/profile/update' : '/api/grass/profile/create';
+    
+    sendFormRequest(url, Object.fromEntries(formData),
+        function(response) {
+            if (typeof showToast === 'function') {
+                showToast(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.');
+            } else {
+                alert(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.');
+            }
+            $('#profileModal').modal('hide');
+            location.reload(); // 페이지 새로고침으로 목록 갱신
+        },
+        function(xhr, status, error) {
+            let errorMessage = '프로필 저장 중 오류가 발생했습니다.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+            }
+            
+            if (typeof showToast === 'function') {
+                showToast(errorMessage);
+            } else {
+                alert(errorMessage);
+            }
+            console.error('Profile save error:', error);
+        }
+    );
+}
+
+/**
+ * 프로필 삭제
+ */
+function deleteProfile(profileId) {
+    if (!confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
+        return;
+    }
+    
+    const params = {
+        profileId: profileId
+    };
+    
+    sendFormRequest('/api/grass/profile/delete', params,
+        function(response) {
+            if (typeof showToast === 'function') {
+                showToast('프로필이 삭제되었습니다.');
+            } else {
+                alert('프로필이 삭제되었습니다.');
+            }
+            location.reload(); // 페이지 새로고침으로 목록 갱신
+        },
+        function(xhr, status, error) {
+            let errorMessage = '프로필 삭제 중 오류가 발생했습니다.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+            }
+            
+            if (typeof showToast === 'function') {
+                showToast(errorMessage);
+            } else {
+                alert(errorMessage);
+            }
+            console.error('Profile delete error:', error);
+        }
+    );
+}
+
+/**
+ * 커밋 실행 모달 표시
+ */
+function executeCommit(profileId) {
+    $('#commitProfileId').val(profileId);
+    $('#commitMessage').val('');
+    $('#commitModal').modal('show');
+}
+
+/**
+ * 커밋 실행 확인
+ */
+function confirmCommit() {
+    const params = {
+        profileId: $('#commitProfileId').val(),
+        commitMessage: $('#commitMessage').val()
+    };
+    
+    sendFormRequest('/api/grass/commit/execute', params,
+        function(response) {
+            if (typeof showToast === 'function') {
+                showToast('커밋이 성공적으로 실행되었습니다.');
+            } else {
+                alert('커밋이 성공적으로 실행되었습니다.');
+            }
+            $('#commitModal').modal('hide');
+            loadCommitLogs();
+        },
+        function(xhr, status, error) {
+            let errorMessage = '커밋 실행 중 오류가 발생했습니다.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+            }
+            
+            if (typeof showToast === 'function') {
+                showToast(errorMessage);
+            } else {
+                alert(errorMessage);
+            }
+            console.error('Commit execute error:', error);
+        }
+    );
+}
+
+/**
+ * 커밋 로그 로드
+ */
+function loadCommitLogs() {
+    const params = {
+        page: 0,
+        size: 20
+    };
+    
+    sendFormRequest('/api/grass/commit/logs', params,
+        function(response) {
+            if (response.commitLogs && Array.isArray(response.commitLogs)) {
+                displayCommitLogs(response.commitLogs);
+            } else {
+                $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그를 불러올 수 없습니다.</td></tr>');
+            }
+        },
+        function(xhr, status, error) {
+            console.error('커밋 로그 로드 실패:', error);
+            $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그 로드 중 오류가 발생했습니다.</td></tr>');
+        }
+    );
+}
+
+/**
+ * 커밋 로그 표시 (XSS 방지 적용) - jQuery를 사용한 안전한 DOM 조작
+ */
+function displayCommitLogs(logs) {
+    const tableBody = $('#commitLogTable');
+    
+    if (!logs || logs.length === 0) {
+        tableBody.html('<tr><td colspan="6" class="center aligned">커밋 로그가 없습니다.</td></tr>');
+        return;
+    }
+    
+    // 기존 내용 제거
+    tableBody.empty();
+    
+    logs.forEach(function(log) {
+        const row = $('<tr>');
+        
+        // 시간 (안전한 텍스트 삽입)
+        const timeCell = $('<td>');
+        const commitTime = log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-';
+        timeCell.text(commitTime);
+        row.append(timeCell);
+        
+        // GitHub 사용자명 (XSS 방지)
+        const usernameCell = $('<td>');
+        usernameCell.text(log.githubUsername || '-');
+        row.append(usernameCell);
+        
+        // 저장소명 (XSS 방지)
+        const repoCell = $('<td>');
+        repoCell.text(log.repositoryName || '-');
+        row.append(repoCell);
+        
+        // 커밋 메시지 (XSS 방지 - 가장 중요)
+        const messageCell = $('<td>');
+        messageCell.text(log.commitMessage || '-');
+        row.append(messageCell);
+        
+        // 상태 라벨 (HTTP 상태 기반)
+        const statusCell = $('<td>');
+        // HTTP 상태 코드나 응답 성공 여부로 판단
+        if (log.httpStatus === 200 || log.httpStatus === 201) {
+            const successLabel = $('<div class="ui green mini label">성공</div>');
+            statusCell.append(successLabel);
+        } else {
+            const failLabel = $('<div class="ui red mini label">실패</div>');
+            statusCell.append(failLabel);
+        }
+        row.append(statusCell);
+        
+        // 레벨 표시 (안전한 숫자 처리)
+        const levelCell = $('<td>');
+        const level = log.targetCommitLevel || 0;
+        const levelSpan = $('<span class="contribution-level">').addClass('level-' + level);
+        levelCell.append(levelSpan);
+        row.append(levelCell);
+        
+        tableBody.append(row);
+    });
+}
+
+/**
+ * HTML 이스케이프 함수 (XSS 방지)
+ */
+function escapeHtml(text) {
+    if (typeof text !== 'string') return text;
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+/**
+ * 폼 데이터를 multipart/form-data로 전송하는 공통 함수
+ */
+function sendFormRequest(url, data, successCallback, errorCallback) {
+    const formData = new FormData();
+    
+    // 데이터 객체를 FormData에 추가
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            formData.append(key, data[key]);
+        }
+    }
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: successCallback,
+        error: errorCallback
+    });
+}
+</script>
 </body>
 </html>

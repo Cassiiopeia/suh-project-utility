@@ -316,265 +316,258 @@ function renderCommitLogTable(logs, tableId = 'commitLogTable') {
 }
 
 // ==========================================
-// Grass Planter 관련 함수들
+// 공통 유틸리티 함수들 (Grass Planter 함수들은 grassPlanter.html로 이동됨)
 // ==========================================
 
-/**
- * UUID 생성 헬퍼
- */
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
+// GrassPlanter 관련 함수들은 grassPlanter.html로 이동되었습니다.
+// 공통으로 사용되는 함수들만 이곳에 남겨둡니다.
 
-/**
- * 프로필 추가 모달 표시
- */
-function showAddProfileModal() {
-  $('#profileForm')[0].reset();
-  $('#profileId').val('');
-  $('#profileModal').modal('show');
-}
-
-/**
- * 프로필 수정
- */
-function editProfile(profileId) {
-  // TODO: 프로필 정보 로드 후 모달 표시
-  $('#profileId').val(profileId);
-  $('#profileModal').modal('show');
-}
-
-/**
- * 프로필 저장
- */
-function saveProfile() {
-  const profileId = $('#profileId').val();
-  const url = profileId ? '/api/grass/profile/update' : '/api/grass/profile/create';
-  
-  // PAT 필드 검증
-  const pat = $('#personalAccessToken').val();
-  if (!pat || pat.trim() === '') {
-    if (typeof showToast === 'function') {
-      showToast('Personal Access Token을 입력해주세요.');
-    } else {
-      alert('Personal Access Token을 입력해주세요.');
-    }
-    return;
-  }
-  
-  // 파라미터 객체 생성
-  const params = {
-    profileId: profileId,
-    githubUsername: $('#githubUsername').val(),
-    personalAccessToken: pat,
-    repositoryFullName: $('#repositoryFullName').val(),
-    targetCommitLevel: $('#targetCommitLevel').val(),
-    ownerNickname: $('#ownerNickname').val(),
-    isActive: $('#isActive').is(':checked'),
-    isAutoCommitEnabled: $('#isAutoCommitEnabled').is(':checked')
-    // 임시 UUID 전송 제거 - 서버에서 처리하도록 함
-    // TODO: 실제 선택 UI 구성 후에만 유효한 식별자 전송
-  };
-  
-  // 공통 AJAX 함수 사용
-  sendFormRequest(url, params, 
-    function(response) {
-      if (typeof showToast === 'function') {
-        showToast('프로필이 저장되었습니다.');
-      } else {
-        alert('프로필이 저장되었습니다.');
-      }
-      location.reload();
-    },
-    function(xhr, status, error) {
-      let errorMessage = '프로필 저장 중 오류가 발생했습니다.';
-      if (xhr.responseJSON && xhr.responseJSON.message) {
-        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-      }
-      
-      if (typeof showToast === 'function') {
-        showToast(errorMessage);
-      } else {
-        alert(errorMessage);
-      }
-      console.error('Profile save error:', error);
-    }
-  );
-}
-
-/**
- * 프로필 삭제
- */
-function deleteProfile(profileId) {
-  if (confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
-    const params = { profileId: profileId };
-    
-    sendFormRequest('/api/grass/profile/delete', params,
-      function(response) {
-        if (typeof showToast === 'function') {
-          showToast('프로필이 삭제되었습니다.');
-        } else {
-          alert('프로필이 삭제되었습니다.');
-        }
-        location.reload();
-      },
-      function(xhr, status, error) {
-        let errorMessage = '프로필 삭제 중 오류가 발생했습니다.';
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-        }
-        
-        if (typeof showToast === 'function') {
-          showToast(errorMessage);
-        } else {
-          alert(errorMessage);
-        }
-        console.error('Profile delete error:', error);
-      }
-    );
-  }
-}
-
-/**
- * 커밋 실행 모달 표시
- */
-function executeCommit(profileId) {
-  $('#commitProfileId').val(profileId);
-  $('#commitMessage').val('Manual commit from GrassPlanter');
-  $('#commitModal').modal('show');
-}
-
-/**
- * 커밋 실행 확인
- */
-function confirmCommit() {
-  const params = {
-    profileId: $('#commitProfileId').val(),
-    commitMessage: $('#commitMessage').val()
-  };
-  
-  sendFormRequest('/api/grass/commit/execute', params,
-    function(response) {
-      if (typeof showToast === 'function') {
-        showToast('커밋이 성공적으로 실행되었습니다.');
-      } else {
-        alert('커밋이 성공적으로 실행되었습니다.');
-      }
-      $('#commitModal').modal('hide');
-      loadCommitLogs();
-    },
-    function(xhr, status, error) {
-      let errorMessage = '커밋 실행 중 오류가 발생했습니다.';
-      if (xhr.responseJSON && xhr.responseJSON.message) {
-        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-      }
-      
-      if (typeof showToast === 'function') {
-        showToast(errorMessage);
-      } else {
-        alert(errorMessage);
-      }
-      console.error('Commit execute error:', error);
-    }
-  );
-}
-
-/**
- * 커밋 로그 로드
- */
-function loadCommitLogs() {
-  const params = {
-    page: 0,
-    size: 20
-  };
-  
-  sendFormRequest('/api/grass/commit/logs', params,
-    function(response) {
-      if (response.commitLogs && Array.isArray(response.commitLogs)) {
-        displayCommitLogs(response.commitLogs);
-      } else {
-        $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그를 불러올 수 없습니다.</td></tr>');
-      }
-    },
-    function(xhr, status, error) {
-      console.error('커밋 로그 로드 실패:', error);
-      $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그 로드 중 오류가 발생했습니다.</td></tr>');
-    }
-  );
-}
-
-/**
- * 커밋 로그 표시 (XSS 방지 적용) - jQuery를 사용한 안전한 DOM 조작
- */
-function displayCommitLogs(logs) {
-  const tableBody = $('#commitLogTable');
-  
-  if (!logs || logs.length === 0) {
-    tableBody.html('<tr><td colspan="6" class="center aligned">커밋 로그가 없습니다.</td></tr>');
-    return;
-  }
-  
-  // 기존 내용 제거
-  tableBody.empty();
-  
-  logs.forEach(function(log) {
-    const row = $('<tr>');
-    
-    // 시간 (안전한 텍스트 삽입)
-    const timeCell = $('<td>');
-    const commitTime = log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-';
-    timeCell.text(commitTime);
-    row.append(timeCell);
-    
-    // GitHub 사용자명 (XSS 방지)
-    const usernameCell = $('<td>');
-    usernameCell.text(log.githubUsername || '-');
-    row.append(usernameCell);
-    
-    // 저장소명 (XSS 방지)
-    const repoCell = $('<td>');
-    repoCell.text(log.repositoryName || '-');
-    row.append(repoCell);
-    
-    // 커밋 메시지 (XSS 방지 - 가장 중요)
-    const messageCell = $('<td>');
-    messageCell.text(log.commitMessage || '-');
-    row.append(messageCell);
-    
-    // 상태 라벨 (HTTP 상태 기반)
-    const statusCell = $('<td>');
-    // HTTP 상태 코드나 응답 성공 여부로 판단
-    const isSuccess = log.isSuccess !== undefined ? log.isSuccess : true; // 기본값 처리
-    if (isSuccess) {
-      statusCell.html('<div class="ui green label">성공</div>');
-    } else {
-      statusCell.html('<div class="ui red label">실패</div>');
-    }
-    row.append(statusCell);
-    
-    // 레벨 표시
-    const levelCell = $('<td class="contribution-level-cell">');
-    const levelColor = 'level-' + (log.commitLevel || 0);
-    const levelBlock = $('<span class="contribution-level">').addClass(levelColor);
-    const levelText = ' Level ' + (log.commitLevel || 0);
-    levelCell.append(levelBlock).append(document.createTextNode(levelText));
-    row.append(levelCell);
-    
-    tableBody.append(row);
-  });
-}
-
-// Grass Planter 페이지 초기화
-$(document).ready(function() {
-  // Grass Planter 페이지인지 확인
-  if ($('#main-content').hasClass('grass-planter-dashboard')) {
-    $('.ui.dropdown').dropdown();
-    $('.ui.checkbox').checkbox();
-    
-    // 페이지 로드 시 커밋 로그 로드
-    loadCommitLogs();
-  }
-});
+// /**
+//  * 프로필 추가 모달 표시
+//  */
+// function showAddProfileModal() {
+//   $('#profileForm')[0].reset();
+//   $('#profileId').val('');
+//   $('#profileModal').modal('show');
+// }
+// 
+// /**
+//  * 프로필 수정
+//  */
+// function editProfile(profileId) {
+//   // TODO: 프로필 정보 로드 후 모달 표시
+//   $('#profileId').val(profileId);
+//   $('#profileModal').modal('show');
+// }
+// 
+// /**
+//  * 프로필 저장
+//  */
+// function saveProfile() {
+//   const profileId = $('#profileId').val();
+//   const url = profileId ? '/api/grass/profile/update' : '/api/grass/profile/create';
+//   
+//   // PAT 필드 검증
+//   const pat = $('#personalAccessToken').val();
+//   if (!pat || pat.trim() === '') {
+//     if (typeof showToast === 'function') {
+//       showToast('Personal Access Token을 입력해주세요.');
+//     } else {
+//       alert('Personal Access Token을 입력해주세요.');
+//     }
+//     return;
+//   }
+//   
+//   // 파라미터 객체 생성
+//   const params = {
+//     profileId: profileId,
+//     githubUsername: $('#githubUsername').val(),
+//     personalAccessToken: pat,
+//     repositoryFullName: $('#repositoryFullName').val(),
+//     targetCommitLevel: $('#targetCommitLevel').val(),
+//     ownerNickname: $('#ownerNickname').val(),
+//     isActive: $('#isActive').is(':checked'),
+//     isAutoCommitEnabled: $('#isAutoCommitEnabled').is(':checked')
+//     // 임시 UUID 전송 제거 - 서버에서 처리하도록 함
+//     // TODO: 실제 선택 UI 구성 후에만 유효한 식별자 전송
+//   };
+//   
+//   // 공통 AJAX 함수 사용
+//   sendFormRequest(url, params, 
+//     function(response) {
+//       if (typeof showToast === 'function') {
+//         showToast('프로필이 저장되었습니다.');
+//       } else {
+//         alert('프로필이 저장되었습니다.');
+//       }
+//       location.reload();
+//     },
+//     function(xhr, status, error) {
+//       let errorMessage = '프로필 저장 중 오류가 발생했습니다.';
+//       if (xhr.responseJSON && xhr.responseJSON.message) {
+//         errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+//       }
+//       
+//       if (typeof showToast === 'function') {
+//         showToast(errorMessage);
+//       } else {
+//         alert(errorMessage);
+//       }
+//       console.error('Profile save error:', error);
+//     }
+//   );
+// }
+// 
+// /**
+//  * 프로필 삭제
+//  */
+// function deleteProfile(profileId) {
+//   if (confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
+//     const params = { profileId: profileId };
+//     
+//     sendFormRequest('/api/grass/profile/delete', params,
+//       function(response) {
+//         if (typeof showToast === 'function') {
+//           showToast('프로필이 삭제되었습니다.');
+//         } else {
+//           alert('프로필이 삭제되었습니다.');
+//         }
+//         location.reload();
+//       },
+//       function(xhr, status, error) {
+//         let errorMessage = '프로필 삭제 중 오류가 발생했습니다.';
+//         if (xhr.responseJSON && xhr.responseJSON.message) {
+//           errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+//         }
+//         
+//         if (typeof showToast === 'function') {
+//           showToast(errorMessage);
+//         } else {
+//           alert(errorMessage);
+//         }
+//         console.error('Profile delete error:', error);
+//       }
+//     );
+//   }
+// }
+// 
+// /**
+//  * 커밋 실행 모달 표시
+//  */
+// function executeCommit(profileId) {
+//   $('#commitProfileId').val(profileId);
+//   $('#commitMessage').val('Manual commit from GrassPlanter');
+//   $('#commitModal').modal('show');
+// }
+// 
+// /**
+//  * 커밋 실행 확인
+//  */
+// function confirmCommit() {
+//   const params = {
+//     profileId: $('#commitProfileId').val(),
+//     commitMessage: $('#commitMessage').val()
+//   };
+//   
+//   sendFormRequest('/api/grass/commit/execute', params,
+//     function(response) {
+//       if (typeof showToast === 'function') {
+//         showToast('커밋이 성공적으로 실행되었습니다.');
+//       } else {
+//         alert('커밋이 성공적으로 실행되었습니다.');
+//       }
+//       $('#commitModal').modal('hide');
+//       loadCommitLogs();
+//     },
+//     function(xhr, status, error) {
+//       let errorMessage = '커밋 실행 중 오류가 발생했습니다.';
+//       if (xhr.responseJSON && xhr.responseJSON.message) {
+//         errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+//       }
+//       
+//       if (typeof showToast === 'function') {
+//         showToast(errorMessage);
+//       } else {
+//         alert(errorMessage);
+//       }
+//       console.error('Commit execute error:', error);
+//     }
+//   );
+// }
+// 
+// /**
+//  * 커밋 로그 로드
+//  */
+// function loadCommitLogs() {
+//   const params = {
+//     page: 0,
+//     size: 20
+//   };
+//   
+//   sendFormRequest('/api/grass/commit/logs', params,
+//     function(response) {
+//       if (response.commitLogs && Array.isArray(response.commitLogs)) {
+//         displayCommitLogs(response.commitLogs);
+//       } else {
+//         $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그를 불러올 수 없습니다.</td></tr>');
+//       }
+//     },
+//     function(xhr, status, error) {
+//       console.error('커밋 로그 로드 실패:', error);
+//       $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그 로드 중 오류가 발생했습니다.</td></tr>');
+//     }
+//   );
+// }
+// 
+// /**
+//  * 커밋 로그 표시 (XSS 방지 적용) - jQuery를 사용한 안전한 DOM 조작
+//  */
+// function displayCommitLogs(logs) {
+//   const tableBody = $('#commitLogTable');
+//   
+//   if (!logs || logs.length === 0) {
+//     tableBody.html('<tr><td colspan="6" class="center aligned">커밋 로그가 없습니다.</td></tr>');
+//     return;
+//   }
+//   
+//   // 기존 내용 제거
+//   tableBody.empty();
+//   
+//   logs.forEach(function(log) {
+//     const row = $('<tr>');
+//     
+//     // 시간 (안전한 텍스트 삽입)
+//     const timeCell = $('<td>');
+//     const commitTime = log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-';
+//     timeCell.text(commitTime);
+//     row.append(timeCell);
+//     
+//     // GitHub 사용자명 (XSS 방지)
+//     const usernameCell = $('<td>');
+//     usernameCell.text(log.githubUsername || '-');
+//     row.append(usernameCell);
+//     
+//     // 저장소명 (XSS 방지)
+//     const repoCell = $('<td>');
+//     repoCell.text(log.repositoryName || '-');
+//     row.append(repoCell);
+//     
+//     // 커밋 메시지 (XSS 방지 - 가장 중요)
+//     const messageCell = $('<td>');
+//     messageCell.text(log.commitMessage || '-');
+//     row.append(messageCell);
+//     
+//     // 상태 라벨 (HTTP 상태 기반)
+//     const statusCell = $('<td>');
+//     // HTTP 상태 코드나 응답 성공 여부로 판단
+//     const isSuccess = log.isSuccess !== undefined ? log.isSuccess : true; // 기본값 처리
+//     if (isSuccess) {
+//       statusCell.html('<div class="ui green label">성공</div>');
+//     } else {
+//       statusCell.html('<div class="ui red label">실패</div>');
+//     }
+//     row.append(statusCell);
+//     
+//     // 레벨 표시
+//     const levelCell = $('<td class="contribution-level-cell">');
+//     const levelColor = 'level-' + (log.commitLevel || 0);
+//     const levelBlock = $('<span class="contribution-level">').addClass(levelColor);
+//     const levelText = ' Level ' + (log.commitLevel || 0);
+//     levelCell.append(levelBlock).append(document.createTextNode(levelText));
+//     row.append(levelCell);
+//     
+//     tableBody.append(row);
+//   });
+// }
+// 
+// // Grass Planter 페이지 초기화
+// $(document).ready(function() {
+//   // Grass Planter 페이지인지 확인
+//   if ($('#main-content').hasClass('grass-planter-dashboard')) {
+//     $('.ui.dropdown').dropdown();
+//     $('.ui.checkbox').checkbox();
+//     
+//     // 페이지 로드 시 커밋 로그 로드
+//     loadCommitLogs();
+//   }
+// });
