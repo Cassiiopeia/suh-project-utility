@@ -20,7 +20,7 @@ public class AiServerService {
     private final SshCommandExecutor sshCommandExecutor;
     private final ObjectMapper objectMapper;
     
-    private static final String TUNNEL_INFO_URL = "https://suh-project.synolog.me/api/tunnel-info";
+    private static final String TUNNEL_INFO_URL = "http://suh-project.synology.me:11435/api/tunnel-info";
 
     /**
      * AI 서버 정보를 조회합니다.
@@ -28,8 +28,8 @@ public class AiServerService {
     public AiServerResponse getTunnelInfo(AiServerRequest request) {
         log.info("AI 서버 터널 정보 조회 시작: {}", TUNNEL_INFO_URL);
         
-        // curl 명령어 구성
-        String curlCommand = String.format("curl -s \"%s\"", TUNNEL_INFO_URL);
+        // curl 명령어 구성 (-L 플래그로 리다이렉트 따라가기)
+        String curlCommand = String.format("curl -sL \"%s\"", TUNNEL_INFO_URL);
         log.debug("실행할 curl 명령어: {}", curlCommand);
         
         try {
