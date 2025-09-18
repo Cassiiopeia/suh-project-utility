@@ -3,7 +3,7 @@ package me.suhsaechan.web.controller.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.docker.dto.DockerRequest;
-import me.suhsaechan.docker.dto.DockerScriptResponse;
+import me.suhsaechan.docker.dto.DockerResponse;
 import me.suhsaechan.docker.service.DockerService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.MediaType;
@@ -23,7 +23,7 @@ public class DockerController {
 
   @PostMapping(value = "/get/container-info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<DockerScriptResponse> getContainerInfo(
+  public ResponseEntity<DockerResponse> getContainerInfo(
       @ModelAttribute DockerRequest request) {
     return ResponseEntity.ok(dockerService.getContainerInfo(request));
   }

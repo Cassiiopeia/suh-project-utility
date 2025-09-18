@@ -119,7 +119,6 @@
             <div class="content">
               <div class="header">
                 <i class="terminal icon"></i>컨테이너 로그
-                <span class="ui red tiny label" style="margin-left:6px;">NEW</span>
               </div>
               <div class="meta">
                 <span class="category">Docker</span>
@@ -141,13 +140,41 @@
           <div class="ui fluid card equal-height-card">
             <div class="content">
               <div class="header">
+                <i class="server icon"></i> AI 서버 관리
+                <span class="ui green tiny label dashboard-badge-new">NEW</span>
+              </div>
+              <div class="tunnel-status-modern" style="margin-top: 10px; margin-bottom: -20px;">
+                <div class="ui basic button" id="ai-server-status" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; align-items: center; color: #666;">
+                    <i class="signal icon"></i>&nbsp;터널 상태
+                  </div>
+                  <div class="ui basic button status-main-btn loading" style="margin: 0;">
+                    <i class="circle notched loading icon"></i>
+                    연결 확인중
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="extra content">
+              <a href="/ai-server" class="ui purple fluid button shortcut-btn">
+                <i class="arrow right icon"></i>
+                <span>바로가기</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="ui fluid card equal-height-card">
+            <div class="content">
+              <div class="header">
                 <i class="comment alternate icon"></i> OpenAI 챗봇
               </div>
               <div class="meta">
                 <span class="category">AI Assistant</span>
               </div>
               <div class="description">
-                (비싸서) 무기한 중단
+                시놀로지 CPU only Ollama 서버
               </div>
             </div>
             <div class="extra content">
@@ -208,7 +235,7 @@
             <div class="content">
               <div class="header">
                 <i class="book icon"></i>스터디 플랜
-                <span class="ui red tiny label" style="margin-left:6px;">NEW</span>
+                <span class="ui green tiny label dashboard-badge-new">NEW</span>
               </div>
               <div class="meta">
                 <span class="category">Study Management</span>
@@ -219,6 +246,29 @@
             </div>
             <div class="extra content">
               <a href="/study-management" class="ui blue fluid button shortcut-btn">
+                <i class="arrow right icon"></i>
+                <span>바로가기</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="ui fluid card equal-height-card">
+            <div class="content">
+              <div class="header">
+                <i class="leaf icon"></i>Grass Planter
+                <span class="ui green tiny label dashboard-badge-new">NEW</span>
+              </div>
+              <div class="meta">
+                <span class="category">GitHub Automation</span>
+              </div>
+              <div class="description">
+                GitHub 자동 커밋 관리
+              </div>
+            </div>
+            <div class="extra content">
+              <a href="/grass" class="ui blue fluid button shortcut-btn">
                 <i class="arrow right icon"></i>
                 <span>바로가기</span>
               </a>
@@ -1187,6 +1237,52 @@
       }
     );
   }
+
+  // AI 서버 상태 로드
+  function loadAiServerStatus() {
+    const formData = new FormData();
+    
+    $.ajax({
+      url: '/api/ai-server/info',
+      method: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        const statusContainer = $('#ai-server-status');
+        const statusBtn = statusContainer.find('.status-main-btn');
+        
+        if (response.isActive) {
+          // 활성 상태
+          statusBtn.removeClass('loading inactive warning').addClass('active');
+          statusBtn.html('<i class="check circle icon"></i>활성');
+        } else {
+          // 비활성 상태
+          statusBtn.removeClass('loading active warning').addClass('inactive');
+          statusBtn.html('<i class="times circle icon"></i>비활성');
+        }
+      },
+      error: function() {
+        const statusContainer = $('#ai-server-status');
+        const statusBtn = statusContainer.find('.status-main-btn');
+        
+        // 오류 상태
+        statusBtn.removeClass('loading active inactive').addClass('warning');
+        statusBtn.html('<i class="exclamation triangle icon"></i>연결 오류');
+      }
+    });
+  }
+
+  // 페이지 로드 시 AI 서버 상태 확인
+  $(document).ready(function() {
+    // 기존 로드 함수들 실행 후 AI 서버 상태도 로드
+    setTimeout(function() {
+      loadAiServerStatus();
+    }, 1000);
+    
+    // 10분마다 AI 서버 상태 새로고침
+    setInterval(loadAiServerStatus, 600000); // 10분 = 600,000ms
+  });
 
 </script>
 </body>

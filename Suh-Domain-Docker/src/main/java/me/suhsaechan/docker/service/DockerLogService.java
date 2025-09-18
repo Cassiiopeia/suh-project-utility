@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.util.SshCommandExecutor;
 import me.suhsaechan.common.properties.SshConnectionProperties;
+import me.suhsaechan.docker.dto.DockerRequest;
+import me.suhsaechan.docker.dto.ContainerInfoDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -48,7 +50,7 @@ public class DockerLogService {
      * @param request 로그 요청 정보
      * @return SSE Emitter 객체
      */
-    public SseEmitter streamContainerLogs(me.suhsaechan.docker.dto.request.DockerLogRequest request) {
+    public SseEmitter streamContainerLogs(DockerRequest request) {
         // 이미 실행 중인 스트리밍이 있다면 중지
         stopLogStreaming(request);
         
@@ -123,7 +125,7 @@ public class DockerLogService {
      * 
      * @param request 로그 요청 정보
      */
-    public void stopLogStreaming(me.suhsaechan.docker.dto.request.DockerLogRequest request) {
+    public void stopLogStreaming(DockerRequest request) {
         String containerName = Optional.ofNullable(request.getContainerName()).orElse("sejong-malsami-back");
         log.info("Docker 로그 스트리밍 중지 요청 - 컨테이너: {}", containerName);
         
@@ -328,10 +330,10 @@ public class DockerLogService {
     /**
      * 서버의 모든 Docker 컨테이너 목록 조회 (ps -a)
      */
-    public List<me.suhsaechan.docker.dto.response.ContainerInfoResponse> listContainers() {
+    public List<ContainerInfoDto> listContainers() {
         String result = sshCommandExecutor.executeCommandWithSudoStdin(
                 "docker ps -a --format \\\"{{.Names}}|{{.Status}}\\\"" );
-        List<me.suhsaechan.docker.dto.response.ContainerInfoResponse> list = new ArrayList<>();
+        List<ContainerInfoDto> list = new ArrayList<>();
         if (result != null && !result.isEmpty()) {
             for (String line : result.split("\n")) {
                 String[] parts = line.split("\\|");
@@ -339,7 +341,11 @@ public class DockerLogService {
                     String name = parts[0].trim();
                     String status = parts[1].trim();
                     boolean running = status.toLowerCase().startsWith("up");
-                    list.add(new me.suhsaechan.docker.dto.response.ContainerInfoResponse(name, status, running));
+                    list.add(ContainerInfoDto.builder()
+                        .name(name)
+                        .status(status)
+                        .isRunning(running)
+                        .build());
                 }
             }
         }

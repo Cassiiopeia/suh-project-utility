@@ -15,6 +15,7 @@ public enum ErrorCode {
 
   // SCRIPT
   EMPTY_SCRIPT_RESPONSE(HttpStatus.INTERNAL_SERVER_ERROR, "스크립트 반환값이 없습니다"),
+  JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 파싱 중 오류가 발생했습니다"),
 
   // UTILS
   FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
@@ -55,7 +56,16 @@ public enum ErrorCode {
   DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "이미 존재하는 리소스입니다."),
   INVALID_OPERATION(HttpStatus.BAD_REQUEST, "유효하지 않은 작업입니다."),
   INVALID_STUDY_REQUEST_PARAMETER(HttpStatus.BAD_REQUEST, "검색 키워드나 태그를 입력해주세요"),
-  FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 중 오류가 발생했습니다.");
+  FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 중 오류가 발생했습니다."),
+
+  // GRASS PLANTER
+  GRASS_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없습니다."),
+  GRASS_PROFILE_DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 GitHub 사용자명입니다."),
+  GRASS_REPOSITORY_NOT_FOUND(HttpStatus.NOT_FOUND, "기본 저장소 정보가 없습니다."),
+  GRASS_PAT_DECRYPT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Personal Access Token 복호화에 실패했습니다."),
+  GRASS_COMMIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "GitHub 커밋 실행에 실패했습니다."),
+  GRASS_CONTRIBUTION_CHECK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "GitHub 기여도 확인에 실패했습니다."),
+  GRASS_AUTO_COMMIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 커밋 실행에 실패했습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

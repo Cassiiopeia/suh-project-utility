@@ -3,6 +3,8 @@ package me.suhsaechan.web.controller.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
+import me.suhsaechan.translate.dto.TranslationRequest;
+import me.suhsaechan.translate.dto.TranslationResponse;
 import me.suhsaechan.translate.service.TranslateService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,8 @@ public class TranslateController {
 
   @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<me.suhsaechan.translate.object.response.TranslationResponse> translate(
-      @ModelAttribute me.suhsaechan.translate.object.request.TranslationRequest request) {
+  public ResponseEntity<TranslationResponse> translate(
+      @ModelAttribute TranslationRequest request) {
     return ResponseEntity.ok(translatorService.translate(request));
   }
 }

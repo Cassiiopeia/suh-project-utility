@@ -1,4 +1,4 @@
-package me.suhsaechan.module.object.request;
+package me.suhsaechan.module.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

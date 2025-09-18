@@ -7,6 +7,7 @@ import me.suhsaechan.study.dto.StudyResponse;
 import me.suhsaechan.study.service.StudyCategoryService;
 import me.suhsaechan.study.service.StudyFileService;
 import me.suhsaechan.study.service.StudyPostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -51,7 +52,7 @@ public class StudyManagementController {
      */
     @PostMapping(value = "/category/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudyResponse> createCategory(@ModelAttribute StudyRequest request) {
-        return ResponseEntity.ok(categoryService.createCategory(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(request));
     }
 
     /**
@@ -68,7 +69,7 @@ public class StudyManagementController {
     @PostMapping(value = "/category/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> deleteCategory(@ModelAttribute StudyRequest request) {
         categoryService.deleteCategory(request.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     // 포스트 관련 엔드포인트 =================================================
@@ -94,7 +95,7 @@ public class StudyManagementController {
      */
     @PostMapping(value = "/post/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudyResponse> createPost(@ModelAttribute StudyRequest request) {
-        return ResponseEntity.ok(postService.createPost(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(request));
     }
 
     /**
@@ -111,7 +112,7 @@ public class StudyManagementController {
     @PostMapping(value = "/post/delete")
     public ResponseEntity<Void> deletePost(@RequestBody StudyRequest request) {
         postService.deletePost(request.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**

@@ -1,4 +1,4 @@
-package me.suhsaechan.common.entity;
+package me.suhsaechan.notice.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import me.suhsaechan.common.entity.BasePostgresEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

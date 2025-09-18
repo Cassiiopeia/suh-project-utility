@@ -1,6 +1,8 @@
 package me.suhsaechan.web.controller.api;
 
 import lombok.RequiredArgsConstructor;
+import me.suhsaechan.module.dto.ModuleVersionRequest;
+import me.suhsaechan.module.dto.ModuleVersionResponse;
 import me.suhsaechan.module.service.ModuleVersionService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.MediaType;
@@ -18,8 +20,8 @@ public class ModuleVersionController {
 
   @PostMapping(value = "/get/versions", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<me.suhsaechan.module.object.response.ModuleVersionResponse> getModuleVersions(
-      @ModelAttribute me.suhsaechan.module.object.request.ModuleVersionRequest request){
+  public ResponseEntity<ModuleVersionResponse> getModuleVersions(
+      @ModelAttribute ModuleVersionRequest request){
     return ResponseEntity.ok(moduleVersionService.getModuleVersions(request));
   }
 }

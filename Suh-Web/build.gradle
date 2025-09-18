@@ -14,10 +14,12 @@ dependencies {
     // 개별 도메인 모듈들 (필요한 경우에만)
     implementation project(':Suh-Domain-Docker')
     implementation project(':Suh-Domain-Github')
+    implementation project(':Suh-Domain-AiServer')
     implementation project(':Suh-Module-Translate')
     implementation project(':Suh-Domain-Notice')
     implementation project(':Suh-Domain-Module')
     implementation project(':Suh-Domain-Study')
+    implementation project(':Suh-Domain-GrassPlanter')
 }
 
 // Boot JAR 고정 > Dockerfile 재사용

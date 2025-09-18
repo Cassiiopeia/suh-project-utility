@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:replace="~{fragments/header :: head(title='AI 서버 관리-SAECHAN-LAB')}"></head>
+<body class="ai-server-page">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="ui container" id="main-content">
+  <!-- 메인 헤더 -->
+  <div class="ui segment ai-server-main-header">
+    <h1 class="ui header">
+      <i class="robot icon"></i>
+      <div class="content">
+        AI 서버 관리
+        <div class="sub header">Cloudflare 터널을 통한 AI 서버 상태 관리 및 모니터링</div>
+      </div>
+    </h1>
+  </div>
+
+  <!-- 컨트롤 패널 -->
+  <div class="ui segment ai-server-controls">
+    <div class="ui stackable two column grid">
+      <div class="column">
+        <button class="ui button ai-server-control-btn primary" id="refreshBtn">
+          <i class="sync alternate icon"></i>정보 새로고침
+        </button>
+      </div>
+      <div class="column">
+        <button class="ui button ai-server-control-btn teal" id="testConnectionBtn">
+          <i class="plug icon"></i>연결 테스트
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 서버 상태 대시보드 -->
+  <div class="ui stackable two column grid">
+    <!-- 서버 상태 카드 -->
+    <div class="column">
+      <div class="ui card ai-server-status-card">
+        <div class="content">
+          <div class="header">
+            <h3><i class="server icon"></i>서버 상태</h3>
+            <div class="ai-server-status-badge loading" id="serverStatusBadge">
+              <i class="circle notched loading icon"></i>
+              확인 중
+            </div>
+          </div>
+          <div class="description">
+            <div class="ui statistic">
+              <div class="value" id="uptimeDisplay">--</div>
+              <div class="label">가동 시간</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 터널 정보 카드 -->
+    <div class="column">
+      <div class="ui card ai-server-status-card">
+        <div class="content">
+          <div class="header">
+            <h3><i class="cloud icon"></i>터널 정보</h3>
+          </div>
+          <div class="description">
+            <div class="ui relaxed list ai-server-info-list">
+              <div class="item">
+                <i class="linkify icon"></i>
+                <div class="content">
+                  <div class="header">터널 URL</div>
+                  <div class="description" id="tunnelUrl">
+                    <div class="ai-server-loading">
+                      <i class="circle notched loading icon"></i>
+                      터널 정보를 불러오는 중...
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <i class="clock icon"></i>
+                <div class="content">
+                  <div class="header">마지막 업데이트</div>
+                  <div class="description" id="lastUpdate">확인 중...</div>
+                </div>
+              </div>
+              <div class="item">
+                <i class="server icon"></i>
+                <div class="content">
+                  <div class="header">로컬 엔드포인트</div>
+                  <div class="description" id="localEndpoint">확인 중...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 추가 정보 섹션 -->
+  <div class="ui segment ai-server-status-card">
+    <h3 class="ui header">
+      <i class="info circle icon"></i>
+      <div class="content">
+        서비스 정보
+        <div class="sub header">AI 서버의 상세 정보와 엔드포인트</div>
+      </div>
+    </h3>
+    <div class="ui stackable three column grid">
+      <div class="column">
+        <div class="ui statistic">
+          <div class="value" id="serviceVersion">v1.0</div>
+          <div class="label">서비스 버전</div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="ui statistic">
+          <div class="value" id="proxyPort">11435</div>
+          <div class="label">프록시 포트</div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="ui statistic">
+          <div class="value" id="targetPort">11434</div>
+          <div class="label">타겟 포트</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- AI 서버 관리 전용 스크립트 -->
+<script>
+$(document).ready(function() {
+    console.log('AI 서버 페이지 로드됨');
+    
+    // 페이지 로드 즉시 데이터 요청
+    loadTunnelInfo();
+    
+    // 새로고침 버튼 이벤트
+    $('#refreshBtn').click(function() {
+        console.log('새로고침 버튼 클릭됨');
+        loadTunnelInfo();
+    });
+    
+    // 연결 테스트 버튼 이벤트
+    $('#testConnectionBtn').click(function() {
+        console.log('연결 테스트 버튼 클릭됨');
+        testConnection();
+    });
+    
+    // 5분마다 자동 새로고침
+    setInterval(function() {
+        loadTunnelInfo();
+    }, 300000); // 5분 = 300,000ms
+});
+
+function loadTunnelInfo() {
+    console.log('터널 정보 로드 시작');
+    
+    // FormData 생성 (빈 요청이지만 MULTIPART_FORM_DATA 형식 필요)
+    const formData = new FormData();
+    
+    // 새로고침 버튼 로딩 상태로 변경
+    const refreshBtn = $('#refreshBtn');
+    refreshBtn.addClass('loading disabled');
+    
+    // 상태 배지를 로딩으로 변경
+    $('#serverStatusBadge').removeClass('active inactive').addClass('loading');
+    $('#serverStatusBadge').html('<i class="circle notched loading icon"></i>확인 중');
+    
+    $.ajax({
+        url: '/api/ai-server/info',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log('API 응답 성공:', response);
+            updateUI(response);
+        },
+        error: function(xhr, status, error) {
+            console.error('API 응답 오류:', xhr, status, error);
+            
+            // 상태 배지 오류 표시
+            $('#serverStatusBadge').removeClass('loading active').addClass('inactive');
+            $('#serverStatusBadge').html('<i class="exclamation triangle icon"></i>오류');
+            
+            // 각 정보 필드 오류 표시
+            $('#tunnelUrl').html('<span class="ui red label"><i class="times icon"></i>연결 실패</span>');
+            $('#lastUpdate').text('오류 발생');
+            $('#localEndpoint').text('연결 실패');
+            $('#uptimeDisplay').text('--');
+        },
+        complete: function() {
+            // 새로고침 버튼 로딩 상태 해제
+            refreshBtn.removeClass('loading disabled');
+        }
+    });
+}
+
+function updateUI(data) {
+    console.log('UI 업데이트 시작:', data);
+    
+    // 서버 상태 배지 업데이트
+    const isActive = data.isActive;
+    const statusBadge = $('#serverStatusBadge');
+    
+    if (isActive) {
+        statusBadge.removeClass('loading inactive').addClass('active');
+        statusBadge.html('<i class="check circle icon"></i>온라인');
+    } else {
+        statusBadge.removeClass('loading active').addClass('inactive');
+        statusBadge.html('<i class="times circle icon"></i>오프라인');
+    }
+    
+    // 가동 시간 업데이트
+    const timestamp = data.tunnelInfo?.timestamp;
+    if (timestamp) {
+        const uptimeText = calculateUptime(timestamp);
+        $('#uptimeDisplay').text(uptimeText);
+    } else {
+        $('#uptimeDisplay').text('--');
+    }
+    
+    // 마지막 업데이트 시간
+    $('#lastUpdate').text(data.tunnelInfo?.timestamp || '알 수 없음');
+    
+    // 터널 URL
+    const urlElement = $('#tunnelUrl');
+    if (data.currentUrl) {
+        urlElement.html(`<a href="${data.currentUrl}" target="_blank" class="ai-server-url-link">
+            <i class="external alternate icon"></i>${data.currentUrl}
+        </a>`);
+    } else {
+        urlElement.html('<span class="ui grey label">사용 가능한 URL이 없습니다</span>');
+    }
+    
+    // 로컬 엔드포인트
+    const localEndpoint = data.tunnelInfo?.localEndpoint || '알 수 없음';
+    $('#localEndpoint').text(localEndpoint);
+    
+    // 서비스 정보 업데이트
+    if (data.tunnelInfo?.service_info) {
+        const serviceInfo = data.tunnelInfo.service_info;
+        $('#serviceVersion').text(serviceInfo.version || 'v1.0');
+        $('#proxyPort').text(serviceInfo.proxy_port || '11435');
+        $('#targetPort').text(serviceInfo.target_port || '11434');
+    }
+    
+    console.log('UI 업데이트 완료');
+}
+
+function calculateUptime(timestamp) {
+    try {
+        const startTime = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now - startTime;
+        
+        const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        if (days > 0) {
+            return `${days}일 ${hours}시간`;
+        } else if (hours > 0) {
+            return `${hours}시간`;
+        } else {
+            return '1시간 미만';
+        }
+    } catch (e) {
+        console.error('가동시간 계산 오류:', e);
+        return '--';
+    }
+}
+
+function testConnection() {
+    console.log('연결 테스트 시작');
+    
+    const formData = new FormData();
+    
+    // 버튼 로딩 상태로 변경
+    const testBtn = $('#testConnectionBtn');
+    testBtn.addClass('loading disabled');
+    
+    $.ajax({
+        url: '/api/ai-server/info',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log('연결 테스트 응답:', response);
+            if (response.isActive) {
+                alert('✅ 연결 테스트 성공: AI 서버가 정상적으로 작동 중입니다');
+            } else {
+                alert('⚠️ AI 서버가 비활성화되어 있습니다');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('연결 테스트 오류:', xhr, status, error);
+            alert('❌ 연결 테스트 오류: ' + error);
+        },
+        complete: function() {
+            // 버튼 로딩 상태 해제
+            testBtn.removeClass('loading disabled');
+        }
+    });
+}
+</script>
+
+</body>
+</html>
