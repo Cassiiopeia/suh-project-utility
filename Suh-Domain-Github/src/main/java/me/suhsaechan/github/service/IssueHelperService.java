@@ -3,6 +3,7 @@ package me.suhsaechan.github.service;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -265,13 +266,15 @@ public class IssueHelperService {
       throw new CustomException(ErrorCode.GITHUB_ISSUE_URL_INVALID);
     }
 
-    GithubRepository githubRepository = githubRepositoryRepository.findByFullName(repositoryFullName); // 요렇게
+    Optional<GithubRepository> githubRepositoryOpt = githubRepositoryRepository.findByFullName(repositoryFullName); // 요렇게
     
     // 존재하지 않는 레포지토리인 경우
-    if (githubRepository == null) {
+    if (githubRepositoryOpt.isEmpty()) {
       log.error("GitHub 레포지토리를 찾을 수 없습니다: {}", repositoryFullName);
       throw new CustomException(ErrorCode.GITHUB_REPOSITORY_NOT_FOUND);
     }
+    
+    GithubRepository githubRepository = githubRepositoryOpt.get();
     
     // 허용되지 않은 레포지토리인 경우
     if (githubRepository.getIsGithubWorkflowResponseAllowed() == null || 

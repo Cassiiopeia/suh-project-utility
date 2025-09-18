@@ -51,7 +51,7 @@ dependencies {
     
     // Suh Libraries - API로 제공
     api "me.suhsaechan:suh-random-engine:1.1.0"
-    api "me.suhsaechan:suh-logger:1.0.7"
+    api "me.suhsaechan:suh-logger:1.2.9"
     api "me.suhsaechan:suh-api-log:1.0.3"
     
     // SSH 관련

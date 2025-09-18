@@ -6,6 +6,7 @@ import me.suhsaechan.github.dto.IssueHelperRequest;
 import me.suhsaechan.github.dto.IssueHelperResponse;
 import me.suhsaechan.github.service.IssueHelperService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,7 +27,7 @@ public class IssueHelperController {
   public ResponseEntity<IssueHelperResponse> createIssueCommmitBranch(
       @ModelAttribute IssueHelperRequest request) {
       IssueHelperResponse response = issueHelperService.createIssueCommmitBranch(request);
-      return ResponseEntity.ok(response);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   // GITHUB_WORKFLOW 에서 호출되는 API
@@ -35,6 +36,6 @@ public class IssueHelperController {
   public ResponseEntity<IssueHelperResponse> createIssueCommmitBranchByGithubWorkflow(
       @ModelAttribute IssueHelperRequest request) {
       IssueHelperResponse response = issueHelperService.createIssueCommitBranchByGithubWorkflow(request);
-      return ResponseEntity.ok(response);
+      return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 }

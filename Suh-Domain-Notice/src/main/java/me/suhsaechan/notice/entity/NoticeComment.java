@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import me.suhsaechan.common.entity.BasePostgresEntity;
-import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
+import me.suhsaechan.notice.entity.SuhProjectUtilityNotice;
 import me.suhsaechan.common.util.CommonUtil;
 
 @Entity

@@ -2,7 +2,7 @@ package me.suhsaechan.notice.repository;
 
 import java.util.UUID;
 import me.suhsaechan.notice.entity.NoticeComment;
-import me.suhsaechan.common.entity.SuhProjectUtilityNotice;
+import me.suhsaechan.notice.entity.SuhProjectUtilityNotice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

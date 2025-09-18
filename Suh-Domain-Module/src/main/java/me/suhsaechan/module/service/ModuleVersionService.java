@@ -7,6 +7,8 @@ import me.suhsaechan.common.entity.ModuleVersion;
 import me.suhsaechan.common.entity.ModuleVersionUpdate;
 import me.suhsaechan.common.repository.ModuleVersionRepository;
 import me.suhsaechan.common.repository.ModuleVersionUpdateRepository;
+import me.suhsaechan.module.dto.ModuleVersionRequest;
+import me.suhsaechan.module.dto.ModuleVersionResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +20,7 @@ public class ModuleVersionService {
   private final ModuleVersionUpdateRepository moduleVersionUpdateRepository;
 
   @Transactional(readOnly = true)
-  public me.suhsaechan.module.object.response.ModuleVersionResponse getModuleVersions(me.suhsaechan.module.object.request.ModuleVersionRequest request) {
+  public ModuleVersionResponse getModuleVersions(ModuleVersionRequest request) {
     log.info("Getting module versions for module type: {}", request.getModuleType());
 
     List<ModuleVersion> moduleVersions = moduleVersionRepository.findByModuleTypeOrderByReleaseDateDesc(request.getModuleType());
@@ -31,7 +33,7 @@ public class ModuleVersionService {
       version.setUpdates(updates);
     }
 
-    return me.suhsaechan.module.object.response.ModuleVersionResponse.builder()
+    return ModuleVersionResponse.builder()
         .versions(moduleVersions)
         .build();
   }

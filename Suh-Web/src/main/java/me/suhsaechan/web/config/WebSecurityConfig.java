@@ -51,6 +51,7 @@ public class WebSecurityConfig {
         .csrf(csrf -> csrf
             // API 경로에 대해 CSRF 토큰 검사 비활성화
                 .ignoringRequestMatchers("/api/issue-helper/create/commit-branch/github-workflow")
+                .ignoringRequestMatchers("/api/grass/**")  // GrassPlanter API CSRF 비활성화
 //            //FIXME: DEV 에서만 추가
 //                .ignoringRequestMatchers("/api/**")
 

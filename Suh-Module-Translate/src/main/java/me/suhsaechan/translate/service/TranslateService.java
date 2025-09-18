@@ -6,6 +6,8 @@ import me.suhsaechan.common.constant.CommonStatus;
 import me.suhsaechan.common.constant.TranslatorLanguage;
 import me.suhsaechan.common.constant.TranslatorType;
 import me.suhsaechan.common.service.WebDriverManager;
+import me.suhsaechan.translate.dto.TranslationRequest;
+import me.suhsaechan.translate.dto.TranslationResponse;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
@@ -36,21 +38,15 @@ public class TranslateService {
   /**
    * 번역 수행
    */
-  public me.suhsaechan.translate.object.response.TranslationResponse translate(me.suhsaechan.translate.object.request.TranslationRequest request) {
+  public TranslationResponse translate(TranslationRequest request) {
     if (request.getTranslatorType() != TranslatorType.PAPAGO) {
-      return me.suhsaechan.translate.object.response.TranslationResponse.builder()
-          .result(CommonStatus.FAIL)
-          .errorMessage("지원하지 않는 번역기 유형입니다.")
-          .build();
+      throw new RuntimeException("지원하지 않는 번역기 유형입니다.");
     }
 
     // 텍스트 검증
     String text = request.getText();
     if (text == null || text.trim().isEmpty()) {
-      return me.suhsaechan.translate.object.response.TranslationResponse.builder()
-          .result(CommonStatus.FAIL)
-          .errorMessage("번역할 텍스트가 비어있습니다.")
-          .build();
+      throw new RuntimeException("번역할 텍스트가 비어있습니다.");
     }
 
     // 세션 잠금으로 동시 접근 방지 (Selenium은 한 번에 하나씩만 처리)
@@ -156,9 +152,12 @@ public class TranslateService {
         }
 
         // 응답 구성
-        return me.suhsaechan.translate.object.response.TranslationResponse.builder()
+        return TranslationResponse.builder()
             .translatedText(translatedText)
+            .originalText(request.getText())
+            .translatorType(request.getTranslatorType())
             .detectedLang(detectedLang)
+            .sourceLang(detectedLang)
             .targetLang(request.getTargetLang())
             .result(CommonStatus.SUCCESS)
             .build();
@@ -166,10 +165,7 @@ public class TranslateService {
       } catch (Exception e) {
         log.error("번역 처리 중 오류 발생: {}", e.getMessage(), e);
 
-        return me.suhsaechan.translate.object.response.TranslationResponse.builder()
-            .result(CommonStatus.FAIL)
-            .errorMessage("번역 처리 중 오류가 발생했습니다: " + e.getMessage())
-            .build();
+        throw new RuntimeException("번역 처리 중 오류가 발생했습니다: " + e.getMessage(), e);
       } finally {
         // 웹드라이버 정리
         if (driver != null) {

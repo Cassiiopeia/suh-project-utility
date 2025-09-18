@@ -14,8 +14,6 @@ public class BaseScriptResponse<T> {
   @JsonProperty("result")
   private String result;  // "SUCCESS" 또는 "FAIL"
 
-  @JsonProperty("message")
-  private String message; // 작업 결과 메시지
 
   @JsonProperty("data")
   private T data;         // 작업별 상세 데이터 (제네릭으로 유연성 확보)

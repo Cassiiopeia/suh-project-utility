@@ -67,6 +67,8 @@ Thumbs.db
 **/src/main/resources/application.yml
 **/src/main/resources/application-*.yml
 **/src/main/resources/application-*.properties
+**/src/main/resources/*.yml
+**/src/main/resources/*.yaml
 
 ### Credentials ###
 /src/main/resources/gen-lang-client-0511951522-e0dc1d68cbcb.json

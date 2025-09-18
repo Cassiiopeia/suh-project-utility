@@ -9,6 +9,7 @@ import me.suhsaechan.notice.dto.NoticeResponse;
 import me.suhsaechan.notice.service.NoticeCommentService;
 import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -71,7 +72,7 @@ public class NoticeController {
   @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
   public ResponseEntity<NoticeResponse> createNotice(@ModelAttribute NoticeRequest request) {
-    return ResponseEntity.ok(noticeService.createNotice(request));
+    return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.createNotice(request));
   }
 
   /**
@@ -88,8 +89,9 @@ public class NoticeController {
    */
   @PostMapping(value = "/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<NoticeResponse> deleteNotice(@ModelAttribute NoticeRequest request) {
-    return ResponseEntity.ok(noticeService.deleteNotice(request.getNoticeId()));
+  public ResponseEntity<Void> deleteNotice(@ModelAttribute NoticeRequest request) {
+    noticeService.deleteNotice(request.getNoticeId());
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -127,7 +129,7 @@ public class NoticeController {
       request.setClientHash(clientHash);
     }
     
-    return ResponseEntity.ok(noticeCommentService.createComment(request));
+    return ResponseEntity.status(HttpStatus.CREATED).body(noticeCommentService.createComment(request));
   }
 
   /**
@@ -135,7 +137,8 @@ public class NoticeController {
    */
   @PostMapping(value = "/comment/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<NoticeResponse> deleteComment(@ModelAttribute NoticeRequest request) {
-    return ResponseEntity.ok(noticeCommentService.deleteComment(request.getCommentId()));
+  public ResponseEntity<Void> deleteComment(@ModelAttribute NoticeRequest request) {
+    noticeCommentService.deleteComment(request.getCommentId());
+    return ResponseEntity.noContent().build();
   }
 }
