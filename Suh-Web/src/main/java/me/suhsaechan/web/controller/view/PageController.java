@@ -94,4 +94,14 @@ public class PageController {
 		
 		return "pages/grassPlanter";
 	}
+
+	/**
+	 * AI 관리 페이지 매핑
+	 *
+	 * @return 뷰 이름
+	 */
+	@GetMapping("/ai-server")
+	public String aiServerPage() {
+		return "pages/aiServer";
+	}
 }
