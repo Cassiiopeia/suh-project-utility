@@ -91,7 +91,7 @@
     <div class="api-test-header">
       <div class="header-content">
         <div class="header-icon">
-          <i class="robot icon"></i>
+          <i class="server icon"></i>
         </div>
         <div class="header-text">
           <h2>AI 모델 API 테스트</h2>
@@ -157,10 +157,10 @@
           </div>
           <div class="config-field">
             <label for="inputText">입력 텍스트</label>
-            <textarea id="inputText" placeholder="벡터로 변환할 문장을 여기에 적으세요" rows="3"></textarea>
+            <textarea id="inputText" placeholder="프롬프트를 여기에 적으세요" rows="3"></textarea>
           </div>
           <div class="config-actions">
-            <button class="ui blue fluid button" id="runApiTestBtn">
+            <button class="ai-test-button" id="runApiTestBtn">
               <i class="play icon"></i>
               API 호출 테스트
             </button>
@@ -209,15 +209,15 @@
 
   <!-- 액션 버튼 -->
   <div class="ai-server-actions">
-    <button class="action-button primary" id="refreshBtn">
+    <button class="ai-action-button refresh-btn" id="refreshBtn">
       <i class="sync alternate icon"></i>
       <span>정보 새로고침</span>
     </button>
-    <button class="action-button secondary" id="testConnectionBtn">
+    <button class="ai-action-button test-btn" id="testConnectionBtn">
       <i class="plug icon"></i>
       <span>연결 테스트</span>
     </button>
-    <button class="action-button secondary" id="loadModelsBtn">
+    <button class="ai-action-button load-btn" id="loadModelsBtn">
       <i class="download icon"></i>
       <span>모델 목록 새로고침</span>
     </button>
