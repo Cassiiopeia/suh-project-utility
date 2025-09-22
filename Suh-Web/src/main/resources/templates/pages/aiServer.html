@@ -3,156 +3,279 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head th:replace="~{fragments/header :: head(title='AI 서버 관리-SAECHAN-LAB')}"></head>
-<body class="ai-server-page">
+<body>
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="ui container" id="main-content">
-  <!-- 메인 헤더 -->
-  <div class="ui segment ai-server-main-header">
-    <h1 class="ui header">
-      <i class="robot icon"></i>
-      <div class="content">
-        AI 서버 관리
-        <div class="sub header">Cloudflare 터널을 통한 AI 서버 상태 관리 및 모니터링</div>
+  <!-- 페이지 헤더 -->
+  <div class="ai-server-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="microchip icon"></i>
       </div>
-    </h1>
-  </div>
-
-  <!-- 컨트롤 패널 -->
-  <div class="ui segment ai-server-controls">
-    <div class="ui stackable two column grid">
-      <div class="column">
-        <button class="ui button ai-server-control-btn primary" id="refreshBtn">
-          <i class="sync alternate icon"></i>정보 새로고침
-        </button>
-      </div>
-      <div class="column">
-        <button class="ui button ai-server-control-btn teal" id="testConnectionBtn">
-          <i class="plug icon"></i>연결 테스트
-        </button>
+      <div class="header-text">
+        <h1>AI 서버 관리</h1>
+        <p>Cloudflare 터널을 통한 AI 서버 상태 관리 및 모니터링</p>
       </div>
     </div>
   </div>
 
-  <!-- AI 서버 상태 대시보드 -->
-  <div class="ui stackable two column grid">
-    <!-- 서버 상태 카드 -->
-    <div class="column">
-      <div class="ui card ai-server-status-card">
-        <div class="content">
-          <div class="header">
-            <h3><i class="server icon"></i>서버 상태</h3>
-            <div class="ai-server-status-badge loading" id="serverStatusBadge">
-              <i class="circle notched loading icon"></i>
-              확인 중
-            </div>
-          </div>
-          <div class="description">
-            <div class="ui statistic">
-              <div class="value" id="uptimeDisplay">--</div>
-              <div class="label">가동 시간</div>
-            </div>
-          </div>
+  <!-- 상태 개요 카드 -->
+  <div class="ai-server-overview">
+    <div class="overview-card server-status-card">
+      <div class="card-header">
+        <i class="server icon"></i>
+        <span>서버 상태</span>
+      </div>
+      <div class="card-content">
+        <div class="status-indicator" id="serverStatusIndicator">
+          <div class="status-dot loading"></div>
+          <span id="serverStatusText">확인 중</span>
+        </div>
+        <div class="uptime-info">
+          <span class="uptime-label">가동 시간</span>
+          <span class="uptime-value" id="uptimeDisplay">--</span>
         </div>
       </div>
     </div>
 
-    <!-- 터널 정보 카드 -->
-    <div class="column">
-      <div class="ui card ai-server-status-card">
-        <div class="content">
-          <div class="header">
-            <h3><i class="cloud icon"></i>터널 정보</h3>
+    <div class="overview-card tunnel-info-card">
+      <div class="card-header">
+        <i class="cloud icon"></i>
+        <span>터널 상태</span>
+      </div>
+      <div class="card-content">
+        <div class="tunnel-url-section">
+          <label>터널 URL</label>
+          <div class="tunnel-url" id="tunnelUrl">
+            <div class="ui active inline loader mini"></div>
+            터널 정보를 불러오는 중...
           </div>
-          <div class="description">
-            <div class="ui relaxed list ai-server-info-list">
-              <div class="item">
-                <i class="linkify icon"></i>
-                <div class="content">
-                  <div class="header">터널 URL</div>
-                  <div class="description" id="tunnelUrl">
-                    <div class="ai-server-loading">
-                      <i class="circle notched loading icon"></i>
-                      터널 정보를 불러오는 중...
-                    </div>
-                  </div>
+        </div>
+        <div class="last-update-section">
+          <label>마지막 업데이트</label>
+          <span id="lastUpdate">확인 중...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 서비스 정보 카드 -->
+  <div class="ai-server-details">
+    <div class="details-header">
+      <i class="cog icon"></i>
+      <span>서비스 정보</span>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <div class="detail-label">서비스 버전</div>
+        <div class="detail-value" id="serviceVersion">v1.0</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">프록시 포트</div>
+        <div class="detail-value" id="proxyPort">11435</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">타겟 포트</div>
+        <div class="detail-value" id="targetPort">11434</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">로컬 엔드포인트</div>
+        <div class="detail-value" id="localEndpoint">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI 모델 API 테스트 섹션 -->
+  <div class="ai-api-test-section">
+    <div class="api-test-header">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="robot icon"></i>
+        </div>
+        <div class="header-text">
+          <h2>AI 모델 API 테스트</h2>
+          <p>사용 가능한 모델로 임베딩 및 텍스트 생성 테스트</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 모델 선택 및 설정 카드 -->
+    <div class="api-test-grid">
+      <div class="test-card model-selection-card">
+        <div class="card-header">
+          <i class="list icon"></i>
+          <span>모델 선택</span>
+        </div>
+        <div class="card-content">
+          <div class="model-dropdown-section">
+            <label for="modelSelect">사용 가능한 모델</label>
+            <div class="ui fluid selection dropdown" id="modelDropdown">
+              <input type="hidden" name="selectedModel" id="modelSelect">
+              <i class="dropdown icon"></i>
+              <div class="default text">모델을 선택하세요</div>
+              <div class="menu" id="modelMenu">
+                <div class="item loading-item">
+                  <div class="ui active inline loader mini"></div>
+                  모델 목록을 불러오는 중...
                 </div>
               </div>
-              <div class="item">
-                <i class="clock icon"></i>
-                <div class="content">
-                  <div class="header">마지막 업데이트</div>
-                  <div class="description" id="lastUpdate">확인 중...</div>
-                </div>
-              </div>
-              <div class="item">
-                <i class="server icon"></i>
-                <div class="content">
-                  <div class="header">로컬 엔드포인트</div>
-                  <div class="description" id="localEndpoint">확인 중...</div>
-                </div>
-              </div>
             </div>
+          </div>
+          <div class="model-info-section" id="modelInfo" style="display: none;">
+            <div class="model-detail">
+              <span class="detail-label">크기:</span>
+              <span class="detail-value" id="modelSize">-</span>
+            </div>
+            <div class="model-detail">
+              <span class="detail-label">패밀리:</span>
+              <span class="detail-value" id="modelFamily">-</span>
+            </div>
+            <div class="model-detail">
+              <span class="detail-label">파라미터:</span>
+              <span class="detail-value" id="modelParams">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- API 호출 설정 카드 -->
+      <div class="test-card api-config-card">
+        <div class="card-header">
+          <i class="settings icon"></i>
+          <span>API 설정</span>
+        </div>
+        <div class="card-content">
+          <div class="config-field">
+            <label for="apiKeyInput">API 키</label>
+            <div class="ui labeled input">
+              <div class="ui label">
+                <i class="key icon"></i>
+              </div>
+              <input type="password" id="apiKeyInput" placeholder="API 키를 입력하세요" value="test123">
+            </div>
+          </div>
+          <div class="config-field">
+            <label for="inputText">입력 텍스트</label>
+            <textarea id="inputText" placeholder="벡터로 변환할 문장을 여기에 적으세요" rows="3"></textarea>
+          </div>
+          <div class="config-actions">
+            <button class="ui blue fluid button" id="runApiTestBtn">
+              <i class="play icon"></i>
+              API 호출 테스트
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API 응답 결과 카드 -->
+    <div class="api-response-section" id="responseSection" style="display: none;">
+      <div class="response-card">
+        <div class="card-header">
+          <i class="code icon"></i>
+          <span>API 응답 결과</span>
+          <div class="response-meta" id="responseMeta"></div>
+        </div>
+        <div class="card-content">
+          <div class="response-info" id="responseInfo">
+            <div class="info-item">
+              <span class="info-label">상태 코드:</span>
+              <span class="info-value" id="statusCode">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">응답 시간:</span>
+              <span class="info-value" id="responseTime">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">호출 시간:</span>
+              <span class="info-value" id="callTime">-</span>
+            </div>
+          </div>
+          <div class="response-content">
+            <div class="content-header">
+              <span>응답 데이터</span>
+              <button class="ui mini button" id="copyResponseBtn">
+                <i class="copy icon"></i>
+                복사
+              </button>
+            </div>
+            <pre id="responseJson" class="json-display"></pre>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 추가 정보 섹션 -->
-  <div class="ui segment ai-server-status-card">
-    <h3 class="ui header">
-      <i class="info circle icon"></i>
-      <div class="content">
-        서비스 정보
-        <div class="sub header">AI 서버의 상세 정보와 엔드포인트</div>
-      </div>
-    </h3>
-    <div class="ui stackable three column grid">
-      <div class="column">
-        <div class="ui statistic">
-          <div class="value" id="serviceVersion">v1.0</div>
-          <div class="label">서비스 버전</div>
-        </div>
-      </div>
-      <div class="column">
-        <div class="ui statistic">
-          <div class="value" id="proxyPort">11435</div>
-          <div class="label">프록시 포트</div>
-        </div>
-      </div>
-      <div class="column">
-        <div class="ui statistic">
-          <div class="value" id="targetPort">11434</div>
-          <div class="label">타겟 포트</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- 액션 버튼 -->
+  <div class="ai-server-actions">
+    <button class="action-button primary" id="refreshBtn">
+      <i class="sync alternate icon"></i>
+      <span>정보 새로고침</span>
+    </button>
+    <button class="action-button secondary" id="testConnectionBtn">
+      <i class="plug icon"></i>
+      <span>연결 테스트</span>
+    </button>
+    <button class="action-button secondary" id="loadModelsBtn">
+      <i class="download icon"></i>
+      <span>모델 목록 새로고침</span>
+    </button>
+</div>
+
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <!-- AI 서버 관리 전용 스크립트 -->
 <script>
+// 전역 변수
+let currentTunnelUrl = '';
+let availableModels = [];
+
 $(document).ready(function() {
     console.log('AI 서버 페이지 로드됨');
-    
+
     // 페이지 로드 즉시 데이터 요청
     loadTunnelInfo();
-    
+
     // 새로고침 버튼 이벤트
     $('#refreshBtn').click(function() {
         console.log('새로고침 버튼 클릭됨');
         loadTunnelInfo();
     });
-    
+
     // 연결 테스트 버튼 이벤트
     $('#testConnectionBtn').click(function() {
         console.log('연결 테스트 버튼 클릭됨');
         testConnection();
     });
-    
+
+    // 모델 목록 새로고침 버튼 이벤트
+    $('#loadModelsBtn').click(function() {
+        console.log('모델 목록 새로고침 버튼 클릭됨');
+        loadAvailableModels();
+    });
+
+    // API 테스트 버튼 이벤트
+    $('#runApiTestBtn').click(function() {
+        console.log('API 테스트 버튼 클릭됨');
+        runApiTest();
+    });
+
+    // 응답 복사 버튼 이벤트
+    $('#copyResponseBtn').click(function() {
+        copyResponseToClipboard();
+    });
+
+    // 모델 드롭다운 초기화
+    $('#modelDropdown').dropdown({
+        onChange: function(value, text, $selectedItem) {
+            console.log('모델 선택됨:', value);
+            showModelInfo(value);
+        }
+    });
+
     // 5분마다 자동 새로고침
     setInterval(function() {
         loadTunnelInfo();
@@ -167,11 +290,16 @@ function loadTunnelInfo() {
     
     // 새로고침 버튼 로딩 상태로 변경
     const refreshBtn = $('#refreshBtn');
-    refreshBtn.addClass('loading disabled');
+    refreshBtn.addClass('loading');
+    refreshBtn.prop('disabled', true);
     
-    // 상태 배지를 로딩으로 변경
-    $('#serverStatusBadge').removeClass('active inactive').addClass('loading');
-    $('#serverStatusBadge').html('<i class="circle notched loading icon"></i>확인 중');
+    // 상태 표시를 로딩으로 변경
+    const statusIndicator = $('#serverStatusIndicator');
+    const statusText = $('#serverStatusText');
+    const statusDot = statusIndicator.find('.status-dot');
+    
+    statusDot.removeClass('online offline').addClass('loading');
+    statusText.text('확인 중');
     
     $.ajax({
         url: '/api/ai-server/info',
@@ -182,23 +310,36 @@ function loadTunnelInfo() {
         success: function(response) {
             console.log('API 응답 성공:', response);
             updateUI(response);
+
+            // 터널 정보 로드 성공 시 모델 목록도 자동 로드
+            if (response.isActive && response.currentUrl) {
+                currentTunnelUrl = response.currentUrl;
+                setTimeout(function() {
+                    loadAvailableModels();
+                }, 500);
+            }
         },
         error: function(xhr, status, error) {
             console.error('API 응답 오류:', xhr, status, error);
             
-            // 상태 배지 오류 표시
-            $('#serverStatusBadge').removeClass('loading active').addClass('inactive');
-            $('#serverStatusBadge').html('<i class="exclamation triangle icon"></i>오류');
+            // 상태 표시 오류로 변경
+            const statusIndicator = $('#serverStatusIndicator');
+            const statusText = $('#serverStatusText');
+            const statusDot = statusIndicator.find('.status-dot');
+            
+            statusDot.removeClass('loading online').addClass('offline');
+            statusText.text('오류');
             
             // 각 정보 필드 오류 표시
-            $('#tunnelUrl').html('<span class="ui red label"><i class="times icon"></i>연결 실패</span>');
+            $('#tunnelUrl').html('<span class="error-text">연결 실패</span>');
             $('#lastUpdate').text('오류 발생');
-            $('#localEndpoint').text('연결 실패');
+            $('#localEndpoint').text('--');
             $('#uptimeDisplay').text('--');
         },
         complete: function() {
             // 새로고침 버튼 로딩 상태 해제
-            refreshBtn.removeClass('loading disabled');
+            refreshBtn.removeClass('loading');
+            refreshBtn.prop('disabled', false);
         }
     });
 }
@@ -206,16 +347,20 @@ function loadTunnelInfo() {
 function updateUI(data) {
     console.log('UI 업데이트 시작:', data);
     
-    // 서버 상태 배지 업데이트
+    // 서버 상태 업데이트
     const isActive = data.isActive;
-    const statusBadge = $('#serverStatusBadge');
+    const statusIndicator = $('#serverStatusIndicator');
+    const statusText = $('#serverStatusText');
+    const statusDot = statusIndicator.find('.status-dot');
+    
+    statusDot.removeClass('loading online offline');
     
     if (isActive) {
-        statusBadge.removeClass('loading inactive').addClass('active');
-        statusBadge.html('<i class="check circle icon"></i>온라인');
+        statusDot.addClass('online');
+        statusText.text('온라인');
     } else {
-        statusBadge.removeClass('loading active').addClass('inactive');
-        statusBadge.html('<i class="times circle icon"></i>오프라인');
+        statusDot.addClass('offline');
+        statusText.text('오프라인');
     }
     
     // 가동 시간 업데이트
@@ -233,15 +378,16 @@ function updateUI(data) {
     // 터널 URL
     const urlElement = $('#tunnelUrl');
     if (data.currentUrl) {
-        urlElement.html(`<a href="${data.currentUrl}" target="_blank" class="ai-server-url-link">
-            <i class="external alternate icon"></i>${data.currentUrl}
+        urlElement.html(`<a href="${data.currentUrl}" target="_blank" class="tunnel-link">
+            <i class="external alternate icon"></i>
+            <span>${data.currentUrl}</span>
         </a>`);
     } else {
-        urlElement.html('<span class="ui grey label">사용 가능한 URL이 없습니다</span>');
+        urlElement.html('<span class="no-url">사용 가능한 URL이 없습니다</span>');
     }
     
     // 로컬 엔드포인트
-    const localEndpoint = data.tunnelInfo?.localEndpoint || '알 수 없음';
+    const localEndpoint = data.tunnelInfo?.localEndpoint || '--';
     $('#localEndpoint').text(localEndpoint);
     
     // 서비스 정보 업데이트
@@ -284,7 +430,8 @@ function testConnection() {
     
     // 버튼 로딩 상태로 변경
     const testBtn = $('#testConnectionBtn');
-    testBtn.addClass('loading disabled');
+    testBtn.addClass('loading');
+    testBtn.prop('disabled', true);
     
     $.ajax({
         url: '/api/ai-server/info',
@@ -306,9 +453,491 @@ function testConnection() {
         },
         complete: function() {
             // 버튼 로딩 상태 해제
-            testBtn.removeClass('loading disabled');
+            testBtn.removeClass('loading');
+            testBtn.prop('disabled', false);
         }
     });
+}
+
+function loadModels() {
+    console.log('모델 목록 로드 시작');
+
+    const formData = new FormData();
+    const loadBtn = $('#loadModelsBtn');
+    const dropdown = $('#modelSelectDropdown');
+    const menu = $('#modelMenu');
+
+    // 버튼 로딩 상태
+    loadBtn.addClass('loading');
+    loadBtn.prop('disabled', true);
+
+    // 드롭다운 비활성화
+    dropdown.addClass('disabled');
+
+    $.ajax({
+        url: '/api/ai-server/models',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log('모델 목록 응답:', response);
+
+            if (response.modelsJson) {
+                try {
+                    const modelsData = JSON.parse(response.modelsJson);
+                    updateModelsDropdown(modelsData.models);
+                } catch (e) {
+                    console.error('모델 목록 JSON 파싱 오류:', e);
+                    menu.html('<div class="item disabled">모델 목록 파싱 오류</div>');
+                }
+            } else {
+                menu.html('<div class="item disabled">모델 목록이 비어있습니다</div>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('모델 목록 로드 오류:', xhr, status, error);
+            menu.html('<div class="item disabled">모델 목록 로드 실패</div>');
+        },
+        complete: function() {
+            loadBtn.removeClass('loading');
+            loadBtn.prop('disabled', false);
+            dropdown.removeClass('disabled');
+        }
+    });
+}
+
+function updateModelsDropdown(models) {
+    const menu = $('#modelMenu');
+    const dropdown = $('#modelSelectDropdown');
+
+    if (!models || models.length === 0) {
+        menu.html('<div class="item disabled">사용 가능한 모델이 없습니다</div>');
+        return;
+    }
+
+    menu.empty();
+
+    models.forEach(function(model) {
+        const modelSize = formatBytes(model.size);
+        const parameterSize = model.details?.parameter_size || 'Unknown';
+        const quantization = model.details?.quantization_level || 'Unknown';
+
+        const itemHtml = `
+            <div class="item" data-value="${model.name}">
+                <div class="content">
+                    <div class="header">${model.name}</div>
+                    <div class="description">
+                        <small>크기: ${modelSize} | 파라미터: ${parameterSize} | 양자화: ${quantization}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        menu.append(itemHtml);
+    });
+
+    // Semantic UI 드롭다운 재초기화
+    dropdown.dropdown({
+        onChange: function(value, text, $selectedItem) {
+            console.log('선택된 모델:', value);
+            $('#selectedModel').val(value);
+        }
+    });
+}
+
+function callEmbedding() {
+    console.log('임베딩 호출 시작');
+
+    const selectedModel = $('#selectedModel').val();
+    const inputText = $('#embeddingInput').val().trim();
+
+    if (!selectedModel) {
+        alert('⚠️ 모델을 선택해주세요');
+        return;
+    }
+
+    if (!inputText) {
+        alert('⚠️ 임베딩할 텍스트를 입력해주세요');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('model', selectedModel);
+    formData.append('input', inputText);
+
+    const callBtn = $('#callEmbeddingBtn');
+    const resultSection = $('#resultSection');
+
+    // 버튼 로딩 상태
+    callBtn.addClass('loading');
+    callBtn.prop('disabled', true);
+
+    // 결과 섹션 표시
+    resultSection.show();
+
+    // 메타 정보 업데이트
+    $('#resultModel').text(selectedModel);
+    $('#resultInput').text(inputText.length > 50 ? inputText.substring(0, 50) + '...' : inputText);
+
+    // 시작 시간
+    const startTime = Date.now();
+
+    $.ajax({
+        url: '/api/ai-server/embeddings',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log('임베딩 응답:', response);
+
+            // 응답 시간 계산
+            const endTime = Date.now();
+            const responseTime = endTime - startTime;
+            $('#responseTime').text(`응답시간: ${responseTime}ms`);
+
+            if (response.embeddingsJson) {
+                try {
+                    const embeddingsData = JSON.parse(response.embeddingsJson);
+                    displayEmbeddingResult(embeddingsData, response.embeddingsJson);
+                } catch (e) {
+                    console.error('임베딩 JSON 파싱 오류:', e);
+                    displayErrorResult('JSON 파싱 오류: ' + e.message);
+                }
+            } else {
+                displayErrorResult('응답에 임베딩 데이터가 없습니다');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('임베딩 호출 오류:', xhr, status, error);
+
+            // 응답 시간 계산
+            const endTime = Date.now();
+            const responseTime = endTime - startTime;
+            $('#responseTime').text(`응답시간: ${responseTime}ms (실패)`);
+
+            let errorMessage = '임베딩 호출 실패';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            } else if (error) {
+                errorMessage = error;
+            }
+
+            displayErrorResult(errorMessage);
+        },
+        complete: function() {
+            callBtn.removeClass('loading');
+            callBtn.prop('disabled', false);
+        }
+    });
+}
+
+function displayEmbeddingResult(embeddingsData, rawJson) {
+    // 포맷된 결과 표시
+    const formattedDiv = $('#formattedResult');
+    const rawDiv = $('#rawResult');
+
+    if (embeddingsData.embeddings && embeddingsData.embeddings.length > 0) {
+        const embedding = embeddingsData.embeddings[0];
+        const vectorLength = embedding.length;
+        const sampleValues = embedding.slice(0, 5).map(v => v.toFixed(4)).join(', ');
+
+        formattedDiv.html(`
+            <div class="ui relaxed divided list">
+                <div class="item">
+                    <i class="checkmark box icon green"></i>
+                    <div class="content">
+                        <div class="header">임베딩 성공</div>
+                        <div class="description">벡터가 성공적으로 생성되었습니다</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <i class="chart line icon blue"></i>
+                    <div class="content">
+                        <div class="header">벡터 차원</div>
+                        <div class="description">${vectorLength}차원</div>
+                    </div>
+                </div>
+                <div class="item">
+                    <i class="list icon"></i>
+                    <div class="content">
+                        <div class="header">샘플 값 (처음 5개)</div>
+                        <div class="description">[${sampleValues}, ...]</div>
+                    </div>
+                </div>
+            </div>
+        `);
+    } else {
+        formattedDiv.html('<div class="ui negative message">임베딩 데이터를 찾을 수 없습니다</div>');
+    }
+
+    // 원본 JSON 표시
+    rawDiv.text(JSON.stringify(JSON.parse(rawJson), null, 2));
+}
+
+function displayErrorResult(errorMessage) {
+    const formattedDiv = $('#formattedResult');
+    const rawDiv = $('#rawResult');
+
+    formattedDiv.html(`
+        <div class="ui negative message">
+            <i class="exclamation triangle icon"></i>
+            ${errorMessage}
+        </div>
+    `);
+
+    rawDiv.text(errorMessage);
+}
+
+// 모델 목록 로드 함수 (백엔드 프록시 사용)
+function loadAvailableModels() {
+    console.log('모델 목록 로드 시작 (백엔드 프록시 사용)');
+
+    const loadBtn = $('#loadModelsBtn');
+    const formData = new FormData();
+
+    loadBtn.addClass('loading');
+    loadBtn.prop('disabled', true);
+
+    // 모델 메뉴 로딩 상태로 변경
+    $('#modelMenu').html('<div class="item loading-item"><div class="ui active inline loader mini"></div>모델 목록을 불러오는 중...</div>');
+
+    $.ajax({
+        url: '/api/ai-server/models',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log('모델 목록 응답 (백엔드):', response);
+
+            if (response.modelsJson) {
+                try {
+                    const modelsData = JSON.parse(response.modelsJson);
+                    if (modelsData.models && modelsData.models.length > 0) {
+                        availableModels = modelsData.models;
+                        updateModelDropdown(modelsData.models);
+                    } else {
+                        $('#modelMenu').html('<div class="item disabled">사용 가능한 모델이 없습니다</div>');
+                    }
+                } catch (e) {
+                    console.error('모델 목록 JSON 파싱 오류:', e);
+                    $('#modelMenu').html('<div class="item disabled">모델 목록 파싱 오류</div>');
+                }
+            } else {
+                $('#modelMenu').html('<div class="item disabled">모델 목록이 비어있습니다</div>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('모델 목록 로드 오류 (백엔드):', xhr, status, error);
+            $('#modelMenu').html('<div class="item disabled">모델 목록 로드 실패</div>');
+        },
+        complete: function() {
+            loadBtn.removeClass('loading');
+            loadBtn.prop('disabled', false);
+        }
+    });
+}
+
+// 모델 드롭다운 업데이트
+function updateModelDropdown(models) {
+    const menu = $('#modelMenu');
+    menu.empty();
+
+    models.forEach(function(model) {
+        const sizeText = formatModelSize(model.size);
+        const familyText = model.details?.family || 'unknown';
+
+        const item = $(`
+            <div class="item" data-value="${model.name}">
+                <div class="model-item">
+                    <div class="model-name">${model.name}</div>
+                    <div class="model-details">
+                        <span class="model-size">${sizeText}</span>
+                        <span class="model-family">${familyText}</span>
+                    </div>
+                </div>
+            </div>
+        `);
+        menu.append(item);
+    });
+}
+
+// 모델 정보 표시
+function showModelInfo(modelName) {
+    const model = availableModels.find(m => m.name === modelName);
+    if (!model) return;
+
+    $('#modelSize').text(formatModelSize(model.size));
+    $('#modelFamily').text(model.details?.family || '-');
+    $('#modelParams').text(model.details?.parameter_size || '-');
+    $('#modelInfo').show();
+}
+
+// API 테스트 실행 (백엔드 프록시 사용)
+function runApiTest() {
+    console.log('API 테스트 실행 시작 (백엔드 프록시 사용)');
+
+    const selectedModel = $('#modelSelect').val();
+    const inputText = $('#inputText').val().trim();
+
+    if (!selectedModel) {
+        alert('모델을 선택해주세요');
+        return;
+    }
+
+    if (!inputText) {
+        alert('입력 텍스트를 입력해주세요');
+        return;
+    }
+
+    const testBtn = $('#runApiTestBtn');
+    testBtn.addClass('loading');
+    testBtn.prop('disabled', true);
+
+    const startTime = Date.now();
+
+    // FormData에 파라미터 추가
+    const formData = new FormData();
+    formData.append('model', selectedModel);
+    formData.append('prompt', inputText);
+    formData.append('stream', 'false'); // 기본적으로 스트림 모드 비활성화
+
+    $.ajax({
+        url: '/api/ai-server/generate',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            const endTime = Date.now();
+            const responseTime = endTime - startTime;
+
+            console.log('API 테스트 성공 (백엔드):', response);
+
+            // 백엔드에서 받은 JSON 응답 파싱
+            let generateResponse;
+            if (response.generatedJson) {
+                try {
+                    generateResponse = JSON.parse(response.generatedJson);
+                } catch (e) {
+                    console.error('generate JSON 파싱 오류:', e);
+                    generateResponse = { error: '응답 파싱 오류', raw: response.generatedJson };
+                }
+            } else {
+                generateResponse = { error: 'generate 응답이 없습니다' };
+            }
+
+            showApiResponse(generateResponse, 200, responseTime, selectedModel, inputText);
+        },
+        error: function(xhr, status, error) {
+            const endTime = Date.now();
+            const responseTime = endTime - startTime;
+
+            console.error('API 테스트 오류 (백엔드):', xhr, status, error);
+
+            let errorResponse;
+            try {
+                errorResponse = JSON.parse(xhr.responseText);
+            } catch (e) {
+                errorResponse = { error: error, status: xhr.status };
+            }
+
+            showApiResponse(errorResponse, xhr.status, responseTime, selectedModel, inputText);
+        },
+        complete: function() {
+            testBtn.removeClass('loading');
+            testBtn.prop('disabled', false);
+        }
+    });
+}
+
+// API 응답 결과 표시
+function showApiResponse(response, statusCode, responseTime, model, input) {
+    console.log('API 응답 표시:', response);
+
+    // 응답 메타 정보 업데이트
+    $('#statusCode').text(statusCode);
+    $('#responseTime').text(responseTime + 'ms');
+    $('#callTime').text(new Date().toLocaleString());
+
+    // 상태 코드에 따른 색상 설정
+    const statusElement = $('#statusCode');
+    statusElement.removeClass('success-status error-status');
+    if (statusCode >= 200 && statusCode < 300) {
+        statusElement.addClass('success-status');
+    } else {
+        statusElement.addClass('error-status');
+    }
+
+    // JSON 응답 포맷팅 및 표시
+    const formattedJson = JSON.stringify(response, null, 2);
+    $('#responseJson').text(formattedJson);
+
+    // generate API 응답인 경우 생성된 텍스트 별도 표시
+    if (response && response.response && typeof response.response === 'string') {
+        // 생성된 텍스트 섹션이 있다면 표시
+        const generatedTextElement = $('#generatedText');
+        if (generatedTextElement.length) {
+            generatedTextElement.text(response.response);
+            $('#generatedTextSection').show();
+        }
+    }
+
+    // 응답 섹션 표시
+    $('#responseSection').show();
+
+    // 응답 섹션으로 스크롤
+    $('#responseSection')[0].scrollIntoView({ behavior: 'smooth' });
+}
+
+// 응답 복사 기능
+function copyResponseToClipboard() {
+    const responseText = $('#responseJson').text();
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(responseText).then(function() {
+            // 임시로 버튼 텍스트 변경
+            const btn = $('#copyResponseBtn');
+            const originalHtml = btn.html();
+            btn.html('<i class="check icon"></i> 복사됨');
+
+            setTimeout(function() {
+                btn.html(originalHtml);
+            }, 2000);
+        });
+    } else {
+        // 구식 브라우저 지원
+        const textArea = document.createElement('textarea');
+        textArea.value = responseText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        alert('응답이 클립보드에 복사되었습니다');
+    }
+}
+
+function formatModelSize(sizeInBytes) {
+    const units = ['B', 'KB', 'MB', 'GB'];
+    let size = sizeInBytes;
+    let unitIndex = 0;
+
+    while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+    }
+
+    return `${size.toFixed(1)} ${units[unitIndex]}`;
+}
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 </script>
 

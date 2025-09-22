@@ -23,6 +23,9 @@ public enum ErrorCode {
   FILE_PATH_EMPTY(HttpStatus.BAD_REQUEST, "파일 경로가 비어 있거나 null입니다."),
   PERCENTILE_CALCULATION_ERROR(HttpStatus.BAD_REQUEST, "백분위 계산 오류: 전체 기준이 0 일 수 없습니다."),
 
+  // NETWORK
+  NETWORK_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "네트워크 요청이 실패했습니다."),
+
   // AUTHENTICATION
   INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "ID와 비밀번호를 정확히 입력해 주십시오."),
 
@@ -65,7 +68,10 @@ public enum ErrorCode {
   GRASS_PAT_DECRYPT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Personal Access Token 복호화에 실패했습니다."),
   GRASS_COMMIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "GitHub 커밋 실행에 실패했습니다."),
   GRASS_CONTRIBUTION_CHECK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "GitHub 기여도 확인에 실패했습니다."),
-  GRASS_AUTO_COMMIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 커밋 실행에 실패했습니다.");
+  GRASS_AUTO_COMMIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 커밋 실행에 실패했습니다."),
+
+  // AI SERVER
+  AI_SERVER_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "AI 서버가 사용할 수 없는 상태입니다.");
 
   private final HttpStatus httpStatus;
   private final String message;
