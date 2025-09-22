@@ -26,4 +26,28 @@ public class AiServerController {
     public ResponseEntity<AiServerResponse> getAiServerInfo(AiServerRequest request) {
         return ResponseEntity.ok(aiServerService.getTunnelInfo(request));
     }
+
+    /**
+     * AI 서버의 모델 목록을 조회합니다.
+     */
+    @PostMapping(value = "/models", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> getModels(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.getModels(request));
+    }
+
+    /**
+     * AI 서버의 embeddings API를 호출합니다.
+     */
+    @PostMapping(value = "/embeddings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> callEmbeddings(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.callEmbeddings(request));
+    }
+
+    /**
+     * AI 서버의 generate API를 호출합니다.
+     */
+    @PostMapping(value = "/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> callGenerate(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.callGenerate(request));
+    }
 }
