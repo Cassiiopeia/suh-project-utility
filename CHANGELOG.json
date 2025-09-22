@@ -1,11 +1,47 @@
 {
   "metadata": {
-    "lastUpdated": "2025-09-18T17:06:26Z",
-    "currentVersion": "1.1.8",
+    "lastUpdated": "2025-09-22T14:31:22Z",
+    "currentVersion": "1.1.9",
     "projectType": "spring",
-    "totalReleases": 11
+    "totalReleases": 12
   },
   "releases": [
+    {
+      "version": "1.1.9",
+      "project_type": "spring",
+      "date": "2025-09-22",
+      "pr_number": 90,
+      "raw_summary": "Summary by CodeRabbit\n\n신규 기능\n\nPR 제목/요약 자동화(배포 스타일 제목 포함), 자동 머지/배포 시퀀스, 완료 알림 추가.\n\n\n개선\n\n워크플로 신뢰성 강화(버전/프로젝트 타입 탐지, 폴링, 로깅, 폴백).\n이슈 코멘트 API 응답 2xx 전체 인식 및 메시지 개선.\n라벨 동기화 워크플로 수동 실행 지원.\n버전 제어 v2.0: 변경 감지, 커밋/태그 처리, 결과 요약 강화.\n\n\n문서\n\nREADME 최신 버전 표기 및 날짜 표시 옵션 지원.\n\n\n기타\n\n버전 업데이트: 1.1.9.",
+      "parsed_changes": {
+        "신규_기능": {
+          "title": "신규 기능",
+          "items": [
+            "PR 제목/요약 자동화(배포 스타일 제목 포함), 자동 머지/배포 시퀀스, 완료 알림 추가."
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "워크플로 신뢰성 강화(버전/프로젝트 타입 탐지, 폴링, 로깅, 폴백).",
+            "이슈 코멘트 API 응답 2xx 전체 인식 및 메시지 개선.",
+            "라벨 동기화 워크플로 수동 실행 지원.",
+            "버전 제어 v2.0: 변경 감지, 커밋/태그 처리, 결과 요약 강화."
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "README 최신 버전 표기 및 날짜 표시 옵션 지원."
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "버전 업데이트: 1.1.9."
+          ]
+        }
+      }
+    },
     {
       "version": "1.1.8",
       "project_type": "spring",
