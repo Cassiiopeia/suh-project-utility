@@ -1,13 +1,14 @@
-name: "Sync GitHub Labels"
+name: "PROJECT-SYNC-GITHUB-LABELS"
 
 on:
+  workflow_dispatch:
   push:
     paths:
-      - ".github/ISSUE_TEMPLATE/issue-label.yml"
+      - '.github/ISSUE_TEMPLATE/issue-label.yml'
 
-permissions:         # 기본 토큰 권한 설정
-  issues: write      # 레이블 issues API 포함
-  contents: read     # 소스 읽기
+permissions:
+  issues: write
+  contents: read
 
 jobs:
   label-sync:
