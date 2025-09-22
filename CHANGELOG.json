@@ -1,11 +1,46 @@
 {
   "metadata": {
-    "lastUpdated": "2025-09-22T14:31:22Z",
-    "currentVersion": "1.1.9",
+    "lastUpdated": "2025-09-22T14:53:13Z",
+    "currentVersion": "1.2.1",
     "projectType": "spring",
-    "totalReleases": 12
+    "totalReleases": 13
   },
   "releases": [
+    {
+      "version": "1.2.1",
+      "project_type": "spring",
+      "date": "2025-09-22",
+      "pr_number": 93,
+      "raw_summary": "Summary by CodeRabbit\n\nNew Features\n\nAI 서버 대시보드 전면 개편: 상태/터널 카드, 모델 선택, API 테스트(Generate/Embeddings), 응답 JSON 보기·복사, 5분 자동 새로고침\n새 공용 API 제공: 모델 조회, 텍스트 생성, 임베딩 호출\n\n\nImprovements\n\n네트워크 유틸 추가로 HTTP 호출 안정성 향상\n에러 코드 보강: 네트워크 실패, AI 서버 사용 불가\n\n\nDocumentation\n\nREADME 배지 v1.1.9로 갱신\n\n\nChores\n\n프로젝트 버전 1.2.1로 업데이트 및 일부 의존성 최신화",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "AI 서버 대시보드 전면 개편: 상태/터널 카드, 모델 선택, API 테스트(Generate/Embeddings), 응답 JSON 보기·복사, 5분 자동 새로고침",
+            "새 공용 API 제공: 모델 조회, 텍스트 생성, 임베딩 호출"
+          ]
+        },
+        "improvements": {
+          "title": "Improvements",
+          "items": [
+            "네트워크 유틸 추가로 HTTP 호출 안정성 향상",
+            "에러 코드 보강: 네트워크 실패, AI 서버 사용 불가"
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "README 배지 v1.1.9로 갱신"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "프로젝트 버전 1.2.1로 업데이트 및 일부 의존성 최신화"
+          ]
+        }
+      }
+    },
     {
       "version": "1.1.9",
       "project_type": "spring",
