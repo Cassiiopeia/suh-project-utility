@@ -201,9 +201,32 @@ public class DockerLogService {
             session.setConfig(config);
             
             // 세션 연결
-            log.debug("SSH 세션 연결 시도 - 컨테이너: {}", containerName);
-            session.connect(10000); // 10초 타임아웃
-            log.debug("SSH 세션 연결 성공 - 컨테이너: {}", containerName);
+            log.info("SSH 세션 연결 시도 - 호스트: {}:{}, 사용자: {}", host, port, username);
+            try {
+                session.connect(10000); // 10초 타임아웃으로 감소 (빠른 실패)
+                log.info("SSH 세션 연결 성공 - 컨테이너: {}", containerName);
+            } catch (JSchException e) {
+                log.error("SSH 세션 연결 실패 - 호스트: {}:{}, 에러: {}", host, port, e.getMessage());
+
+                // 구체적인 오류 메시지 제공
+                String errorMessage;
+                if (e.getMessage().contains("timeout") || e.getMessage().contains("Connection timed out")) {
+                    errorMessage = "SSH 서버 연결 타임아웃 - 네트워크 상태나 방화벽을 확인해주세요.";
+                } else if (e.getMessage().contains("Connection refused")) {
+                    errorMessage = "SSH 서비스가 실행되지 않거나 포트가 차단되었습니다.";
+                } else if (e.getMessage().contains("Auth fail")) {
+                    errorMessage = "SSH 인증 실패 - 사용자명/비밀번호를 확인해주세요.";
+                } else {
+                    errorMessage = "SSH 연결 실패: " + e.getMessage();
+                }
+
+                sendLogEvent(emitter, errorMessage + "\n");
+                sendLogEvent(emitter, "서버 상태를 확인하거나 관리자에게 문의하세요.\n");
+
+                // 연결 실패 시 즉시 emitter 종료
+                emitter.completeWithError(e);
+                return; // 예외를 던지지 않고 메서드 종료
+            }
             
             sendLogEvent(emitter, "SSH 연결 성공\n");
             
@@ -276,11 +299,23 @@ public class DockerLogService {
         } catch (JSchException e) {
             log.error("SSH 연결 오류: {}", e.getMessage(), e);
             try {
-                sendLogEvent(emitter, "SSH 연결 오류: " + e.getMessage() + "\n");
+                if (e.getMessage().contains("socket is not established") ||
+                    e.getMessage().contains("connection is closed") ||
+                    e.getMessage().contains("timeout")) {
+                    sendLogEvent(emitter, "네트워크 연결 문제가 발생했습니다.\n");
+                    sendLogEvent(emitter, "서버 상태를 확인하거나 잠시 후 다시 시도해주세요.\n");
+                } else if (e.getMessage().contains("Auth")) {
+                    sendLogEvent(emitter, "SSH 인증 실패: 계정 정보를 확인해주세요.\n");
+                } else {
+                    sendLogEvent(emitter, "SSH 연결 오류: " + e.getMessage() + "\n");
+                }
+                sendLogEvent(emitter, "연결이 중단되었습니다. 다시 시작하려면 \"로그 시작\" 버튼을 클릭하세요.\n");
+                emitter.completeWithError(e);
             } catch (IOException ex) {
                 log.error("오류 메시지 전송 실패", ex);
+                emitter.completeWithError(ex);
             }
-            throw new RuntimeException("SSH 연결 오류: " + e.getMessage(), e);
+            return; // 예외를 던지지 않고 메서드 종료
         } catch (IOException e) {
             log.error("로그 스트리밍 중 I/O 오류: {}", e.getMessage(), e);
             try {
@@ -332,17 +367,21 @@ public class DockerLogService {
      */
     public List<ContainerInfoDto> listContainers() {
         String result = sshCommandExecutor.executeCommandWithSudoStdin(
-                "docker ps -a --format \\\"{{.Names}}|{{.Status}}\\\"" );
+                "docker ps -a --format \\\"{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}\\\"" );
         List<ContainerInfoDto> list = new ArrayList<>();
         if (result != null && !result.isEmpty()) {
             for (String line : result.split("\n")) {
                 String[] parts = line.split("\\|");
-                if (parts.length == 2) {
-                    String name = parts[0].trim();
-                    String status = parts[1].trim();
+                if (parts.length == 4) {
+                    String id = parts[0].trim();
+                    String name = parts[1].trim();
+                    String image = parts[2].trim();
+                    String status = parts[3].trim();
                     boolean running = status.toLowerCase().startsWith("up");
                     list.add(ContainerInfoDto.builder()
+                        .id(id)
                         .name(name)
+                        .image(image)
                         .status(status)
                         .isRunning(running)
                         .build());

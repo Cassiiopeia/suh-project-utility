@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
         version = "1.0v"
     ),
     servers = {
-        @Server(url = "https://lab.suhsaechan.me", description = "메인 서버"),
+        @Server(url = "https://lab.suhsaechan.kr", description = "메인 서버"),
         @Server(url = "http://localhost:8080", description = "로컬 서버") // 포트 수정
     }
 )
@@ -49,7 +49,7 @@ public class SwaggerConfig {
                 .url("http://localhost:8080")
                 .description("로컬 서버"),
             new io.swagger.v3.oas.models.servers.Server()
-                .url("https://lab.suhsaechan.me")
+                .url("https://lab.suhsaechan.kr")
                 .description("메인 서버")
         ));
   }

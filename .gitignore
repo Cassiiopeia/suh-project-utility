@@ -82,3 +82,6 @@ Thumbs.db
 **/application-secret.yml
 **/application-prod.yml
 **/application-local.yml
+
+## Claude
+./.claude/settings.local.json
