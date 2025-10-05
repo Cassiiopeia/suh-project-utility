@@ -16,7 +16,7 @@ allprojects {
 
         maven {
             name = 'SUH-NEXUS'
-            url "https://nexus.suhsaechan.me/repository/maven-releases/"
+            url "https://nexus.suhsaechan.kr/repository/maven-releases/"
             metadataSources {
                 mavenPom()
                 artifact()
@@ -70,5 +70,6 @@ if (project == rootProject) {
         }
     }
 }
+
 
 
