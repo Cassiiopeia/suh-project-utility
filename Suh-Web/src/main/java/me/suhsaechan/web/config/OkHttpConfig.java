@@ -11,8 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class OkHttpConfig {
 
   /**
-   * OkHttpClient.Builder 빈 등록
-   * (TranslateService에서 CookieJar와 함께 사용)
+   * OkHttpClient.Builder 빈 등록 : CookieJar 함께 사용
    */
   @Bean
   public OkHttpClient.Builder okHttpClientBuilder() {
@@ -25,7 +24,7 @@ public class OkHttpConfig {
   }
 
   /**
-   * 기본 OkHttpClient 빈 등록 (다른 서비스에서 사용)
+   * 기본 OkHttpClient 빈 등록
    */
   @Bean
   public OkHttpClient okHttpClient(OkHttpClient.Builder builder) {

@@ -20,23 +20,23 @@ public class AiServerController {
     private final AiServerService aiServerService;
 
     /**
-     * AI 서버의 터널 정보를 조회합니다.
+     * AI 서버 터널 정보 조회 : /api/tunnel-info
      */
     @PostMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AiServerResponse> getAiServerInfo(AiServerRequest request) {
-        return ResponseEntity.ok(aiServerService.getTunnelInfo(request));
+    public ResponseEntity<AiServerResponse> getAiServerInfo() {
+        return ResponseEntity.ok(aiServerService.getTunnelInfo());
     }
 
     /**
-     * AI 서버의 모델 목록을 조회합니다.
+     * 모델 목록 조회
      */
     @PostMapping(value = "/models", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AiServerResponse> getModels(AiServerRequest request) {
-        return ResponseEntity.ok(aiServerService.getModels(request));
+    public ResponseEntity<AiServerResponse> getModels() {
+        return ResponseEntity.ok(aiServerService.getModels());
     }
 
     /**
-     * AI 서버의 embeddings API를 호출합니다.
+     * embeddings API 호출
      */
     @PostMapping(value = "/embeddings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AiServerResponse> callEmbeddings(AiServerRequest request) {
@@ -44,7 +44,7 @@ public class AiServerController {
     }
 
     /**
-     * AI 서버의 generate API를 호출합니다.
+     * generate API 호출
      */
     @PostMapping(value = "/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AiServerResponse> callGenerate(AiServerRequest request) {
