@@ -1,5 +1,5 @@
-# OpenJDK 17 이미지
-FROM openjdk:17-jdk-slim
+# Eclipse Temurin OpenJDK 17 이미지 (Alpine)
+FROM eclipse-temurin:17-jdk-alpine
 
 # 작업 디렉토리 설정
 WORKDIR /app
