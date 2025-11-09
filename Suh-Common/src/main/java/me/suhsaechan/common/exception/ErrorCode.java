@@ -71,7 +71,11 @@ public enum ErrorCode {
   GRASS_AUTO_COMMIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 커밋 실행에 실패했습니다."),
 
   // AI SERVER
-  AI_SERVER_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "AI 서버가 사용할 수 없는 상태입니다.");
+  AI_SERVER_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "AI 서버가 사용할 수 없는 상태입니다."),
+  AI_SERVER_HEALTH_CHECK_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "AI 서버 상태 확인에 실패했습니다."),
+  AI_SERVER_MODEL_PULL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "모델 다운로드에 실패했습니다."),
+  AI_SERVER_MODEL_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "모델 삭제에 실패했습니다."),
+  AI_SERVER_MODEL_NOT_FOUND(HttpStatus.NOT_FOUND, "모델을 찾을 수 없습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

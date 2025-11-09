@@ -10,11 +10,9 @@ import me.suhsaechan.aiserver.dto.AiServerRequest;
 import me.suhsaechan.aiserver.dto.AiServerResponse;
 import me.suhsaechan.aiserver.dto.EmbeddingsPayload;
 import me.suhsaechan.aiserver.dto.GeneratePayload;
-import me.suhsaechan.aiserver.dto.TunnelInfoDto;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.common.util.NetworkUtil;
-import me.suhsaechan.common.util.SshCommandExecutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +22,10 @@ import org.springframework.stereotype.Service;
 public class AiServerService {
 
     private final NetworkUtil networkUtil;
-    private final SshCommandExecutor sshCommandExecutor;
     private final ObjectMapper objectMapper;
 
-    @Value("${ai-server.tunnel-info-url}")
-    private String tunnelInfoUrl;
+    @Value("${ai-server.base-url}")
+    private String baseUrl;
 
     @Value("${ai-server.api-key}")
     private String apiKey;
@@ -51,51 +48,39 @@ public class AiServerService {
     }
 
     /**
-     * AI 서버 정보를 조회합니다.
-     * tunnel-info는 SSH를 통해서만 접근 가능하므로 SSH 명령어로 호출
+     * AI 서버 Health Check를 수행합니다.
      */
-    public AiServerResponse getTunnelInfo(AiServerRequest request) {
-        log.info("AI 서버 터널 정보 조회 시작: {}", tunnelInfoUrl);
-
-        // tunnel-info는 SSH로만 접근 가능하므로 curl 명령어 사용
-        String curlCommand = String.format("curl -sL \"%s\"", tunnelInfoUrl);
-        log.debug("실행할 curl 명령어: {}", curlCommand);
+    public AiServerResponse getHealth(AiServerRequest request) {
+        log.info("AI 서버 Health Check 시작: {}", baseUrl);
 
         try {
-            // SSH를 통해 curl 명령어 실행 (tunnel-info는 SSH 전용)
-            String jsonResponse = sshCommandExecutor.executeCommandWithSudoStdin(curlCommand);
-            log.debug("API 응답 크기: {} bytes", jsonResponse.length());
+            // 헤더 설정
+            Map<String, String> headers = new HashMap<>();
+            headers.put("X-API-Key", apiKey);
 
-            // 빈 응답 체크
-            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
-                log.error("AI 서버로부터 빈 응답을 받았습니다");
-                throw new CustomException(ErrorCode.EMPTY_SCRIPT_RESPONSE);
-            }
+            // Ollama의 기본 엔드포인트로 health check
+            String healthResponse = networkUtil.sendGetRequest(baseUrl, headers);
+            log.debug("Health check 응답: {}", healthResponse);
 
-            // JSON 파싱
-            TunnelInfoDto tunnelInfo = objectMapper.readValue(jsonResponse, TunnelInfoDto.class);
-            log.info("AI 서버 터널 정보 조회 성공 - 상태: {}, URL: {}",
-                    tunnelInfo.getStatus(), tunnelInfo.getUrl());
-
-            // 상태 판단
-            Boolean isActive = "active".equalsIgnoreCase(tunnelInfo.getStatus());
-            String currentUrl = isActive ? tunnelInfo.getUrl() : null;
+            // "Ollama is running" 문구 확인
+            Boolean isHealthy = healthResponse != null &&
+                               healthResponse.toLowerCase().contains("ollama is running");
 
             return AiServerResponse.builder()
-                    .tunnelInfo(tunnelInfo)
-                    .isActive(isActive)
-                    .currentUrl(currentUrl)
+                    .isHealthy(isHealthy)
+                    .isActive(isHealthy)
+                    .currentUrl(baseUrl)
+                    .healthMessage(isHealthy ? "AI 서버가 정상 작동 중입니다" : "AI 서버 응답이 올바르지 않습니다")
                     .build();
 
-        } catch (JsonProcessingException e) {
-            log.error("AI 서버 응답 JSON 파싱 실패: {}", e.getMessage(), e);
-            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
-        } catch (CustomException e) {
-            // 이미 적절한 CustomException으로 처리된 경우 그대로 전파
-            throw e;
         } catch (Exception e) {
-            log.error("AI 서버 터널 정보 조회 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            log.error("AI 서버 Health Check 실패: {}", e.getMessage(), e);
+            return AiServerResponse.builder()
+                    .isHealthy(false)
+                    .isActive(false)
+                    .currentUrl(baseUrl)
+                    .healthMessage("AI 서버에 연결할 수 없습니다")
+                    .build();
         }
     }
 
@@ -106,14 +91,7 @@ public class AiServerService {
         log.info("AI 서버 모델 목록 조회 시작");
 
         try {
-            // 먼저 터널 정보를 가져와서 활성 URL 확인
-            AiServerResponse tunnelResponse = getTunnelInfo(request);
-            if (!Boolean.TRUE.equals(tunnelResponse.getIsActive()) || tunnelResponse.getCurrentUrl() == null) {
-                log.error("AI 서버가 비활성화 상태이거나 URL을 찾을 수 없습니다");
-                throw new CustomException(ErrorCode.AI_SERVER_UNAVAILABLE);
-            }
-
-            String modelsUrl = tunnelResponse.getCurrentUrl() + "/api/tags";
+            String modelsUrl = baseUrl + "/api/tags";
             log.debug("모델 목록 조회 URL: {}", modelsUrl);
 
             // 헤더 설정
@@ -131,9 +109,8 @@ public class AiServerService {
 
             // JSON 응답을 그대로 반환 (프론트엔드에서 파싱)
             return AiServerResponse.builder()
-                    .tunnelInfo(tunnelResponse.getTunnelInfo())
-                    .isActive(tunnelResponse.getIsActive())
-                    .currentUrl(tunnelResponse.getCurrentUrl())
+                    .isActive(true)
+                    .currentUrl(baseUrl)
                     .modelsJson(jsonResponse)
                     .build();
 
@@ -158,14 +135,7 @@ public class AiServerService {
         }
 
         try {
-            // 먼저 터널 정보를 가져와서 활성 URL 확인
-            AiServerResponse tunnelResponse = getTunnelInfo(new AiServerRequest());
-            if (!Boolean.TRUE.equals(tunnelResponse.getIsActive()) || tunnelResponse.getCurrentUrl() == null) {
-                log.error("AI 서버가 비활성화 상태이거나 URL을 찾을 수 없습니다");
-                throw new CustomException(ErrorCode.AI_SERVER_UNAVAILABLE);
-            }
-
-            String generateUrl = tunnelResponse.getCurrentUrl() + "/api/generate";
+            String generateUrl = baseUrl + "/api/generate";
             log.debug("generate 호출 URL: {}", generateUrl);
 
             // stream 기본값 설정
@@ -194,9 +164,8 @@ public class AiServerService {
 
             // JSON 응답을 그대로 반환 (프론트엔드에서 파싱)
             return AiServerResponse.builder()
-                    .tunnelInfo(tunnelResponse.getTunnelInfo())
-                    .isActive(tunnelResponse.getIsActive())
-                    .currentUrl(tunnelResponse.getCurrentUrl())
+                    .isActive(true)
+                    .currentUrl(baseUrl)
                     .generatedJson(jsonResponse)
                     .model(request.getModel())
                     .prompt(request.getPrompt())
@@ -224,14 +193,7 @@ public class AiServerService {
         }
 
         try {
-            // 먼저 터널 정보를 가져와서 활성 URL 확인
-            AiServerResponse tunnelResponse = getTunnelInfo(new AiServerRequest());
-            if (!Boolean.TRUE.equals(tunnelResponse.getIsActive()) || tunnelResponse.getCurrentUrl() == null) {
-                log.error("AI 서버가 비활성화 상태이거나 URL을 찾을 수 없습니다");
-                throw new CustomException(ErrorCode.AI_SERVER_UNAVAILABLE);
-            }
-
-            String embeddingsUrl = tunnelResponse.getCurrentUrl() + "/api/embeddings";
+            String embeddingsUrl = baseUrl + "/api/embeddings";
             log.debug("embeddings 호출 URL: {}", embeddingsUrl);
 
             // JSON 페이로드 객체 생성
@@ -256,9 +218,8 @@ public class AiServerService {
 
             // JSON 응답을 그대로 반환 (프론트엔드에서 파싱)
             return AiServerResponse.builder()
-                    .tunnelInfo(tunnelResponse.getTunnelInfo())
-                    .isActive(tunnelResponse.getIsActive())
-                    .currentUrl(tunnelResponse.getCurrentUrl())
+                    .isActive(true)
+                    .currentUrl(baseUrl)
                     .embeddingsJson(jsonResponse)
                     .model(request.getModel())
                     .input(request.getInput())
@@ -269,6 +230,100 @@ public class AiServerService {
         } catch (Exception e) {
             log.error("AI 서버 embeddings 호출 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * AI 서버에서 모델을 다운로드합니다.
+     */
+    public AiServerResponse pullModel(AiServerRequest request) {
+        log.info("AI 서버 모델 다운로드 시작 - 모델: {}", request.getModelName());
+
+        if (request.getModelName() == null || request.getModelName().trim().isEmpty()) {
+            log.error("모델 이름이 비어있습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        try {
+            String pullUrl = baseUrl + "/api/pull";
+            log.debug("모델 다운로드 URL: {}", pullUrl);
+
+            // JSON 페이로드 생성
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("name", request.getModelName());
+            payload.put("stream", false); // 단순화를 위해 스트림 모드 비활성화
+
+            // 헤더 설정
+            Map<String, String> headers = new HashMap<>();
+            headers.put("X-API-Key", apiKey);
+            headers.put("Content-Type", "application/json");
+
+            // NetworkUtil을 통해 HTTP POST 요청 수행
+            String jsonPayload = objectMapper.writeValueAsString(payload);
+            String jsonResponse = networkUtil.sendPostRequest(pullUrl, headers, jsonPayload);
+            log.info("모델 다운로드 성공 - 모델: {}", request.getModelName());
+
+            return AiServerResponse.builder()
+                    .isActive(true)
+                    .currentUrl(baseUrl)
+                    .pullProgressJson(jsonResponse)
+                    .model(request.getModelName())
+                    .build();
+
+        } catch (JsonProcessingException e) {
+            log.error("JSON 직렬화 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("모델 다운로드 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.AI_SERVER_MODEL_PULL_FAILED);
+        }
+    }
+
+    /**
+     * AI 서버에서 모델을 삭제합니다.
+     */
+    public AiServerResponse deleteModel(AiServerRequest request) {
+        log.info("AI 서버 모델 삭제 시작 - 모델: {}", request.getModelName());
+
+        if (request.getModelName() == null || request.getModelName().trim().isEmpty()) {
+            log.error("모델 이름이 비어있습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        try {
+            String deleteUrl = baseUrl + "/api/delete";
+            log.debug("모델 삭제 URL: {}", deleteUrl);
+
+            // JSON 페이로드 생성
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("name", request.getModelName());
+
+            // 헤더 설정
+            Map<String, String> headers = new HashMap<>();
+            headers.put("X-API-Key", apiKey);
+            headers.put("Content-Type", "application/json");
+
+            // NetworkUtil을 통해 HTTP DELETE 요청 수행
+            String jsonPayload = objectMapper.writeValueAsString(payload);
+            String jsonResponse = networkUtil.sendPostRequest(deleteUrl, headers, jsonPayload);
+            log.info("모델 삭제 성공 - 모델: {}", request.getModelName());
+
+            return AiServerResponse.builder()
+                    .isActive(true)
+                    .currentUrl(baseUrl)
+                    .model(request.getModelName())
+                    .build();
+
+        } catch (JsonProcessingException e) {
+            log.error("JSON 직렬화 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("모델 삭제 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.AI_SERVER_MODEL_DELETE_FAILED);
         }
     }
 }
