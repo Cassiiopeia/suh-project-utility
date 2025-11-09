@@ -31,7 +31,7 @@ public class DockerLogController {
      * @param request 로그 요청 정보 (컨테이너 이름 등)
      * @return SSE Emitter 객체
      */
-    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/stream", produces = "text/event-stream;charset=UTF-8")
     public SseEmitter streamContainerLogs(@ModelAttribute DockerRequest request) {
         String containerName = request.getContainerName() != null ? request.getContainerName() : "sejong-malsami-back";
         Integer lineLimit = request.getLineLimit() != null ? request.getLineLimit() : 100;

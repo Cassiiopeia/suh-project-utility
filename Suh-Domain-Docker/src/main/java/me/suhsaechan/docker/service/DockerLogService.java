@@ -348,11 +348,11 @@ public class DockerLogService {
         if (message == null || message.isEmpty()) {
             return;
         }
-        
+
         try {
             emitter.send(SseEmitter.event()
                     .name("log")
-                    .data(message));
+                    .data(message, org.springframework.http.MediaType.TEXT_PLAIN));
         } catch (IllegalStateException closed) {
             // Emitter 가 이미 닫혔을 때는 상위 호출부에서 처리하도록 예외 전달
             throw closed;
