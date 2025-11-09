@@ -1,20 +1,33 @@
 package me.suhsaechan.aiserver.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.aiserver.dto.AiServerRequest;
 import me.suhsaechan.aiserver.dto.AiServerResponse;
+import me.suhsaechan.aiserver.dto.DownloadProgressDto;
 import me.suhsaechan.aiserver.dto.EmbeddingsPayload;
 import me.suhsaechan.aiserver.dto.GeneratePayload;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.common.util.NetworkUtil;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +42,17 @@ public class AiServerService {
 
     @Value("${ai-server.api-key}")
     private String apiKey;
+
+    // 다운로드 진행 상황 추적을 위한 맵 (모델명 -> 진행상황)
+    private final Map<String, DownloadProgressDto> downloadProgressMap = new ConcurrentHashMap<>();
+
+
+    // OkHttp 클라이언트 (타임아웃 없음 - 장시간 다운로드 지원)
+    private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            .readTimeout(0, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(0, java.util.concurrent.TimeUnit.SECONDS)
+            .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .build();
 
     /**
      * 모델별 지원 기능을 확인합니다.
@@ -325,5 +349,510 @@ public class AiServerService {
             log.error("모델 삭제 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorCode.AI_SERVER_MODEL_DELETE_FAILED);
         }
+    }
+
+    /**
+     * AI 서버 모델 다운로드를 SSE로 스트리밍합니다.
+     * @param modelName 다운로드할 모델 이름
+     * @return SSE Emitter
+     */
+    public SseEmitter pullModelStream(String modelName) {
+        log.info("모델 다운로드 스트리밍 시작 - 모델: {}", modelName);
+
+        if (modelName == null || modelName.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        // 이미 다운로드 중인지 확인
+        DownloadProgressDto existingProgress = downloadProgressMap.get(modelName);
+        if (existingProgress != null && "downloading".equals(existingProgress.getStatus())) {
+            log.warn("모델이 이미 다운로드 중입니다 - 모델: {}", modelName);
+            throw new CustomException(ErrorCode.AI_SERVER_MODEL_PULL_ALREADY_IN_PROGRESS);
+        }
+
+        // SSE Emitter 생성 (30분 타임아웃)
+        SseEmitter emitter = new SseEmitter(30 * 60 * 1000L); // 30분
+
+        // 초기 진행 상황 생성
+        DownloadProgressDto progress = DownloadProgressDto.builder()
+                .modelName(modelName)
+                .status("downloading")
+                .completed(0L)
+                .total(0L)
+                .percentage(0)
+                .message("다운로드 시작 중...")
+                .startTime(System.currentTimeMillis())
+                .build();
+        downloadProgressMap.put(modelName, progress);
+
+        // 초기 이벤트 전송
+        try {
+            String initialProgressJson = objectMapper.writeValueAsString(progress);
+            log.info("[SSE] === 초기 이벤트 전송 시도 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+            emitter.send(SseEmitter.event()
+                    .name("progress")
+                    .data(initialProgressJson));
+            log.info("[SSE] === 초기 이벤트 전송 완료 === 모델: {}", modelName);
+        } catch (Exception e) {
+            log.error("[SSE] === 초기 이벤트 전송 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, e.getMessage(), e);
+            downloadProgressMap.remove(modelName);
+            try {
+                emitter.completeWithError(e);
+            } catch (Exception ignored) {
+                // 최종 실패 시 무시
+            }
+            throw new CustomException(ErrorCode.AI_SERVER_STREAM_ERROR);
+        }
+
+        // 다운로드 스트리밍 시작 (간단한 스레드 사용)
+        Thread downloadThread = new Thread(() -> {
+            try {
+                log.info("[SSE] === 다운로드 스트리밍 스레드 시작 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+                streamModelDownload(modelName, emitter);
+                log.info("[SSE] === 다운로드 스트리밍 스레드 완료 === 모델: {}", modelName);
+            } catch (Exception e) {
+                log.error("[SSE] === 다운로드 스트리밍 스레드 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, e.getMessage(), e);
+                updateProgressError(modelName, e.getMessage());
+                try {
+                    String errorJson = objectMapper.writeValueAsString(
+                        Map.of("error", "다운로드 중 오류가 발생했습니다: " + e.getMessage(),
+                               "modelName", modelName)
+                    );
+                    log.info("[SSE] === 에러 이벤트 전송 시도 === 모델: {}", modelName);
+                    emitter.send(SseEmitter.event().name("error").data(errorJson));
+                    emitter.completeWithError(e);
+                    log.info("[SSE] === 에러 이벤트 전송 완료 === 모델: {}", modelName);
+                } catch (Exception ex) {
+                    log.error("[SSE] === 에러 이벤트 전송 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, ex.getMessage(), ex);
+                    try {
+                        emitter.completeWithError(ex);
+                    } catch (Exception ignored) {
+                        // 최종 실패 시 무시
+                    }
+                }
+            }
+        });
+        downloadThread.setDaemon(true);
+        downloadThread.setName("DownloadThread-" + modelName);
+        downloadThread.start();
+        log.info("[SSE] === 다운로드 스트리밍 스레드 시작됨 === 모델: {}, 스레드 ID: {}", modelName, downloadThread.getId());
+
+        // SSE Emitter 완료/타임아웃/에러 핸들러
+        emitter.onCompletion(() -> {
+            log.info("[SSE] === Emitter 완료 콜백 호출 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+            downloadProgressMap.remove(modelName); // 완료 시 맵에서 제거
+        });
+
+        emitter.onTimeout(() -> {
+            log.warn("[SSE] === Emitter 타임아웃 콜백 호출 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+            updateProgressError(modelName, "타임아웃");
+            downloadProgressMap.remove(modelName); // 타임아웃 시 맵에서 제거
+        });
+
+        emitter.onError(e -> {
+            log.error("[SSE] === Emitter 에러 콜백 호출 === 모델: {}, 에러: {}, 스택: {}, 스레드: {}", 
+                     modelName, e.getMessage(), e.getClass().getName(), e, Thread.currentThread().getName());
+            updateProgressError(modelName, e.getMessage());
+            downloadProgressMap.remove(modelName); // 에러 시 맵에서 제거
+        });
+
+        return emitter;
+    }
+
+    /**
+     * 모델 다운로드를 비동기로 시작합니다 (폴링용).
+     * @param modelName 다운로드할 모델 이름
+     */
+    public void startModelDownload(String modelName) {
+        log.info("모델 다운로드 시작 요청 - 모델: {}", modelName);
+
+        if (modelName == null || modelName.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        // 이미 다운로드 중인지 확인
+        DownloadProgressDto existingProgress = downloadProgressMap.get(modelName);
+        if (existingProgress != null && "downloading".equals(existingProgress.getStatus())) {
+            log.warn("모델이 이미 다운로드 중입니다 - 모델: {}", modelName);
+            throw new CustomException(ErrorCode.AI_SERVER_MODEL_PULL_ALREADY_IN_PROGRESS);
+        }
+
+        // 초기 진행 상황 생성
+        DownloadProgressDto progress = DownloadProgressDto.builder()
+                .modelName(modelName)
+                .status("downloading")
+                .completed(0L)
+                .total(0L)
+                .percentage(0)
+                .message("다운로드 시작 중...")
+                .startTime(System.currentTimeMillis())
+                .build();
+        downloadProgressMap.put(modelName, progress);
+
+        // 다운로드 스트리밍 시작 (간단한 스레드 사용)
+        Thread downloadThread = new Thread(() -> {
+            try {
+                log.info("[다운로드] === 다운로드 스트리밍 스레드 시작 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+                streamModelDownloadWithoutEmitter(modelName);
+                log.info("[다운로드] === 다운로드 스트리밍 스레드 완료 === 모델: {}", modelName);
+            } catch (Exception e) {
+                log.error("[다운로드] === 다운로드 스트리밍 스레드 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, e.getMessage(), e);
+                updateProgressError(modelName, e.getMessage());
+            }
+        });
+        downloadThread.setDaemon(true);
+        downloadThread.setName("DownloadThread-" + modelName);
+        downloadThread.start();
+        log.info("[다운로드] === 다운로드 스트리밍 스레드 시작됨 === 모델: {}, 스레드 ID: {}", modelName, downloadThread.getId());
+    }
+
+    /**
+     * OkHttp로 모델 다운로드를 스트리밍합니다 (SSE Emitter 없이).
+     */
+    private void streamModelDownloadWithoutEmitter(String modelName) throws IOException {
+        log.debug("[DEBUG] streamModelDownloadWithoutEmitter 시작 - 모델: {}", modelName);
+        String pullUrl = baseUrl + "/api/pull";
+        log.debug("[DEBUG] Pull URL: {}", pullUrl);
+
+        // JSON 페이로드 생성
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("name", modelName);
+        payload.put("stream", true); // 스트리밍 활성화
+        log.debug("[DEBUG] 페이로드 생성 완료: {}", payload);
+
+        String jsonPayload = objectMapper.writeValueAsString(payload);
+        log.debug("[DEBUG] JSON 직렬화 완료: {}", jsonPayload);
+
+        // OkHttp 요청 생성
+        RequestBody body = RequestBody.create(
+                jsonPayload,
+                MediaType.parse("application/json; charset=utf-8")
+        );
+        log.debug("[DEBUG] RequestBody 생성 완료");
+
+        Request request = new Request.Builder()
+                .url(pullUrl)
+                .addHeader("X-API-Key", apiKey)
+                .post(body)
+                .build();
+        log.debug("[DEBUG] OkHttp Request 빌드 완료");
+
+        // 스트리밍 응답 처리
+        log.debug("[DEBUG] OkHttp 요청 실행 시작 (execute() 호출 전)...");
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            log.debug("[DEBUG] OkHttp 요청 실행 완료 - 응답 코드: {}", response.code());
+            if (!response.isSuccessful()) {
+                throw new IOException("AI 서버 응답 실패: " + response.code());
+            }
+
+            if (response.body() == null) {
+                log.error("[DEBUG] 응답 본문이 비어있습니다");
+                throw new IOException("응답 본문이 비어있습니다");
+            }
+            log.debug("[DEBUG] 응답 본문 확인 완료, 스트림 읽기 시작");
+
+            // 라인별로 JSON 파싱하여 진행 상황 업데이트
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(response.body().byteStream(), StandardCharsets.UTF_8))) {
+
+                log.debug("[DEBUG] BufferedReader 생성 완료, 라인 읽기 시작");
+                String line;
+                int lineCount = 0;
+                while ((line = reader.readLine()) != null) {
+                    lineCount++;
+                    log.debug("[DEBUG] 라인 #{} 읽음: {}", lineCount, line.length() > 100 ? line.substring(0, 100) + "..." : line);
+
+                    if (line.trim().isEmpty()) {
+                        log.debug("[DEBUG] 빈 라인 스킵");
+                        continue;
+                    }
+
+                    try {
+                        log.debug("[DEBUG] JSON 파싱 시작...");
+                        JsonNode jsonNode = objectMapper.readTree(line);
+                        log.debug("[DEBUG] JSON 파싱 완료: {}", jsonNode);
+
+                        String status = jsonNode.has("status") ? jsonNode.get("status").asText() : "";
+                        long completed = jsonNode.has("completed") ? jsonNode.get("completed").asLong() : 0;
+                        long total = jsonNode.has("total") ? jsonNode.get("total").asLong() : 0;
+                        log.debug("[DEBUG] 파싱 결과 - status: {}, completed: {}, total: {}", status, completed, total);
+
+                        // 진행률 계산
+                        int percentage = 0;
+                        if (total > 0) {
+                            percentage = (int) ((completed * 100) / total);
+                        }
+                        log.debug("[DEBUG] 진행률 계산: {}%", percentage);
+
+                        // 진행 상황 업데이트
+                        DownloadProgressDto progress = downloadProgressMap.get(modelName);
+                        if (progress != null) {
+                            progress.setStatus("downloading");
+                            progress.setCompleted(completed);
+                            progress.setTotal(total);
+                            progress.setPercentage(percentage);
+                            progress.setMessage(status);
+                            log.debug("[DEBUG] 진행 상황 맵 업데이트 완료: {}", progress);
+                        } else {
+                            log.warn("[DEBUG] 진행 상황 맵에서 모델을 찾을 수 없음: {}", modelName);
+                        }
+
+                        // 완료 확인: status가 "success"이거나 completed == total인 경우
+                        boolean isCompleted = "success".equals(status) ||
+                                             (total > 0 && completed > 0 && completed >= total);
+
+                        log.debug("[DEBUG] 완료 체크 - status: {}, total: {}, completed: {}, isCompleted: {}",
+                                  status, total, completed, isCompleted);
+
+                        if (isCompleted) {
+                            log.info("[다운로드] 모델 다운로드 완료 - 모델: {}, completed: {}/{}", modelName, completed, total);
+                            updateProgressCompleted(modelName);
+                            break;
+                        }
+
+                    } catch (JsonProcessingException e) {
+                        log.warn("JSON 파싱 실패, 라인 스킵: {}", line);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("모델 다운로드 스트리밍 실패: {}", e.getMessage(), e);
+            updateProgressError(modelName, e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * OkHttp로 모델 다운로드를 스트리밍합니다.
+     */
+    private void streamModelDownload(String modelName, SseEmitter emitter) throws IOException {
+        log.debug("[DEBUG] streamModelDownload 시작 - 모델: {}", modelName);
+        String pullUrl = baseUrl + "/api/pull";
+        log.debug("[DEBUG] Pull URL: {}", pullUrl);
+
+        // JSON 페이로드 생성
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("name", modelName);
+        payload.put("stream", true); // 스트리밍 활성화
+        log.debug("[DEBUG] 페이로드 생성 완료: {}", payload);
+
+        String jsonPayload = objectMapper.writeValueAsString(payload);
+        log.debug("[DEBUG] JSON 직렬화 완료: {}", jsonPayload);
+
+        // OkHttp 요청 생성
+        RequestBody body = RequestBody.create(
+                jsonPayload,
+                MediaType.parse("application/json; charset=utf-8")
+        );
+        log.debug("[DEBUG] RequestBody 생성 완료");
+
+        Request request = new Request.Builder()
+                .url(pullUrl)
+                .addHeader("X-API-Key", apiKey)
+                .post(body)
+                .build();
+        log.debug("[DEBUG] OkHttp Request 빌드 완료");
+
+        // 스트리밍 응답 처리
+        log.debug("[DEBUG] OkHttp 요청 실행 시작 (execute() 호출 전)...");
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            log.debug("[DEBUG] OkHttp 요청 실행 완료 - 응답 코드: {}", response.code());
+            if (!response.isSuccessful()) {
+                throw new IOException("AI 서버 응답 실패: " + response.code());
+            }
+
+            if (response.body() == null) {
+                log.error("[DEBUG] 응답 본문이 비어있습니다");
+                throw new IOException("응답 본문이 비어있습니다");
+            }
+            log.debug("[DEBUG] 응답 본문 확인 완료, 스트림 읽기 시작");
+
+            // 라인별로 JSON 파싱하여 진행 상황 업데이트
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(response.body().byteStream(), StandardCharsets.UTF_8))) {
+
+                log.debug("[DEBUG] BufferedReader 생성 완료, 라인 읽기 시작");
+                String line;
+                int lineCount = 0;
+                while ((line = reader.readLine()) != null) {
+                    lineCount++;
+                    log.debug("[DEBUG] 라인 #{} 읽음: {}", lineCount, line.length() > 100 ? line.substring(0, 100) + "..." : line);
+
+                    if (line.trim().isEmpty()) {
+                        log.debug("[DEBUG] 빈 라인 스킵");
+                        continue;
+                    }
+
+                    try {
+                        log.debug("[DEBUG] JSON 파싱 시작...");
+                        JsonNode jsonNode = objectMapper.readTree(line);
+                        log.debug("[DEBUG] JSON 파싱 완료: {}", jsonNode);
+
+                        String status = jsonNode.has("status") ? jsonNode.get("status").asText() : "";
+                        long completed = jsonNode.has("completed") ? jsonNode.get("completed").asLong() : 0;
+                        long total = jsonNode.has("total") ? jsonNode.get("total").asLong() : 0;
+                        log.debug("[DEBUG] 파싱 결과 - status: {}, completed: {}, total: {}", status, completed, total);
+
+                        // 진행률 계산
+                        int percentage = 0;
+                        if (total > 0) {
+                            percentage = (int) ((completed * 100) / total);
+                        }
+                        log.debug("[DEBUG] 진행률 계산: {}%", percentage);
+
+                        // 진행 상황 업데이트
+                        DownloadProgressDto progress = downloadProgressMap.get(modelName);
+                        if (progress != null) {
+                            progress.setStatus("downloading");
+                            progress.setCompleted(completed);
+                            progress.setTotal(total);
+                            progress.setPercentage(percentage);
+                            progress.setMessage(status);
+                            log.debug("[DEBUG] 진행 상황 맵 업데이트 완료: {}", progress);
+                        } else {
+                            log.warn("[DEBUG] 진행 상황 맵에서 모델을 찾을 수 없음: {}", modelName);
+                        }
+
+                        // SSE로 진행 상황 전송
+                        if (progress == null) {
+                            log.error("[SSE] progress가 null입니다 - 모델: {}", modelName);
+                            return;
+                        }
+                        
+                        try {
+                            String progressJson = objectMapper.writeValueAsString(progress);
+                            log.info("[SSE] === 진행 상황 전송 시도 === 모델: {}, percentage: {}%, completed: {}/{}, 스레드: {}", 
+                                     modelName, percentage, completed, total, Thread.currentThread().getName());
+                            
+                            // emitter.send() 호출
+                            emitter.send(SseEmitter.event()
+                                    .name("progress")
+                                    .data(progressJson));
+                            
+                            log.info("[SSE] === 진행 상황 전송 완료 === 모델: {}, percentage: {}%, completed: {}/{}, message: {}",
+                                     modelName, percentage, completed, total, status);
+                        } catch (IllegalStateException e) {
+                            log.error("[SSE] === 전송 실패 (IllegalStateException) === 모델: {}, 에러: {}, 스택: {}", 
+                                     modelName, e.getMessage(), e);
+                            return; // 스트림 처리 중단
+                        } catch (IOException e) {
+                            log.error("[SSE] === 전송 실패 (IOException) === 모델: {}, 에러: {}, 스택: {}", 
+                                     modelName, e.getMessage(), e);
+                            try {
+                                emitter.completeWithError(e);
+                            } catch (Exception ex) {
+                                log.error("[SSE] completeWithError() 호출 실패: {}", ex.getMessage());
+                            }
+                            return; // 스트림 처리 중단
+                        } catch (Exception e) {
+                            log.error("[SSE] === 전송 실패 (Exception) === 모델: {}, 에러: {}, 스택: {}", 
+                                     modelName, e.getMessage(), e);
+                            try {
+                                emitter.completeWithError(e);
+                            } catch (Exception ex) {
+                                log.error("[SSE] completeWithError() 호출 실패: {}", ex.getMessage());
+                            }
+                            return; // 스트림 처리 중단
+                        }
+
+                        // 완료 확인: status가 "success"이거나 completed == total인 경우
+                        // digest 필드는 다운로드 시작 시부터 존재하므로 완료 조건으로 부적합
+                        boolean isCompleted = "success".equals(status) ||
+                                             (total > 0 && completed > 0 && completed >= total);
+
+                        log.debug("[DEBUG] 완료 체크 - status: {}, total: {}, completed: {}, isCompleted: {}",
+                                  status, total, completed, isCompleted);
+
+                        if (isCompleted) {
+                            log.info("[SSE] 모델 다운로드 완료 - 모델: {}, completed: {}/{}", modelName, completed, total);
+                            updateProgressCompleted(modelName);
+
+                            // 업데이트된 progress 가져오기
+                            DownloadProgressDto completedProgress = downloadProgressMap.get(modelName);
+                            log.info("[SSE] 완료 이벤트 전송 시작 - 모델: {}", modelName);
+                            try {
+                                String completedProgressJson = objectMapper.writeValueAsString(completedProgress);
+                                log.debug("[DEBUG] 전송할 완료 JSON 데이터: {}", completedProgressJson);
+                                
+                                emitter.send(SseEmitter.event()
+                                        .name("complete")
+                                        .data(completedProgressJson));
+                                log.info("[SSE] 완료 이벤트 전송 성공 - 모델: {}, emitter.complete() 호출", modelName);
+                                emitter.complete();
+                            } catch (IllegalStateException e) {
+                                // 클라이언트 연결이 끊긴 경우 (emitter가 이미 완료되었거나 닫힌 경우)
+                                log.warn("[SSE] Emitter가 이미 닫혔거나 완료됨 (완료 이벤트) - 모델: {}, 에러: {}", modelName, e.getMessage());
+                                // 이미 닫혔으므로 추가 처리 불필요
+                            } catch (IOException e) {
+                                log.error("[SSE] 완료 이벤트 전송 실패 - 모델: {}, 에러: {}, 스택: {}", 
+                                         modelName, e.getMessage(), e.getClass().getName(), e);
+                                try {
+                                    emitter.completeWithError(e);
+                                } catch (Exception ex) {
+                                    log.error("[ERROR] emitter.completeWithError() 호출 실패: {}", ex.getMessage());
+                                }
+                            } catch (Exception e) {
+                                log.error("[SSE] 완료 이벤트 전송 중 예상치 못한 오류 - 모델: {}, 에러: {}", 
+                                         modelName, e.getMessage(), e);
+                                try {
+                                    emitter.completeWithError(e);
+                                } catch (Exception ex) {
+                                    log.error("[ERROR] emitter.completeWithError() 호출 실패: {}", ex.getMessage());
+                                }
+                            }
+                            break;
+                        }
+
+                    } catch (JsonProcessingException e) {
+                        log.warn("JSON 파싱 실패, 라인 스킵: {}", line);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("모델 다운로드 스트리밍 실패: {}", e.getMessage(), e);
+            updateProgressError(modelName, e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * 진행 상황을 완료 상태로 업데이트합니다.
+     */
+    private void updateProgressCompleted(String modelName) {
+        DownloadProgressDto progress = downloadProgressMap.get(modelName);
+        if (progress != null) {
+            progress.setStatus("completed");
+            progress.setPercentage(100);
+            progress.setMessage("다운로드 완료");
+            progress.setEndTime(System.currentTimeMillis());
+        }
+    }
+
+    /**
+     * 진행 상황을 에러 상태로 업데이트합니다.
+     */
+    private void updateProgressError(String modelName, String errorMessage) {
+        DownloadProgressDto progress = downloadProgressMap.get(modelName);
+        if (progress != null) {
+            progress.setStatus("failed");
+            progress.setMessage("오류: " + errorMessage);
+            progress.setEndTime(System.currentTimeMillis());
+        }
+    }
+
+    /**
+     * 모든 다운로드 진행 상황을 조회합니다.
+     */
+    public Map<String, DownloadProgressDto> getDownloadStatus() {
+        return new HashMap<>(downloadProgressMap);
+    }
+
+    /**
+     * 특정 모델의 다운로드 진행 상황을 조회합니다.
+     */
+    public DownloadProgressDto getModelDownloadStatus(String modelName) {
+        return downloadProgressMap.get(modelName);
     }
 }

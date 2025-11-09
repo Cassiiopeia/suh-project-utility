@@ -1,11 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2025-11-09T15:20:58Z",
-    "currentVersion": "1.3.2",
+    "lastUpdated": "2025-11-09T17:15:39Z",
+    "currentVersion": "1.3.4",
     "projectType": "spring",
-    "totalReleases": 14
+    "totalReleases": 15
   },
   "releases": [
+    {
+      "version": "1.3.4",
+      "project_type": "spring",
+      "date": "2025-11-09",
+      "pr_number": 99,
+      "raw_summary": "Summary by CodeRabbit\n릴리스 노트 v1.3.4\n\n\n새로운 기능\n\nAI 모델 다운로드 진행률 추적 기능 추가 (시작, 중단, 상태 확인 가능)\nDocker 로그 조회 방식을 스트리밍에서 폴링으로 개선\n\n\n\n개선사항\n\nSSE 기반 로그 처리 최적화\nDocker 기본 이미지 업그레이드\n\n\n\n버전\n\nv1.3.4로 업데이트",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "AI 모델 다운로드 진행률 추적 기능 추가 (시작, 중단, 상태 확인 가능)",
+            "Docker 로그 조회 방식을 스트리밍에서 폴링으로 개선"
+          ]
+        },
+        "개선사항": {
+          "title": "개선사항",
+          "items": [
+            "SSE 기반 로그 처리 최적화",
+            "Docker 기본 이미지 업그레이드"
+          ]
+        },
+        "버전": {
+          "title": "버전",
+          "items": [
+            "v1.3.4로 업데이트"
+          ]
+        }
+      }
+    },
     {
       "version": "1.3.2",
       "project_type": "spring",

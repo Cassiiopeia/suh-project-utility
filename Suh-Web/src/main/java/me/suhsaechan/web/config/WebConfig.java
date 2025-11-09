@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadDir = System.getProperty("user.dir") + "/upload";
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         String uploadResourcePath = uploadPath.toUri().toString();
-        
+
         registry.addResourceHandler("/upload/**", "/uploads/**", "/suh-project-utility/dev-uploads/**", "/suh-project-utility/upload/**")
                 .addResourceLocations(uploadResourcePath);
     }
