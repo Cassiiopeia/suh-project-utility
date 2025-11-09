@@ -300,22 +300,49 @@ public class DockerLogService {
                 initialOut.write((password + "\n").getBytes(StandardCharsets.UTF_8));
                 initialOut.flush();
 
-                // 초기 로그 읽기 (타임아웃 30초)
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(initialIn, StandardCharsets.UTF_8))) {
-                    String line;
-                    long startTime = System.currentTimeMillis();
-                    // 최대 30초 타임아웃
-                    while ((line = reader.readLine()) != null) {
-                        sendLogEvent(emitter, line + "\n");
-                        initialLogCount++;
+                // 초기 로그 읽기 (타임아웃 30초) - 바이트 스트림 기반 읽기
+                byte[] buffer = new byte[8192]; // 8KB 버퍼
+                StringBuilder lineBuffer = new StringBuilder();
+                long startTime = System.currentTimeMillis();
 
-                        // 타임아웃 체크 (30초)
-                        if (System.currentTimeMillis() - startTime > 30000) {
-                            log.warn("초기 로그 읽기 타임아웃 (30초 초과)");
+                try {
+                    while (System.currentTimeMillis() - startTime < 30000) {
+                        // available() 체크로 블로킹 방지
+                        if (initialIn.available() > 0) {
+                            int bytesRead = initialIn.read(buffer);
+                            if (bytesRead > 0) {
+                                String chunk = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
+                                lineBuffer.append(chunk);
+
+                                // 줄 단위로 분리하여 전송
+                                String bufferedText = lineBuffer.toString();
+                                int lastNewline = bufferedText.lastIndexOf('\n');
+
+                                if (lastNewline >= 0) {
+                                    String linesToSend = bufferedText.substring(0, lastNewline + 1);
+                                    String[] lines = linesToSend.split("\n", -1);
+                                    for (int i = 0; i < lines.length - 1; i++) {
+                                        sendLogEvent(emitter, lines[i] + "\n");
+                                        initialLogCount++;
+                                    }
+                                    lineBuffer = new StringBuilder(bufferedText.substring(lastNewline + 1));
+                                }
+                            }
+                        } else if (initialChannel.isClosed()) {
+                            // 채널이 닫혔으면 남은 데이터 처리 후 종료
+                            if (lineBuffer.length() > 0) {
+                                sendLogEvent(emitter, lineBuffer.toString());
+                                initialLogCount++;
+                            }
                             break;
+                        } else {
+                            // 데이터가 없으면 잠시 대기
+                            Thread.sleep(50);
                         }
                     }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.warn("초기 로그 읽기 중단됨");
                 }
 
                 log.info("초기 로그 {} 줄 전송 완료", initialLogCount);
@@ -337,7 +364,8 @@ public class DockerLogService {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setPty(true);
             // sudo -S -p '' 로 프롬프트 제거 후 패스워드 STDIN 으로 전달
-            String followCommand = "sudo -S -p '' bash -c 'export PATH=$PATH:/usr/local/bin && docker logs -f " + containerName + "'";
+            // --tail=0 옵션으로 과거 로그는 건너뛰고 새 로그만 실시간 스트리밍 (성능 최적화)
+            String followCommand = "sudo -S -p '' bash -c 'export PATH=$PATH:/usr/local/bin && docker logs -f --tail=0 " + containerName + "'";
             log.debug("실시간 로그 명령어 실행: {}", followCommand);
             channel.setCommand(followCommand);
 
@@ -356,27 +384,64 @@ public class DockerLogService {
                 context.setSession(session);
             }
 
-            // 로그 실시간 읽기
+            // 로그 실시간 읽기 - 바이트 스트림 기반 읽기
             int streamLogCount = 0;
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                String line;
+            byte[] buffer = new byte[8192]; // 8KB 버퍼
+            StringBuilder lineBuffer = new StringBuilder();
+
+            try {
                 while (!Thread.currentThread().isInterrupted() &&
-                       (line = reader.readLine()) != null &&
                        activeStreams.containsKey(containerName)) {
-                    // 새 로그 라인을 SSE로 전송
-                    try {
-                        sendLogEvent(emitter, line + "\n");
-                        streamLogCount++;
-                        if (streamLogCount % 100 == 0) {
-                            log.debug("실시간 로그 {} 줄 전송 중...", streamLogCount);
+
+                    // available() 체크로 블로킹 방지
+                    if (in.available() > 0) {
+                        int bytesRead = in.read(buffer);
+                        if (bytesRead > 0) {
+                            String chunk = new String(buffer, 0, bytesRead, StandardCharsets.UTF_8);
+                            lineBuffer.append(chunk);
+
+                            // 줄 단위로 분리하여 전송
+                            String bufferedText = lineBuffer.toString();
+                            int lastNewline = bufferedText.lastIndexOf('\n');
+
+                            if (lastNewline >= 0) {
+                                String linesToSend = bufferedText.substring(0, lastNewline + 1);
+                                String[] lines = linesToSend.split("\n", -1);
+
+                                for (int i = 0; i < lines.length - 1; i++) {
+                                    try {
+                                        sendLogEvent(emitter, lines[i] + "\n");
+                                        streamLogCount++;
+                                        if (streamLogCount % 100 == 0) {
+                                            log.debug("실시간 로그 {} 줄 전송 중...", streamLogCount);
+                                        }
+                                    } catch (IllegalStateException closed) {
+                                        log.info("Emitter closed - 실시간 로그 전송 중단: {}", containerName);
+                                        return;
+                                    }
+                                }
+                                lineBuffer = new StringBuilder(bufferedText.substring(lastNewline + 1));
+                            }
                         }
-                    } catch (IllegalStateException closed) {
-                        // Emitter 가 이미 종료된 경우 루프 탈출
-                        log.info("Emitter closed - 실시간 로그 전송 중단: {}", containerName);
+                    } else if (channel.isClosed()) {
+                        // 채널이 닫혔으면 남은 데이터 처리 후 종료
+                        if (lineBuffer.length() > 0) {
+                            try {
+                                sendLogEvent(emitter, lineBuffer.toString());
+                                streamLogCount++;
+                            } catch (IllegalStateException closed) {
+                                log.info("Emitter closed - 실시간 로그 전송 중단: {}", containerName);
+                            }
+                        }
                         break;
+                    } else {
+                        // 데이터가 없으면 잠시 대기
+                        Thread.sleep(100);
                     }
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.info("실시간 로그 스트리밍 중단됨: {}", containerName);
             }
             
             log.info("컨테이너 {} 로그 스트리밍 종료 - 총 {} 줄 전송", containerName, initialLogCount + streamLogCount);

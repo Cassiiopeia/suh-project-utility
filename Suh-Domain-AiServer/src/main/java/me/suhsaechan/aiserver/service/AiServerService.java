@@ -389,6 +389,19 @@ public class AiServerService {
                 .build();
         downloadProgressMap.put(modelName, progress);
 
+        // ⚠️ 중요: EventSource 연결 확립을 위해 초기 이벤트를 즉시 전송
+        // 이렇게 하지 않으면 빠른 다운로드 시 EventSource가 연결되기 전에 모든 이벤트가 전송될 수 있음
+        try {
+            log.debug("[DEBUG] 초기 연결 이벤트 전송 중...");
+            emitter.send(SseEmitter.event()
+                    .name("progress")
+                    .data(objectMapper.writeValueAsString(progress)));
+            log.debug("[DEBUG] 초기 연결 이벤트 전송 완료");
+        } catch (IOException e) {
+            log.error("초기 SSE 이벤트 전송 실패: {}", e.getMessage());
+            throw new CustomException(ErrorCode.AI_SERVER_STREAM_ERROR);
+        }
+
         // 비동기로 다운로드 스트리밍 시작
         executorService.execute(() -> {
             try {
@@ -523,9 +536,16 @@ public class AiServerService {
                                 .data(objectMapper.writeValueAsString(progress)));
                         log.debug("[DEBUG] SSE 진행 상황 전송 완료");
 
-                        // 완료 확인
-                        if ("success".equals(status) || jsonNode.has("digest")) {
-                            log.info("모델 다운로드 완료 - 모델: {}", modelName);
+                        // 완료 확인: status가 "success"이거나 completed == total인 경우
+                        // digest 필드는 다운로드 시작 시부터 존재하므로 완료 조건으로 부적합
+                        boolean isCompleted = "success".equals(status) ||
+                                             (total > 0 && completed > 0 && completed >= total);
+
+                        log.debug("[DEBUG] 완료 체크 - status: {}, total: {}, completed: {}, isCompleted: {}",
+                                  status, total, completed, isCompleted);
+
+                        if (isCompleted) {
+                            log.info("모델 다운로드 완료 - 모델: {}, completed: {}/{}", modelName, completed, total);
                             updateProgressCompleted(modelName);
 
                             // 업데이트된 progress 가져오기
