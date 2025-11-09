@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -229,24 +230,61 @@ public class DockerLogService {
             }
             
             sendLogEvent(emitter, "SSH 연결 성공\n");
-            
+
             // 초기 로그 (최근 N줄) 가져오기
             int tailLines = lineLimit != null && lineLimit > 0 ? lineLimit : 100;
 
             sendLogEvent(emitter, "최근 " + tailLines + "줄 로그 가져오는 중...\n");
 
-            // executeCommandWithSudoStdin 으로 초기 로그 획득 (한 번에 텍스트 반환)
-            String initialLog = sshCommandExecutor.executeCommandWithSudoStdin(
-                    "docker logs --tail=" + tailLines + " " + containerName);
+            // 이미 연결된 session으로 초기 로그 채널 생성
+            ChannelExec initialChannel = null;
+            int initialLogCount = 0;
+            try {
+                initialChannel = (ChannelExec) session.openChannel("exec");
+                String initialCommand = String.format(
+                    "sudo -S -p '' bash -c 'export PATH=$PATH:/usr/local/bin && docker logs --tail=%d %s'",
+                    tailLines, containerName
+                );
+                initialChannel.setCommand(initialCommand);
+                initialChannel.setPty(true);
 
-            if (initialLog != null && !initialLog.isEmpty()) {
-                for (String line : initialLog.split("\n")) {
-                    sendLogEvent(emitter, line + "\n");
+                InputStream initialIn = initialChannel.getInputStream();
+                OutputStream initialOut = initialChannel.getOutputStream();
+                initialChannel.connect(10000); // 10초 타임아웃
+
+                // sudo 비밀번호 전달
+                initialOut.write((password + "\n").getBytes(StandardCharsets.UTF_8));
+                initialOut.flush();
+
+                // 초기 로그 읽기 (타임아웃 30초)
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(initialIn, StandardCharsets.UTF_8))) {
+                    String line;
+                    long startTime = System.currentTimeMillis();
+                    // 최대 30초 타임아웃
+                    while ((line = reader.readLine()) != null) {
+                        sendLogEvent(emitter, line + "\n");
+                        initialLogCount++;
+
+                        // 타임아웃 체크 (30초)
+                        if (System.currentTimeMillis() - startTime > 30000) {
+                            log.warn("초기 로그 읽기 타임아웃 (30초 초과)");
+                            break;
+                        }
+                    }
+                }
+
+                log.info("초기 로그 {} 줄 전송 완료", initialLogCount);
+
+            } catch (Exception e) {
+                log.error("초기 로그 가져오기 실패: {}", e.getMessage(), e);
+                sendLogEvent(emitter, "초기 로그 가져오기 실패: " + e.getMessage() + "\n");
+            } finally {
+                if (initialChannel != null && initialChannel.isConnected()) {
+                    initialChannel.disconnect();
                 }
             }
-            int initialLogCount = initialLog != null ? initialLog.split("\n").length : 0;
-            log.debug("초기 로그 {} 줄 전송 완료", initialLogCount);
-            
+
             // 초기 로그 이후 실시간 스트리밍 준비
             
             // 실시간 스트리밍을 위한 새 채널 열기 (follow 모드)
@@ -264,17 +302,18 @@ public class DockerLogService {
             OutputStream out = channel.getOutputStream();
             channel.connect();
             // sudo 비밀번호 전달
-            out.write((password + "\n").getBytes());
+            out.write((password + "\n").getBytes(StandardCharsets.UTF_8));
             out.flush();
             log.debug("실시간 로그 채널 연결 성공");
-            
+
             // 현재 채널과 세션을 맵에 저장 (나중에 종료하기 위해)
             sshChannels.put(containerName, channel);
             sshSessions.put(containerName, session);
-            
+
             // 로그 실시간 읽기
             int streamLogCount = 0;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line;
                 while (!Thread.currentThread().isInterrupted() && 
                        (line = reader.readLine()) != null &&

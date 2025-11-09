@@ -6,6 +6,7 @@ import com.jcraft.jsch.Session;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.properties.SshConnectionProperties;
 import org.springframework.stereotype.Component;
@@ -51,18 +52,26 @@ public class SshCommandExecutor {
       InputStream in = channel.getInputStream();
       channel.connect();
 
-      // 6) 결과 읽기
+      // 6) 결과 읽기 (UTF-8 인코딩)
       StringBuilder outputBuffer = new StringBuilder();
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+      try (BufferedReader reader = new BufferedReader(
+              new InputStreamReader(in, StandardCharsets.UTF_8))) {
         String line;
         while ((line = reader.readLine()) != null) {
           outputBuffer.append(line).append("\n");
         }
       }
 
-      // 7) 채널 종료 대기
-      while (!channel.isClosed()) {
+      // 7) 채널 종료 대기 (최대 60초 타임아웃)
+      int waitCount = 0;
+      while (!channel.isClosed() && waitCount < 600) { // 60초 = 600 * 100ms
         Thread.sleep(100);
+        waitCount++;
+      }
+
+      if (!channel.isClosed()) {
+        log.warn("SSH 채널이 60초 내에 닫히지 않아 강제 종료합니다. command: {}", command);
+        channel.disconnect();
       }
 
       int exitStatus = channel.getExitStatus();
@@ -128,15 +137,24 @@ public class SshCommandExecutor {
       channel.connect();
 
       StringBuilder outputBuffer = new StringBuilder();
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+      try (BufferedReader reader = new BufferedReader(
+              new InputStreamReader(in, StandardCharsets.UTF_8))) {
         String line;
         while ((line = reader.readLine()) != null) {
           outputBuffer.append(line).append("\n");
         }
       }
 
-      while (!channel.isClosed()) {
+      // 채널 종료 대기 (최대 60초 타임아웃)
+      int waitCount = 0;
+      while (!channel.isClosed() && waitCount < 600) { // 60초 = 600 * 100ms
         Thread.sleep(100);
+        waitCount++;
+      }
+
+      if (!channel.isClosed()) {
+        log.warn("SSH SUDO 채널이 60초 내에 닫히지 않아 강제 종료합니다. command: {}", command);
+        channel.disconnect();
       }
 
       int exitStatus = channel.getExitStatus();
