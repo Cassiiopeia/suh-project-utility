@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import me.suhsaechan.aiserver.dto.DownloadProgressDto;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
@@ -73,13 +75,34 @@ public class AiServerController {
     }
 
     /**
+     * 모델 다운로드를 시작합니다 (비동기, 폴링용).
+     * @param modelName 다운로드할 모델 이름
+     * @return 성공 응답
+     */
+    @PostMapping(value = "/models/pull/start", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, String>> startModelDownload(@RequestParam String modelName) {
+        log.info("AI 모델 다운로드 시작 요청 - 모델: {}", modelName);
+        aiServerService.startModelDownload(modelName);
+        return ResponseEntity.ok(Map.of("status", "started", "modelName", modelName));
+    }
+
+    /**
      * AI 서버 모델 다운로드를 SSE로 스트리밍합니다.
      * @param modelName 다운로드할 모델 이름
+     * @param response HTTP 응답 객체
      * @return SSE Emitter 객체
      */
     @GetMapping(value = "/models/pull/stream", produces = "text/event-stream;charset=UTF-8")
-    public SseEmitter pullModelStream(@RequestParam String modelName) {
+    public SseEmitter pullModelStream(@RequestParam String modelName, HttpServletResponse response) {
         log.info("AI 모델 다운로드 스트리밍 시작 - 모델: {}", modelName);
+        
+        // SSE 응답 헤더 설정 (버퍼링 비활성화)
+        response.setContentType("text/event-stream;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setHeader("Connection", "keep-alive");
+        response.setHeader("X-Accel-Buffering", "no"); // nginx 프록시 사용 시 버퍼링 비활성화
+        
         return aiServerService.pullModelStream(modelName);
     }
 
@@ -98,7 +121,7 @@ public class AiServerController {
      * @return 다운로드 진행 상황
      */
     @GetMapping(value = "/models/pull/status/{modelName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DownloadProgressDto> getModelDownloadStatus(@RequestParam String modelName) {
+    public ResponseEntity<DownloadProgressDto> getModelDownloadStatus(@PathVariable String modelName) {
         DownloadProgressDto progress = aiServerService.getModelDownloadStatus(modelName);
         if (progress == null) {
             return ResponseEntity.notFound().build();

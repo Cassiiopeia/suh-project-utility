@@ -73,7 +73,7 @@
     
     <!-- 로그 출력 화면 -->
     <div class="ui inverted segment log-output-container">
-      <pre id="logOutput"><code class="language-bash"></code></pre>
+      <pre id="logOutput"></pre>
     </div>
     
     <!-- 상태 표시 -->
@@ -108,9 +108,10 @@
 <script>
   $(document).ready(function() {
     // 변수 초기화
-    let eventSource = null;
+    let pollInterval = null;
     let logLineCount = 0;
-    const logOutput = document.querySelector('#logOutput code');
+    let lastLogHash = null;
+    const logOutput = document.querySelector('#logOutput');
     const logStatusLabel = $('#logStatus');
     const lineCountLabel = $('#lineCount');
     
@@ -157,26 +158,19 @@
     setTimeout(function() {
       document.getElementById('skeleton-container').classList.add('hide');
       document.getElementById('real-content').classList.remove('hide');
-    }, 500); // 0.5초 후 실제 콘텐츠로 전환
+    }, 500);
     
     // 로그 시작 버튼 클릭 이벤트
     $('#startLogBtn').on('click', function() {
-      // 이미 연결 중이면 중지
-      if (eventSource) {
-        stopLogStream();
-        // SSH 세션 정리를 위한 짧은 지연 (100ms)
-        setTimeout(function() {
-          startLogStream();
-        }, 100);
-      } else {
-        // 연결이 없으면 즉시 시작
-        startLogStream();
+      if (pollInterval) {
+        stopLogPoll();
       }
+      startLogPoll();
     });
     
     // 로그 중지 버튼 클릭 이벤트
     $('#stopLogBtn').on('click', function() {
-      stopLogStream();
+      stopLogPoll();
       updateStatus('중지됨', 'yellow');
     });
     
@@ -186,185 +180,114 @@
       updateStatus('준비됨', 'blue');
     });
     
-    // 로그 스트리밍 시작 함수
-    function startLogStream() {
-      // 컨테이너 이름 가져오기
+    // 폴링 시작 함수
+    function startLogPoll() {
       const containerName = $('#containerName').val() || 'sejong-malsami-back';
       const lineLimit = $('#lineLimit').val() || 100;
       
-      // 상태 업데이트
-      updateStatus('연결 중...', 'blue');
+      updateStatus('폴링 시작', 'blue');
+      lastLogHash = null;
       
-      // SSE 연결 설정
-      const url = `/api/docker-log/stream?containerName=${encodeURIComponent(containerName)}&lineLimit=${lineLimit}`;
-      console.log('SSE 연결 시작:', url);
+      // 즉시 한 번 호출
+      pollLogs(containerName, lineLimit);
       
-      eventSource = new EventSource(url);
+      // 이후 1초마다 폴링
+      pollInterval = setInterval(function() {
+        pollLogs(containerName, lineLimit);
+      }, 1000);
       
-      // 로그 이벤트 리스너
-      eventSource.addEventListener('log', function(event) {
-        console.log('=== 로그 이벤트 수신 ===');
-        console.log('이벤트 타입:', event.type);
-        console.log('데이터 길이:', event.data.length);
-        console.log('데이터 내용 (첫 200자):', event.data.substring(0, 200));
-        console.log('데이터 전체:', event.data);
-        console.log('========================');
-
-        appendToLog(event.data);
-        updateStatus('스트리밍 중', 'green');
-      });
-      
-      // 연결 열림 이벤트
-      eventSource.onopen = function() {
-        console.log('SSE 연결 성공');
-        updateStatus('연결됨', 'blue');
-      };
-      
-      // 에러 핸들러
-      eventSource.onerror = function(error) {
-        console.error('=== SSE onerror 호출 ===');
-        console.error('에러 객체:', error);
-        console.error('readyState:', eventSource.readyState);
-        console.error('현재 로그 라인 수:', logLineCount);
-        console.error('=========================');
-
-        // 연결 상태 확인 - CLOSED 상태는 정상 종료일 수 있음
-        if (eventSource.readyState === EventSource.CLOSED) {
-          // 로그 라인이 있으면 정상 종료로 간주
-          if (logLineCount > 0) {
-            console.log('SSE 스트리밍 정상 종료 (로그 라인:', logLineCount, ')');
-            stopLogStream();
-            updateStatus('스트리밍 완료', 'blue');
-            return;
-          }
-
-          // CLOSED 상태인데 로그가 없으면 초기 연결 실패
-          console.error('초기 연결 실패 - 로그 라인 수: 0');
-        }
-
-        // CONNECTING 상태면 재연결 시도 중이므로 에러 메시지 표시 안 함
-        if (eventSource.readyState === EventSource.CONNECTING) {
-          console.log('재연결 시도 중... 에러 메시지 표시하지 않음');
-          return;
-        }
-
-        // 실제 오류 상황 처리
-        let errorMessage = '\n=== 연결 오류 발생 ===\n';
-
-        if (eventSource.readyState === EventSource.CLOSED) {
-          errorMessage += 'SSH 연결이 실패했습니다.\n';
-          errorMessage += '서버의 SSH 서비스 상태를 확인해주세요.\n';
-        } else {
-          errorMessage += '알 수 없는 연결 오류가 발생했습니다.\n';
-        }
-
-        errorMessage += '\n다시 시도하려면 "로그 시작" 버튼을 클릭하세요.\n';
-
-        stopLogStream();
-        updateStatus('연결 실패', 'red');
-        appendToLog(errorMessage);
-      };
+      console.log('폴링 시작 - 컨테이너:', containerName, ', 간격: 1초');
     }
     
-    // 로그 스트리밍 중지 함수
-    function stopLogStream() {
-      if (eventSource) {
-        console.log('SSE 연결 종료');
-        eventSource.close();
-        eventSource = null;
-        
-        // 서버에 중지 요청 전송 (FormData 사용)
-        const containerName = $('#containerName').val() || 'sejong-malsami-back';
-        
-        // FormData 객체 생성 및 데이터 추가
-        const formData = new FormData();
-        formData.append('containerName', containerName);
-        
-        // 서버에 중지 요청 전송
-        $.ajax({
-          url: '/api/docker-log/stop',
-          type: 'POST',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            console.log('로그 중지 요청 성공:', response);
-          },
-          error: function(xhr, status, error) {
-            console.error('로그 중지 요청 실패:', error);
-          }
-        });
+    // 폴링 중지 함수
+    function stopLogPoll() {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        console.log('폴링 중지');
       }
+    }
+    
+    // 로그 폴링 함수
+    function pollLogs(containerName, lineLimit) {
+      const url = `/api/docker-log/poll?containerName=${encodeURIComponent(containerName)}&lineLimit=${lineLimit}`;
+      
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(response) {
+          if (response.error) {
+            console.error('로그 조회 오류:', response.error);
+            updateStatus('오류: ' + response.error, 'red');
+            appendToLog('\n=== 오류 ===\n' + response.error + '\n');
+            stopLogPoll();
+            return;
+          }
+          
+          if (response.logs) {
+            const currentHash = hashString(response.logs);
+            
+            // 로그가 변경되었을 때만 업데이트
+            if (currentHash !== lastLogHash) {
+              console.log('로그 업데이트 - 총 라인 수:', response.totalLines);
+              logOutput.textContent = response.logs;
+              logLineCount = response.totalLines || 0;
+              updateLineCount();
+              updateStatus('폴링 중', 'green');
+              
+              // 자동 스크롤
+              if ($('#autoScroll').is(':checked')) {
+                const container = document.querySelector('.log-output-container');
+                container.scrollTop = container.scrollHeight;
+              }
+              
+              lastLogHash = currentHash;
+            }
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error('폴링 요청 실패:', error);
+          updateStatus('연결 실패', 'red');
+          stopLogPoll();
+        }
+      });
+    }
+    
+    // 문자열 해시 함수 (로그 변경 감지용)
+    function hashString(str) {
+      let hash = 0;
+      if (str.length === 0) return hash;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      return hash;
     }
     
     // 로그 출력 지우기 함수
     function clearLogOutput() {
-      logOutput.innerHTML = '';
+      logOutput.textContent = '';
       logLineCount = 0;
+      lastLogHash = null;
       updateLineCount();
     }
     
-    // 로그 추가 함수
+    // 로그 추가 함수 (폴링에서는 사용하지 않지만 호환성을 위해 유지)
     function appendToLog(text) {
-      console.log('>>> appendToLog 호출됨, 텍스트 길이:', text ? text.length : 0);
-      console.log('>>> 텍스트 내용:', text);
-
-      if (!text) {
-        console.log('>>> 텍스트가 비어있어서 리턴');
+      if (!text || text.trim().length === 0) {
         return;
       }
-
-      // 새로운 로그 라인 추가
-      const lines = text.split('\n');
-      console.log('>>> 분할된 라인 수:', lines.length);
-
-      for (const line of lines) {
-        if (!line) {
-          console.log('>>> 빈 라인 스킵');
-          continue;
-        }
-        console.log('>>> 라인 추가:', line);
-        
-        // 최대 라인 수 제한 확인
-        const limit = parseInt($('#lineLimit').val()) || 0;
-        if (limit > 0 && logLineCount >= limit) {
-          // 첫 번째 라인 제거
-          const firstLine = logOutput.querySelector('.log-line:first-child');
-          if (firstLine) {
-            firstLine.remove();
-          }
-        } else {
-          logLineCount++;
-        }
-        
-        // 새 로그 라인 추가
-        const logLine = document.createElement('div');
-        logLine.className = 'log-line';
-        logLine.innerText = line;
-
-        // 라인 타입 감지 (에러, 경고, 정보)
-        if (line.toLowerCase().includes('error') || line.toLowerCase().includes('exception')) {
-          logLine.classList.add('error');
-        } else if (line.toLowerCase().includes('warn')) {
-          logLine.classList.add('warn');
-        } else if (line.toLowerCase().includes('info')) {
-          logLine.classList.add('info');
-        }
-
-        console.log('>>> DOM에 라인 추가:', line);
-        logOutput.appendChild(logLine);
-        console.log('>>> logOutput 자식 요소 수:', logOutput.children.length);
-      }
-      console.log('>>> appendToLog 완료, 총 라인 수:', logLineCount);
+      const currentText = logOutput.textContent || '';
+      logOutput.textContent = currentText + text;
+      const allLines = logOutput.textContent.split('\n');
+      logLineCount = allLines.length - 1;
+      updateLineCount();
       
-      // 자동 스크롤
       if ($('#autoScroll').is(':checked')) {
         const container = document.querySelector('.log-output-container');
         container.scrollTop = container.scrollHeight;
       }
-      
-      // 라인 카운트 업데이트
-      updateLineCount();
     }
     
     // 상태 업데이트 함수
@@ -381,4 +304,4 @@
   });
 </script>
 </body>
-</html> 
+</html>
