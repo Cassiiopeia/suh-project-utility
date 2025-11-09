@@ -1,11 +1,51 @@
 {
   "metadata": {
-    "lastUpdated": "2025-09-22T14:53:13Z",
-    "currentVersion": "1.2.1",
+    "lastUpdated": "2025-11-09T15:20:58Z",
+    "currentVersion": "1.3.2",
     "projectType": "spring",
-    "totalReleases": 13
+    "totalReleases": 14
   },
   "releases": [
+    {
+      "version": "1.3.2",
+      "project_type": "spring",
+      "date": "2025-11-09",
+      "pr_number": 98,
+      "raw_summary": "Summary by CodeRabbit\n릴리스 노트\n\n\n새로운 기능\n\nAI 서버 모델 관리 기능 추가 (모델 다운로드/삭제)\n향상된 서버 상태 확인 메커니즘 구현\nDocker 컨테이너 정보 확장 (이미지 정보 표시)\n\n\n\n버그 수정\n\nUTF-8 문자 인코딩 처리 개선\nSSH 연결 타임아웃 안정화\n에러 메시지 및 로깅 강화\n\n\n\nUI/UX 개선\n\nAI 서버 관리 페이지 전면 재설계\nDocker 로그 스트리밍 상태 표시기 개선\n대시보드 엔드포인트 업데이트\n\n\n\n기타\n\n버전 1.3.2로 업그레이드\n도메인 마이그레이션 완료",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "AI 서버 모델 관리 기능 추가 (모델 다운로드/삭제)",
+            "향상된 서버 상태 확인 메커니즘 구현",
+            "Docker 컨테이너 정보 확장 (이미지 정보 표시)"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "UTF-8 문자 인코딩 처리 개선",
+            "SSH 연결 타임아웃 안정화",
+            "에러 메시지 및 로깅 강화"
+          ]
+        },
+        "ui_ux_개선": {
+          "title": "UI/UX 개선",
+          "items": [
+            "AI 서버 관리 페이지 전면 재설계",
+            "Docker 로그 스트리밍 상태 표시기 개선",
+            "대시보드 엔드포인트 업데이트"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "버전 1.3.2로 업그레이드",
+            "도메인 마이그레이션 완료"
+          ]
+        }
+      }
+    },
     {
       "version": "1.2.1",
       "project_type": "spring",
