@@ -243,22 +243,29 @@ function loadModelsList() {
         success: function(response) {
             console.log('모델 목록 응답:', response);
 
-            if (response.modelsJson) {
+            // models 배열이 있으면 직접 사용, 없으면 modelsJson 파싱 (하위 호환성)
+            let models = [];
+            if (response.models && Array.isArray(response.models)) {
+                models = response.models;
+            } else if (response.modelsJson) {
                 try {
                     const data = JSON.parse(response.modelsJson);
                     if (data.models && data.models.length > 0) {
-                        availableModels = data.models;
-                        renderModelsTable(data.models);
-                        updateModelDropdown(data.models);
-                    } else {
-                        tbody.html('<tr><td colspan="4" class="center aligned">설치된 모델이 없습니다</td></tr>');
+                        models = data.models;
                     }
                 } catch (e) {
                     console.error('JSON 파싱 오류:', e);
                     tbody.html('<tr><td colspan="4" class="center aligned error">응답 파싱 실패</td></tr>');
+                    return;
                 }
+            }
+
+            if (models.length > 0) {
+                availableModels = models;
+                renderModelsTable(models);
+                updateModelDropdown(models);
             } else {
-                tbody.html('<tr><td colspan="4" class="center aligned">모델 목록이 비어있습니다</td></tr>');
+                tbody.html('<tr><td colspan="4" class="center aligned">설치된 모델이 없습니다</td></tr>');
             }
         },
         error: function(xhr, status, error) {

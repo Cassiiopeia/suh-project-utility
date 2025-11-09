@@ -7,7 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +19,11 @@ import me.suhsaechan.aiserver.dto.AiServerResponse;
 import me.suhsaechan.aiserver.dto.DownloadProgressDto;
 import me.suhsaechan.aiserver.dto.EmbeddingsPayload;
 import me.suhsaechan.aiserver.dto.GeneratePayload;
+import me.suhsaechan.aiserver.dto.ModelDto;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.common.util.NetworkUtil;
+import me.suhsaechan.common.util.SshCommandExecutor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -36,6 +40,7 @@ public class AiServerService {
 
     private final NetworkUtil networkUtil;
     private final ObjectMapper objectMapper;
+    private final SshCommandExecutor sshCommandExecutor;
 
     @Value("${ai-server.base-url}")
     private String baseUrl;
@@ -110,6 +115,7 @@ public class AiServerService {
 
     /**
      * AI 서버의 모델 목록을 조회합니다.
+     * SSH를 통해 curl 명령어를 실행하여 모델 목록을 가져옵니다.
      */
     public AiServerResponse getModels(AiServerRequest request) {
         log.info("AI 서버 모델 목록 조회 시작");
@@ -118,26 +124,43 @@ public class AiServerService {
             String modelsUrl = baseUrl + "/api/tags";
             log.debug("모델 목록 조회 URL: {}", modelsUrl);
 
-            // 헤더 설정
-            Map<String, String> headers = new HashMap<>();
-            headers.put("X-API-Key", apiKey);
-
-            // NetworkUtil을 통해 HTTP GET 요청 수행
-            String jsonResponse = networkUtil.sendGetRequest(modelsUrl, headers);
-            log.debug("모델 목록 응답 크기: {} bytes", jsonResponse.length());
+            // SSH를 통해 curl 명령어 실행
+            String curlCommand = String.format("curl -s %s", modelsUrl);
+            log.debug("SSH curl 명령어 실행: {}", curlCommand);
+            
+            String jsonResponse = sshCommandExecutor.executeCommand(curlCommand);
+            log.debug("모델 목록 응답 크기: {} bytes", jsonResponse != null ? jsonResponse.length() : 0);
 
             if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
                 log.error("AI 서버로부터 빈 모델 목록 응답을 받았습니다");
                 throw new CustomException(ErrorCode.EMPTY_SCRIPT_RESPONSE);
             }
 
-            // JSON 응답을 그대로 반환 (프론트엔드에서 파싱)
+            // JSON 응답 파싱하여 모델 배열 추출
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode modelsNode = rootNode.get("models");
+            
+            List<ModelDto> models = new ArrayList<>();
+            if (modelsNode != null && modelsNode.isArray()) {
+                for (JsonNode modelNode : modelsNode) {
+                    ModelDto modelDto = objectMapper.treeToValue(modelNode, ModelDto.class);
+                    models.add(modelDto);
+                }
+            }
+            
+            log.info("모델 목록 파싱 완료 - 모델 개수: {}", models.size());
+
+            // 파싱된 모델 배열과 원본 JSON 모두 반환 (하위 호환성)
             return AiServerResponse.builder()
                     .isActive(true)
                     .currentUrl(baseUrl)
                     .modelsJson(jsonResponse)
+                    .models(models)
                     .build();
 
+        } catch (JsonProcessingException e) {
+            log.error("모델 목록 JSON 파싱 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
