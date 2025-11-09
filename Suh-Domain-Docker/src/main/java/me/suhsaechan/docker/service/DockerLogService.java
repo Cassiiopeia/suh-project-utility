@@ -39,11 +39,67 @@ public class DockerLogService {
     private final SshConnectionProperties sshProps;
     
     // 현재 실행 중인 로그 스트리밍 작업을 저장하는 맵 (컨테이너 이름 -> 실행 작업)
-    private final Map<String, Thread> runningThreads = new ConcurrentHashMap<>();
-    private final Map<String, Session> sshSessions = new ConcurrentHashMap<>();
-    private final Map<String, ChannelExec> sshChannels = new ConcurrentHashMap<>();
-    private final Map<String, SseEmitter> activeEmitters = new ConcurrentHashMap<>();
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    // 메모리 최적화: 컨테이너별 상태를 하나의 객체로 관리
+    private final Map<String, ContainerStreamContext> activeStreams = new ConcurrentHashMap<>();
+
+    // 메모리 최적화: 고정 크기 스레드 풀 사용 (최대 10개 동시 스트리밍)
+    private final ExecutorService executorService = Executors.newFixedThreadPool(
+        10,
+        r -> {
+            Thread t = new Thread(r);
+            t.setDaemon(true); // 메모리 누수 방지: 데몬 스레드로 설정
+            t.setName("docker-log-stream-" + System.currentTimeMillis());
+            return t;
+        }
+    );
+
+    /**
+     * 컨테이너 스트리밍 컨텍스트 (메모리 최적화를 위한 통합 관리)
+     */
+    private static class ContainerStreamContext {
+        private final SseEmitter emitter;
+        private final Thread thread;
+        private volatile Session session;
+        private volatile ChannelExec channel;
+        private volatile boolean stopped = false;
+
+        ContainerStreamContext(SseEmitter emitter, Thread thread) {
+            this.emitter = emitter;
+            this.thread = thread;
+        }
+
+        synchronized void setSession(Session session) {
+            this.session = session;
+        }
+
+        synchronized void setChannel(ChannelExec channel) {
+            this.channel = channel;
+        }
+
+        synchronized void stop() {
+            if (stopped) return;
+            stopped = true;
+
+            // 채널 종료
+            if (channel != null && channel.isConnected()) {
+                channel.disconnect();
+            }
+
+            // 세션 종료
+            if (session != null && session.isConnected()) {
+                session.disconnect();
+            }
+
+            // 스레드 인터럽트
+            if (thread != null && thread.isAlive()) {
+                thread.interrupt();
+            }
+        }
+
+        synchronized boolean isStopped() {
+            return stopped;
+        }
+    }
 
     /**
      * Docker 컨테이너 로그를 SSE로 스트리밍
@@ -64,19 +120,18 @@ public class DockerLogService {
         
         // SSE Emitter 생성 (타임아웃 설정)
         SseEmitter emitter = new SseEmitter(timeout);
-        activeEmitters.put(containerName, emitter);
-        
+
         // 완료, 타임아웃, 에러 이벤트 핸들러 등록
         emitter.onCompletion(() -> {
             log.info("컨테이너 로그 스트리밍 완료: {}", containerName);
             stopLogStreaming(request);
         });
-        
+
         emitter.onTimeout(() -> {
             log.info("컨테이너 로그 스트리밍 타임아웃: {}", containerName);
             stopLogStreaming(request);
         });
-        
+
         emitter.onError(e -> {
             log.error("컨테이너 로그 스트리밍 오류: {}", containerName, e);
             stopLogStreaming(request);
@@ -95,28 +150,38 @@ public class DockerLogService {
             return emitter;
         }
         
-        // 비동기적으로 로그 스트리밍 시작
+        // 메모리 최적화: 비동기 로그 스트리밍 작업 생성
         Thread streamingThread = new Thread(() -> {
             try {
                 log.debug("로그 스트리밍 스레드 시작 - 컨테이너: {}", containerName);
-                streamDockerLogsWithJSch(emitter, containerName, request.getLineLimit());
+                streamDockerLogsWithJSch(containerName, request.getLineLimit());
             } catch (Exception e) {
                 log.error("로그 스트리밍 중 오류 발생: {}", containerName, e);
-                try {
-                    emitter.send(SseEmitter.event()
-                            .name("log")
-                            .data("로그 스트리밍 오류: " + e.getMessage() + "\n"));
-                } catch (IOException ex) {
-                    log.error("오류 메시지 전송 실패", ex);
+
+                // 컨텍스트를 통해 안전하게 에러 전송
+                ContainerStreamContext ctx = activeStreams.get(containerName);
+                if (ctx != null && !ctx.isStopped()) {
+                    try {
+                        ctx.emitter.send(SseEmitter.event()
+                                .name("log")
+                                .data("로그 스트리밍 오류: " + e.getMessage() + "\n"));
+                        ctx.emitter.completeWithError(e);
+                    } catch (IOException ex) {
+                        log.error("오류 메시지 전송 실패", ex);
+                    }
                 }
-                emitter.completeWithError(e);
             }
         });
-        
+
         streamingThread.setDaemon(true);
+        streamingThread.setName("docker-log-" + containerName + "-" + System.currentTimeMillis());
+
+        // 메모리 최적화: 컨텍스트 생성 및 원자적 저장
+        ContainerStreamContext context = new ContainerStreamContext(emitter, streamingThread);
+        activeStreams.put(containerName, context);
+
         streamingThread.start();
-        runningThreads.put(containerName, streamingThread);
-        
+
         log.info("Docker 로그 스트리밍 요청 처리 완료 - 컨테이너: {}", containerName);
         return emitter;
     }
@@ -130,54 +195,33 @@ public class DockerLogService {
         String containerName = Optional.ofNullable(request.getContainerName()).orElse("sejong-malsami-back");
         log.info("Docker 로그 스트리밍 중지 요청 - 컨테이너: {}", containerName);
         
-        // 실행 중인 SSH 채널이 있다면 종료
-        ChannelExec channel = sshChannels.remove(containerName);
-        if (channel != null) {
-            log.debug("SSH 채널 연결 종료 - 컨테이너: {}", containerName);
-            channel.disconnect();
-        }
-        
-        // 실행 중인 SSH 세션이 있다면 종료
-        Session session = sshSessions.remove(containerName);
-        if (session != null) {
-            log.debug("SSH 세션 연결 종료 - 컨테이너: {}", containerName);
-            session.disconnect();
-        }
-        
-        // 실행 중인 스레드가 있다면 인터럽트
-        Thread thread = runningThreads.remove(containerName);
-        if (thread != null && thread.isAlive()) {
-            log.debug("로그 스트리밍 스레드 인터럽트 - 컨테이너: {}", containerName);
-            thread.interrupt();
-        }
-        
-        // SSE 연결 종료
-        SseEmitter emitter = activeEmitters.remove(containerName);
-        if (emitter != null) {
-            try {
-                log.debug("SSE 종료 메시지 전송 - 컨테이너: {}", containerName);
-                emitter.send(SseEmitter.event()
-                        .name("log")
-                        .data("=== 로그 스트리밍 종료 ===\n"));
-                emitter.complete();
-            } catch (Exception e) {
-                log.warn("SSE 종료 메시지 전송 실패: {}", containerName, e);
-            }
-            log.info("컨테이너 {} SSE 연결 종료 완료", containerName);
+        // 컨텍스트 조회 및 제거
+        ContainerStreamContext context = activeStreams.remove(containerName);
+        if (context != null) {
+            log.debug("스트림 컨텍스트 종료 - 컨테이너: {}", containerName);
+            context.stop(); // 모든 리소스 정리
         }
     }
     
     /**
      * JSch를 직접 사용하여 SSH 연결을 통해 Docker 로그를 실시간으로 스트리밍
-     * 
-     * @param emitter SSE Emitter
+     * 메모리 최적화: 컨텍스트에서 emitter를 가져와서 사용
+     *
      * @param containerName 컨테이너 이름
      * @param lineLimit 라인 제한 (null이면 기본값 100)
      */
-    private void streamDockerLogsWithJSch(SseEmitter emitter, String containerName, Integer lineLimit) {
+    private void streamDockerLogsWithJSch(String containerName, Integer lineLimit) {
         Session session = null;
         ChannelExec channel = null;
-        
+
+        // 컨텍스트에서 emitter 가져오기
+        ContainerStreamContext context = activeStreams.get(containerName);
+        if (context == null || context.isStopped()) {
+            log.warn("스트리밍 컨텍스트가 없거나 이미 종료됨: {}", containerName);
+            return;
+        }
+        SseEmitter emitter = context.emitter;
+
         try {
             // SSH 연결 정보 가져오기
             String host = sshProps.getHost();
@@ -306,18 +350,20 @@ public class DockerLogService {
             out.flush();
             log.debug("실시간 로그 채널 연결 성공");
 
-            // 현재 채널과 세션을 맵에 저장 (나중에 종료하기 위해)
-            sshChannels.put(containerName, channel);
-            sshSessions.put(containerName, session);
+            // 현재 채널과 세션을 컨텍스트에 저장 (나중에 종료하기 위해)
+            if (context != null) {
+                context.setChannel(channel);
+                context.setSession(session);
+            }
 
             // 로그 실시간 읽기
             int streamLogCount = 0;
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line;
-                while (!Thread.currentThread().isInterrupted() && 
+                while (!Thread.currentThread().isInterrupted() &&
                        (line = reader.readLine()) != null &&
-                       activeEmitters.containsKey(containerName)) {
+                       activeStreams.containsKey(containerName)) {
                     // 새 로그 라인을 SSE로 전송
                     try {
                         sendLogEvent(emitter, line + "\n");
@@ -391,7 +437,7 @@ public class DockerLogService {
         try {
             emitter.send(SseEmitter.event()
                     .name("log")
-                    .data(message, org.springframework.http.MediaType.TEXT_PLAIN));
+                    .data(message, org.springframework.http.MediaType.valueOf("text/plain;charset=UTF-8")));
         } catch (IllegalStateException closed) {
             // Emitter 가 이미 닫혔을 때는 상위 호출부에서 처리하도록 예외 전달
             throw closed;
