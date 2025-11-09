@@ -19,7 +19,7 @@ public class CorsConfig {
         "http://localhost:8089",
         "http://localhost:8080",
         "http://localhost:3000",
-        "https://lab.suhsaechan.me",
+        "https://lab.suhsaechan.kr",
         "http://suh-project.synology.me:8090"
     ));
 

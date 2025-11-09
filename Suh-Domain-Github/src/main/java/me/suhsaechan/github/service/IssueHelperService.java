@@ -212,7 +212,7 @@ public class IssueHelperService {
     StringBuilder markdown = new StringBuilder();
     
     // 시작 주석 추가
-    markdown.append("<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->\n\n");
+    markdown.append("<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.kr -->\n\n");
     
     markdown.append("Guide by SUH-LAB\n");
     markdown.append("---\n\n");
@@ -228,7 +228,7 @@ public class IssueHelperService {
     markdown.append("\n```\n\n");
     
     // 끝 주석 추가
-    markdown.append("<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->");
+    markdown.append("<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.kr -->");
     
     return markdown.toString();
   }

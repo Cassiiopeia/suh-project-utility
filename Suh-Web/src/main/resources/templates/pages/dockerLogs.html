@@ -131,13 +131,17 @@
           return;
         }
         data.forEach(function(c) {
-          const color = c.running ? 'green' : 'grey';
+          const statusClass = c.isRunning ? 'online' : 'offline';
+          const imageInfo = (c.image && c.image !== 'null') ? c.image.split(':')[0] : 'Unknown';
           const item = $(
             `<a class="item container-item" data-name="${c.name}">
-               <i class="${color} circle icon"></i>
+               <div class="status-dot ${statusClass}"></div>
                <div class="content">
                  <div class="header">${c.name}</div>
-                 <div class="description" style="font-size:0.8em;">${c.status}</div>
+                 <div class="description" style="font-size:0.8em;">
+                   <div>${c.status}</div>
+                   <div style="color:#666;font-size:0.9em;margin-top:2px;">${imageInfo}</div>
+                 </div>
                </div>
              </a>`);
           item.on('click', function() {
@@ -209,9 +213,25 @@
       // 에러 핸들러
       eventSource.onerror = function(error) {
         console.error('SSE 연결 오류:', error);
+
+        // 연결 상태에 따른 구체적인 오류 메시지
+        let errorMessage = '\n=== 연결 오류 발생 ===\n';
+
+        if (eventSource.readyState === EventSource.CONNECTING) {
+          errorMessage += 'SSH 서버에 연결을 시도하고 있습니다...\n';
+          errorMessage += '네트워크 상태나 서버 상태를 확인해주세요.\n';
+        } else if (eventSource.readyState === EventSource.CLOSED) {
+          errorMessage += 'SSH 연결이 종료되었습니다.\n';
+          errorMessage += '서버의 SSH 서비스 상태를 확인해주세요.\n';
+        } else {
+          errorMessage += '알 수 없는 연결 오류가 발생했습니다.\n';
+        }
+
+        errorMessage += '\n다시 시도하려면 "로그 시작" 버튼을 클릭하세요.\n';
+
         stopLogStream();
-        updateStatus('연결 오류', 'red');
-        appendToLog('\n연결이 중단되었습니다. 다시 시작하려면 "로그 시작" 버튼을 클릭하세요.\n');
+        updateStatus('연결 실패', 'red');
+        appendToLog(errorMessage);
       };
     }
     

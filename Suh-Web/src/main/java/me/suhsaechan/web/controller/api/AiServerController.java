@@ -20,11 +20,11 @@ public class AiServerController {
     private final AiServerService aiServerService;
 
     /**
-     * AI 서버의 터널 정보를 조회합니다.
+     * AI 서버의 Health Check를 수행합니다.
      */
-    @PostMapping(value = "/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<AiServerResponse> getAiServerInfo(AiServerRequest request) {
-        return ResponseEntity.ok(aiServerService.getTunnelInfo(request));
+    @PostMapping(value = "/health", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> getHealth(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.getHealth(request));
     }
 
     /**
@@ -49,5 +49,21 @@ public class AiServerController {
     @PostMapping(value = "/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AiServerResponse> callGenerate(AiServerRequest request) {
         return ResponseEntity.ok(aiServerService.callGenerate(request));
+    }
+
+    /**
+     * AI 서버에서 모델을 다운로드합니다.
+     */
+    @PostMapping(value = "/models/pull", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> pullModel(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.pullModel(request));
+    }
+
+    /**
+     * AI 서버에서 모델을 삭제합니다.
+     */
+    @PostMapping(value = "/models/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> deleteModel(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.deleteModel(request));
     }
 }

@@ -44,7 +44,7 @@ jobs:
         id: api-call
         uses: fjogeleit/http-request-action@v1
         with:
-          url: 'https://lab.suhsaechan.me/api/issue-helper/create/commit-branch/github-workflow'
+          url: 'https://lab.suhsaechan.kr/api/issue-helper/create/commit-branch/github-workflow'
           method: 'POST'
           contentType: 'multipart/form-data'
           customHeaders: '{"Accept": "application/json"}'
@@ -68,7 +68,7 @@ jobs:
               BRANCH=$(echo '${{ steps.api-call.outputs.response }}' | jq -r '.branchName // "브랜치명을 가져올 수 없습니다"')
               COMMIT=$(echo '${{ steps.api-call.outputs.response }}' | jq -r '.commitMessage // "커밋 메시지를 가져올 수 없습니다"')
               
-              COMMENT_MD="<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->\n\n## 🛠️ 브랜치/커밋 가이드\n\n### 브랜치\n\`\`\`\n$BRANCH\n\`\`\`\n\n### 커밋 메시지\n\`\`\`\n$COMMIT\n\`\`\`\n\n<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.me -->"
+              COMMENT_MD="<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.kr -->\n\n## 🛠️ 브랜치/커밋 가이드\n\n### 브랜치\n\`\`\`\n$BRANCH\n\`\`\`\n\n### 커밋 메시지\n\`\`\`\n$COMMIT\n\`\`\`\n\n<!-- 이 댓글은 SUH Project Utility에 의해 자동으로 생성되었습니다. - https://lab.suhsaechan.kr -->"
               
               echo "COMMENT_BODY<<EOF" >> $GITHUB_ENV
               echo -e "$COMMENT_MD" >> $GITHUB_ENV
@@ -107,7 +107,7 @@ jobs:
 ## 문제 해결
 - 워크플로우가 `403 Forbidden` 오류를 반환하는 경우:
   - 해당 레포지토리가 허용 목록에 등록되어 있지 않습니다.
-  - 최소한 한 번 웹 UI( https://lab.suhsaechan.me )에서 해당 레포지토리의 이슈 URL을 사용하여 브랜치/커밋 가이드를 생성해보세요.
+  - 최소한 한 번 웹 UI( https://lab.suhsaechan.kr )에서 해당 레포지토리의 이슈 URL을 사용하여 브랜치/커밋 가이드를 생성해보세요.
   
 - 워크플로우가 실행되지만 이슈에 댓글이 추가되지 않는 경우:
   - GitHub 워크플로우 로그를 확인하세요.

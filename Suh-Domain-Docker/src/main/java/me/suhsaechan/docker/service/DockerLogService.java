@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -201,29 +202,89 @@ public class DockerLogService {
             session.setConfig(config);
             
             // 세션 연결
-            log.debug("SSH 세션 연결 시도 - 컨테이너: {}", containerName);
-            session.connect(10000); // 10초 타임아웃
-            log.debug("SSH 세션 연결 성공 - 컨테이너: {}", containerName);
+            log.info("SSH 세션 연결 시도 - 호스트: {}:{}, 사용자: {}", host, port, username);
+            try {
+                session.connect(10000); // 10초 타임아웃으로 감소 (빠른 실패)
+                log.info("SSH 세션 연결 성공 - 컨테이너: {}", containerName);
+            } catch (JSchException e) {
+                log.error("SSH 세션 연결 실패 - 호스트: {}:{}, 에러: {}", host, port, e.getMessage());
+
+                // 구체적인 오류 메시지 제공
+                String errorMessage;
+                if (e.getMessage().contains("timeout") || e.getMessage().contains("Connection timed out")) {
+                    errorMessage = "SSH 서버 연결 타임아웃 - 네트워크 상태나 방화벽을 확인해주세요.";
+                } else if (e.getMessage().contains("Connection refused")) {
+                    errorMessage = "SSH 서비스가 실행되지 않거나 포트가 차단되었습니다.";
+                } else if (e.getMessage().contains("Auth fail")) {
+                    errorMessage = "SSH 인증 실패 - 사용자명/비밀번호를 확인해주세요.";
+                } else {
+                    errorMessage = "SSH 연결 실패: " + e.getMessage();
+                }
+
+                sendLogEvent(emitter, errorMessage + "\n");
+                sendLogEvent(emitter, "서버 상태를 확인하거나 관리자에게 문의하세요.\n");
+
+                // 연결 실패 시 즉시 emitter 종료
+                emitter.completeWithError(e);
+                return; // 예외를 던지지 않고 메서드 종료
+            }
             
             sendLogEvent(emitter, "SSH 연결 성공\n");
-            
+
             // 초기 로그 (최근 N줄) 가져오기
             int tailLines = lineLimit != null && lineLimit > 0 ? lineLimit : 100;
 
             sendLogEvent(emitter, "최근 " + tailLines + "줄 로그 가져오는 중...\n");
 
-            // executeCommandWithSudoStdin 으로 초기 로그 획득 (한 번에 텍스트 반환)
-            String initialLog = sshCommandExecutor.executeCommandWithSudoStdin(
-                    "docker logs --tail=" + tailLines + " " + containerName);
+            // 이미 연결된 session으로 초기 로그 채널 생성
+            ChannelExec initialChannel = null;
+            int initialLogCount = 0;
+            try {
+                initialChannel = (ChannelExec) session.openChannel("exec");
+                String initialCommand = String.format(
+                    "sudo -S -p '' bash -c 'export PATH=$PATH:/usr/local/bin && docker logs --tail=%d %s'",
+                    tailLines, containerName
+                );
+                initialChannel.setCommand(initialCommand);
+                initialChannel.setPty(true);
 
-            if (initialLog != null && !initialLog.isEmpty()) {
-                for (String line : initialLog.split("\n")) {
-                    sendLogEvent(emitter, line + "\n");
+                InputStream initialIn = initialChannel.getInputStream();
+                OutputStream initialOut = initialChannel.getOutputStream();
+                initialChannel.connect(10000); // 10초 타임아웃
+
+                // sudo 비밀번호 전달
+                initialOut.write((password + "\n").getBytes(StandardCharsets.UTF_8));
+                initialOut.flush();
+
+                // 초기 로그 읽기 (타임아웃 30초)
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(initialIn, StandardCharsets.UTF_8))) {
+                    String line;
+                    long startTime = System.currentTimeMillis();
+                    // 최대 30초 타임아웃
+                    while ((line = reader.readLine()) != null) {
+                        sendLogEvent(emitter, line + "\n");
+                        initialLogCount++;
+
+                        // 타임아웃 체크 (30초)
+                        if (System.currentTimeMillis() - startTime > 30000) {
+                            log.warn("초기 로그 읽기 타임아웃 (30초 초과)");
+                            break;
+                        }
+                    }
+                }
+
+                log.info("초기 로그 {} 줄 전송 완료", initialLogCount);
+
+            } catch (Exception e) {
+                log.error("초기 로그 가져오기 실패: {}", e.getMessage(), e);
+                sendLogEvent(emitter, "초기 로그 가져오기 실패: " + e.getMessage() + "\n");
+            } finally {
+                if (initialChannel != null && initialChannel.isConnected()) {
+                    initialChannel.disconnect();
                 }
             }
-            int initialLogCount = initialLog != null ? initialLog.split("\n").length : 0;
-            log.debug("초기 로그 {} 줄 전송 완료", initialLogCount);
-            
+
             // 초기 로그 이후 실시간 스트리밍 준비
             
             // 실시간 스트리밍을 위한 새 채널 열기 (follow 모드)
@@ -241,17 +302,18 @@ public class DockerLogService {
             OutputStream out = channel.getOutputStream();
             channel.connect();
             // sudo 비밀번호 전달
-            out.write((password + "\n").getBytes());
+            out.write((password + "\n").getBytes(StandardCharsets.UTF_8));
             out.flush();
             log.debug("실시간 로그 채널 연결 성공");
-            
+
             // 현재 채널과 세션을 맵에 저장 (나중에 종료하기 위해)
             sshChannels.put(containerName, channel);
             sshSessions.put(containerName, session);
-            
+
             // 로그 실시간 읽기
             int streamLogCount = 0;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line;
                 while (!Thread.currentThread().isInterrupted() && 
                        (line = reader.readLine()) != null &&
@@ -276,11 +338,23 @@ public class DockerLogService {
         } catch (JSchException e) {
             log.error("SSH 연결 오류: {}", e.getMessage(), e);
             try {
-                sendLogEvent(emitter, "SSH 연결 오류: " + e.getMessage() + "\n");
+                if (e.getMessage().contains("socket is not established") ||
+                    e.getMessage().contains("connection is closed") ||
+                    e.getMessage().contains("timeout")) {
+                    sendLogEvent(emitter, "네트워크 연결 문제가 발생했습니다.\n");
+                    sendLogEvent(emitter, "서버 상태를 확인하거나 잠시 후 다시 시도해주세요.\n");
+                } else if (e.getMessage().contains("Auth")) {
+                    sendLogEvent(emitter, "SSH 인증 실패: 계정 정보를 확인해주세요.\n");
+                } else {
+                    sendLogEvent(emitter, "SSH 연결 오류: " + e.getMessage() + "\n");
+                }
+                sendLogEvent(emitter, "연결이 중단되었습니다. 다시 시작하려면 \"로그 시작\" 버튼을 클릭하세요.\n");
+                emitter.completeWithError(e);
             } catch (IOException ex) {
                 log.error("오류 메시지 전송 실패", ex);
+                emitter.completeWithError(ex);
             }
-            throw new RuntimeException("SSH 연결 오류: " + e.getMessage(), e);
+            return; // 예외를 던지지 않고 메서드 종료
         } catch (IOException e) {
             log.error("로그 스트리밍 중 I/O 오류: {}", e.getMessage(), e);
             try {
@@ -313,11 +387,11 @@ public class DockerLogService {
         if (message == null || message.isEmpty()) {
             return;
         }
-        
+
         try {
             emitter.send(SseEmitter.event()
                     .name("log")
-                    .data(message));
+                    .data(message, org.springframework.http.MediaType.TEXT_PLAIN));
         } catch (IllegalStateException closed) {
             // Emitter 가 이미 닫혔을 때는 상위 호출부에서 처리하도록 예외 전달
             throw closed;
@@ -332,17 +406,21 @@ public class DockerLogService {
      */
     public List<ContainerInfoDto> listContainers() {
         String result = sshCommandExecutor.executeCommandWithSudoStdin(
-                "docker ps -a --format \\\"{{.Names}}|{{.Status}}\\\"" );
+                "docker ps -a --format \\\"{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}\\\"" );
         List<ContainerInfoDto> list = new ArrayList<>();
         if (result != null && !result.isEmpty()) {
             for (String line : result.split("\n")) {
                 String[] parts = line.split("\\|");
-                if (parts.length == 2) {
-                    String name = parts[0].trim();
-                    String status = parts[1].trim();
+                if (parts.length == 4) {
+                    String id = parts[0].trim();
+                    String name = parts[1].trim();
+                    String image = parts[2].trim();
+                    String status = parts[3].trim();
                     boolean running = status.toLowerCase().startsWith("up");
                     list.add(ContainerInfoDto.builder()
+                        .id(id)
                         .name(name)
+                        .image(image)
                         .status(status)
                         .isRunning(running)
                         .build());
