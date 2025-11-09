@@ -616,8 +616,35 @@ public class AiServerService {
                 }
             }
 
+        } catch (IOException e) {
+            // 스트림이 중간에 끊긴 경우 (stream was reset 등)
+            String errorMessage = e.getMessage();
+            log.warn("[다운로드] 스트림 읽기 중 오류 발생 - 모델: {}, 에러: {}, 스택: {}", modelName, errorMessage, e);
+            
+            // 스트림이 끊겨도 다운로드는 계속 진행될 수 있으므로, 
+            // 현재 진행 상황을 확인하여 완료되었는지 체크
+            DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
+            if (currentProgress != null) {
+                // 완료 여부 확인 (completed >= total이면 완료로 간주)
+                if (currentProgress.getTotal() > 0 && 
+                    currentProgress.getCompleted() >= currentProgress.getTotal()) {
+                    log.info("[다운로드] 스트림이 끊겼지만 다운로드는 완료된 것으로 확인 - 모델: {}, completed: {}/{}", 
+                            modelName, currentProgress.getCompleted(), currentProgress.getTotal());
+                    updateProgressCompleted(modelName);
+                } else {
+                    // 스트림이 끊겼지만 다운로드가 완료되지 않은 경우
+                    // 에러 상태로 변경하되, 진행 상황은 유지
+                    log.warn("[다운로드] 스트림이 끊겼고 다운로드 미완료 - 모델: {}, completed: {}/{}", 
+                            modelName, currentProgress.getCompleted(), currentProgress.getTotal());
+                    updateProgressError(modelName, "스트림 연결 오류: " + errorMessage);
+                }
+            } else {
+                log.error("[다운로드] 진행 상황을 찾을 수 없음 - 모델: {}", modelName);
+                updateProgressError(modelName, "스트림 연결 오류: " + errorMessage);
+            }
+            throw e;
         } catch (Exception e) {
-            log.error("모델 다운로드 스트리밍 실패: {}", e.getMessage(), e);
+            log.error("[다운로드] 모델 다운로드 스트리밍 실패 - 모델: {}, 에러: {}", modelName, e.getMessage(), e);
             updateProgressError(modelName, e.getMessage());
             throw e;
         }
@@ -837,8 +864,14 @@ public class AiServerService {
         DownloadProgressDto progress = downloadProgressMap.get(modelName);
         if (progress != null) {
             progress.setStatus("failed");
-            progress.setMessage("오류: " + errorMessage);
+            // 에러 메시지가 이미 "오류: "로 시작하는지 확인
+            if (errorMessage != null && errorMessage.startsWith("오류: ")) {
+                progress.setMessage(errorMessage);
+            } else {
+                progress.setMessage("오류: " + errorMessage);
+            }
             progress.setEndTime(System.currentTimeMillis());
+            log.info("[다운로드] 다운로드 실패 상태로 변경 - 모델: {}, 메시지: {}", modelName, progress.getMessage());
         }
     }
 
