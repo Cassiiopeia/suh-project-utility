@@ -56,6 +56,14 @@
       </div>
     </div>
 
+    <!-- 다운로드 진행 상황 -->
+    <div id="downloadProgressContainer" style="display: none; margin-bottom: 2rem;">
+      <h5 class="ui dividing header">다운로드 진행 중</h5>
+      <div id="progressBars">
+        <!-- 진행 바들이 동적으로 추가됩니다 -->
+      </div>
+    </div>
+
     <!-- 모델 목록 테이블 -->
     <h5 class="ui dividing header">설치된 모델</h5>
     <table class="ui celled table" id="modelsTable">
@@ -174,6 +182,7 @@ $(document).ready(function() {
     // 초기 로드
     checkServerHealth();
     loadModelsList();
+    restoreActiveDownloads(); // 진행 중인 다운로드 복원
 
     // 버튼 이벤트
     $('#downloadModelBtn').click(downloadModel);
@@ -329,7 +338,186 @@ function showModelInfo(modelName) {
     $('#modelInfo').show();
 }
 
-// 모델 다운로드
+// EventSource 관리 맵 (모델명 -> EventSource)
+const activeDownloads = new Map();
+
+// 페이지 로드 시 진행 중인 다운로드 복원
+function restoreActiveDownloads() {
+    console.log('진행 중인 다운로드 확인 중...');
+
+    $.ajax({
+        url: '/api/ai-server/models/pull/status',
+        method: 'GET',
+        success: function(statusMap) {
+            console.log('다운로드 상태:', statusMap);
+
+            // 진행 중인 다운로드가 있으면 복원
+            Object.keys(statusMap).forEach(modelName => {
+                const progress = statusMap[modelName];
+
+                // 다운로드 중이거나 완료되지 않은 상태만 복원
+                if (progress.status === 'downloading') {
+                    console.log('다운로드 복원:', modelName);
+
+                    // 진행 바 생성
+                    const progressId = createProgressBar(modelName);
+                    updateProgressBar(progressId, progress);
+
+                    // SSE 재연결
+                    const eventSource = new EventSource(`/api/ai-server/models/pull/stream?modelName=${encodeURIComponent(modelName)}`);
+                    activeDownloads.set(modelName, eventSource);
+
+                    // 진행 상황 업데이트 이벤트
+                    eventSource.addEventListener('progress', function(event) {
+                        try {
+                            const progress = JSON.parse(event.data);
+                            updateProgressBar(progressId, progress);
+                        } catch (e) {
+                            console.error('진행 상황 파싱 오류:', e);
+                        }
+                    });
+
+                    // 완료 이벤트
+                    eventSource.addEventListener('complete', function(event) {
+                        try {
+                            const progress = JSON.parse(event.data);
+                            updateProgressBar(progressId, progress);
+                            eventSource.close();
+                            activeDownloads.delete(modelName);
+                        } catch (e) {
+                            console.error('완료 이벤트 파싱 오류:', e);
+                        }
+                    });
+
+                    // 에러 이벤트 (서버에서 명시적으로 error 이벤트를 보낸 경우)
+                    eventSource.addEventListener('error', function(event) {
+                        console.error('서버 에러 이벤트 (복원):', event);
+                        // 서버에서 명시적으로 보낸 에러 메시지가 있을 때만 처리
+                        if (event.data) {
+                            const progress = {
+                                modelName: modelName,
+                                status: 'failed',
+                                message: event.data
+                            };
+                            updateProgressBar(progressId, progress);
+                            eventSource.close();
+                            activeDownloads.delete(modelName);
+                        }
+                    });
+
+                    // 연결 에러 (EventSource 자체의 오류 핸들러)
+                    eventSource.onerror = function(error) {
+                        console.log('SSE onerror 호출 (복원) - readyState:', eventSource.readyState);
+
+                        // readyState 값 확인: 0=CONNECTING, 1=OPEN, 2=CLOSED
+                        if (eventSource.readyState === 2) { // CLOSED
+                            console.log('SSE 연결이 정상적으로 닫혔습니다 (복원, readyState=2)');
+                            // 정상 종료 시 아무 것도 하지 않음 (complete 이벤트에서 처리됨)
+                        } else if (eventSource.readyState === 0) { // CONNECTING
+                            console.log('SSE 재연결 시도 중... (복원)');
+                            // 재연결 시도 중이므로 대기
+                        } else {
+                            // 비정상 종료인 경우에만 에러 표시
+                            console.error('SSE 비정상 종료 (복원):', error);
+                            const progress = {
+                                modelName: modelName,
+                                status: 'failed',
+                                message: '서버 연결이 끊어졌습니다'
+                            };
+                            updateProgressBar(progressId, progress);
+                            eventSource.close();
+                            activeDownloads.delete(modelName);
+                        }
+                    };
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('다운로드 상태 조회 실패:', error);
+        }
+    });
+}
+
+// 바이트 크기를 읽기 쉬운 형식으로 변환
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+// 진행 바 UI 생성
+function createProgressBar(modelName) {
+    const progressId = `progress-${modelName.replace(/[^a-zA-Z0-9]/g, '-')}`;
+
+    const progressHtml = `
+        <div id="${progressId}" class="ui segment" style="margin-bottom: 1rem;">
+            <div class="ui top attached label">
+                <i class="download icon"></i> ${modelName}
+            </div>
+            <div class="ui active progress" data-percent="0">
+                <div class="bar" style="width: 0%; transition-duration: 300ms;">
+                    <div class="progress">0%</div>
+                </div>
+                <div class="label">다운로드 준비 중...</div>
+            </div>
+            <div style="text-align: right; color: #6b7280; font-size: 0.9em;">
+                <span class="download-size">0 B / 0 B</span>
+            </div>
+        </div>
+    `;
+
+    $('#progressBars').append(progressHtml);
+    $('#downloadProgressContainer').show();
+
+    return progressId;
+}
+
+// 진행 바 업데이트
+function updateProgressBar(progressId, progress) {
+    const element = $(`#${progressId}`);
+    if (!element.length) return;
+
+    const percentage = progress.percentage || 0;
+    const completed = progress.completed || 0;
+    const total = progress.total || 0;
+
+    // 진행 바 업데이트
+    element.find('.progress').attr('data-percent', percentage);
+    element.find('.bar').css('width', percentage + '%');
+    element.find('.bar .progress').text(percentage + '%');
+
+    // 상태 메시지 업데이트
+    element.find('.label').text(progress.message || '다운로드 중...');
+
+    // 크기 정보 업데이트
+    if (total > 0) {
+        element.find('.download-size').text(`${formatBytes(completed)} / ${formatBytes(total)}`);
+    }
+
+    // 완료 시 스타일 변경
+    if (progress.status === 'completed') {
+        element.find('.progress').removeClass('active').addClass('success');
+        element.find('.label').html('<i class="check icon"></i> 다운로드 완료');
+
+        // 3초 후 진행 바 제거
+        setTimeout(() => {
+            element.fadeOut(500, function() {
+                $(this).remove();
+                if ($('#progressBars').children().length === 0) {
+                    $('#downloadProgressContainer').hide();
+                }
+            });
+            loadModelsList(); // 모델 목록 새로고침
+        }, 3000);
+    } else if (progress.status === 'failed') {
+        element.find('.progress').removeClass('active').addClass('error');
+        element.find('.label').html('<i class="times icon"></i> ' + (progress.message || '다운로드 실패'));
+    }
+}
+
+// SSE로 모델 다운로드 시작
 function downloadModel() {
     const modelName = $('#modelNameInput').val().trim();
 
@@ -338,41 +526,89 @@ function downloadModel() {
         return;
     }
 
+    // 이미 다운로드 중인지 확인
+    if (activeDownloads.has(modelName)) {
+        alert(`"${modelName}" 모델이 이미 다운로드 중입니다.`);
+        return;
+    }
+
     if (!confirm(`"${modelName}" 모델을 다운로드하시겠습니까?\n\n모델 크기에 따라 시간이 오래 걸릴 수 있습니다.`)) {
         return;
     }
 
-    const formData = new FormData();
-    formData.append('modelName', modelName);
+    // 진행 바 생성
+    const progressId = createProgressBar(modelName);
+    $('#modelNameInput').val('');
 
-    const btn = $('#downloadModelBtn');
-    btn.addClass('loading disabled');
+    // SSE 연결 시작
+    const eventSource = new EventSource(`/api/ai-server/models/pull/stream?modelName=${encodeURIComponent(modelName)}`);
+    activeDownloads.set(modelName, eventSource);
 
-    $.ajax({
-        url: '/api/ai-server/models/pull',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log('모델 다운로드 성공:', response);
-            alert(`모델 다운로드가 시작되었습니다: ${modelName}\n\n백그라운드에서 다운로드가 진행됩니다.`);
-            $('#modelNameInput').val('');
-
-            // 5초 후 모델 목록 새로고침
-            setTimeout(function() {
-                loadModelsList();
-            }, 5000);
-        },
-        error: function(xhr, status, error) {
-            console.error('모델 다운로드 실패:', xhr, status, error);
-            const message = xhr.responseJSON?.message || '다운로드 실패';
-            alert('다운로드 오류: ' + message);
-        },
-        complete: function() {
-            btn.removeClass('loading disabled');
+    // 진행 상황 업데이트 이벤트
+    eventSource.addEventListener('progress', function(event) {
+        try {
+            const progress = JSON.parse(event.data);
+            console.log('진행 상황:', progress);
+            updateProgressBar(progressId, progress);
+        } catch (e) {
+            console.error('진행 상황 파싱 오류:', e);
         }
     });
+
+    // 완료 이벤트
+    eventSource.addEventListener('complete', function(event) {
+        try {
+            const progress = JSON.parse(event.data);
+            console.log('다운로드 완료:', progress);
+            updateProgressBar(progressId, progress);
+            eventSource.close();
+            activeDownloads.delete(modelName);
+        } catch (e) {
+            console.error('완료 이벤트 파싱 오류:', e);
+        }
+    });
+
+    // 에러 이벤트 (서버에서 명시적으로 error 이벤트를 보낸 경우)
+    eventSource.addEventListener('error', function(event) {
+        console.error('서버 에러 이벤트:', event);
+        // 서버에서 명시적으로 보낸 에러 메시지가 있을 때만 처리
+        if (event.data) {
+            const progress = {
+                modelName: modelName,
+                status: 'failed',
+                message: event.data
+            };
+            updateProgressBar(progressId, progress);
+            eventSource.close();
+            activeDownloads.delete(modelName);
+        }
+    });
+
+    // 연결 에러 (EventSource 자체의 오류 핸들러)
+    eventSource.onerror = function(error) {
+        console.log('SSE onerror 호출 - readyState:', eventSource.readyState);
+
+        // readyState 값 확인
+        // 0 = CONNECTING, 1 = OPEN, 2 = CLOSED
+        if (eventSource.readyState === 2) { // CLOSED
+            console.log('SSE 연결이 정상적으로 닫혔습니다 (readyState=2)');
+            // 정상 종료 시 아무 것도 하지 않음 (complete 이벤트에서 처리됨)
+        } else if (eventSource.readyState === 0) { // CONNECTING
+            console.log('SSE 재연결 시도 중...');
+            // 재연결 시도 중이므로 대기
+        } else {
+            // 비정상 종료인 경우에만 에러 표시
+            console.error('SSE 비정상 종료:', error);
+            const progress = {
+                modelName: modelName,
+                status: 'failed',
+                message: '서버 연결이 끊어졌습니다'
+            };
+            updateProgressBar(progressId, progress);
+            eventSource.close();
+            activeDownloads.delete(modelName);
+        }
+    };
 }
 
 // 모델 삭제
