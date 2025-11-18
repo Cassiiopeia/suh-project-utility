@@ -146,7 +146,7 @@
               <div class="tunnel-status-modern" style="margin-top: 10px; margin-bottom: -20px;">
                 <div class="ui basic button" id="ai-server-status" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
                   <div style="display: flex; align-items: center; color: #666;">
-                    <i class="signal icon"></i>&nbsp;터널 상태
+                    <i class="signal icon"></i>&nbsp;연결 상태
                   </div>
                   <div class="ui basic button status-main-btn loading" style="margin: 0;">
                     <i class="circle notched loading icon"></i>
@@ -1241,9 +1241,9 @@
   // AI 서버 상태 로드
   function loadAiServerStatus() {
     const formData = new FormData();
-    
+
     $.ajax({
-      url: '/api/ai-server/info',
+      url: '/api/ai-server/health',
       method: 'POST',
       data: formData,
       processData: false,
@@ -1251,21 +1251,21 @@
       success: function(response) {
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
-        
-        if (response.isActive) {
-          // 활성 상태
+
+        if (response.isHealthy) {
+          // 정상 작동 상태
           statusBtn.removeClass('loading inactive warning').addClass('active');
-          statusBtn.html('<i class="check circle icon"></i>활성');
+          statusBtn.html('<i class="check circle icon"></i>정상');
         } else {
-          // 비활성 상태
+          // 비정상 상태
           statusBtn.removeClass('loading active warning').addClass('inactive');
-          statusBtn.html('<i class="times circle icon"></i>비활성');
+          statusBtn.html('<i class="times circle icon"></i>비정상');
         }
       },
       error: function() {
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
-        
+
         // 오류 상태
         statusBtn.removeClass('loading active inactive').addClass('warning');
         statusBtn.html('<i class="exclamation triangle icon"></i>연결 오류');
