@@ -2,53 +2,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='openAiChat-SAECHAN-LAB')}"></head>
-<body class="dashboard-page">
+<body class="openai-chat-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container">
-  <div class="ui segment">
-    <h3 class="ui header">대시보드</h3>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 페이지 헤더 -->
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <i class="fa-solid fa-robot text-blue-500"></i>
+        대시보드
+      </h2>
+    </div>
   </div>
 
-  <!-- 기능 목록 카드-->
-  <div class="ui segment">
-    <h3 class="ui header">목록</h3>
-    <div class="ui two column stackable grid">
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header"><i class="github icon"></i>깃헙 이슈 도우미</div>
-            <div class="meta">
-              <span class="category">Git Helper</span>
+  <!-- 기능 목록 카드 -->
+  <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card-body">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">목록</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 깃헙 이슈 도우미 카드 -->
+        <div class="card bg-base-100 shadow-sm border border-gray-200">
+          <div class="card-body">
+            <h4 class="card-title text-gray-800">
+              <i class="fa-brands fa-github text-gray-700"></i>
+              깃헙 이슈 도우미
+            </h4>
+            <p class="text-sm text-gray-500">Git Helper</p>
+            <p class="text-gray-600">커밋, 브랜치 자동 생성</p>
+            <div class="card-actions justify-end mt-4">
+              <a href="/issue-helper" class="btn btn-primary w-full">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
+              </a>
             </div>
-            <div class="description">
-              커밋, 브랜치 자동 생성
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="/issue-helper" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon"></i>
-              <span class=""> 바로가기</span>
-            </a>
           </div>
         </div>
-      </div>
-      <div class="column">
-        <div class="ui fluid card">
-          <div class="content">
-            <div class="header"> <i class="comment alternate icon"></i>OpenAI 챗봇</div>
-            <div class="meta">
-              <span class="category">AI Assistant</span>
+
+        <!-- OpenAI 챗봇 카드 -->
+        <div class="card bg-base-100 shadow-sm border border-gray-200">
+          <div class="card-body">
+            <h4 class="card-title text-gray-800">
+              <i class="fa-solid fa-comment text-blue-500"></i>
+              OpenAI 챗봇
+            </h4>
+            <p class="text-sm text-gray-500">AI Assistant</p>
+            <p class="text-gray-600">OpenAI GPT</p>
+            <div class="card-actions justify-end mt-4">
+              <a href="/openai-chat" class="btn btn-primary w-full">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
+              </a>
             </div>
-            <div class="description">
-              OpenAI GPT
-            </div>
-          </div>
-          <div class="extra content">
-            <a href="/openai-chat" class="ui blue fluid button">
-              <i class="arrow alternate circle right icon"></i>
-              <span class=""> 바로가기</span>
-            </a>
           </div>
         </div>
       </div>
