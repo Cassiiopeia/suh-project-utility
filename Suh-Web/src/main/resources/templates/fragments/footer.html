@@ -3,21 +3,25 @@
 <div th:fragment="footer">
   <footer class="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-2 border-blue-500 mt-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
 
         <!-- Developer 섹션 -->
         <div>
           <h4 class="text-lg font-semibold text-gray-800 mb-4">Developer</h4>
           <div class="space-y-2 text-gray-600">
-            <p class="flex items-center justify-center md:justify-start gap-2">
+            <p class="flex items-center justify-center gap-2">
               <i class="fa-solid fa-user-circle text-blue-500"></i>
               서새찬 연구원
             </p>
-            <p class="flex items-center justify-center md:justify-start gap-2">
+            <p class="flex items-center justify-center gap-2">
               <i class="fa-solid fa-building text-blue-500"></i>
-              SOMANSA(소만사) 서버모듈팀
+              <a href="https://www.somansa.com/" target="_blank"
+                 class="text-blue-500 hover:text-blue-600 transition-colors hover:underline">
+                SOMANSA(소만사)
+              </a>
+              서버모듈팀
             </p>
-            <p class="flex items-center justify-center md:justify-start gap-2">
+            <p class="flex items-center justify-center gap-2">
               <i class="fa-solid fa-code text-blue-500"></i>
               Spring, Postgres, Java, ElasticSearch
             </p>
@@ -28,7 +32,7 @@
         <div>
           <h4 class="text-lg font-semibold text-gray-800 mb-4">Contact Me</h4>
           <div class="space-y-2 text-gray-600">
-            <p class="flex items-center justify-center md:justify-start gap-2">
+            <p class="flex items-center justify-center gap-2">
               <i class="fa-solid fa-envelope text-blue-500"></i>
               Email:
               <a href="mailto:chan4760@gmail.com"
@@ -36,7 +40,7 @@
                 chan4760@gmail.com
               </a>
             </p>
-            <p class="flex items-center justify-center md:justify-start gap-2">
+            <p class="flex items-center justify-center gap-2">
               <i class="fa-brands fa-github text-blue-500"></i>
               GitHub:
               <a href="https://github.com/Cassiiopeia/suh-project-utility"

@@ -28,6 +28,7 @@ public class PublicEndpointConfig {
     return Arrays.asList(
         "/login",
         "/logout",
+        "/profile",
         "/css/**",
         "/js/**",
         "/images/**",

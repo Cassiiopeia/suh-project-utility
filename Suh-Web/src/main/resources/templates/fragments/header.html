@@ -37,6 +37,12 @@
     html, body, button, input, select, textarea {
       font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;
     }
+
+    /* DaisyUI Primary 색상 커스텀 */
+    [data-theme="light"], :root {
+      --color-primary: oklch(0.61 0.24 252.55 / 1);
+      --color-primary-content: oklch(1 0 0 / 1);
+    }
   </style>
 </head>
 
@@ -72,6 +78,8 @@
             <i class="fa-solid fa-chevron-down text-xs"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
+            <li><a href="/profile" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-user w-5"></i>프로필</a></li>
+            <li class="divider my-1"></li>
             <li><a href="/notice-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
             <li><a href="/docker-logs" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
             <li><a href="/study-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-book w-5"></i>스터디 플랜</a></li>
@@ -90,6 +98,8 @@
         </div>
         <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-64 p-2 mt-2 border border-gray-100">
           <li class="menu-title text-gray-500 text-xs font-semibold px-4 py-2">메뉴</li>
+          <li><a href="/profile" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-user w-5"></i>프로필</a></li>
+          <li class="divider my-1"></li>
           <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
           <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈 도우미</a></li>
           <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>커스텀 AI 번역기</a></li>
