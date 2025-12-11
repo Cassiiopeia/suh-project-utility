@@ -8,7 +8,7 @@
 
 - name: 취소
   color: FEF2C0
-  description: 작업 취소
+  description: 추후 작업 진행 예정
 
 - name: 작업 완료
   color: 0A4ABB

@@ -11,15 +11,12 @@ body:
         아래 항목을 참고하여 문서를 작성해주세요. 필요한 부분을 자유롭게 작성하시면 됩니다.
         -->
 
-  # 개념 (선택)
+  # 문제 상황
   - type: textarea
     id: concept
     attributes:
-      label: "📝 기본 개념"
-      description: "사전 지식 및 기본적인 개념에 대해 작성해주세요"
-      placeholder: |
-        ooo이란?
-        - ooo에서 사용하는 ...
+      label: "❌ 문제 상황"
+      description: "해당 기술을 도입하게 된 문제 상황을 작성해주세요"
     validations:
       required: false
 
@@ -27,20 +24,24 @@ body:
   - type: textarea
     id: main
     attributes:
-      label: "🎯 본문"
+      label: "📝 핵심 내용과 방향성"
       description: "개발 과정에서 구현한 내용이나 기술적인 세부사항을 작성해주세요."
-      placeholder:
+      placeholder: |
+        - 사전 지식 및 기본적인 개념
+        - 개발 과정에서 구현한 내용 or 기술적인 세부사항
       value:
     validations:
       required: true
 
-  # 기대 효과 (선택)
+  # 트러블 슈팅 및 기대효과 (선택)
   - type: textarea
     id: expected
     attributes:
-      label: "📚 기대효과"
-      description: "해당 기능을 사용했을 때의 기대효과에 대해서 적어주세요"
-      placeholder: "예: 사용자 인증 프로세스 개선"
+      label: "📚 트러블슈팅 및 기대효과"
+      placeholder: |
+        - 구현 과정에서 발생한 문제점과 해결 방법에 대해 작성해주세요
+        - 해당 기능을 사용했을 때의 기대효과에 대해서 적어주세요
+        예: 사용자 인증 프로세스 개선
     validations:
       required: false
 
@@ -62,11 +63,6 @@ body:
     id: assignees
     attributes:
       label: "🙋‍ 담당자"
-      description: |
-        담당자가 정해져 있다면 입력해주세요.
-          - 백엔드: 이름
-          - 프로트엔드: 이름
-          - 디자인: 이름
       value: |
         - 백엔드: 이름
         - 프로트엔드: 이름
