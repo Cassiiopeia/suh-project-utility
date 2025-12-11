@@ -3,170 +3,175 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head th:replace="~{fragments/header :: head(title='AI 서버 관리-SAECHAN-LAB')}"></head>
-<body>
+<body class="ai-server-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
-
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
   <!-- 페이지 헤더 -->
-  <div class="ui segment">
-    <h3 class="dashboard-section-header">AI 서버 관리</h3>
-    <p class="dashboard-section-description">Ollama AI 서버 상태 및 모델 관리</p>
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-solid fa-server text-blue-500"></i>
+      AI 서버 관리
+    </h2>
+    <p class="text-gray-500 mt-1">Ollama AI 서버 상태 및 모델 관리</p>
   </div>
 
   <!-- 서버 상태 -->
-  <div class="ui segment">
-    <h4 class="ui header">
-      <i class="server icon"></i>
-      <div class="content">
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-heart-pulse text-blue-500"></i>
         서버 상태
-        <div class="sub header" id="serverStatus">
-          <div class="ui active inline loader mini"></div>
-          확인 중...
-        </div>
+      </h3>
+      <div class="flex items-center gap-4 mb-4" id="serverStatus">
+        <span class="loading loading-spinner loading-sm text-primary"></span>
+        <span class="text-gray-500">확인 중...</span>
       </div>
-    </h4>
-    <div class="ui labeled input fluid">
-      <div class="ui label">서버 URL</div>
-      <input type="text" value="https://ai.suhsaechan.kr" readonly>
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">서버 URL</span>
+        </label>
+        <input type="text" class="input input-bordered w-full max-w-md" value="https://ai.suhsaechan.kr" readonly>
+      </div>
     </div>
   </div>
 
   <!-- 모델 관리 -->
-  <div class="ui segment">
-    <h4 class="ui header">
-      <i class="database icon"></i>
-      <div class="content">
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-database text-blue-500"></i>
         모델 관리
-        <div class="sub header">모델 다운로드 및 삭제</div>
-      </div>
-    </h4>
+      </h3>
+      <p class="text-gray-500 text-sm mb-6">모델 다운로드 및 삭제</p>
 
-    <!-- 모델 다운로드 폼 -->
-    <div class="ui form" style="margin-bottom: 2rem;">
-      <div class="field">
-        <label>새 모델 다운로드</label>
-        <div class="ui action input">
-          <input type="text" id="modelNameInput" placeholder="예: llama3.2:3b, qwen2.5:3b">
-          <button class="ui primary button" id="downloadModelBtn">
-            <i class="download icon"></i> 다운로드
+      <!-- 모델 다운로드 폼 -->
+      <div class="mb-6">
+        <label class="label">
+          <span class="label-text font-medium">새 모델 다운로드</span>
+        </label>
+        <div class="join w-full max-w-lg">
+          <input type="text" id="modelNameInput" class="input input-bordered join-item flex-1" placeholder="예: llama3.2:3b, qwen2.5:3b">
+          <button class="btn btn-primary join-item" id="downloadModelBtn">
+            <i class="fa-solid fa-download"></i>
+            다운로드
           </button>
         </div>
-        <small style="color: #6b7280;">모델명:태그 형식으로 입력하세요 (예: llama3.2:3b)</small>
+        <label class="label">
+          <span class="label-text-alt text-gray-500">모델명:태그 형식으로 입력하세요 (예: llama3.2:3b)</span>
+        </label>
+      </div>
+
+      <!-- 다운로드 진행 상황 -->
+      <div id="downloadProgressContainer" class="hidden mb-6">
+        <h4 class="font-semibold text-gray-800 mb-3">다운로드 진행 중</h4>
+        <div id="progressBars" class="space-y-3">
+          <!-- 진행 바들이 동적으로 추가됩니다 -->
+        </div>
+      </div>
+
+      <!-- 모델 목록 테이블 -->
+      <h4 class="font-semibold text-gray-800 mb-3">설치된 모델</h4>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra" id="modelsTable">
+          <thead>
+            <tr>
+              <th>모델 이름</th>
+              <th>크기</th>
+              <th>수정일</th>
+              <th class="w-24">작업</th>
+            </tr>
+          </thead>
+          <tbody id="modelsTableBody">
+            <tr>
+              <td colspan="4" class="text-center py-8">
+                <span class="loading loading-spinner loading-md text-primary"></span>
+                <span class="ml-2 text-gray-500">모델 목록을 불러오는 중...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <!-- 다운로드 진행 상황 -->
-    <div id="downloadProgressContainer" style="display: none; margin-bottom: 2rem;">
-      <h5 class="ui dividing header">다운로드 진행 중</h5>
-      <div id="progressBars">
-        <!-- 진행 바들이 동적으로 추가됩니다 -->
-      </div>
-    </div>
-
-    <!-- 모델 목록 테이블 -->
-    <h5 class="ui dividing header">설치된 모델</h5>
-    <table class="ui celled table" id="modelsTable">
-      <thead>
-        <tr>
-          <th>모델 이름</th>
-          <th>크기</th>
-          <th>수정일</th>
-          <th width="100">작업</th>
-        </tr>
-      </thead>
-      <tbody id="modelsTableBody">
-        <tr>
-          <td colspan="4" class="center aligned">
-            <div class="ui active inline loader"></div>
-            모델 목록을 불러오는 중...
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 
   <!-- API 테스트 섹션 -->
-  <div class="ui segment">
-    <h4 class="ui header">
-      <i class="code icon"></i>
-      <div class="content">
+  <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card-body">
+      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-code text-blue-500"></i>
         API 테스트
-        <div class="sub header">텍스트 생성 및 임베딩 테스트</div>
-      </div>
-    </h4>
+      </h3>
+      <p class="text-gray-500 text-sm mb-6">텍스트 생성 및 임베딩 테스트</p>
 
-    <div class="ui two column stackable grid">
-      <!-- 모델 선택 -->
-      <div class="column">
-        <div class="ui form">
-          <div class="field">
-            <label>모델 선택</label>
-            <div class="ui fluid selection dropdown" id="modelDropdown">
-              <input type="hidden" name="selectedModel" id="modelSelect">
-              <i class="dropdown icon"></i>
-              <div class="default text">모델을 선택하세요</div>
-              <div class="menu" id="modelMenu">
-                <div class="item">
-                  <div class="ui active inline loader mini"></div>
-                  모델 목록을 불러오는 중...
-                </div>
-              </div>
-            </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 모델 선택 -->
+        <div>
+          <div class="form-control mb-4">
+            <label class="label">
+              <span class="label-text font-medium">모델 선택</span>
+            </label>
+            <select class="select select-bordered w-full" id="modelSelect">
+              <option value="" disabled selected>모델을 선택하세요</option>
+            </select>
           </div>
 
           <!-- 모델 정보 -->
-          <div id="modelInfo" style="display: none; margin-top: 1rem;">
-            <div class="ui small message">
-              <div class="header">모델 정보</div>
-              <ul class="list">
-                <li>크기: <strong id="modelSize">-</strong></li>
-                <li>패밀리: <strong id="modelFamily">-</strong></li>
-                <li>파라미터: <strong id="modelParams">-</strong></li>
-              </ul>
+          <div id="modelInfo" class="hidden">
+            <div class="alert alert-info">
+              <div>
+                <h4 class="font-semibold mb-2">모델 정보</h4>
+                <ul class="text-sm space-y-1">
+                  <li>크기: <strong id="modelSize">-</strong></li>
+                  <li>패밀리: <strong id="modelFamily">-</strong></li>
+                  <li>파라미터: <strong id="modelParams">-</strong></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- API 설정 -->
-      <div class="column">
-        <div class="ui form">
-          <div class="field">
-            <label>입력 텍스트</label>
-            <textarea id="inputText" placeholder="프롬프트를 여기에 입력하세요" rows="5"></textarea>
+        <!-- API 설정 -->
+        <div>
+          <div class="form-control mb-4">
+            <label class="label">
+              <span class="label-text font-medium">입력 텍스트</span>
+            </label>
+            <textarea id="inputText" class="textarea textarea-bordered h-32" placeholder="프롬프트를 여기에 입력하세요"></textarea>
           </div>
-          <button class="ui blue fluid button" id="runApiTestBtn">
-            <i class="play icon"></i>
+          <button class="btn btn-primary w-full" id="runApiTestBtn">
+            <i class="fa-solid fa-play"></i>
             API 호출 테스트
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- API 응답 결과 -->
-    <div id="responseSection" style="display: none; margin-top: 2rem;">
-      <h5 class="ui dividing header">API 응답 결과</h5>
-      <div class="ui message">
-        <div class="header">응답 정보</div>
-        <p>
-          상태 코드: <strong id="statusCode">-</strong> |
-          응답 시간: <strong id="responseTime">-</strong> |
-          호출 시간: <strong id="callTime">-</strong>
-        </p>
-      </div>
-      <div class="ui segment">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <strong>응답 데이터</strong>
-          <button class="ui mini button" id="copyResponseBtn">
-            <i class="copy icon"></i> 복사
-          </button>
+      <!-- API 응답 결과 -->
+      <div id="responseSection" class="hidden mt-6">
+        <h4 class="font-semibold text-gray-800 mb-3">API 응답 결과</h4>
+        <div class="alert mb-4">
+          <div>
+            <span class="font-medium">응답 정보</span>
+            <p class="text-sm">
+              상태 코드: <strong id="statusCode">-</strong> |
+              응답 시간: <strong id="responseTime">-</strong> |
+              호출 시간: <strong id="callTime">-</strong>
+            </p>
+          </div>
         </div>
-        <pre id="responseJson" style="background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow-x: auto; max-height: 400px;"></pre>
+        <div class="bg-gray-100 rounded-lg p-4">
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-medium text-gray-700">응답 데이터</span>
+            <button class="btn btn-sm btn-outline" id="copyResponseBtn">
+              <i class="fa-solid fa-copy"></i>
+              복사
+            </button>
+          </div>
+          <pre id="responseJson" class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto max-h-96 text-sm font-mono"></pre>
+        </div>
       </div>
     </div>
   </div>
-
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -177,592 +182,500 @@
 let availableModels = [];
 
 $(document).ready(function() {
-    console.log('AI 서버 페이지 로드');
+  console.log('AI 서버 페이지 로드');
 
-    // 초기 로드
-    checkServerHealth();
-    loadModelsList();
-    restoreActiveDownloads(); // 진행 중인 다운로드 복원
+  // 초기 로드
+  checkServerHealth();
+  loadModelsList();
+  restoreActiveDownloads();
 
-    // 버튼 이벤트
-    $('#downloadModelBtn').click(downloadModel);
-    $('#runApiTestBtn').click(runApiTest);
-    $('#copyResponseBtn').click(copyResponseToClipboard);
+  // 버튼 이벤트
+  $('#downloadModelBtn').click(downloadModel);
+  $('#runApiTestBtn').click(runApiTest);
+  $('#copyResponseBtn').click(copyResponseToClipboard);
 
-    // 모델 드롭다운 초기화
-    $('#modelDropdown').dropdown({
-        onChange: function(value, text, $selectedItem) {
-            console.log('모델 선택됨:', value);
-            showModelInfo(value);
-        }
-    });
+  // 모델 선택 이벤트
+  $('#modelSelect').change(function() {
+    const value = $(this).val();
+    console.log('모델 선택됨:', value);
+    showModelInfo(value);
+  });
 });
 
 // Health Check
 function checkServerHealth() {
-    console.log('서버 Health Check 시작');
+  console.log('서버 Health Check 시작');
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    $.ajax({
-        url: '/api/ai-server/health',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log('Health Check 성공:', response);
-            if (response.isHealthy) {
-                $('#serverStatus').html('<i class="green check circle icon"></i> 정상 작동 중');
-            } else {
-                $('#serverStatus').html('<i class="yellow warning icon"></i> ' + (response.healthMessage || '상태 불명'));
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Health Check 실패:', xhr, status, error);
-            $('#serverStatus').html('<i class="red times circle icon"></i> 연결 실패');
-        }
-    });
+  $.ajax({
+    url: '/api/ai-server/health',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      console.log('Health Check 성공:', response);
+      if (response.isHealthy) {
+        $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-600 font-medium">정상 작동 중</span></div>');
+      } else {
+        $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-yellow-600 font-medium">' + (response.healthMessage || '상태 불명') + '</span></div>');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('Health Check 실패:', xhr, status, error);
+      $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-600 font-medium">연결 실패</span></div>');
+    }
+  });
 }
 
 // 모델 목록 로드
 function loadModelsList() {
-    console.log('모델 목록 로드 시작');
+  console.log('모델 목록 로드 시작');
 
-    const formData = new FormData();
-    const tbody = $('#modelsTableBody');
+  const formData = new FormData();
+  const tbody = $('#modelsTableBody');
 
-    tbody.html('<tr><td colspan="4" class="center aligned"><div class="ui active inline loader"></div> 로딩 중...</td></tr>');
+  tbody.html('<tr><td colspan="4" class="text-center py-8"><span class="loading loading-spinner loading-md text-primary"></span><span class="ml-2 text-gray-500">로딩 중...</span></td></tr>');
 
-    $.ajax({
-        url: '/api/ai-server/models',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log('모델 목록 응답:', response);
+  $.ajax({
+    url: '/api/ai-server/models',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      console.log('모델 목록 응답:', response);
 
-            // models 배열이 있으면 직접 사용, 없으면 modelsJson 파싱 (하위 호환성)
-            let models = [];
-            if (response.models && Array.isArray(response.models)) {
-                models = response.models;
-            } else if (response.modelsJson) {
-                try {
-                    const data = JSON.parse(response.modelsJson);
-                    if (data.models && data.models.length > 0) {
-                        models = data.models;
-                    }
-                } catch (e) {
-                    console.error('JSON 파싱 오류:', e);
-                    tbody.html('<tr><td colspan="4" class="center aligned error">응답 파싱 실패</td></tr>');
-                    return;
-                }
-            }
-
-            if (models.length > 0) {
-                availableModels = models;
-                renderModelsTable(models);
-                updateModelDropdown(models);
-            } else {
-                tbody.html('<tr><td colspan="4" class="center aligned">설치된 모델이 없습니다</td></tr>');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('모델 목록 로드 실패:', xhr, status, error);
-            tbody.html('<tr><td colspan="4" class="center aligned error">모델 목록 로드 실패</td></tr>');
+      let models = [];
+      if (response.models && Array.isArray(response.models)) {
+        models = response.models;
+      } else if (response.modelsJson) {
+        try {
+          const data = JSON.parse(response.modelsJson);
+          if (data.models && data.models.length > 0) {
+            models = data.models;
+          }
+        } catch (e) {
+          console.error('JSON 파싱 오류:', e);
+          tbody.html('<tr><td colspan="4" class="text-center py-8 text-red-500">응답 파싱 실패</td></tr>');
+          return;
         }
-    });
+      }
+
+      if (models.length > 0) {
+        availableModels = models;
+        renderModelsTable(models);
+        updateModelDropdown(models);
+      } else {
+        tbody.html('<tr><td colspan="4" class="text-center py-8 text-gray-500">설치된 모델이 없습니다</td></tr>');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('모델 목록 로드 실패:', xhr, status, error);
+      tbody.html('<tr><td colspan="4" class="text-center py-8 text-red-500">모델 목록 로드 실패</td></tr>');
+    }
+  });
 }
 
 // 모델 목록 테이블 렌더링
 function renderModelsTable(models) {
-    const tbody = $('#modelsTableBody');
+  const tbody = $('#modelsTableBody');
 
-    if (!models || models.length === 0) {
-        tbody.html('<tr><td colspan="4" class="center aligned">설치된 모델이 없습니다</td></tr>');
-        return;
-    }
+  if (!models || models.length === 0) {
+    tbody.html('<tr><td colspan="4" class="text-center py-8 text-gray-500">설치된 모델이 없습니다</td></tr>');
+    return;
+  }
 
-    let html = '';
-    models.forEach(function(model) {
-        const size = formatModelSize(model.size);
-        const date = formatDate(model.modified_at);
-        const name = escapeHtml(model.name);
+  let html = '';
+  models.forEach(function(model) {
+    const size = formatModelSize(model.size);
+    const date = formatDate(model.modified_at);
+    const name = escapeHtml(model.name);
 
-        html += `
-            <tr>
-                <td><strong>${name}</strong></td>
-                <td>${size}</td>
-                <td>${date}</td>
-                <td>
-                    <button class="ui mini red button" onclick="deleteModel('${name}')">
-                        <i class="trash icon"></i> 삭제
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
-    tbody.html(html);
+    html += `
+      <tr>
+        <td><strong>${name}</strong></td>
+        <td>${size}</td>
+        <td>${date}</td>
+        <td>
+          <button class="btn btn-xs btn-error" onclick="deleteModel('${name}')">
+            <i class="fa-solid fa-trash"></i>
+            삭제
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.html(html);
 }
 
 // 모델 드롭다운 업데이트
 function updateModelDropdown(models) {
-    const menu = $('#modelMenu');
-    menu.empty();
+  const select = $('#modelSelect');
+  select.find('option:not(:first)').remove();
 
-    if (!models || models.length === 0) {
-        menu.html('<div class="item disabled">사용 가능한 모델이 없습니다</div>');
-        return;
-    }
+  if (!models || models.length === 0) {
+    return;
+  }
 
-    models.forEach(function(model) {
-        const size = formatModelSize(model.size);
-        const family = model.details?.family || 'unknown';
-
-        const item = $(`
-            <div class="item" data-value="${model.name}">
-                <div class="content">
-                    <div class="header">${model.name}</div>
-                    <div class="description">
-                        <small>${size} | ${family}</small>
-                    </div>
-                </div>
-            </div>
-        `);
-        menu.append(item);
-    });
+  models.forEach(function(model) {
+    const size = formatModelSize(model.size);
+    const family = model.details?.family || 'unknown';
+    select.append(`<option value="${model.name}">${model.name} (${size} | ${family})</option>`);
+  });
 }
 
 // 모델 정보 표시
 function showModelInfo(modelName) {
-    const model = availableModels.find(m => m.name === modelName);
-    if (!model) return;
+  const model = availableModels.find(m => m.name === modelName);
+  if (!model) {
+    $('#modelInfo').addClass('hidden');
+    return;
+  }
 
-    $('#modelSize').text(formatModelSize(model.size));
-    $('#modelFamily').text(model.details?.family || '-');
-    $('#modelParams').text(model.details?.parameter_size || '-');
-    $('#modelInfo').show();
+  $('#modelSize').text(formatModelSize(model.size));
+  $('#modelFamily').text(model.details?.family || '-');
+  $('#modelParams').text(model.details?.parameter_size || '-');
+  $('#modelInfo').removeClass('hidden');
 }
 
-// 폴링 인터벌 관리 맵 (모델명 -> intervalId)
+// 폴링 인터벌 관리 맵
 const activeDownloads = new Map();
 
 // 페이지 로드 시 진행 중인 다운로드 복원
 function restoreActiveDownloads() {
-    console.log('진행 중인 다운로드 확인 중...');
+  console.log('진행 중인 다운로드 확인 중...');
 
-    $.ajax({
-        url: '/api/ai-server/models/pull/status',
-        method: 'GET',
-        success: function(statusMap) {
-            console.log('다운로드 상태:', statusMap);
+  $.ajax({
+    url: '/api/ai-server/models/pull/status',
+    method: 'GET',
+    success: function(statusMap) {
+      console.log('다운로드 상태:', statusMap);
 
-            // 진행 중인 다운로드가 있으면 복원
-            Object.keys(statusMap).forEach(modelName => {
-                const progress = statusMap[modelName];
+      Object.keys(statusMap).forEach(modelName => {
+        const progress = statusMap[modelName];
 
-                // 다운로드 중이거나 완료되지 않은 상태만 복원
-                if (progress.status === 'downloading') {
-                    console.log('다운로드 복원:', modelName);
-
-                    // 진행 바 생성
-                    const progressId = createProgressBar(modelName);
-                    updateProgressBar(progressId, progress);
-
-                    // 폴링 시작
-                    startPolling(modelName, progressId);
-                }
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error('다운로드 상태 조회 실패:', error);
+        if (progress.status === 'downloading') {
+          console.log('다운로드 복원:', modelName);
+          const progressId = createProgressBar(modelName);
+          updateProgressBar(progressId, progress);
+          startPolling(modelName, progressId);
         }
-    });
+      });
+    },
+    error: function(xhr, status, error) {
+      console.error('다운로드 상태 조회 실패:', error);
+    }
+  });
 }
 
-// 바이트 크기를 읽기 쉬운 형식으로 변환
+// 바이트 크기 포맷
 function formatBytes(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 }
 
 // 진행 바 UI 생성
 function createProgressBar(modelName) {
-    const progressId = `progress-${modelName.replace(/[^a-zA-Z0-9]/g, '-')}`;
+  const progressId = `progress-${modelName.replace(/[^a-zA-Z0-9]/g, '-')}`;
 
-    const progressHtml = `
-        <div id="${progressId}" class="ui segment" style="margin-bottom: 1rem;">
-            <div class="ui top attached label">
-                <i class="download icon"></i> ${modelName}
-            </div>
-            <div class="ui active progress" data-percent="0">
-                <div class="bar" style="width: 0%; transition-duration: 300ms;">
-                    <div class="progress">0%</div>
-                </div>
-                <div class="label">다운로드 준비 중...</div>
-            </div>
-            <div style="text-align: right; color: #6b7280; font-size: 0.9em;">
-                <span class="download-size">0 B / 0 B</span>
-            </div>
-        </div>
-    `;
+  const progressHtml = `
+    <div id="${progressId}" class="bg-white border border-gray-200 rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-medium text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-download text-blue-500"></i>
+          ${modelName}
+        </span>
+        <span class="download-size text-sm text-gray-500">0 B / 0 B</span>
+      </div>
+      <progress class="progress progress-primary w-full" value="0" max="100"></progress>
+      <div class="text-sm text-gray-500 mt-1 progress-label">다운로드 준비 중...</div>
+    </div>
+  `;
 
-    $('#progressBars').append(progressHtml);
-    $('#downloadProgressContainer').show();
+  $('#progressBars').append(progressHtml);
+  $('#downloadProgressContainer').removeClass('hidden');
 
-    return progressId;
+  return progressId;
 }
 
 // 진행 바 업데이트
 function updateProgressBar(progressId, progress) {
-    console.log('>>> updateProgressBar 호출됨');
-    console.log('>>> progressId:', progressId);
-    console.log('>>> progress:', progress);
+  const element = $(`#${progressId}`);
+  if (!element.length) return;
 
-    const element = $(`#${progressId}`);
-    console.log('>>> element 찾기 결과:', element.length > 0 ? '찾음' : '못 찾음');
+  const percentage = progress.percentage || 0;
+  const completed = progress.completed || 0;
+  const total = progress.total || 0;
 
-    if (!element.length) {
-        console.error('>>> 진행 바 요소를 찾을 수 없음:', progressId);
-        return;
-    }
+  element.find('progress').val(percentage);
+  element.find('.progress-label').text(progress.message || '다운로드 중...');
 
-    const percentage = progress.percentage || 0;
-    const completed = progress.completed || 0;
-    const total = progress.total || 0;
+  if (total > 0) {
+    element.find('.download-size').text(`${formatBytes(completed)} / ${formatBytes(total)}`);
+  }
 
-    console.log('>>> percentage:', percentage, 'completed:', completed, 'total:', total);
-    console.log('>>> progress.status:', progress.status);
+  if (progress.status === 'completed') {
+    element.find('progress').addClass('progress-success');
+    element.find('.progress-label').html('<i class="fa-solid fa-check text-green-500"></i> 다운로드 완료');
 
-    // 진행 바 업데이트
-    element.find('.progress').attr('data-percent', percentage);
-    element.find('.bar').css('width', percentage + '%');
-    element.find('.bar .progress').text(percentage + '%');
-
-    // 상태 메시지 업데이트
-    element.find('.label').text(progress.message || '다운로드 중...');
-
-    // 크기 정보 업데이트
-    if (total > 0) {
-        element.find('.download-size').text(`${formatBytes(completed)} / ${formatBytes(total)}`);
-    }
-
-    // 완료 시 스타일 변경
-    if (progress.status === 'completed') {
-        console.log('>>> ✅ 완료 상태 감지! 스타일 변경 시작');
-        element.find('.progress').removeClass('active').addClass('success');
-        element.find('.label').html('<i class="check icon"></i> 다운로드 완료');
-        console.log('>>> 스타일 변경 완료');
-
-        // 3초 후 진행 바 제거
-        setTimeout(() => {
-            console.log('>>> 3초 경과, 진행 바 제거 시작');
-            element.fadeOut(500, function() {
-                $(this).remove();
-                if ($('#progressBars').children().length === 0) {
-                    $('#downloadProgressContainer').hide();
-                }
-                console.log('>>> 진행 바 제거 완료');
-            });
-            loadModelsList(); // 모델 목록 새로고침
-        }, 3000);
-    } else if (progress.status === 'failed') {
-        console.log('>>> ❌ 실패 상태 감지');
-        element.find('.progress').removeClass('active').addClass('error');
-        element.find('.label').html('<i class="times icon"></i> ' + (progress.message || '다운로드 실패'));
-    } else {
-        console.log('>>> 진행 중 상태 - status:', progress.status);
-    }
-}
-
-// 폴링으로 모델 다운로드 시작
-function downloadModel() {
-    const modelName = $('#modelNameInput').val().trim();
-
-    if (!modelName) {
-        alert('모델 이름을 입력하세요');
-        return;
-    }
-
-    // 이미 다운로드 중인지 확인
-    if (activeDownloads.has(modelName)) {
-        alert(`"${modelName}" 모델이 이미 다운로드 중입니다.`);
-        return;
-    }
-
-    if (!confirm(`"${modelName}" 모델을 다운로드하시겠습니까?\n\n모델 크기에 따라 시간이 오래 걸릴 수 있습니다.`)) {
-        return;
-    }
-
-    // 진행 바 생성
-    const progressId = createProgressBar(modelName);
-    $('#modelNameInput').val('');
-
-    // 다운로드 시작 API 호출
-    console.log('[다운로드] 다운로드 시작 요청 - 모델:', modelName);
-    
-    $.ajax({
-        url: `/api/ai-server/models/pull/start?modelName=${encodeURIComponent(modelName)}`,
-        method: 'POST',
-        success: function(response) {
-            console.log('[다운로드] 다운로드 시작 성공 - 모델:', modelName, 'response:', response);
-            // 폴링 시작
-            startPolling(modelName, progressId);
-        },
-        error: function(xhr, status, error) {
-            console.error('[다운로드] 다운로드 시작 실패 - 모델:', modelName, 'error:', error);
-            alert(`다운로드 시작 실패: ${error}`);
-            // 진행 바 제거
-            $(`#${progressId}`).remove();
+    setTimeout(() => {
+      element.fadeOut(500, function() {
+        $(this).remove();
+        if ($('#progressBars').children().length === 0) {
+          $('#downloadProgressContainer').addClass('hidden');
         }
-    });
+      });
+      loadModelsList();
+    }, 3000);
+  } else if (progress.status === 'failed') {
+    element.find('progress').addClass('progress-error');
+    element.find('.progress-label').html('<i class="fa-solid fa-times text-red-500"></i> ' + (progress.message || '다운로드 실패'));
+  }
 }
 
-// 폴링으로 다운로드 상태 확인
-function startPolling(modelName, progressId) {
-    console.log('[폴링] 폴링 시작 - 모델:', modelName);
-    
-    // 이미 폴링 중이면 중지
-    if (activeDownloads.has(modelName)) {
-        clearInterval(activeDownloads.get(modelName));
+// 모델 다운로드
+function downloadModel() {
+  const modelName = $('#modelNameInput').val().trim();
+
+  if (!modelName) {
+    alert('모델 이름을 입력하세요');
+    return;
+  }
+
+  if (activeDownloads.has(modelName)) {
+    alert(`"${modelName}" 모델이 이미 다운로드 중입니다.`);
+    return;
+  }
+
+  if (!confirm(`"${modelName}" 모델을 다운로드하시겠습니까?\n\n모델 크기에 따라 시간이 오래 걸릴 수 있습니다.`)) {
+    return;
+  }
+
+  const progressId = createProgressBar(modelName);
+  $('#modelNameInput').val('');
+
+  $.ajax({
+    url: `/api/ai-server/models/pull/start?modelName=${encodeURIComponent(modelName)}`,
+    method: 'POST',
+    success: function(response) {
+      console.log('[다운로드] 시작 성공:', modelName);
+      startPolling(modelName, progressId);
+    },
+    error: function(xhr, status, error) {
+      console.error('[다운로드] 시작 실패:', error);
+      alert(`다운로드 시작 실패: ${error}`);
+      $(`#${progressId}`).remove();
     }
+  });
+}
 
-    // 즉시 한 번 확인
+// 폴링 시작
+function startPolling(modelName, progressId) {
+  if (activeDownloads.has(modelName)) {
+    clearInterval(activeDownloads.get(modelName));
+  }
+
+  pollDownloadStatus(modelName, progressId);
+
+  const intervalId = setInterval(function() {
     pollDownloadStatus(modelName, progressId);
+  }, 500);
 
-    // 500ms마다 상태 확인
-    const intervalId = setInterval(function() {
-        pollDownloadStatus(modelName, progressId);
-    }, 500);
-
-    activeDownloads.set(modelName, intervalId);
+  activeDownloads.set(modelName, intervalId);
 }
 
 // 다운로드 상태 확인
 function pollDownloadStatus(modelName, progressId) {
-    $.ajax({
-        url: `/api/ai-server/models/pull/status/${encodeURIComponent(modelName)}`,
-        method: 'GET',
-        success: function(progress) {
-            if (progress) {
-                console.log('[폴링] 상태 확인 - 모델:', modelName, 'percentage:', progress.percentage + '%', 'status:', progress.status);
-                updateProgressBar(progressId, progress);
+  $.ajax({
+    url: `/api/ai-server/models/pull/status/${encodeURIComponent(modelName)}`,
+    method: 'GET',
+    success: function(progress) {
+      if (progress) {
+        updateProgressBar(progressId, progress);
 
-                // 완료 또는 실패 시 폴링 중지
-                if (progress.status === 'completed' || progress.status === 'failed') {
-                    console.log('[폴링] 다운로드 완료/실패 - 모델:', modelName, '폴링 중지');
-                    if (activeDownloads.has(modelName)) {
-                        clearInterval(activeDownloads.get(modelName));
-                        activeDownloads.delete(modelName);
-                    }
-                }
-            } else {
-                console.log('[폴링] 상태 없음 - 모델:', modelName, '폴링 중지');
-                // 상태가 없으면 폴링 중지
-                if (activeDownloads.has(modelName)) {
-                    clearInterval(activeDownloads.get(modelName));
-                    activeDownloads.delete(modelName);
-                }
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('[폴링] 상태 확인 실패 - 모델:', modelName, 'error:', error);
-            // 404면 다운로드가 없는 것이므로 폴링 중지
-            if (xhr.status === 404) {
-                console.log('[폴링] 다운로드 없음 (404) - 모델:', modelName, '폴링 중지');
-                if (activeDownloads.has(modelName)) {
-                    clearInterval(activeDownloads.get(modelName));
-                    activeDownloads.delete(modelName);
-                }
-            }
+        if (progress.status === 'completed' || progress.status === 'failed') {
+          if (activeDownloads.has(modelName)) {
+            clearInterval(activeDownloads.get(modelName));
+            activeDownloads.delete(modelName);
+          }
         }
-    });
+      } else {
+        if (activeDownloads.has(modelName)) {
+          clearInterval(activeDownloads.get(modelName));
+          activeDownloads.delete(modelName);
+        }
+      }
+    },
+    error: function(xhr, status, error) {
+      if (xhr.status === 404) {
+        if (activeDownloads.has(modelName)) {
+          clearInterval(activeDownloads.get(modelName));
+          activeDownloads.delete(modelName);
+        }
+      }
+    }
+  });
 }
 
 // 모델 삭제
 function deleteModel(modelName) {
-    if (!confirm(`"${modelName}" 모델을 삭제하시겠습니까?`)) {
-        return;
+  if (!confirm(`"${modelName}" 모델을 삭제하시겠습니까?`)) {
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('modelName', modelName);
+
+  $.ajax({
+    url: '/api/ai-server/models/delete',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      alert('모델이 삭제되었습니다');
+      loadModelsList();
+    },
+    error: function(xhr, status, error) {
+      const message = xhr.responseJSON?.message || '삭제 실패';
+      alert('삭제 오류: ' + message);
     }
-
-    const formData = new FormData();
-    formData.append('modelName', modelName);
-
-    $.ajax({
-        url: '/api/ai-server/models/delete',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log('모델 삭제 성공:', response);
-            alert('모델이 삭제되었습니다');
-            loadModelsList();
-        },
-        error: function(xhr, status, error) {
-            console.error('모델 삭제 실패:', xhr, status, error);
-            const message = xhr.responseJSON?.message || '삭제 실패';
-            alert('삭제 오류: ' + message);
-        }
-    });
+  });
 }
 
 // API 테스트 실행
 function runApiTest() {
-    console.log('API 테스트 시작');
+  const selectedModel = $('#modelSelect').val();
+  const inputText = $('#inputText').val().trim();
 
-    const selectedModel = $('#modelSelect').val();
-    const inputText = $('#inputText').val().trim();
+  if (!selectedModel) {
+    alert('모델을 선택해주세요');
+    return;
+  }
 
-    if (!selectedModel) {
-        alert('모델을 선택해주세요');
-        return;
-    }
+  if (!inputText) {
+    alert('입력 텍스트를 입력해주세요');
+    return;
+  }
 
-    if (!inputText) {
-        alert('입력 텍스트를 입력해주세요');
-        return;
-    }
+  const testBtn = $('#runApiTestBtn');
+  testBtn.html('<span class="loading loading-spinner loading-sm"></span> 테스트 중...');
+  testBtn.prop('disabled', true);
 
-    const testBtn = $('#runApiTestBtn');
-    testBtn.addClass('loading disabled');
+  const startTime = Date.now();
 
-    const startTime = Date.now();
+  const formData = new FormData();
+  formData.append('model', selectedModel);
+  formData.append('prompt', inputText);
+  formData.append('stream', 'false');
 
-    const formData = new FormData();
-    formData.append('model', selectedModel);
-    formData.append('prompt', inputText);
-    formData.append('stream', 'false');
+  $.ajax({
+    url: '/api/ai-server/generate',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      const responseTime = Date.now() - startTime;
 
-    $.ajax({
-        url: '/api/ai-server/generate',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            const endTime = Date.now();
-            const responseTime = endTime - startTime;
-
-            console.log('API 테스트 성공:', response);
-
-            let generateResponse;
-            if (response.generatedJson) {
-                try {
-                    generateResponse = JSON.parse(response.generatedJson);
-                } catch (e) {
-                    console.error('응답 파싱 오류:', e);
-                    generateResponse = { error: '응답 파싱 오류', raw: response.generatedJson };
-                }
-            } else {
-                generateResponse = { error: 'generate 응답이 없습니다' };
-            }
-
-            showApiResponse(generateResponse, 200, responseTime, selectedModel, inputText);
-        },
-        error: function(xhr, status, error) {
-            const endTime = Date.now();
-            const responseTime = endTime - startTime;
-
-            console.error('API 테스트 오류:', xhr, status, error);
-
-            let errorResponse;
-            try {
-                errorResponse = JSON.parse(xhr.responseText);
-            } catch (e) {
-                errorResponse = { error: error, status: xhr.status };
-            }
-
-            showApiResponse(errorResponse, xhr.status, responseTime, selectedModel, inputText);
-        },
-        complete: function() {
-            testBtn.removeClass('loading disabled');
+      let generateResponse;
+      if (response.generatedJson) {
+        try {
+          generateResponse = JSON.parse(response.generatedJson);
+        } catch (e) {
+          generateResponse = { error: '응답 파싱 오류', raw: response.generatedJson };
         }
-    });
+      } else {
+        generateResponse = { error: 'generate 응답이 없습니다' };
+      }
+
+      showApiResponse(generateResponse, 200, responseTime);
+    },
+    error: function(xhr, status, error) {
+      const responseTime = Date.now() - startTime;
+
+      let errorResponse;
+      try {
+        errorResponse = JSON.parse(xhr.responseText);
+      } catch (e) {
+        errorResponse = { error: error, status: xhr.status };
+      }
+
+      showApiResponse(errorResponse, xhr.status, responseTime);
+    },
+    complete: function() {
+      testBtn.html('<i class="fa-solid fa-play"></i> API 호출 테스트');
+      testBtn.prop('disabled', false);
+    }
+  });
 }
 
 // API 응답 표시
-function showApiResponse(response, statusCode, responseTime, model, input) {
-    console.log('API 응답 표시:', response);
+function showApiResponse(response, statusCode, responseTime) {
+  $('#statusCode').text(statusCode);
+  $('#responseTime').text(responseTime + 'ms');
+  $('#callTime').text(new Date().toLocaleString());
 
-    $('#statusCode').text(statusCode);
-    $('#responseTime').text(responseTime + 'ms');
-    $('#callTime').text(new Date().toLocaleString());
+  const formattedJson = JSON.stringify(response, null, 2);
+  $('#responseJson').text(formattedJson);
 
-    const formattedJson = JSON.stringify(response, null, 2);
-    $('#responseJson').text(formattedJson);
-
-    $('#responseSection').show();
-
-    // 응답 섹션으로 스크롤
-    $('#responseSection')[0].scrollIntoView({ behavior: 'smooth' });
+  $('#responseSection').removeClass('hidden');
+  $('#responseSection')[0].scrollIntoView({ behavior: 'smooth' });
 }
 
 // 응답 복사
 function copyResponseToClipboard() {
-    const responseText = $('#responseJson').text();
+  const responseText = $('#responseJson').text();
 
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(responseText).then(function() {
-            const btn = $('#copyResponseBtn');
-            const originalHtml = btn.html();
-            btn.html('<i class="check icon"></i> 복사됨');
-
-            setTimeout(function() {
-                btn.html(originalHtml);
-            }, 2000);
-        });
-    } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = responseText;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-
-        alert('응답이 클립보드에 복사되었습니다');
-    }
+  navigator.clipboard.writeText(responseText).then(function() {
+    const btn = $('#copyResponseBtn');
+    const originalHtml = btn.html();
+    btn.html('<i class="fa-solid fa-check"></i> 복사됨');
+    setTimeout(() => btn.html(originalHtml), 2000);
+  }).catch(function() {
+    const textArea = document.createElement('textarea');
+    textArea.value = responseText;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    alert('응답이 클립보드에 복사되었습니다');
+  });
 }
 
 // 유틸리티 함수
 function formatModelSize(sizeInBytes) {
-    if (!sizeInBytes) return '-';
+  if (!sizeInBytes) return '-';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let size = sizeInBytes;
+  let unitIndex = 0;
 
-    const units = ['B', 'KB', 'MB', 'GB'];
-    let size = sizeInBytes;
-    let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
 
-    while (size >= 1024 && unitIndex < units.length - 1) {
-        size /= 1024;
-        unitIndex++;
-    }
-
-    return size.toFixed(1) + ' ' + units[unitIndex];
+  return size.toFixed(1) + ' ' + units[unitIndex];
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '-';
-    try {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('ko-KR');
-    } catch (e) {
-        return dateStr;
-    }
+  if (!dateStr) return '-';
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ko-KR');
+  } catch (e) {
+    return dateStr;
+  }
 }
 
 function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, m => map[m]);
 }
 </script>
 

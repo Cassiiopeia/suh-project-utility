@@ -3,98 +3,128 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head th:replace="~{fragments/header :: head(title='Docker 로그-SAECHAN-LAB')}"></head>
-<body class="docker-logs-page">
+<body class="docker-logs-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
-  <!-- 스켈레톤 로딩 컨테이너 - 페이지 로딩 시 임시 표시 -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
+  <!-- 스켈레톤 로딩 컨테이너 -->
   <div id="skeleton-container">
-    <div class="ui segment skeleton">
-      <div class="skeleton skeleton-header-large"></div>
-      <div class="skeleton skeleton-text-medium"></div>
+    <div class="card bg-base-100 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="skeleton h-8 w-64 mb-4"></div>
+        <div class="skeleton h-4 w-48"></div>
+      </div>
     </div>
-    <div class="ui segment skeleton">
-      <div class="skeleton skeleton-text-small"></div>
-      <div class="skeleton skeleton-output"></div>
+    <div class="card bg-base-100 shadow-sm">
+      <div class="card-body">
+        <div class="skeleton h-4 w-32 mb-4"></div>
+        <div class="skeleton h-64 w-full"></div>
+      </div>
     </div>
   </div>
 
-  <!-- 실제 콘텐츠 - 로딩 후 표시 -->
-  <div id="real-content" class="hide">
-    <div class="ui stackable grid">
-      <!-- 컨테이너 목록 -->
-      <div class="three wide column">
-        <h4 class="ui header"><i class="cubes icon"></i> 컨테이너 목록</h4>
-        <div class="ui relaxed divided list" id="containerList" style="max-height:70vh;overflow-y:auto;"></div>
+  <!-- 실제 콘텐츠 -->
+  <div id="real-content" class="hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- 컨테이너 목록 (사이드바) -->
+      <div class="lg:col-span-3">
+        <div class="card bg-base-100 shadow-sm border border-gray-100 sticky top-20">
+          <div class="card-body p-4">
+            <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-4">
+              <i class="fa-solid fa-cubes text-blue-500"></i>
+              컨테이너 목록
+            </h4>
+            <div id="containerList" class="space-y-2 max-h-96 overflow-y-auto">
+              <div class="flex justify-center py-4">
+                <span class="loading loading-spinner loading-sm text-primary"></span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
       <!-- 로그 영역 -->
-      <div class="thirteen wide column">
-    <!-- 메인 헤더 -->
-    <div class="ui segment">
-      <h2 class="ui header">
-        <i class="fab fa-docker fa-sm" style="color:#2185d0;"></i>
-        <div class="content">
-          Docker 컨테이너 로그
-          <div class="sub header">실시간 서버 Docker 컨테이너 로그</div>
-        </div>
-      </h2>
-      
-      <!-- 컨트롤 패널 -->
-      <div class="ui form">
-        <div class="fields">
-          <div class="eight wide field">
-            <label>컨테이너 이름</label>
-            <div class="ui action input">
-              <input type="text" id="containerName" placeholder="컨테이너 이름" value="sejong-malsami-back">
-              <button class="ui primary button" id="startLogBtn">로그 시작</button>
-              <button class="ui red button" id="stopLogBtn">중지</button>
-              <button class="ui button" id="clearLogBtn">화면 지우기</button>
+      <div class="lg:col-span-9">
+        <!-- 메인 헤더 -->
+        <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+          <div class="card-body">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+              <i class="fa-brands fa-docker text-blue-500"></i>
+              Docker 컨테이너 로그
+            </h2>
+            <p class="text-gray-500 mb-6">실시간 서버 Docker 컨테이너 로그</p>
+
+            <!-- 컨트롤 패널 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+              <div class="lg:col-span-6">
+                <label class="label">
+                  <span class="label-text font-medium">컨테이너 이름</span>
+                </label>
+                <div class="join w-full">
+                  <input type="text" id="containerName" class="input input-bordered join-item flex-1" placeholder="컨테이너 이름" value="sejong-malsami-back">
+                  <button class="btn btn-primary join-item" id="startLogBtn">
+                    <i class="fa-solid fa-play"></i>
+                    시작
+                  </button>
+                  <button class="btn btn-error join-item" id="stopLogBtn">
+                    <i class="fa-solid fa-stop"></i>
+                    중지
+                  </button>
+                  <button class="btn btn-outline join-item" id="clearLogBtn">
+                    <i class="fa-solid fa-eraser"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="lg:col-span-3">
+                <label class="label">
+                  <span class="label-text font-medium">라인 제한</span>
+                </label>
+                <select class="select select-bordered w-full" id="lineLimit">
+                  <option value="100">100줄</option>
+                  <option value="500">500줄</option>
+                  <option value="1000">1000줄</option>
+                  <option value="0">제한 없음</option>
+                </select>
+              </div>
+              <div class="lg:col-span-3">
+                <label class="label">
+                  <span class="label-text font-medium">자동 스크롤</span>
+                </label>
+                <label class="label cursor-pointer justify-start gap-2">
+                  <input type="checkbox" id="autoScroll" class="toggle toggle-primary" checked>
+                  <span class="label-text">켜기</span>
+                </label>
+              </div>
             </div>
           </div>
-          <div class="four wide field">
-            <label>라인 제한</label>
-            <select class="ui dropdown" id="lineLimit">
-              <option value="100">100줄</option>
-              <option value="500">500줄</option>
-              <option value="1000">1000줄</option>
-              <option value="0">제한 없음</option>
-            </select>
+        </div>
+
+        <!-- 로그 출력 화면 -->
+        <div class="card bg-gray-900 shadow-sm border border-gray-700 mb-6">
+          <div class="card-body p-0">
+            <div class="log-output-container overflow-auto max-h-96 p-4">
+              <pre id="logOutput" class="text-green-400 text-sm font-mono whitespace-pre-wrap"></pre>
+            </div>
           </div>
-          <div class="four wide field">
-            <label>자동 스크롤</label>
-            <div class="ui toggle checkbox auto-scroll-checkbox">
-              <input type="checkbox" id="autoScroll" checked>
-              <label>켜기</label>
+        </div>
+
+        <!-- 상태 표시 -->
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-4">
+            <div class="flex items-center justify-between">
+              <div id="logStatus" class="badge badge-info gap-2">
+                <i class="fa-solid fa-circle text-xs"></i>
+                준비됨
+              </div>
+              <div id="lineCount" class="badge badge-outline gap-2">
+                <i class="fa-solid fa-list-ol"></i>
+                라인: 0
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
-    <!-- 로그 출력 화면 -->
-    <div class="ui inverted segment log-output-container">
-      <pre id="logOutput"></pre>
-    </div>
-    
-    <!-- 상태 표시 -->
-    <div class="ui segment">
-      <div class="ui grid">
-        <div class="eight wide column">
-          <div class="ui label" id="logStatus">
-            <i class="circle icon"></i>
-            준비됨
-          </div>
-        </div>
-        <div class="eight wide column right aligned">
-          <div class="ui label" id="lineCount">
-            <i class="list ol icon"></i>
-            라인: 0
-          </div>
-        </div>
-      </div>
-    </div>
-    </div> <!-- column end -->
-    </div> <!-- grid end -->
   </div>
 </div>
 
@@ -114,37 +144,32 @@
     const logOutput = document.querySelector('#logOutput');
     const logStatusLabel = $('#logStatus');
     const lineCountLabel = $('#lineCount');
-    
-    // UI 초기화
-    $('.ui.dropdown').dropdown();
-    $('.ui.checkbox').checkbox();
-    
+
     // 컨테이너 목록 로드
     loadContainerList();
-    
+
     function loadContainerList() {
-      $('#containerList').html('<div class="ui active inline loader mini"></div>');
+      $('#containerList').html('<div class="flex justify-center py-4"><span class="loading loading-spinner loading-sm text-primary"></span></div>');
       $.get('/api/docker-log/containers', function(data) {
         const list = $('#containerList');
         list.empty();
         if (!data || data.length === 0) {
-          list.append('<div class="item">컨테이너 없음</div>');
+          list.append('<div class="text-gray-500 text-sm py-2">컨테이너 없음</div>');
           return;
         }
         data.forEach(function(c) {
-          const statusClass = c.isRunning ? 'online' : 'offline';
+          const statusClass = c.isRunning ? 'bg-green-500' : 'bg-red-500';
           const imageInfo = (c.image && c.image !== 'null') ? c.image.split(':')[0] : 'Unknown';
-          const item = $(
-            `<a class="item container-item" data-name="${c.name}">
-               <div class="status-dot ${statusClass}"></div>
-               <div class="content">
-                 <div class="header">${c.name}</div>
-                 <div class="description" style="font-size:0.8em;">
-                   <div>${c.status}</div>
-                   <div style="color:#666;font-size:0.9em;margin-top:2px;">${imageInfo}</div>
-                 </div>
-               </div>
-             </a>`);
+          const item = $(`
+            <a class="container-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" data-name="${c.name}">
+              <div class="w-3 h-3 rounded-full ${statusClass} flex-shrink-0"></div>
+              <div class="min-w-0 flex-1">
+                <div class="font-medium text-gray-800 truncate">${c.name}</div>
+                <div class="text-xs text-gray-500 truncate">${c.status}</div>
+                <div class="text-xs text-gray-400 truncate">${imageInfo}</div>
+              </div>
+            </a>
+          `);
           item.on('click', function() {
             $('#containerName').val(c.name);
             $('#startLogBtn').click();
@@ -153,13 +178,13 @@
         });
       });
     }
-    
+
     // 페이지 로딩 효과
     setTimeout(function() {
-      document.getElementById('skeleton-container').classList.add('hide');
-      document.getElementById('real-content').classList.remove('hide');
+      document.getElementById('skeleton-container').classList.add('hidden');
+      document.getElementById('real-content').classList.remove('hidden');
     }, 500);
-    
+
     // 로그 시작 버튼 클릭 이벤트
     $('#startLogBtn').on('click', function() {
       if (pollInterval) {
@@ -167,38 +192,38 @@
       }
       startLogPoll();
     });
-    
+
     // 로그 중지 버튼 클릭 이벤트
     $('#stopLogBtn').on('click', function() {
       stopLogPoll();
-      updateStatus('중지됨', 'yellow');
+      updateStatus('중지됨', 'badge-warning');
     });
-    
+
     // 로그 지우기 버튼 클릭 이벤트
     $('#clearLogBtn').on('click', function() {
       clearLogOutput();
-      updateStatus('준비됨', 'blue');
+      updateStatus('준비됨', 'badge-info');
     });
-    
+
     // 폴링 시작 함수
     function startLogPoll() {
       const containerName = $('#containerName').val() || 'sejong-malsami-back';
       const lineLimit = $('#lineLimit').val() || 100;
-      
-      updateStatus('폴링 시작', 'blue');
+
+      updateStatus('폴링 시작', 'badge-info');
       lastLogHash = null;
-      
+
       // 즉시 한 번 호출
       pollLogs(containerName, lineLimit);
-      
+
       // 이후 1초마다 폴링
       pollInterval = setInterval(function() {
         pollLogs(containerName, lineLimit);
       }, 1000);
-      
+
       console.log('폴링 시작 - 컨테이너:', containerName, ', 간격: 1초');
     }
-    
+
     // 폴링 중지 함수
     function stopLogPoll() {
       if (pollInterval) {
@@ -207,52 +232,52 @@
         console.log('폴링 중지');
       }
     }
-    
+
     // 로그 폴링 함수
     function pollLogs(containerName, lineLimit) {
       const url = `/api/docker-log/poll?containerName=${encodeURIComponent(containerName)}&lineLimit=${lineLimit}`;
-      
+
       $.ajax({
         url: url,
         type: 'GET',
         success: function(response) {
           if (response.error) {
             console.error('로그 조회 오류:', response.error);
-            updateStatus('오류: ' + response.error, 'red');
+            updateStatus('오류: ' + response.error, 'badge-error');
             appendToLog('\n=== 오류 ===\n' + response.error + '\n');
             stopLogPoll();
             return;
           }
-          
+
           if (response.logs) {
             const currentHash = hashString(response.logs);
-            
+
             // 로그가 변경되었을 때만 업데이트
             if (currentHash !== lastLogHash) {
               console.log('로그 업데이트 - 총 라인 수:', response.totalLines);
               logOutput.textContent = response.logs;
               logLineCount = response.totalLines || 0;
               updateLineCount();
-              updateStatus('폴링 중', 'green');
-              
+              updateStatus('폴링 중', 'badge-success');
+
               // 자동 스크롤
               if ($('#autoScroll').is(':checked')) {
                 const container = document.querySelector('.log-output-container');
                 container.scrollTop = container.scrollHeight;
               }
-              
+
               lastLogHash = currentHash;
             }
           }
         },
         error: function(xhr, status, error) {
           console.error('폴링 요청 실패:', error);
-          updateStatus('연결 실패', 'red');
+          updateStatus('연결 실패', 'badge-error');
           stopLogPoll();
         }
       });
     }
-    
+
     // 문자열 해시 함수 (로그 변경 감지용)
     function hashString(str) {
       let hash = 0;
@@ -264,7 +289,7 @@
       }
       return hash;
     }
-    
+
     // 로그 출력 지우기 함수
     function clearLogOutput() {
       logOutput.textContent = '';
@@ -272,8 +297,8 @@
       lastLogHash = null;
       updateLineCount();
     }
-    
-    // 로그 추가 함수 (폴링에서는 사용하지 않지만 호환성을 위해 유지)
+
+    // 로그 추가 함수
     function appendToLog(text) {
       if (!text || text.trim().length === 0) {
         return;
@@ -283,23 +308,23 @@
       const allLines = logOutput.textContent.split('\n');
       logLineCount = allLines.length - 1;
       updateLineCount();
-      
+
       if ($('#autoScroll').is(':checked')) {
         const container = document.querySelector('.log-output-container');
         container.scrollTop = container.scrollHeight;
       }
     }
-    
+
     // 상태 업데이트 함수
-    function updateStatus(text, color) {
-      logStatusLabel.html(`<i class="circle ${color} icon"></i> ${text}`);
-      logStatusLabel.removeClass('blue green yellow red');
-      logStatusLabel.addClass(color);
+    function updateStatus(text, badgeClass) {
+      logStatusLabel.removeClass('badge-info badge-success badge-warning badge-error');
+      logStatusLabel.addClass(badgeClass);
+      logStatusLabel.html(`<i class="fa-solid fa-circle text-xs"></i> ${text}`);
     }
-    
+
     // 라인 카운트 업데이트 함수
     function updateLineCount() {
-      lineCountLabel.html(`<i class="list ol icon"></i> 라인: ${logLineCount}`);
+      lineCountLabel.html(`<i class="fa-solid fa-list-ol"></i> 라인: ${logLineCount}`);
     }
   });
 </script>

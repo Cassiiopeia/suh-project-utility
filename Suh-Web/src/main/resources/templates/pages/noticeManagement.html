@@ -2,41 +2,44 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='공지사항 관리-SAECHAN-LAB')}"></head>
-<body class="notice-management-page">
+<body class="notice-management-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
   <!-- 페이지 헤더 -->
-  <div class="ui segment">
-    <h2 class="ui header">
-      <i class="bullhorn icon"></i>
-      <div class="content">
-        공지사항 관리
-        <div class="sub header">대시보드에 표시되는 공지사항을 관리합니다.</div>
-      </div>
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-solid fa-bullhorn text-blue-500"></i>
+      공지사항 관리
     </h2>
+    <p class="text-gray-500 mt-1">대시보드에 표시되는 공지사항을 관리합니다.</p>
   </div>
 
   <!-- 공지사항 관리 툴바 -->
-  <div class="ui segment">
-    <div class="ui stackable grid">
-      <div class="eight wide column">
-        <div class="ui action input fluid">
-          <input type="text" id="search-keyword" placeholder="검색어를 입력하세요...">
-          <select class="ui compact selection dropdown" id="search-type">
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body p-4">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- 검색 영역 -->
+        <div class="join w-full lg:w-auto">
+          <input type="text" id="search-keyword" class="input input-bordered join-item w-full lg:w-64" placeholder="검색어를 입력하세요...">
+          <select class="select select-bordered join-item" id="search-type">
             <option value="title">제목</option>
             <option value="content">내용</option>
           </select>
-          <button class="ui button" id="search-btn">검색</button>
-        </div>
-      </div>
-      <div class="eight wide column">
-        <div class="ui right floated buttons">
-          <button class="ui primary button" id="create-btn">
-            <i class="plus icon"></i> 새 공지사항
+          <button class="btn btn-primary join-item" id="search-btn">
+            <i class="fa-solid fa-search"></i>
+            검색
           </button>
-          <button class="ui button" id="refresh-btn">
-            <i class="sync icon"></i> 새로고침
+        </div>
+        <!-- 버튼 영역 -->
+        <div class="flex gap-2">
+          <button class="btn btn-primary" id="create-btn">
+            <i class="fa-solid fa-plus"></i>
+            새 공지사항
+          </button>
+          <button class="btn btn-outline" id="refresh-btn">
+            <i class="fa-solid fa-rotate"></i>
+            새로고침
           </button>
         </div>
       </div>
@@ -44,125 +47,191 @@
   </div>
 
   <!-- 공지사항 목록 테이블 -->
-  <div class="ui segment">
-    <div id="notice-table" class="modal-table-container"></div>
-    <div id="loading-indicator" class="ui active centered inline loader" style="margin-top: 2rem;"></div>
-    <div id="error-message" class="ui negative message hide">
-      <div class="header">데이터 로드 실패</div>
-      <p>공지사항을 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</p>
+  <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card-body p-4">
+      <div id="notice-table" class="modal-table-container"></div>
+      <div id="loading-indicator" class="flex justify-center py-8">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+      <div id="error-message" class="alert alert-error hidden">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div>
+          <h3 class="font-bold">데이터 로드 실패</h3>
+          <span>공지사항을 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- 공지사항 등록/수정 모달 -->
-  <div class="ui small modal" id="notice-modal">
-    <i class="close icon"></i>
-    <div class="header" id="modal-title">공지사항 등록</div>
-    <div class="scrolling content">
-      <form class="ui form" id="notice-form">
-        <input type="hidden" id="notice-id">
-        <div class="field">
-          <label>제목</label>
-          <input type="text" id="notice-title" placeholder="제목을 입력하세요">
-        </div>
-        <div class="field">
-          <label>내용</label>
-          <textarea id="notice-content" rows="10" placeholder="내용을 입력하세요"></textarea>
-        </div>
-        <div class="two fields">
-          <div class="field">
-            <label>게시 시작일</label>
-            <input type="datetime-local" id="notice-start-date">
-          </div>
-          <div class="field">
-            <label>게시 종료일</label>
-            <input type="datetime-local" id="notice-end-date">
-          </div>
-        </div>
-        <div class="two fields">
-          <div class="field">
-            <div class="ui checkbox">
-              <input type="checkbox" id="notice-important">
-              <label>중요 공지</label>
-            </div>
-          </div>
-          <div class="field">
-            <div class="ui checkbox">
-              <input type="checkbox" id="notice-active" checked>
-              <label>활성화</label>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label>작성자</label>
-          <input type="text" id="notice-author" placeholder="작성자를 입력하세요">
-        </div>
-      </form>
-    </div>
-    <div class="actions">
-      <div class="ui deny button">취소</div>
-      <div class="ui positive button" id="save-btn">저장</div>
-    </div>
-  </div>
-
-  <!-- 공지사항 상세 모달 -->
-  <div class="ui small modal" id="notice-detail-modal">
-    <i class="close icon"></i>
-    <div class="header" id="detail-title"></div>
-    <div class="scrolling content">
-      <div class="ui segment">
-        <div class="ui two column stackable grid">
-          <div class="column">
-            <p><i class="user icon"></i> <strong>작성자:</strong> <span id="detail-author"></span></p>
-            <p><i class="calendar alternate outline icon"></i> <strong>작성일:</strong> <span id="detail-created-date"></span></p>
-          </div>
-          <div class="column">
-            <p><i class="eye icon"></i> <strong>조회수:</strong> <span id="detail-view-count"></span></p>
-            <p><i class="calendar icon"></i> <strong>게시 기간:</strong> <span id="detail-period"></span></p>
-            <p><i class="check circle icon"></i> <strong>상태:</strong> <span id="detail-status"></span></p>
-          </div>
-        </div>
-      </div>
-      <div class="ui divider"></div>
-      <div class="ui basic segment" id="detail-content"></div>
-      
-      <!-- 댓글 섹션 추가 -->
-      <div class="ui divider"></div>
-      <h4 class="ui header"><i class="comments icon"></i>댓글</h4>
-      
-      <!-- 댓글 목록 -->
-      <div class="ui comments" id="comment-list">
-        <div id="comments-loading" class="ui active centered inline loader"></div>
-        <div id="no-comments-message" class="ui info message hide">
-          <p>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
-        </div>
-      </div>
-      
-      <!-- 댓글 작성 폼 -->
-      <form class="ui reply form" id="comment-form">
-        <div class="field">
-          <input type="text" id="comment-author" placeholder="이름을 입력하세요">
-        </div>
-        <div class="field">
-          <textarea id="comment-content" placeholder="댓글을 입력하세요"></textarea>
-        </div>
-        <button type="button" id="comment-submit" class="ui blue labeled submit icon button">
-          <i class="icon edit"></i> 댓글 작성
+  <dialog class="modal" id="notice-modal">
+    <div class="modal-box max-w-2xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </form>
+      <h3 class="font-bold text-lg mb-4" id="modal-title">공지사항 등록</h3>
+      <form id="notice-form" class="space-y-4">
+        <input type="hidden" id="notice-id">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">제목</span>
+          </label>
+          <input type="text" id="notice-title" class="input input-bordered w-full" placeholder="제목을 입력하세요">
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">내용</span>
+          </label>
+          <textarea id="notice-content" class="textarea textarea-bordered h-40" placeholder="내용을 입력하세요"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">게시 시작일</span>
+            </label>
+            <input type="datetime-local" id="notice-start-date" class="input input-bordered w-full">
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">게시 종료일</span>
+            </label>
+            <input type="datetime-local" id="notice-end-date" class="input input-bordered w-full">
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-6">
+          <label class="label cursor-pointer gap-2">
+            <input type="checkbox" id="notice-important" class="checkbox checkbox-primary">
+            <span class="label-text">중요 공지</span>
+          </label>
+          <label class="label cursor-pointer gap-2">
+            <input type="checkbox" id="notice-active" class="checkbox checkbox-primary" checked>
+            <span class="label-text">활성화</span>
+          </label>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">작성자</span>
+          </label>
+          <input type="text" id="notice-author" class="input input-bordered w-full" placeholder="작성자를 입력하세요">
+        </div>
+      </form>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost">취소</button>
+        </form>
+        <button class="btn btn-primary" id="save-btn">저장</button>
+      </div>
     </div>
-    <div class="actions">
-      <div class="ui blue button" id="edit-btn">
-        <i class="edit icon"></i> 수정
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- 공지사항 상세 모달 -->
+  <dialog class="modal" id="notice-detail-modal">
+    <div class="modal-box max-w-3xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <h3 class="font-bold text-xl mb-4" id="detail-title"></h3>
+
+      <!-- 메타 정보 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-lg p-4 mb-4">
+        <div class="space-y-2">
+          <p class="flex items-center gap-2 text-gray-600">
+            <i class="fa-solid fa-user text-blue-500"></i>
+            <strong>작성자:</strong>
+            <span id="detail-author"></span>
+          </p>
+          <p class="flex items-center gap-2 text-gray-600">
+            <i class="fa-solid fa-calendar text-blue-500"></i>
+            <strong>작성일:</strong>
+            <span id="detail-created-date"></span>
+          </p>
+        </div>
+        <div class="space-y-2">
+          <p class="flex items-center gap-2 text-gray-600">
+            <i class="fa-solid fa-eye text-blue-500"></i>
+            <strong>조회수:</strong>
+            <span id="detail-view-count"></span>
+          </p>
+          <p class="flex items-center gap-2 text-gray-600">
+            <i class="fa-solid fa-clock text-blue-500"></i>
+            <strong>게시 기간:</strong>
+            <span id="detail-period"></span>
+          </p>
+          <p class="flex items-center gap-2 text-gray-600">
+            <i class="fa-solid fa-circle-check text-blue-500"></i>
+            <strong>상태:</strong>
+            <span id="detail-status"></span>
+          </p>
+        </div>
       </div>
-      <div class="ui red button" id="delete-btn">
-        <i class="trash icon"></i> 삭제
+
+      <div class="divider"></div>
+
+      <!-- 내용 -->
+      <div class="prose max-w-none" id="detail-content"></div>
+
+      <div class="divider"></div>
+
+      <!-- 댓글 섹션 -->
+      <h4 class="font-bold text-lg flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-comments text-blue-500"></i>
+        댓글
+      </h4>
+
+      <!-- 댓글 목록 -->
+      <div id="comment-list" class="space-y-4 mb-6">
+        <div id="comments-loading" class="flex justify-center py-4">
+          <span class="loading loading-spinner loading-md text-primary"></span>
+        </div>
+        <div id="no-comments-message" class="alert alert-info hidden">
+          <i class="fa-solid fa-info-circle"></i>
+          <span>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</span>
+        </div>
       </div>
-      <div class="ui button" id="toggle-active-btn">
-        <i class="power off icon"></i> 활성화/비활성화
+
+      <!-- 댓글 작성 폼 -->
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="form-control mb-3">
+          <input type="text" id="comment-author" class="input input-bordered input-sm w-full max-w-xs" placeholder="이름을 입력하세요">
+        </div>
+        <div class="form-control mb-3">
+          <textarea id="comment-content" class="textarea textarea-bordered" placeholder="댓글을 입력하세요"></textarea>
+        </div>
+        <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-pen"></i>
+          댓글 작성
+        </button>
       </div>
-      <div class="ui deny button">닫기</div>
+
+      <div class="modal-action">
+        <button class="btn btn-primary" id="edit-btn">
+          <i class="fa-solid fa-pen-to-square"></i>
+          수정
+        </button>
+        <button class="btn btn-error" id="delete-btn">
+          <i class="fa-solid fa-trash"></i>
+          삭제
+        </button>
+        <button class="btn btn-outline" id="toggle-active-btn">
+          <i class="fa-solid fa-power-off"></i>
+          활성화/비활성화
+        </button>
+        <form method="dialog">
+          <button class="btn btn-ghost">닫기</button>
+        </form>
+      </div>
     </div>
-  </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -173,10 +242,6 @@
 
 <script>
   $(document).ready(function() {
-    // Semantic UI 초기화
-    $('.ui.dropdown').dropdown();
-    $('.ui.checkbox').checkbox();
-    
     // Tabulator 테이블 초기화
     const noticeTable = new Tabulator("#notice-table", {
       height: "400px",
@@ -187,8 +252,8 @@
         {title: "제목", field: "title", width: 250, formatter: function(cell) {
           const value = cell.getValue();
           const isImportant = cell.getRow().getData().isImportant;
-          return isImportant ? 
-            `<i class="red announcement icon"></i> ${value}` : 
+          return isImportant ?
+            `<i class="fa-solid fa-bell text-red-500 mr-1"></i> ${value}` :
             value;
         }},
         {title: "중요", field: "isImportant", formatter: "tickCross", width: 80},
@@ -207,12 +272,15 @@
           return new Date(cell.getValue()).toLocaleString();
         }, width: 150},
         {title: "관리", formatter: function() {
-          return '<div class="ui mini buttons"><button class="ui mini blue button view-btn"><i class="eye icon"></i></button><button class="ui mini green button edit-row-btn"><i class="edit icon"></i></button><button class="ui mini red button delete-row-btn"><i class="trash icon"></i></button></div>';
-        }, width: 120, headerSort: false, hozAlign: "center", cellClick: function(e, cell) {
-          // 버튼 클릭 이벤트 처리
+          return `<div class="flex gap-1">
+            <button class="btn btn-xs btn-info view-btn"><i class="fa-solid fa-eye"></i></button>
+            <button class="btn btn-xs btn-success edit-row-btn"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn btn-xs btn-error delete-row-btn"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+        }, width: 130, headerSort: false, hozAlign: "center", cellClick: function(e, cell) {
           const rowData = cell.getRow().getData();
           const element = e.target;
-          
+
           if ($(element).hasClass('view-btn') || $(element).parent().hasClass('view-btn')) {
             showNoticeDetail(rowData);
           } else if ($(element).hasClass('edit-row-btn') || $(element).parent().hasClass('edit-row-btn')) {
@@ -222,63 +290,60 @@
               deleteNotice(rowData.noticeId);
             }
           }
-          
-          e.stopPropagation(); // 행 클릭 이벤트 방지
+
+          e.stopPropagation();
         }}
       ],
       rowClick: function(e, row) {
         showNoticeDetail(row.getData());
       }
     });
-    
+
     // 공지사항 목록 로드
     loadNotices();
-    
+
     // 새로고침 버튼 클릭 이벤트
     $('#refresh-btn').click(function() {
       loadNotices();
     });
-    
+
     // 검색 버튼 클릭 이벤트
     $('#search-btn').click(function() {
       const keyword = $('#search-keyword').val();
       const type = $('#search-type').val();
-      
+
       if (keyword) {
         searchNotices(keyword, type);
       } else {
         loadNotices();
       }
     });
-    
+
     // 검색 입력 필드에서 엔터 키 이벤트
     $('#search-keyword').keypress(function(e) {
-      if (e.which === 13) { // 엔터 키
+      if (e.which === 13) {
         $('#search-btn').click();
       }
     });
-    
+
     // 새 공지사항 버튼 클릭 이벤트
     $('#create-btn').click(function() {
       resetNoticeForm();
       $('#modal-title').text('공지사항 등록');
-      $('#notice-modal').modal({
-        centered: false,
-        closable: true
-      }).modal('show');
+      document.getElementById('notice-modal').showModal();
     });
-    
+
     // 저장 버튼 클릭 이벤트
     $('#save-btn').click(function() {
       saveNotice();
     });
-    
+
     // 수정 버튼 클릭 이벤트
     $('#edit-btn').click(function() {
       const noticeId = $('#detail-title').data('id');
       editNotice(noticeId);
     });
-    
+
     // 삭제 버튼 클릭 이벤트
     $('#delete-btn').click(function() {
       const noticeId = $('#detail-title').data('id');
@@ -286,20 +351,18 @@
         deleteNotice(noticeId);
       }
     });
-    
+
     // 활성화/비활성화 버튼 클릭 이벤트
     $('#toggle-active-btn').click(function() {
       const noticeId = $('#detail-title').data('id');
       toggleNoticeActive(noticeId);
     });
-    
+
     // 공지사항 목록 로드 함수
     function loadNotices() {
-      // 로딩 표시
       $('#loading-indicator').show();
-      $('#error-message').addClass('hide');
-      
-      // 공통 함수 사용
+      $('#error-message').addClass('hidden');
+
       sendFormRequest(
         '/api/notice/get/all',
         null,
@@ -308,25 +371,23 @@
           if (response) {
             noticeTable.setData(response.notices);
           } else {
-            $('#error-message').removeClass('hide');
+            $('#error-message').removeClass('hidden');
             console.error('공지사항 로드 실패:', response);
           }
         },
         function(xhr, status, error) {
           $('#loading-indicator').hide();
-          $('#error-message').removeClass('hide');
+          $('#error-message').removeClass('hidden');
           console.error('공지사항 로드 오류:', error);
         }
       );
     }
-    
+
     // 공지사항 검색 함수
     function searchNotices(keyword, type) {
-      // 로딩 표시
       $('#loading-indicator').show();
-      $('#error-message').addClass('hide');
-      
-      // 공통 함수 사용
+      $('#error-message').addClass('hidden');
+
       sendFormRequest(
         '/api/notice/search',
         {
@@ -338,18 +399,18 @@
           if (response) {
             noticeTable.setData(response.notices);
           } else {
-            $('#error-message').removeClass('hide');
+            $('#error-message').removeClass('hidden');
             console.error('검색 실패:', response);
           }
         },
         function(xhr, status, error) {
           $('#loading-indicator').hide();
-          $('#error-message').removeClass('hide');
+          $('#error-message').removeClass('hidden');
           console.error('검색 오류:', error);
         }
       );
     }
-    
+
     // 공지사항 저장 함수
     function saveNotice() {
       const noticeId = $('#notice-id').val();
@@ -360,13 +421,12 @@
       const isImportant = $('#notice-important').prop('checked');
       const isActive = $('#notice-active').prop('checked');
       const author = $('#notice-author').val();
-      
+
       if (!title || !content) {
         alert('제목과 내용을 입력해주세요.');
         return;
       }
-      
-      // 공통 함수 사용
+
       sendFormRequest(
         noticeId ? '/api/notice/update' : '/api/notice/create',
         {
@@ -382,7 +442,7 @@
         function(response) {
           if (response) {
             alert(response.message);
-            $('#notice-modal').modal('hide');
+            document.getElementById('notice-modal').close();
             loadNotices();
           } else {
             alert('저장 실패: ' + (response ? response.message : '알 수 없는 오류'));
@@ -393,76 +453,69 @@
         }
       );
     }
-    
+
     // 공지사항 상세 정보 표시 함수
     function showNoticeDetail(notice) {
       $('#detail-title').text(notice.title).data('id', notice.noticeId);
       $('#detail-author').text(notice.author || '익명');
       $('#detail-view-count').text(notice.viewCount || 0);
       $('#detail-created-date').text(new Date(notice.createdDate).toLocaleString());
-      
+
       const startDate = notice.startDate ? new Date(notice.startDate).toLocaleString() : '-';
       const endDate = notice.endDate ? new Date(notice.endDate).toLocaleString() : '무기한';
       $('#detail-period').text(startDate + ' ~ ' + endDate);
-      
-      const statusClass = notice.isActive ? 'green' : 'red';
+
+      const statusClass = notice.isActive ? 'badge-success' : 'badge-error';
       const statusText = notice.isActive ? '활성화' : '비활성화';
-      $('#detail-status').html(`<span class="ui ${statusClass} label">${statusText}</span>`);
-      
+      $('#detail-status').html(`<span class="badge ${statusClass}">${statusText}</span>`);
+
       $('#detail-content').html(notice.content.replace(/\n/g, '<br>'));
-      
+
       // 버튼 상태 업데이트
-      $('#toggle-active-btn').html(`<i class="power off icon"></i> ${notice.isActive ? '비활성화' : '활성화'}`);
-      
+      $('#toggle-active-btn').html(`<i class="fa-solid fa-power-off"></i> ${notice.isActive ? '비활성화' : '활성화'}`);
+
       // 댓글 목록 불러오기
       loadComments(notice.noticeId);
-      
+
       // 댓글 폼 초기화
       $('#comment-author').val('');
       $('#comment-content').val('');
-      
-      $('#notice-detail-modal').modal({
-        centered: false,
-        closable: true
-      }).modal('show');
+
+      document.getElementById('notice-detail-modal').showModal();
     }
-    
+
     // 공지사항 수정 함수
     function editNotice(noticeId) {
-      // 공통 함수 사용
       sendFormRequest(
         '/api/notice/get/detail',
         { noticeId: noticeId },
         function(response) {
           if (response) {
             const notice = response;
-            
+
             $('#notice-id').val(notice.noticeId);
             $('#notice-title').val(notice.title);
             $('#notice-content').val(notice.content);
-            
+
             if (notice.startDate) {
               $('#notice-start-date').val(formatDateTimeForInput(notice.startDate));
             } else {
               $('#notice-start-date').val('');
             }
-            
+
             if (notice.endDate) {
               $('#notice-end-date').val(formatDateTimeForInput(notice.endDate));
             } else {
               $('#notice-end-date').val('');
             }
-            
+
             $('#notice-important').prop('checked', notice.isImportant);
             $('#notice-active').prop('checked', notice.isActive);
             $('#notice-author').val(notice.author);
-            
+
             $('#modal-title').text('공지사항 수정');
-            $('#notice-detail-modal').modal('hide');
-            $('#notice-modal').modal({
-              centered: false,
-              closable: true
-            }).modal('show');
+            document.getElementById('notice-detail-modal').close();
+            document.getElementById('notice-modal').showModal();
           } else {
             alert('공지사항 정보를 불러올 수 없습니다.');
           }
@@ -472,17 +525,16 @@
         }
       );
     }
-    
+
     // 공지사항 삭제 함수
     function deleteNotice(noticeId) {
-      // 공통 함수 사용
       sendFormRequest(
         '/api/notice/delete',
         { noticeId: noticeId },
         function(response) {
           if (response) {
             alert(response.message);
-            $('#notice-detail-modal').modal('hide');
+            document.getElementById('notice-detail-modal').close();
             loadNotices();
           } else {
             alert('삭제 실패: ' + (response ? response.message : '알 수 없는 오류'));
@@ -493,17 +545,16 @@
         }
       );
     }
-    
+
     // 공지사항 활성화/비활성화 함수
     function toggleNoticeActive(noticeId) {
-      // 공통 함수 사용
       sendFormRequest(
         '/api/notice/toggle-active',
         { noticeId: noticeId },
         function(response) {
           if (response) {
             alert(response.message);
-            $('#notice-detail-modal').modal('hide');
+            document.getElementById('notice-detail-modal').close();
             loadNotices();
           } else {
             alert('상태 변경 실패: ' + (response ? response.message : '알 수 없는 오류'));
@@ -514,7 +565,7 @@
         }
       );
     }
-    
+
     // 공지사항 폼 초기화 함수
     function resetNoticeForm() {
       $('#notice-id').val('');
@@ -526,34 +577,31 @@
       $('#notice-active').prop('checked', true);
       $('#notice-author').val('');
     }
-    
+
     // 날짜 포맷 변환 함수
     function formatDateTimeForInput(dateTimeStr) {
       const date = new Date(dateTimeStr);
       return date.toISOString().slice(0, 16);
     }
-    
+
     // 댓글 목록 로드 함수
     function loadComments(noticeId) {
       $('#comments-loading').show();
-      $('#comment-list .comment').remove();
-      $('#no-comments-message').addClass('hide');
-      
-      // 댓글 로드 요청
+      $('#comment-list .comment-item').remove();
+      $('#no-comments-message').addClass('hidden');
+
       sendFormRequest(
         '/api/notice/comment/list',
         { noticeId: noticeId },
         function(response) {
           $('#comments-loading').hide();
-          
+
           if (response && response.noticeCommentDtos && response.noticeCommentDtos.length > 0) {
-            // 댓글 목록 표시
             response.noticeCommentDtos.forEach(function(comment) {
               const commentHtml = createCommentHtml(comment);
               $('#comment-list').append(commentHtml);
             });
-            
-            // 댓글 삭제 버튼 이벤트 연결
+
             $('.delete-comment-btn').click(function() {
               const commentId = $(this).data('id');
               if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
@@ -561,59 +609,57 @@
               }
             });
           } else {
-            // 댓글이 없는 경우
-            $('#no-comments-message').removeClass('hide');
+            $('#no-comments-message').removeClass('hidden');
           }
         },
         function(xhr, status, error) {
           $('#comments-loading').hide();
           console.error('댓글 로드 오류:', error);
-          $('#no-comments-message').removeClass('hide')
-            .addClass('negative')
-            .html('<div class="header">댓글 로드 실패</div><p>댓글을 불러오는 중 오류가 발생했습니다.</p>');
+          $('#no-comments-message').removeClass('hidden').addClass('alert-error')
+            .html('<i class="fa-solid fa-circle-exclamation"></i><span>댓글을 불러오는 중 오류가 발생했습니다.</span>');
         }
       );
     }
-    
+
     // 댓글 HTML 생성 함수
     function createCommentHtml(comment) {
       const date = new Date(comment.createdDate).toLocaleString();
-      const deleteButton = `<button class="ui mini red right floated button delete-comment-btn" data-id="${comment.noticeCommentId}">
-        <i class="trash icon"></i> 삭제
-      </button>`;
-      
-          return `
-      <div class="comment modern-comment">
-        <div class="avatar">
-          <i class="big user circle icon"></i>
-        </div>
-        <div class="content">
-          <div class="comment-header">
-            <span class="author">${comment.author}</span>
-            ${comment.anonymizedIp ? `<span class="metadata">(${comment.anonymizedIp})</span>` : ''}
-            <span class="metadata">${date}</span>
+      return `
+        <div class="comment-item bg-white border border-gray-200 rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-user text-blue-500"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-gray-800">${comment.author}</span>
+                ${comment.anonymizedIp ? `<span class="text-xs text-gray-400">(${comment.anonymizedIp})</span>` : ''}
+                <span class="text-xs text-gray-400">${date}</span>
+              </div>
+              <p class="text-gray-700">${comment.content}</p>
+              <div class="mt-2">
+                <button class="btn btn-xs btn-error delete-comment-btn" data-id="${comment.noticeCommentId}">
+                  <i class="fa-solid fa-trash"></i>
+                  삭제
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="text">${comment.content}</div>
-          <div class="actions">
-            ${deleteButton}
-          </div>
         </div>
-      </div>
-    `;
+      `;
     }
-    
+
     // 댓글 작성 이벤트
     $('#comment-submit').click(function() {
       const noticeId = $('#detail-title').data('id');
       const authorName = $('#comment-author').val() || '익명';
       const content = $('#comment-content').val();
-      
+
       if (!content) {
         alert('댓글 내용을 입력해주세요.');
         return;
       }
-      
-      // 댓글 등록 요청
+
       sendFormRequest(
         '/api/notice/comment/create',
         {
@@ -623,9 +669,8 @@
         },
         function(response) {
           if (response) {
-            // 댓글 작성 성공
             $('#comment-content').val('');
-            loadComments(noticeId); // 댓글 목록 새로고침
+            loadComments(noticeId);
           } else {
             alert('댓글 등록 실패');
           }
@@ -635,18 +680,17 @@
         }
       );
     });
-    
+
     // 댓글 삭제 함수
     function deleteComment(commentId) {
       const noticeId = $('#detail-title').data('id');
-      
-      // 댓글 삭제 요청
+
       sendFormRequest(
         '/api/notice/comment/delete',
-        { commentId: commentId }, // 댓글 ID를 commentId 파라미터로 전달
+        { commentId: commentId },
         function(response) {
           if (response) {
-            loadComments(noticeId); // 댓글 목록 새로고침
+            loadComments(noticeId);
           } else {
             alert('댓글 삭제 실패');
           }
@@ -659,4 +703,4 @@
   });
 </script>
 </body>
-</html> 
+</html>
