@@ -6,16 +6,19 @@
   <meta name="_csrf_header" th:content="${_csrf.headerName}" />
   <title th:text="${title}">S.LAB</title>
 
-  <!-- CDN Semantic UI CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+  <!-- Tailwind CSS + DaisyUI -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
 
   <!-- Font Awesome Icons (브랜드 아이콘 포함) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+  <!-- Pretendard 폰트 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css">
+
   <!-- 커스텀 CSS -->
   <link rel="stylesheet" href="/css/common.css">
-  <link rel="stylesheet" th:href="@{/css/semantic-custom-utilities.css}">
-  
+
   <!-- 스터디 모듈 관련 CSS (마크다운 에디터 등) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown-light.min.css">
@@ -27,57 +30,80 @@
   <!-- 스크립트 파일 포함 -->
   <script th:src="@{/js/jquery.min.js}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script th:src="@{/js/semantic.min.js}"></script>
   <script th:src="@{/js/common.js}"></script>
+
+  <style>
+    /* Tailwind와 함께 사용할 기본 스타일 */
+    html, body, button, input, select, textarea {
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;
+    }
+  </style>
 </head>
 
 <div th:fragment="header">
-  <div class="ui fixed menu">
-    <div class="ui container"
-         style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-      <a href="/dashboard" class="header item main-logo"
-         style="display: flex; height: 30px;">
-        <img src="/images/logo_no_text.png" alt="로고" class="ui" style="height: 30px">
-        <span class="" style="margin-left: 5px; font-weight: bold; color: black;">SAECHAN LAB</span>
+  <!-- DaisyUI Navbar - 파란색 테마 -->
+  <div class="navbar bg-white shadow-md fixed top-0 left-0 right-0 z-50 px-4 lg:px-8">
+    <div class="navbar-start">
+      <a href="/dashboard" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <img src="/images/logo_no_text.png" alt="로고" class="h-8 w-8">
+        <span class="text-lg font-bold text-gray-800">SAECHAN LAB</span>
       </a>
-      <div class="right menu">
-        <div class="ui dropdown item" style="margin-left: auto;">
-          <i class="bars icon large"></i>
-          <div class="menu">
-            <div class="item disabled">메뉴</div>
-            <a href="/dashboard" class="item">
-              <i class="clipboard list icon"></i> 대시보드
-            </a>
-            <a href="/issue-helper" class="item">
-              <i class="github icon"></i> 깃헙 이슈 도우미
-            </a>
-            <a href="/translator" class="item">
-              <i class="language icon"></i> 커스텀 AI 번역기
-            </a>
-            <a href="/notice-management" class="item">
-              <i class="bullhorn icon"></i> 공지사항 관리
-            </a>
-            <a href="/docker-logs" class="item">
-              <i class="terminal icon"></i> 컨테이너 로그
-            </a>
-            <a href="/study-management" class="item">
-              <i class="book icon"></i> 스터디 플랜
-            </a>
-            <a href="/grass" class="item">
-              <i class="leaf icon"></i> Grass Planter
-            </a>
-            <a href="/ai-server" class="item">
-              <i class="server icon"></i> AI 서버 관리
-            </a>
-            <div class="divider"></div>
-            <a href="/logout" class="item">
-              <i class="sign-out alternate icon"></i> 로그아웃
-            </a>
+    </div>
+
+    <div class="navbar-end">
+      <!-- Desktop Menu -->
+      <div class="hidden lg:flex items-center gap-1">
+        <a href="/dashboard" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+          <i class="fa-solid fa-clipboard-list"></i>
+          대시보드
+        </a>
+        <a href="/issue-helper" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+          <i class="fa-brands fa-github"></i>
+          깃헙 이슈
+        </a>
+        <a href="/translator" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+          <i class="fa-solid fa-language"></i>
+          번역기
+        </a>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+            <i class="fa-solid fa-ellipsis"></i>
+            더보기
+            <i class="fa-solid fa-chevron-down text-xs"></i>
           </div>
+          <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
+            <li><a href="/notice-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
+            <li><a href="/docker-logs" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
+            <li><a href="/study-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-book w-5"></i>스터디 플랜</a></li>
+            <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
+            <li><a href="/ai-server" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
+            <li class="divider my-1"></li>
+            <li><a href="/logout" class="text-red-500 hover:bg-red-50"><i class="fa-solid fa-right-from-bracket w-5"></i>로그아웃</a></li>
+          </ul>
         </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="dropdown dropdown-end lg:hidden">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <i class="fa-solid fa-bars text-xl text-gray-700"></i>
+        </div>
+        <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-64 p-2 mt-2 border border-gray-100">
+          <li class="menu-title text-gray-500 text-xs font-semibold px-4 py-2">메뉴</li>
+          <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
+          <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈 도우미</a></li>
+          <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>커스텀 AI 번역기</a></li>
+          <li><a href="/notice-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
+          <li><a href="/docker-logs" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
+          <li><a href="/study-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-book w-5"></i>스터디 플랜</a></li>
+          <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
+          <li><a href="/ai-server" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
+          <li class="divider my-1"></li>
+          <li><a href="/logout" class="text-red-500 hover:bg-red-50"><i class="fa-solid fa-right-from-bracket w-5"></i>로그아웃</a></li>
+        </ul>
       </div>
     </div>
   </div>
   <!-- 헤더 아래 여백 -->
-  <div class="ui container" style="margin-top: 5em;"></div>
+  <div class="h-16"></div>
 </div>
