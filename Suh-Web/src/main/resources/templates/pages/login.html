@@ -15,6 +15,14 @@
         <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="w-48 mx-auto">
       </div>
 
+      <!-- 개발자 프로필 배지 -->
+      <div class="text-center mb-4">
+        <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity">
+          <i class="fa-solid fa-user-circle"></i>
+          프로필 보기
+        </a>
+      </div>
+
       <!-- 로그인 폼 -->
       <form th:action="@{/login}" method="post" id="loginForm" class="space-y-4">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
@@ -27,7 +35,7 @@
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input type="text" name="username" placeholder="아이디를 입력하세요"
-                   class="input input-bordered w-full pl-5 />
+                   class="input input-bordered w-full pl-5" />
           </div>
         </div>
 
@@ -58,14 +66,6 @@
           <span></span>
         </div>
       </form>
-
-      <!-- 개발자 프로필 배지 버튼 -->
-      <div class="text-center mt-6">
-        <a href="/profile" class="badge badge-primary badge-lg gap-2 px-4 py-3 hover:bg-blue-700 transition-colors">
-          <i class="fa-solid fa-user-circle"></i>
-          개발자 프로필 보기
-        </a>
-      </div>
     </div>
   </div>
 </main>
