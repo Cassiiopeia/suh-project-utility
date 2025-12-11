@@ -23,4 +23,7 @@ public class AiServerRequest {
     // 스트림 모드 사용 여부 (기본값: false)
     private Boolean stream;
 
+    // 모델 다운로드/삭제용 모델명
+    private String modelName;
+
 }

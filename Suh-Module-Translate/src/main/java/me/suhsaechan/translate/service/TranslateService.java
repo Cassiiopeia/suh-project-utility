@@ -60,21 +60,16 @@ public class TranslateService {
         driver = webDriverManager.getDriver();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5)); // 타임아웃 시간 줄임 (10초→5초)
 
-        // ===================== 수정된 부분 시작 =====================
         // 파파고 페이지 로드 - URL 파라미터로 언어 설정을 직접 전달
         String sourceCode = request.getSourceLang() == TranslatorLanguage.AUTO ? "auto" : request.getSourceLang().name().toLowerCase().replace("_", "-");
         String targetCode = request.getTargetLang().name().toLowerCase().replace("_", "-");
         String papagoUrl = "https://papago.naver.com/?sk=" + sourceCode + "&tk=" + targetCode;
         log.info("파파고 URL 접속: {}", papagoUrl);
         driver.get(papagoUrl);
-        // ===================== 수정된 부분 끝 =====================
 
         // 페이지 로드 완료 대기
         wait.until(webDriver -> ((JavascriptExecutor) webDriver)
             .executeScript("return document.readyState").equals("complete"));
-
-        // URL 파라미터로 언어 설정을 전달했으므로 UI 선택 과정 생략
-        // setLanguages(driver, wait, request.getSourceLang(), request.getTargetLang());
 
         // 번역할 텍스트 입력 및 번역 요청
         log.info("번역할 텍스트 입력: {}", text.substring(0, Math.min(text.length(), 50)) + (text.length() > 50 ? "..." : ""));
@@ -172,44 +167,6 @@ public class TranslateService {
           webDriverManager.quitDriver();
         }
       }
-    }
-  }
-
-  /**
-   * 파파고 언어 선택 설정 (URL 파라미터 방식으로 변경되어 사용되지 않음)
-   */
-  private void setLanguages(WebDriver driver, WebDriverWait wait,
-      TranslatorLanguage sourceLang, TranslatorLanguage targetLang) {
-    try {
-      // 소스 언어 설정 (드롭다운)
-      if (sourceLang != TranslatorLanguage.AUTO) {
-        WebElement sourceDropdown = wait.until(
-            ExpectedConditions.elementToBeClickable(By.id("ddSourceLanguageButton")));
-        sourceDropdown.click();
-
-        String languageSelector = getLanguageSelector(sourceLang);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(languageSelector))).click();
-      }
-
-      // 타겟 언어 설정 (드롭다운)
-      WebElement targetDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.id("ddTargetLanguageButton")));
-      targetDropdown.click();
-
-      String languageSelector = getLanguageSelector(targetLang);
-      wait.until(ExpectedConditions.elementToBeClickable(By.xpath(languageSelector))).click();
-
-      // 언어 변경 후 UI가 안정화될 때까지 대기 (sleep 대신 wait 사용)
-      wait.until(webDriver -> {
-        try {
-          // 드롭다운 메뉴가 닫혔는지 확인
-          return driver.findElements(By.cssSelector(".dropdown_menu___XsI_h.active___3VPGL")).isEmpty();
-        } catch (Exception e) {
-          return false;
-        }
-      });
-
-    } catch (Exception e) {
-      log.warn("언어 선택 설정 중 오류 발생: {}", e.getMessage());
     }
   }
 

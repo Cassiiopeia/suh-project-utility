@@ -85,6 +85,7 @@ Thumbs.db
 
 ## Claude
 ./.claude/settings.local.json
+/.claude/settings.local.json
 
 # ====================================================================
 # SUH-DEVOPS-TEMPLATE: Auto-added entries

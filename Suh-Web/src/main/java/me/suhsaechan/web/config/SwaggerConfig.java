@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Profile;
     ),
     servers = {
         @Server(url = "https://lab.suhsaechan.kr", description = "메인 서버"),
-        @Server(url = "http://localhost:8080", description = "로컬 서버") // 포트 수정
+        @Server(url = "http://localhost:8080", description = "로컬 서버")
     }
 )
 public class SwaggerConfig {

@@ -32,6 +32,8 @@ public class NoticeResponse {
     private Boolean isImportant;
     private Boolean isActive;
     private Long viewCount;
+
+    private SuhProjectUtilityNotice suhProjectUtilityNotice;
     
     // 공지사항 목록
     @Builder.Default
