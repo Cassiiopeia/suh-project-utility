@@ -1,11 +1,49 @@
 {
   "metadata": {
-    "lastUpdated": "2025-11-09T17:15:39Z",
-    "currentVersion": "1.3.4",
+    "lastUpdated": "2025-12-12T10:04:21Z",
+    "currentVersion": "1.4.3",
     "projectType": "spring",
-    "totalReleases": 15
+    "totalReleases": 16
   },
   "releases": [
+    {
+      "version": "1.4.3",
+      "project_type": "spring",
+      "date": "2025-12-12",
+      "pr_number": 104,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 프로필 페이지 추가\n  * AI 서버 모델 관리 개선 (다운로드 진행 상황 표시, 모델 목록 관리)\n  * 토스트 알림 시스템 추가\n\n* **UI/UX 개선**\n  * 헤더 및 푸터 UI 재설계 (Tailwind CSS 기반)\n  * 공개 끝점에 프로필 페이지 추가\n\n* **문서**\n  * 개발 워크플로우 및 명령어 가이드 추가\n  * QA 요청 이슈 템플릿 추가\n\n* **Chores**\n  * GitHub 워크플로우 자동화 개선 (버전 관리, QA 이슈 자동 생성)",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "프로필 페이지 추가",
+            "AI 서버 모델 관리 개선 (다운로드 진행 상황 표시, 모델 목록 관리)",
+            "토스트 알림 시스템 추가"
+          ]
+        },
+        "ui_ux_개선": {
+          "title": "UI/UX 개선",
+          "items": [
+            "헤더 및 푸터 UI 재설계 (Tailwind CSS 기반)",
+            "공개 끝점에 프로필 페이지 추가"
+          ]
+        },
+        "문서": {
+          "title": "문서",
+          "items": [
+            "개발 워크플로우 및 명령어 가이드 추가",
+            "QA 요청 이슈 템플릿 추가"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "GitHub 워크플로우 자동화 개선 (버전 관리, QA 이슈 자동 생성)"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.3.4",
       "project_type": "spring",

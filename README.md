@@ -14,8 +14,12 @@
 
 ## Screenshots
 
-![Profile](screenshots/profile.png)
-![Dashboard](screenshots/dashboard.png)
+<img width="1211" height="926" alt="image" src="https://github.com/user-attachments/assets/779bc22b-ecae-4946-a41d-e111a02f84e4" />
+
+<img width="1222" height="930" alt="image" src="https://github.com/user-attachments/assets/6351ad16-d91d-4a2e-adf8-786130bd98b8" />
+
+<img width="1211" height="929" alt="image" src="https://github.com/user-attachments/assets/f52a4463-ffd5-44d9-bae6-5662cc112553" />
+
 
 ---
 
