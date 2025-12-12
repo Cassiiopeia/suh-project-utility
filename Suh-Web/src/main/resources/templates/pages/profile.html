@@ -82,7 +82,7 @@
 
       <ul class="timeline timeline-vertical timeline-snap-icon">
         <!-- 소만사 -->
-        <li>
+        <li class="timeline-item">
           <div class="timeline-middle">
             <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
               <img src="/images/somansaLogo.jpg" alt="SOMANSA" class="w-full h-full object-contain" />
@@ -100,7 +100,7 @@
         </li>
 
         <!-- 제로베이스 -->
-        <li>
+        <li class="timeline-item">
           <hr/>
           <div class="timeline-middle">
             <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
@@ -116,7 +116,7 @@
         </li>
 
         <!-- 세종대학교 -->
-        <li>
+        <li class="timeline-item">
           <hr/>
           <div class="timeline-middle">
             <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
@@ -132,7 +132,7 @@
         </li>
 
         <!-- 휘문고등학교 -->
-        <li>
+        <li class="timeline-item">
           <hr/>
           <div class="timeline-middle">
             <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
@@ -301,6 +301,33 @@
             <div class="card-actions justify-end">
               <a href="http://suh-project.synology.me/plane-accident-finder/" target="_blank" class="btn btn-primary btn-xs">
                 <i class="fa-solid fa-arrow-right"></i> Download APK
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tripgether -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                <img src="/images/tripgether_로고.png" alt="Tripgether" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Tripgether</h3>
+                <span class="badge badge-primary badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">AI-powered travel guide app - extracts places from SNS posts via OCR & video analysis</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Flutter</span>
+              <span class="badge badge-ghost badge-xs">Python</span>
+              <span class="badge badge-ghost badge-xs">AI/OCR</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="https://github.com/TEAM-Tripgether" target="_blank" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
               </a>
             </div>
           </div>
@@ -518,6 +545,50 @@
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<style>
+  /* Timeline Scroll Animation */
+  .timeline-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -50px 0px',
+      threshold: 0.1
+    };
+
+    let visibleCount = 0;
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+          // 순차적 딜레이 적용
+          setTimeout(function() {
+            entry.target.classList.add('visible');
+          }, visibleCount * 150);
+          visibleCount++;
+        }
+      });
+    }, observerOptions);
+
+    timelineItems.forEach(function(item) {
+      observer.observe(item);
+    });
+  });
+</script>
 
 </body>
 </html>
