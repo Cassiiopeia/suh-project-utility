@@ -1,245 +1,268 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='Grass Planter - GitHub 자동 커밋 관리')}"></head>
-<body>
+<body class="grass-planter-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container grass-planter-dashboard" id="main-content">
-    <!-- 페이지 헤더 -->
-    <div class="ui segment">
-        <h2 class="ui header">
-            <i class="github icon"></i>
-            <div class="content">
-                Grass Planter
-                <div class="sub header">GitHub 자동 커밋 관리 시스템</div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grass-planter-dashboard" id="main-content">
+  <!-- 페이지 헤더 -->
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-brands fa-github text-blue-500"></i>
+      Grass Planter
+    </h2>
+    <p class="text-gray-500 mt-1">GitHub 자동 커밋 관리 시스템</p>
+  </div>
+
+  <!-- 프로필 카드 섹션 -->
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-brands fa-github text-blue-500"></i>
+            프로필 목록
+          </h3>
+          <p class="text-gray-500 text-sm">등록된 GitHub 프로필 관리</p>
+        </div>
+        <button class="btn btn-primary" onclick="showAddProfileModal()">
+          <i class="fa-solid fa-plus"></i>
+          프로필 추가
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 프로필 카드들 -->
+        <div th:each="profile : ${profiles}" class="card bg-base-100 border border-gray-200 hover:shadow-md transition-shadow">
+          <div class="card-body p-4">
+            <!-- 프로필 헤더 -->
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <i class="fa-brands fa-github text-xl text-gray-700"></i>
+                <span class="font-semibold text-gray-800" th:text="${profile.githubUsername}">username</span>
+              </div>
+              <div th:if="${profile.isActive}" class="badge badge-success badge-sm">활성</div>
+              <div th:unless="${profile.isActive}" class="badge badge-ghost badge-sm">비활성</div>
             </div>
-        </h2>
+
+            <!-- 저장소 이름 -->
+            <div class="text-sm text-gray-500 mb-3" th:text="${profile.defaultRepositoryName ?: 'No repository'}">repository</div>
+
+            <!-- 주요 정보 영역 -->
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <i class="fa-solid fa-clock text-blue-500"></i>
+                <span th:text="${profile.isAutoCommitEnabled ? '자동 커밋' : '수동 커밋'}">자동 커밋</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="contribution-level" th:classappend="'level-' + ${profile.targetCommitLevel ?: 0}"></span>
+                <span class="text-gray-600">레벨 <span th:text="${profile.targetCommitLevel ?: 0}">1</span></span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <i class="fa-solid fa-user text-blue-500"></i>
+                <span th:text="${profile.ownerNickname ?: '미지정'}">Cassiopeia</span>
+              </div>
+            </div>
+
+            <!-- 버튼 영역 -->
+            <div class="flex gap-2 justify-end">
+              <button class="btn btn-circle btn-sm btn-success"
+                      th:data-profile-id="${profile.grassProfileId}"
+                      onclick="executeCommit(this.getAttribute('data-profile-id'))"
+                      title="커밋 실행">
+                <i class="fa-solid fa-play text-xs"></i>
+              </button>
+              <button class="btn btn-circle btn-sm btn-info"
+                      th:data-profile-id="${profile.grassProfileId}"
+                      onclick="editProfile(this.getAttribute('data-profile-id'))"
+                      title="프로필 수정">
+                <i class="fa-solid fa-pen text-xs"></i>
+              </button>
+              <button class="btn btn-circle btn-sm btn-error"
+                      th:data-profile-id="${profile.grassProfileId}"
+                      onclick="deleteProfile(this.getAttribute('data-profile-id'))"
+                      title="프로필 삭제">
+                <i class="fa-solid fa-trash text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- 프로필 카드 섹션 -->
-    <div class="ui segment">
-        <div class="header-with-button">
-            <div>
-                <h3 class="grass-section-header">
-                    <i class="github icon"></i>
-                    프로필 목록
-                </h3>
-                <p class="dashboard-section-description">등록된 GitHub 프로필 관리</p>
-            </div>
-            <button class="ui primary button" onclick="showAddProfileModal()">
-                <i class="plus icon"></i> 프로필 추가
-            </button>
+  <!-- 커밋 로그 섹션 -->
+  <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+            커밋 로그
+          </h3>
+          <p class="text-gray-500 text-sm">최근 커밋 기록</p>
         </div>
+        <button class="btn btn-outline btn-sm" onclick="loadCommitLogs()">
+          <i class="fa-solid fa-rotate"></i>
+          새로고침
+        </button>
+      </div>
 
-        <div class="ui four column doubling stackable grid">
-            <!-- 프로필 카드들 -->
-            <div class="column" th:each="profile : ${profiles}">
-                <div class="ui fluid card equal-height-card">
-                    <div class="content">
-                        <!-- 프로필 헤더 -->
-                        <div class="grass-profile-header">
-                            <div class="profile-name">
-                                <i class="github icon"></i>
-                                <span th:text="${profile.githubUsername}">username</span>
-                            </div>
-                            <div>
-                                <div th:if="${profile.isActive}" class="ui green circular mini label">활성</div>
-                                <div th:unless="${profile.isActive}" class="ui grey circular mini label">비활성</div>
-                            </div>
-                        </div>
-                        
-                        <!-- 저장소 이름 -->
-                        <div class="meta">
-                            <span class="date" th:text="${profile.defaultRepositoryName ?: 'No repository'}">repository</span>
-                        </div>
-                        
-                        <!-- 주요 정보 영역 -->
-                        <div class="grass-profile-info">
-                            <div class="info-item">
-                                <i class="clock icon"></i>
-                                <span th:text="${profile.isAutoCommitEnabled ? '자동 커밋' : '수동 커밋'}">자동 커밋</span>
-                            </div>
-                            
-                            <div class="contribution-level-display">
-                                <span class="contribution-level" th:classappend="'level-' + ${profile.targetCommitLevel ?: 0}"></span>
-                                <span class="level-text">레벨 <span th:text="${profile.targetCommitLevel ?: 0}">1</span></span>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class="user icon"></i>
-                                <span th:text="${profile.ownerNickname ?: '미지정'}">Cassiopeia</span>
-                            </div>
-                        </div>
-                        
-                        <!-- 버튼 영역 -->
-                        <div class="grass-profile-actions">
-                            <button class="ui circular icon green button" 
-                                    th:data-profile-id="${profile.grassProfileId}"
-                                    onclick="executeCommit(this.getAttribute('data-profile-id'))"
-                                    data-tooltip="커밋 실행"
-                                    data-position="top center">
-                                <i class="play icon"></i>
-                            </button>
-                            <button class="ui circular icon blue button" 
-                                    th:data-profile-id="${profile.grassProfileId}"
-                                    onclick="editProfile(this.getAttribute('data-profile-id'))"
-                                    data-tooltip="프로필 수정"
-                                    data-position="top center">
-                                <i class="edit icon"></i>
-                            </button>
-                            <button class="ui circular icon red button" 
-                                    th:data-profile-id="${profile.grassProfileId}"
-                                    onclick="deleteProfile(this.getAttribute('data-profile-id'))"
-                                    data-tooltip="프로필 삭제"
-                                    data-position="top center">
-                                <i class="trash icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 커밋 로그 섹션 -->
-    <div class="ui segment">
-        <div class="header-with-button">
-            <div>
-                <h3 class="grass-section-header">
-                    <i class="history icon"></i>
-                    커밋 로그
-                </h3>
-                <p class="dashboard-section-description">최근 커밋 기록</p>
-            </div>
-            <button class="ui blue button" onclick="loadCommitLogs()">
-                <i class="refresh icon"></i> 새로고침
-            </button>
-        </div>
-        
-        <table class="ui celled table commit-log-table">
-            <thead>
-                <tr>
-                    <th>시간</th>
-                    <th>프로필</th>
-                    <th>저장소</th>
-                    <th>메시지</th>
-                    <th>상태</th>
-                    <th>레벨</th>
-                </tr>
-            </thead>
-            <tbody id="commitLogTable">
-                <tr>
-                    <td colspan="6" class="center aligned">
-                        <div class="ui active inline loader"></div>
-                        로그 로딩 중...
-                    </td>
-                </tr>
-            </tbody>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>시간</th>
+              <th>프로필</th>
+              <th>저장소</th>
+              <th>메시지</th>
+              <th>상태</th>
+              <th>레벨</th>
+            </tr>
+          </thead>
+          <tbody id="commitLogTable">
+            <tr>
+              <td colspan="6" class="text-center py-8">
+                <span class="loading loading-spinner loading-md text-primary"></span>
+                <span class="ml-2 text-gray-500">로그 로딩 중...</span>
+              </td>
+            </tr>
+          </tbody>
         </table>
+      </div>
     </div>
+  </div>
 
-    <!-- 프로필 추가/수정 모달 -->
-    <div class="ui modal" id="profileModal">
-        <i class="close icon"></i>
-        <div class="header">
-            <i class="github icon"></i>
-            GitHub 프로필 설정
-        </div>
-        <div class="content">
-            <form class="ui form" id="profileForm">
-                <input type="hidden" id="profileId" name="profileId">
-                
-                <div class="two fields">
-                    <div class="field">
-                        <label>GitHub 사용자명</label>
-                        <input type="text" id="githubUsername" name="githubUsername" 
-                               placeholder="예: octocat" required>
-                    </div>
-                    <div class="field">
-                        <label>Personal Access Token (PAT)</label>
-                        <input type="password" id="personalAccessToken" name="personalAccessToken" 
-                               placeholder="ghp_xxxxxxxxxxxx">
-                    </div>
-                </div>
-                
-                <div class="two fields">
-                    <div class="field">
-                        <label>저장소 전체 이름</label>
-                        <input type="text" id="repositoryFullName" name="repositoryFullName" 
-                               placeholder="예: username/repository">
-                    </div>
-                    <div class="field">
-                        <label>목표 커밋 레벨</label>
-                        <select class="ui dropdown" id="targetCommitLevel" name="targetCommitLevel">
-                            <option value="1">레벨 1 (연한 녹색)</option>
-                            <option value="2">레벨 2 (녹색)</option>
-                            <option value="3">레벨 3 (진한 녹색)</option>
-                            <option value="4">레벨 4 (매우 진한 녹색)</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="two fields">
-                    <div class="field">
-                        <label>담당자 닉네임</label>
-                        <input type="text" id="ownerNickname" name="ownerNickname" 
-                               placeholder="담당자 이름">
-                    </div>
-                    <div class="field">
-                        <label>설정</label>
-                        <div class="ui segment">
-                            <div class="ui toggle checkbox">
-                                <input type="checkbox" id="isActive" name="isActive" checked>
-                                <label>프로필 활성화</label>
-                            </div>
-                            <br><br>
-                            <div class="ui toggle checkbox">
-                                <input type="checkbox" id="isAutoCommitEnabled" name="isAutoCommitEnabled">
-                                <label>자동 커밋 활성화</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="actions">
-            <div class="ui black deny button">
-                취소
-            </div>
-            <div class="ui positive right labeled icon button" onclick="saveProfile()">
-                저장
-                <i class="checkmark icon"></i>
-            </div>
-        </div>
-    </div>
+  <!-- 프로필 추가/수정 모달 -->
+  <dialog class="modal" id="profileModal">
+    <div class="modal-box max-w-2xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
+        <i class="fa-brands fa-github text-blue-500"></i>
+        GitHub 프로필 설정
+      </h3>
+      <form id="profileForm" class="space-y-4">
+        <input type="hidden" id="profileId" name="profileId">
 
-    <!-- 커밋 실행 모달 -->
-    <div class="ui small modal" id="commitModal">
-        <i class="close icon"></i>
-        <div class="header">
-            <i class="play icon"></i>
-            수동 커밋 실행
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">GitHub 사용자명</span>
+            </label>
+            <input type="text" id="githubUsername" name="githubUsername"
+                   class="input input-bordered w-full" placeholder="예: octocat" required>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">Personal Access Token (PAT)</span>
+            </label>
+            <input type="password" id="personalAccessToken" name="personalAccessToken"
+                   class="input input-bordered w-full" placeholder="ghp_xxxxxxxxxxxx">
+          </div>
         </div>
-        <div class="content">
-            <form class="ui form" id="commitForm">
-                <input type="hidden" id="commitProfileId" name="profileId">
-                <div class="field">
-                    <label>커밋 메시지</label>
-                    <textarea id="commitMessage" name="commitMessage" rows="3" 
-                              placeholder="커밋 메시지를 입력하세요..."></textarea>
-                </div>
-            </form>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">저장소 전체 이름</span>
+            </label>
+            <input type="text" id="repositoryFullName" name="repositoryFullName"
+                   class="input input-bordered w-full" placeholder="예: username/repository">
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">목표 커밋 레벨</span>
+            </label>
+            <select class="select select-bordered w-full" id="targetCommitLevel" name="targetCommitLevel">
+              <option value="1">레벨 1 (연한 녹색)</option>
+              <option value="2">레벨 2 (녹색)</option>
+              <option value="3">레벨 3 (진한 녹색)</option>
+              <option value="4">레벨 4 (매우 진한 녹색)</option>
+            </select>
+          </div>
         </div>
-        <div class="actions">
-            <div class="ui black deny button">
-                취소
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">담당자 닉네임</span>
+            </label>
+            <input type="text" id="ownerNickname" name="ownerNickname"
+                   class="input input-bordered w-full" placeholder="담당자 이름">
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-medium">설정</span>
+            </label>
+            <div class="flex flex-col gap-3 p-3 bg-gray-50 rounded-lg">
+              <label class="label cursor-pointer justify-start gap-3">
+                <input type="checkbox" id="isActive" name="isActive" class="checkbox checkbox-primary" checked>
+                <span class="label-text">프로필 활성화</span>
+              </label>
+              <label class="label cursor-pointer justify-start gap-3">
+                <input type="checkbox" id="isAutoCommitEnabled" name="isAutoCommitEnabled" class="checkbox checkbox-primary">
+                <span class="label-text">자동 커밋 활성화</span>
+              </label>
             </div>
-            <div class="ui positive right labeled icon button" onclick="confirmCommit()">
-                실행
-                <i class="play icon"></i>
-            </div>
+          </div>
         </div>
+      </form>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost">취소</button>
+        </form>
+        <button class="btn btn-primary" onclick="saveProfile()">
+          <i class="fa-solid fa-check"></i>
+          저장
+        </button>
+      </div>
     </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- 커밋 실행 모달 -->
+  <dialog class="modal" id="commitModal">
+    <div class="modal-box">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
+        <i class="fa-solid fa-play text-blue-500"></i>
+        수동 커밋 실행
+      </h3>
+      <form id="commitForm">
+        <input type="hidden" id="commitProfileId" name="profileId">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">커밋 메시지</span>
+          </label>
+          <textarea id="commitMessage" name="commitMessage"
+                    class="textarea textarea-bordered h-24"
+                    placeholder="커밋 메시지를 입력하세요..."></textarea>
+        </div>
+      </form>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost">취소</button>
+        </form>
+        <button class="btn btn-primary" onclick="confirmCommit()">
+          <i class="fa-solid fa-play"></i>
+          실행
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -247,287 +270,252 @@
 <!-- Grass Planter 전용 JavaScript -->
 <script>
 $(document).ready(function() {
-    // 페이지 로드 시 커밋 로그 로드
-    loadCommitLogs();
-    
-    // 드롭다운 초기화
-    $('.ui.dropdown').dropdown();
-    
-    // 체크박스 초기화
-    $('.ui.checkbox').checkbox();
+  // 페이지 로드 시 커밋 로그 로드
+  loadCommitLogs();
 });
 
 /**
  * UUID 생성 헬퍼
  */
 function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }
 
 /**
  * 프로필 추가 모달 표시
  */
 function showAddProfileModal() {
-    $('#profileForm')[0].reset();
-    $('#profileId').val('');
-    $('#profileModal').modal('show');
+  $('#profileForm')[0].reset();
+  $('#profileId').val('');
+  document.getElementById('profileModal').showModal();
 }
 
 /**
  * 프로필 수정
  */
 function editProfile(profileId) {
-    // TODO: 프로필 정보 로드 후 모달 표시
-    $('#profileId').val(profileId);
-    $('#profileModal').modal('show');
+  $('#profileId').val(profileId);
+  document.getElementById('profileModal').showModal();
 }
 
 /**
  * 프로필 저장
  */
 function saveProfile() {
-    const formData = new FormData($('#profileForm')[0]);
-    
-    // 체크박스 값들을 명시적으로 설정
-    formData.set('isActive', $('#isActive').is(':checked'));
-    formData.set('isAutoCommitEnabled', $('#isAutoCommitEnabled').is(':checked'));
-    
-    // 프로필 ID가 있으면 수정, 없으면 생성
-    const profileId = $('#profileId').val();
-    const url = profileId ? '/api/grass/profile/update' : '/api/grass/profile/create';
-    
-    sendFormRequest(url, Object.fromEntries(formData),
-        function(response) {
-            if (typeof showToast === 'function') {
-                showToast(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.');
-            } else {
-                alert(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.');
-            }
-            $('#profileModal').modal('hide');
-            location.reload(); // 페이지 새로고침으로 목록 갱신
-        },
-        function(xhr, status, error) {
-            let errorMessage = '프로필 저장 중 오류가 발생했습니다.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-            }
-            
-            if (typeof showToast === 'function') {
-                showToast(errorMessage);
-            } else {
-                alert(errorMessage);
-            }
-            console.error('Profile save error:', error);
-        }
-    );
+  const formData = new FormData($('#profileForm')[0]);
+
+  // 체크박스 값들을 명시적으로 설정
+  formData.set('isActive', $('#isActive').is(':checked'));
+  formData.set('isAutoCommitEnabled', $('#isAutoCommitEnabled').is(':checked'));
+
+  // 프로필 ID가 있으면 수정, 없으면 생성
+  const profileId = $('#profileId').val();
+  const url = profileId ? '/api/grass/profile/update' : '/api/grass/profile/create';
+
+  sendFormRequest(url, Object.fromEntries(formData),
+    function(response) {
+      if (typeof showToast === 'function') {
+        showToast(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.', 'positive');
+      } else {
+        alert(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.');
+      }
+      document.getElementById('profileModal').close();
+      location.reload();
+    },
+    function(xhr, status, error) {
+      let errorMessage = '프로필 저장 중 오류가 발생했습니다.';
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+      }
+
+      if (typeof showToast === 'function') {
+        showToast(errorMessage, 'negative');
+      } else {
+        alert(errorMessage);
+      }
+      console.error('Profile save error:', error);
+    }
+  );
 }
 
 /**
  * 프로필 삭제
  */
 function deleteProfile(profileId) {
-    if (!confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
-        return;
+  if (!confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
+    return;
+  }
+
+  const params = {
+    profileId: profileId
+  };
+
+  sendFormRequest('/api/grass/profile/delete', params,
+    function(response) {
+      if (typeof showToast === 'function') {
+        showToast('프로필이 삭제되었습니다.', 'positive');
+      } else {
+        alert('프로필이 삭제되었습니다.');
+      }
+      location.reload();
+    },
+    function(xhr, status, error) {
+      let errorMessage = '프로필 삭제 중 오류가 발생했습니다.';
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+      }
+
+      if (typeof showToast === 'function') {
+        showToast(errorMessage, 'negative');
+      } else {
+        alert(errorMessage);
+      }
+      console.error('Profile delete error:', error);
     }
-    
-    const params = {
-        profileId: profileId
-    };
-    
-    sendFormRequest('/api/grass/profile/delete', params,
-        function(response) {
-            if (typeof showToast === 'function') {
-                showToast('프로필이 삭제되었습니다.');
-            } else {
-                alert('프로필이 삭제되었습니다.');
-            }
-            location.reload(); // 페이지 새로고침으로 목록 갱신
-        },
-        function(xhr, status, error) {
-            let errorMessage = '프로필 삭제 중 오류가 발생했습니다.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-            }
-            
-            if (typeof showToast === 'function') {
-                showToast(errorMessage);
-            } else {
-                alert(errorMessage);
-            }
-            console.error('Profile delete error:', error);
-        }
-    );
+  );
 }
 
 /**
  * 커밋 실행 모달 표시
  */
 function executeCommit(profileId) {
-    $('#commitProfileId').val(profileId);
-    $('#commitMessage').val('');
-    $('#commitModal').modal('show');
+  $('#commitProfileId').val(profileId);
+  $('#commitMessage').val('');
+  document.getElementById('commitModal').showModal();
 }
 
 /**
  * 커밋 실행 확인
  */
 function confirmCommit() {
-    const params = {
-        profileId: $('#commitProfileId').val(),
-        commitMessage: $('#commitMessage').val()
-    };
-    
-    sendFormRequest('/api/grass/commit/execute', params,
-        function(response) {
-            if (typeof showToast === 'function') {
-                showToast('커밋이 성공적으로 실행되었습니다.');
-            } else {
-                alert('커밋이 성공적으로 실행되었습니다.');
-            }
-            $('#commitModal').modal('hide');
-            loadCommitLogs();
-        },
-        function(xhr, status, error) {
-            let errorMessage = '커밋 실행 중 오류가 발생했습니다.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-            }
-            
-            if (typeof showToast === 'function') {
-                showToast(errorMessage);
-            } else {
-                alert(errorMessage);
-            }
-            console.error('Commit execute error:', error);
-        }
-    );
+  const params = {
+    profileId: $('#commitProfileId').val(),
+    commitMessage: $('#commitMessage').val()
+  };
+
+  sendFormRequest('/api/grass/commit/execute', params,
+    function(response) {
+      if (typeof showToast === 'function') {
+        showToast('커밋이 성공적으로 실행되었습니다.', 'positive');
+      } else {
+        alert('커밋이 성공적으로 실행되었습니다.');
+      }
+      document.getElementById('commitModal').close();
+      loadCommitLogs();
+    },
+    function(xhr, status, error) {
+      let errorMessage = '커밋 실행 중 오류가 발생했습니다.';
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
+      }
+
+      if (typeof showToast === 'function') {
+        showToast(errorMessage, 'negative');
+      } else {
+        alert(errorMessage);
+      }
+      console.error('Commit execute error:', error);
+    }
+  );
 }
 
 /**
  * 커밋 로그 로드
  */
 function loadCommitLogs() {
-    const params = {
-        page: 0,
-        size: 20
-    };
-    
-    sendFormRequest('/api/grass/commit/logs', params,
-        function(response) {
-            if (response.commitLogs && Array.isArray(response.commitLogs)) {
-                displayCommitLogs(response.commitLogs);
-            } else {
-                $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그를 불러올 수 없습니다.</td></tr>');
-            }
-        },
-        function(xhr, status, error) {
-            console.error('커밋 로그 로드 실패:', error);
-            $('#commitLogTable').html('<tr><td colspan="6" class="center aligned">로그 로드 중 오류가 발생했습니다.</td></tr>');
-        }
-    );
+  const params = {
+    page: 0,
+    size: 20
+  };
+
+  sendFormRequest('/api/grass/commit/logs', params,
+    function(response) {
+      if (response.commitLogs && Array.isArray(response.commitLogs)) {
+        displayCommitLogs(response.commitLogs);
+      } else {
+        $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">로그를 불러올 수 없습니다.</td></tr>');
+      }
+    },
+    function(xhr, status, error) {
+      console.error('커밋 로그 로드 실패:', error);
+      $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">로그 로드 중 오류가 발생했습니다.</td></tr>');
+    }
+  );
 }
 
 /**
- * 커밋 로그 표시 (XSS 방지 적용) - jQuery를 사용한 안전한 DOM 조작
+ * 커밋 로그 표시 (XSS 방지 적용)
  */
 function displayCommitLogs(logs) {
-    const tableBody = $('#commitLogTable');
-    
-    if (!logs || logs.length === 0) {
-        tableBody.html('<tr><td colspan="6" class="center aligned">커밋 로그가 없습니다.</td></tr>');
-        return;
+  const tableBody = $('#commitLogTable');
+
+  if (!logs || logs.length === 0) {
+    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-gray-500">커밋 로그가 없습니다.</td></tr>');
+    return;
+  }
+
+  tableBody.empty();
+
+  logs.forEach(function(log) {
+    const row = $('<tr>');
+
+    // 시간
+    const timeCell = $('<td>');
+    const commitTime = log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-';
+    timeCell.text(commitTime);
+    row.append(timeCell);
+
+    // GitHub 사용자명
+    const usernameCell = $('<td>');
+    usernameCell.text(log.githubUsername || '-');
+    row.append(usernameCell);
+
+    // 저장소명
+    const repoCell = $('<td>');
+    repoCell.text(log.repositoryName || '-');
+    row.append(repoCell);
+
+    // 커밋 메시지
+    const messageCell = $('<td>');
+    messageCell.text(log.commitMessage || '-');
+    row.append(messageCell);
+
+    // 상태 라벨
+    const statusCell = $('<td>');
+    if (log.httpStatus === 200 || log.httpStatus === 201) {
+      statusCell.html('<span class="badge badge-success badge-sm">성공</span>');
+    } else {
+      statusCell.html('<span class="badge badge-error badge-sm">실패</span>');
     }
-    
-    // 기존 내용 제거
-    tableBody.empty();
-    
-    logs.forEach(function(log) {
-        const row = $('<tr>');
-        
-        // 시간 (안전한 텍스트 삽입)
-        const timeCell = $('<td>');
-        const commitTime = log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-';
-        timeCell.text(commitTime);
-        row.append(timeCell);
-        
-        // GitHub 사용자명 (XSS 방지)
-        const usernameCell = $('<td>');
-        usernameCell.text(log.githubUsername || '-');
-        row.append(usernameCell);
-        
-        // 저장소명 (XSS 방지)
-        const repoCell = $('<td>');
-        repoCell.text(log.repositoryName || '-');
-        row.append(repoCell);
-        
-        // 커밋 메시지 (XSS 방지 - 가장 중요)
-        const messageCell = $('<td>');
-        messageCell.text(log.commitMessage || '-');
-        row.append(messageCell);
-        
-        // 상태 라벨 (HTTP 상태 기반)
-        const statusCell = $('<td>');
-        // HTTP 상태 코드나 응답 성공 여부로 판단
-        if (log.httpStatus === 200 || log.httpStatus === 201) {
-            const successLabel = $('<div class="ui green mini label">성공</div>');
-            statusCell.append(successLabel);
-        } else {
-            const failLabel = $('<div class="ui red mini label">실패</div>');
-            statusCell.append(failLabel);
-        }
-        row.append(statusCell);
-        
-        // 레벨 표시 (안전한 숫자 처리)
-        const levelCell = $('<td>');
-        const level = log.targetCommitLevel || 0;
-        const levelSpan = $('<span class="contribution-level">').addClass('level-' + level);
-        levelCell.append(levelSpan);
-        row.append(levelCell);
-        
-        tableBody.append(row);
-    });
+    row.append(statusCell);
+
+    // 레벨 표시
+    const levelCell = $('<td>');
+    const level = log.targetCommitLevel || 0;
+    const levelSpan = $('<span class="contribution-level">').addClass('level-' + level);
+    levelCell.append(levelSpan);
+    row.append(levelCell);
+
+    tableBody.append(row);
+  });
 }
 
 /**
  * HTML 이스케이프 함수 (XSS 방지)
  */
 function escapeHtml(text) {
-    if (typeof text !== 'string') return text;
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-/**
- * 폼 데이터를 multipart/form-data로 전송하는 공통 함수
- */
-function sendFormRequest(url, data, successCallback, errorCallback) {
-    const formData = new FormData();
-    
-    // 데이터 객체를 FormData에 추가
-    for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            formData.append(key, data[key]);
-        }
-    }
-    
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: successCallback,
-        error: errorCallback
-    });
+  if (typeof text !== 'string') return text;
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 </script>
 </body>

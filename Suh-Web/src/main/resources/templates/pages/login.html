@@ -1,46 +1,85 @@
 <!-- src/main/resources/templates/pages/login.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head(title='로그인-SAECHAN-LAB')}"></head>
-<body class="login-page" style="background: #f9f9f9;">
+<html xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head th:replace="~{fragments/header :: head(title='Login - SAECHAN LAB')}"></head>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
 <!-- 헤더 영역 -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <!-- 로그인 폼 영역 -->
-<div class="ui container" style="margin-top: 3em; display: flex; justify-content: center;">
-  <div class="ui raised segment" style="width: 100%; max-width: 400px;">
-    <div class="ui center aligned" style="padding-bottom: 1em">
-      <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="ui huge image"
-           style="display: block; margin: 0 auto -2em;">
-      <!--      <h2 class="ui header">로그인</h2>-->
+<main class="flex-1 flex items-center justify-center px-4 py-12">
+  <div class="card bg-base-100 shadow-xl w-full max-w-md">
+    <div class="card-body">
+      <!-- 로고 영역 -->
+      <div class="text-center">
+        <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="w-48 mx-auto">
+      </div>
+
+      <!-- 개발자 프로필 배지 -->
+      <div class="text-center">
+        <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity">
+          <i class="fa-solid fa-user-circle"></i>
+          ABOUT ME
+        </a>
+      </div>
+
+      <!-- 로그인 폼 -->
+      <form th:action="@{/login}" method="post" id="loginForm" class="space-y-4">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+
+        <!-- 아이디 입력 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Username</span>
+          </label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" name="username" placeholder="Enter your username"
+                   class="input input-bordered w-full pl-5" />
+          </div>
+        </div>
+
+        <!-- 비밀번호 입력 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Password</span>
+          </label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
+                   class="input input-bordered w-full pl-5 pr-10" />
+            <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70">
+              <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- 에러 메시지 (로그인 실패 시 표시) -->
+        <div th:if="${param.error}" class="flex items-center gap-2 p-3 rounded-lg border border-red-300 bg-red-50 text-red-600 text-sm">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Invalid username or password.</span>
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <button type="submit" class="btn btn-primary w-full">
+          <i class="fa-solid fa-right-to-bracket mr-2"></i>
+          Sign In
+        </button>
+      </form>
     </div>
-    <form class="ui form" th:action="@{/login}" method="post" id="loginForm">
-      <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-      <div class="field">
-        <label>아이디</label>
-        <div class="ui left icon input">
-          <i class="user icon"></i>
-          <input type="text" name="username" placeholder="아이디를 입력하세요">
-        </div>
-      </div>
-      <div class="field">
-        <label>비밀번호</label>
-        <div class="ui left icon input">
-          <i class="lock icon"></i>
-          <input type="password" name="password" placeholder="비밀번호를 입력하세요">
-        </div>
-      </div>
-      <button type="submit" class="ui fluid primary button">로그인</button>
-      <div class="ui error message" style="display: none;"></div>
-    </form>
+  </div>
+</main>
+
+<!-- 로그인 진행 시 보여줄 로딩 오버레이 -->
+<div id="login-loading" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+  <div class="flex flex-col items-center gap-4">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+    <span class="text-white text-lg font-medium">Signing in...</span>
   </div>
 </div>
 
-<!-- 로그인 진행 시 보여줄 로딩 디머 -->
-<div class="ui dimmer" id="login-dimmer">
-  <div class="ui text loader">로그인 중...</div>
-</div>
-
+<!-- footer fragment -->
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script th:inline="javascript">
   // 페이지 로드 시 즉시 IP 정보 요청 시작
@@ -49,6 +88,7 @@
   $(document).ready(function() {
     // DOM 로드 후 이벤트 리스너 설정
     setupLoginForm();
+    setupPasswordToggle();
 
     // IP 정보 처리 (이미 요청 시작)
     getClientIPPromise
@@ -96,13 +136,34 @@
         }
 
         // 로딩 표시
-        $('#login-dimmer').dimmer('show');
+        const loadingEl = document.getElementById('login-loading');
+        loadingEl.classList.remove('hidden');
+        loadingEl.classList.add('flex');
       });
     }
   }
-</script>
 
-<!-- footer fragment -->
-<div th:replace="~{fragments/footer :: footer}"></div>
+  // 비밀번호 보기/숨기기 토글
+  function setupPasswordToggle() {
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    if (toggleBtn && passwordInput && eyeIcon) {
+      toggleBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          eyeIcon.classList.remove('fa-eye');
+          eyeIcon.classList.add('fa-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          eyeIcon.classList.remove('fa-eye-slash');
+          eyeIcon.classList.add('fa-eye');
+        }
+      });
+    }
+  }
+
+</script>
 </body>
 </html>
