@@ -1,7 +1,7 @@
 <!-- src/main/resources/templates/pages/profile.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" data-theme="light">
-<head th:replace="~{fragments/header :: head(title='프로필-SAECHAN-LAB')}"></head>
+<head th:replace="~{fragments/header :: head(title='Profile - SAECHAN LAB')}"></head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
 
@@ -13,20 +13,20 @@
       <div class="flex flex-col md:flex-row items-center gap-6">
         <!-- 프로필 이미지 -->
         <div class="avatar">
-          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img src="/images/profile.jpg" alt="프로필 사진" onerror="this.src='/images/logo_no_text.png'" />
+          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-0">
+            <img src="/images/suhSaeChanProfile.jpeg" alt="Profile Photo" onerror="this.src='/images/logo_no_text.png'" />
           </div>
         </div>
         <!-- 기본 정보 -->
         <div class="text-center md:text-left flex-1">
-          <h1 class="text-3xl font-bold text-gray-900">서새찬</h1>
-          <p class="text-lg text-gray-600 mt-1">Saechan Suh</p>
+          <h1 class="text-3xl font-bold text-gray-900">Saechan Suh</h1>
+          <p class="text-lg text-gray-600 mt-1">서새찬</p>
           <p class="text-md text-blue-600 font-medium mt-2">
             <i class="fa-solid fa-building mr-1"></i>
-            SOMANSA 서버모듈팀 연구원
+            Server Module Team Researcher @ SOMANSA
           </p>
           <p class="text-gray-500 mt-2">
-            실험과 개발을 즐기는 백엔드 개발자
+            Backend Developer who enjoys experimentation and problem-solving
           </p>
           <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
             <span class="badge badge-primary">Spring Boot</span>
@@ -39,7 +39,7 @@
         <!-- 연락처 버튼 -->
         <div class="flex flex-col gap-2">
           <a href="mailto:chan4760@gmail.com" class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-envelope mr-1"></i> 이메일
+            <i class="fa-solid fa-envelope mr-1"></i> Email
           </a>
           <a href="https://github.com/Cassiiopeia" target="_blank" class="btn btn-outline btn-sm">
             <i class="fa-brands fa-github mr-1"></i> GitHub
@@ -58,15 +58,15 @@
       </h2>
       <div class="prose max-w-none text-gray-600">
         <p>
-          안녕하세요! 저는 실험적인 기능 개발과 문제 해결을 즐기는 백엔드 개발자 서새찬입니다.
+          Hi! I'm Saechan Suh, a backend developer who enjoys building experimental features and solving problems.
         </p>
         <p class="mt-3">
-          세종대학교에서 바이오융합공학을 전공하며 생명과학에 대한 깊은 이해를 쌓았고,
-          이후 제로베이스 부트캠프를 통해 본격적으로 개발의 세계에 뛰어들었습니다.
-          현재는 소만사(SOMANSA)에서 DLP 솔루션 개발에 참여하며 서버 모듈 개발을 담당하고 있습니다.
+          I majored in Integrative Bioscience and Biotechnology at Sejong University, gaining a deep understanding of life sciences.
+          Later, I dove into the world of development through the Zerobase Bootcamp.
+          Currently, I'm working at SOMANSA, contributing to DLP solution development as a Server Module Team Researcher.
         </p>
         <p class="mt-3">
-          이 사이트는 개인 실험실로, 다양한 기술을 테스트하고 유용한 유틸리티들을 만들어가는 공간입니다.
+          This site serves as my personal lab — a space to test various technologies and build useful utilities.
         </p>
       </div>
     </div>
@@ -84,17 +84,17 @@
         <!-- 소만사 -->
         <li>
           <div class="timeline-middle">
-            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-              <i class="fa-solid fa-briefcase"></i>
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/somansaLogo.jpg" alt="SOMANSA" class="w-full h-full object-contain" />
             </div>
           </div>
           <div class="timeline-end timeline-box bg-blue-50 border-blue-200">
             <div class="flex items-center gap-2 mb-1">
-              <span class="badge badge-primary badge-sm">현재</span>
-              <time class="text-xs text-gray-500">2024.07 - 현재</time>
+              <span class="badge badge-primary badge-sm">Current</span>
+              <time class="text-xs text-gray-500">2024.07 - Present</time>
             </div>
-            <div class="font-bold text-gray-900">SOMANSA (소만사)</div>
-            <div class="text-sm text-gray-600">서버모듈팀 연구원 - DLP 솔루션 개발</div>
+            <div class="font-bold text-gray-900">SOMANSA</div>
+            <div class="text-sm text-gray-600">Server Module Team Researcher - DLP Solution Development</div>
           </div>
           <hr/>
         </li>
@@ -103,14 +103,14 @@
         <li>
           <hr/>
           <div class="timeline-middle">
-            <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
-              <i class="fa-solid fa-laptop-code"></i>
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/day1CompanyLogo.jpg" alt="데이원컴퍼니" class="w-full h-full object-contain" />
             </div>
           </div>
           <div class="timeline-start timeline-box">
             <time class="text-xs text-gray-500">2023.06 - 2024.03</time>
-            <div class="font-bold text-gray-900">Zerobase Bootcamp</div>
-            <div class="text-sm text-gray-600">백엔드 개발 과정 수료</div>
+            <div class="font-bold text-gray-900">Zerobase (Day1Company)</div>
+            <div class="text-sm text-gray-600">Backend Development Bootcamp Completed</div>
           </div>
           <hr/>
         </li>
@@ -119,14 +119,14 @@
         <li>
           <hr/>
           <div class="timeline-middle">
-            <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white">
-              <i class="fa-solid fa-graduation-cap"></i>
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/sejongUniversityLogo.jpeg" alt="세종대학교" class="w-full h-full object-contain" />
             </div>
           </div>
           <div class="timeline-end timeline-box">
             <time class="text-xs text-gray-500">2018.03 - 2024.09</time>
-            <div class="font-bold text-gray-900">세종대학교</div>
-            <div class="text-sm text-gray-600">바이오융합공학전공 (Department of Integrative Bioscience and Biotechnology)</div>
+            <div class="font-bold text-gray-900">Sejong University</div>
+            <div class="text-sm text-gray-600">B.S. in Integrative Bioscience and Biotechnology</div>
           </div>
           <hr/>
         </li>
@@ -135,14 +135,14 @@
         <li>
           <hr/>
           <div class="timeline-middle">
-            <div class="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white">
-              <i class="fa-solid fa-school"></i>
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/whimoonHighschoolLogo.jpeg" alt="휘문고등학교" class="w-full h-full object-contain" />
             </div>
           </div>
           <div class="timeline-start timeline-box">
             <time class="text-xs text-gray-500">2015.03 - 2018.02</time>
-            <div class="font-bold text-gray-900">휘문고등학교</div>
-            <div class="text-sm text-gray-600">Whimoon High School</div>
+            <div class="font-bold text-gray-900">Whimoon High School</div>
+            <div class="text-sm text-gray-600">Seoul, South Korea</div>
           </div>
         </li>
       </ul>
@@ -225,7 +225,7 @@
         <i class="fa-solid fa-users text-blue-500"></i>
         Team Projects
       </h2>
-      <p class="text-gray-500 text-sm mb-6">함께 만들어가는 프로젝트들</p>
+      <p class="text-gray-500 text-sm mb-6">Collaborative projects I'm working on</p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- 세종말싸미 -->
@@ -236,11 +236,11 @@
                 <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-blue-500 text-xl\'></i>'" />
               </div>
               <div>
-                <h3 class="font-bold text-gray-900">세종말싸미</h3>
-                <span class="badge badge-primary badge-xs">활성</span>
+                <h3 class="font-bold text-gray-900">Sejong Malsami</h3>
+                <span class="badge badge-primary badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">세종대학교 학생들을 위한 AI 기반 학습 지원 플랫폼</p>
+            <p class="text-gray-500 text-sm mb-3">AI-powered learning platform for Sejong University students</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">React</span>
@@ -248,7 +248,7 @@
             </div>
             <div class="card-actions justify-end">
               <a href="https://test.sejong-malsami.co.kr" target="_blank" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> 바로가기
+                <i class="fa-solid fa-arrow-right"></i> Visit
               </a>
             </div>
           </div>
@@ -263,10 +263,10 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">ROM ROM</h3>
-                <span class="badge badge-primary badge-xs">활성</span>
+                <span class="badge badge-primary badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">롬곰 캐릭터 기반 소셜 플랫폼 앱</p>
+            <p class="text-gray-500 text-sm mb-3">Character-based social platform app</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -274,7 +274,7 @@
             </div>
             <div class="card-actions justify-end">
               <a href="http://suh-project.synology.me/romrom" target="_blank" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> APK 다운로드
+                <i class="fa-solid fa-arrow-right"></i> Download APK
               </a>
             </div>
           </div>
@@ -289,10 +289,10 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">PLANE ACCIDENT FINDER</h3>
-                <span class="badge badge-primary badge-xs">활성</span>
+                <span class="badge badge-primary badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">항공기 사고 정보 조회 앱</p>
+            <p class="text-gray-500 text-sm mb-3">Aircraft accident information lookup app</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -300,7 +300,7 @@
             </div>
             <div class="card-actions justify-end">
               <a href="http://suh-project.synology.me/plane-accident-finder/" target="_blank" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> APK 다운로드
+                <i class="fa-solid fa-arrow-right"></i> Download APK
               </a>
             </div>
           </div>
@@ -316,7 +316,7 @@
         <i class="fa-solid fa-flask text-purple-500"></i>
         Personal Projects
       </h2>
-      <p class="text-gray-500 text-sm mb-6">개인적으로 실험하고 만들어가는 프로젝트들</p>
+      <p class="text-gray-500 text-sm mb-6">Personal experiments and side projects</p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- SUH-PROJECT-UTILITY -->
@@ -328,10 +328,10 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">SUH-PROJECT-UTILITY</h3>
-                <span class="badge badge-success badge-xs">활성</span>
+                <span class="badge badge-success badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">개발 유틸리티 모음 (지금 보고 계신 사이트!)</p>
+            <p class="text-gray-500 text-sm mb-3">Dev utility collection (This site!)</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">Thymeleaf</span>
@@ -353,18 +353,18 @@
                 <i class="fa-brands fa-github text-gray-700 text-xl"></i>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900">GitHub 이슈 도우미</h3>
-                <span class="badge badge-success badge-xs">활성</span>
+                <h3 class="font-bold text-gray-900">GitHub Issue Helper</h3>
+                <span class="badge badge-success badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">이슈 기반 브랜치명, 커밋 메시지 자동 생성</p>
+            <p class="text-gray-500 text-sm mb-3">Auto-generate branch names and commit messages from issues</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">GitHub API</span>
-              <span class="badge badge-ghost badge-xs">자동화</span>
+              <span class="badge badge-ghost badge-xs">Automation</span>
             </div>
             <div class="card-actions justify-end">
               <a href="/issue-helper" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> 바로가기
+                <i class="fa-solid fa-arrow-right"></i> Visit
               </a>
             </div>
           </div>
@@ -378,18 +378,18 @@
                 <i class="fa-solid fa-language text-indigo-500 text-xl"></i>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900">커스텀 AI 번역기</h3>
-                <span class="badge badge-success badge-xs">활성</span>
+                <h3 class="font-bold text-gray-900">Custom AI Translator</h3>
+                <span class="badge badge-success badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">OpenAI 기반 커스텀 번역 서비스</p>
+            <p class="text-gray-500 text-sm mb-3">OpenAI-powered custom translation service</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">OpenAI API</span>
-              <span class="badge badge-ghost badge-xs">번역</span>
+              <span class="badge badge-ghost badge-xs">Translation</span>
             </div>
             <div class="card-actions justify-end">
               <a href="/translator" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> 바로가기
+                <i class="fa-solid fa-arrow-right"></i> Visit
               </a>
             </div>
           </div>
@@ -404,17 +404,17 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">Grass Planter</h3>
-                <span class="badge badge-success badge-xs">활성</span>
+                <span class="badge badge-success badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">GitHub 잔디 자동 커밋 관리 도구</p>
+            <p class="text-gray-500 text-sm mb-3">GitHub contribution graph auto-commit manager</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">GitHub API</span>
-              <span class="badge badge-ghost badge-xs">스케줄러</span>
+              <span class="badge badge-ghost badge-xs">Scheduler</span>
             </div>
             <div class="card-actions justify-end">
               <a href="/grass" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> 바로가기
+                <i class="fa-solid fa-arrow-right"></i> Visit
               </a>
             </div>
           </div>
@@ -428,18 +428,18 @@
                 <i class="fa-solid fa-book text-teal-500 text-xl"></i>
               </div>
               <div>
-                <h3 class="font-bold text-gray-900">스터디 플랜</h3>
-                <span class="badge badge-success badge-xs">활성</span>
+                <h3 class="font-bold text-gray-900">Study Plan</h3>
+                <span class="badge badge-success badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">마크다운 지원 학습 노트 관리</p>
+            <p class="text-gray-500 text-sm mb-3">Markdown-supported study note manager</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">Markdown</span>
-              <span class="badge badge-ghost badge-xs">노트</span>
+              <span class="badge badge-ghost badge-xs">Notes</span>
             </div>
             <div class="card-actions justify-end">
               <a href="/study-management" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> 바로가기
+                <i class="fa-solid fa-arrow-right"></i> Visit
               </a>
             </div>
           </div>
@@ -454,17 +454,17 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">Custom GPTs</h3>
-                <span class="badge badge-success badge-xs">활성</span>
+                <span class="badge badge-success badge-xs">Active</span>
               </div>
             </div>
-            <p class="text-gray-500 text-sm mb-3">업무 자동화를 위한 커스텀 GPT 모음</p>
+            <p class="text-gray-500 text-sm mb-3">Custom GPT collection for workflow automation</p>
             <div class="flex flex-wrap gap-1 mb-3">
               <span class="badge badge-ghost badge-xs">ChatGPT</span>
-              <span class="badge badge-ghost badge-xs">자동화</span>
+              <span class="badge badge-ghost badge-xs">Automation</span>
             </div>
             <div class="card-actions justify-end">
               <a href="/dashboard" class="btn btn-primary btn-xs">
-                <i class="fa-solid fa-arrow-right"></i> 대시보드에서 확인
+                <i class="fa-solid fa-arrow-right"></i> View in Dashboard
               </a>
             </div>
           </div>

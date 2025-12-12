@@ -1,7 +1,7 @@
 <!-- src/main/resources/templates/pages/login.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" data-theme="light">
-<head th:replace="~{fragments/header :: head(title='로그인-SAECHAN-LAB')}"></head>
+<head th:replace="~{fragments/header :: head(title='Login - SAECHAN LAB')}"></head>
 <body class="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
 <!-- 헤더 영역 -->
 <div th:replace="~{fragments/header :: header}"></div>
@@ -11,15 +11,15 @@
   <div class="card bg-base-100 shadow-xl w-full max-w-md">
     <div class="card-body">
       <!-- 로고 영역 -->
-      <div class="text-center mb-4">
+      <div class="text-center">
         <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="w-48 mx-auto">
       </div>
 
       <!-- 개발자 프로필 배지 -->
-      <div class="text-center mb-4">
+      <div class="text-center">
         <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity">
           <i class="fa-solid fa-user-circle"></i>
-          프로필 보기
+          ABOUT ME
         </a>
       </div>
 
@@ -30,11 +30,11 @@
         <!-- 아이디 입력 -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">아이디</span>
+            <span class="label-text font-medium">Username</span>
           </label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input type="text" name="username" placeholder="아이디를 입력하세요"
+            <input type="text" name="username" placeholder="Enter your username"
                    class="input input-bordered w-full pl-5" />
           </div>
         </div>
@@ -42,11 +42,11 @@
         <!-- 비밀번호 입력 -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">비밀번호</span>
+            <span class="label-text font-medium">Password</span>
           </label>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input type="password" id="passwordInput" name="password" placeholder="비밀번호를 입력하세요"
+            <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
                    class="input input-bordered w-full pl-5 pr-10" />
             <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70">
               <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
@@ -54,17 +54,17 @@
           </div>
         </div>
 
+        <!-- 에러 메시지 (로그인 실패 시 표시) -->
+        <div th:if="${param.error}" class="flex items-center gap-2 p-3 rounded-lg border border-red-300 bg-red-50 text-red-600 text-sm">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>Invalid username or password.</span>
+        </div>
+
         <!-- 로그인 버튼 -->
         <button type="submit" class="btn btn-primary w-full">
           <i class="fa-solid fa-right-to-bracket mr-2"></i>
-          로그인
+          Sign In
         </button>
-
-        <!-- 에러 메시지 -->
-        <div id="error-message" class="alert alert-error hidden">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          <span></span>
-        </div>
       </form>
     </div>
   </div>
@@ -74,7 +74,7 @@
 <div id="login-loading" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
   <div class="flex flex-col items-center gap-4">
     <span class="loading loading-spinner loading-lg text-primary"></span>
-    <span class="text-white text-lg font-medium">로그인 중...</span>
+    <span class="text-white text-lg font-medium">Signing in...</span>
   </div>
 </div>
 

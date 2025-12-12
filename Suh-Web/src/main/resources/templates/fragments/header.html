@@ -59,17 +59,13 @@
     <div class="navbar-end">
       <!-- Desktop Menu -->
       <div class="hidden lg:flex items-center gap-1">
+        <a href="/profile" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+          <i class="fa-solid fa-user"></i>
+          프로필
+        </a>
         <a href="/dashboard" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           <i class="fa-solid fa-clipboard-list"></i>
           대시보드
-        </a>
-        <a href="/issue-helper" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-          <i class="fa-brands fa-github"></i>
-          깃헙 이슈
-        </a>
-        <a href="/translator" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-          <i class="fa-solid fa-language"></i>
-          번역기
         </a>
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
@@ -78,7 +74,8 @@
             <i class="fa-solid fa-chevron-down text-xs"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
-            <li><a href="/profile" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-user w-5"></i>프로필</a></li>
+            <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈</a></li>
+            <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>번역기</a></li>
             <li class="divider my-1"></li>
             <li><a href="/notice-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
             <li><a href="/docker-logs" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
