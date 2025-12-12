@@ -1,7 +1,75 @@
-# 새찬 서버 실험실 🔬
-# https://lab.suhsaechan.kr/
+# SUH-PROJECT-UTILITY
+
+> My personal lab for building random stuff that actually works.
+
+[![Live](https://img.shields.io/badge/Live-lab.suhsaechan.kr-blue)](https://lab.suhsaechan.kr/)
+[![GitHub](https://img.shields.io/badge/GitHub-Cassiiopeia-black)](https://github.com/Cassiiopeia)
 
 <!-- 수정하지마세요 자동으로 동기화 됩니다 -->
-## 최신 버전 : v1.3.4 (2025-11-09)
+## Version: v1.3.4 (2025-11-09)
 
-[전체 버전 기록 보기](CHANGELOG.md)
+[View Changelog (Korean)](CHANGELOG.md)
+
+---
+
+## Screenshots
+
+![Profile](screenshots/profile.png)
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+## What is this?
+
+A collection of **experimental utilities** I build when I have an idea at 2am.
+
+- **Built for me, shared for fun**
+- **If it's useful, it stays. If not, it was a good experiment.**
+- **No fancy frameworks. Just things that work.**
+
+---
+
+## Features
+
+| Tool | What it does |
+|------|-------------|
+| **Grass Planter** | Auto-commit to keep GitHub green |
+| **AI Translator** | Custom translation with OpenAI |
+| **Issue Helper** | Branch names & commits from GitHub issues |
+| **Study Plan** | Markdown notes with style |
+| **Docker Logs** | Real-time container monitoring |
+
+---
+
+## Tech Stack
+
+```
+Backend    → Spring Boot 3.4 + Java 17
+Database   → PostgreSQL + Redis
+Frontend   → Thymeleaf + TailwindCSS + DaisyUI
+Deploy     → Docker + GitHub Actions + Synology NAS
+```
+
+---
+
+## About Me
+
+**Saechan Suh** (서새찬)
+
+- Server Module Team @ SOMANSA
+- Sejong University - Integrative Bioscience
+- I like building things. Even if no one uses them.
+
+---
+
+## Links
+
+- [Live Site](https://lab.suhsaechan.kr)
+- [Email](mailto:chan4760@gmail.com)
+- [GitHub](https://github.com/Cassiiopeia)
+
+---
+
+## License
+
+Do whatever you want. Just don't blame me if it breaks.
