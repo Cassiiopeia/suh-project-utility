@@ -2,95 +2,109 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='번역기-SAECHAN-LAB')}"></head>
-<body class="translator-page">
+<body class="translator-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
-<div class="ui container">
-  <h2 class="ui header">SUH-AI 번역기</h2>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 페이지 헤더 -->
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-solid fa-language text-blue-500"></i>
+      SUH-AI 번역기
+    </h2>
+  </div>
 
   <!-- 버전 정보 섹션 -->
   <div th:replace="~{fragments/versionInfo :: versionInfo(moduleType='TRANSLATOR')}"></div>
 
-  <div class="ui stackable two column grid">
-    <div class="column">
-      <div class="ui segment">
-        <div class="field">
-          <label>원본 언어</label>
-          <div id="sourceLanguage" class="ui selection clearable dropdown">
-            <input type="hidden" name="sourceLanguage" value="AUTO">
-            <i class="dropdown icon"></i>
-            <div class="default text">언어 선택</div>
-            <div class="menu">
-              <div class="item" data-value="AUTO"><i class="globe icon"></i>언어 감지</div>
-              <div class="item" data-value="KO"><i class="kr flag"></i>한국어</div>
-              <div class="item" data-value="EN"><i class="us flag"></i>영어</div>
-              <div class="item" data-value="JA"><i class="jp flag"></i>일본어</div>
-              <div class="item" data-value="ZH_CN"><i class="cn flag"></i>중국어 (간체)</div>
-              <div class="item" data-value="ZH_TW"><i class="tw flag"></i>중국어 (번체)</div>
-              <div class="item" data-value="ES"><i class="es flag"></i>스페인어</div>
-              <div class="item" data-value="FR"><i class="fr flag"></i>프랑스어</div>
-              <div class="item" data-value="DE"><i class="de flag"></i>독일어</div>
-              <div class="item" data-value="RU"><i class="ru flag"></i>러시아어</div>
-              <div class="item" data-value="PT"><i class="pt flag"></i>포르투갈어</div>
-              <div class="item" data-value="IT"><i class="it flag"></i>이탈리아어</div>
-              <div class="item" data-value="VI"><i class="vn flag"></i>베트남어</div>
-              <div class="item" data-value="TH"><i class="th flag"></i>태국어</div>
-              <div class="item" data-value="ID"><i class="id flag"></i>인도네시아어</div>
-            </div>
-          </div>
+  <!-- 번역 영역 -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <!-- 원본 텍스트 영역 -->
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body">
+        <!-- 원본 언어 선택 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">원본 언어</span>
+          </label>
+          <select id="sourceLanguage" class="select select-bordered w-full">
+            <option value="AUTO" selected>🌐 언어 감지</option>
+            <option value="KO">🇰🇷 한국어</option>
+            <option value="EN">🇺🇸 영어</option>
+            <option value="JA">🇯🇵 일본어</option>
+            <option value="ZH_CN">🇨🇳 중국어 (간체)</option>
+            <option value="ZH_TW">🇹🇼 중국어 (번체)</option>
+            <option value="ES">🇪🇸 스페인어</option>
+            <option value="FR">🇫🇷 프랑스어</option>
+            <option value="DE">🇩🇪 독일어</option>
+            <option value="RU">🇷🇺 러시아어</option>
+            <option value="PT">🇵🇹 포르투갈어</option>
+            <option value="IT">🇮🇹 이탈리아어</option>
+            <option value="VI">🇻🇳 베트남어</option>
+            <option value="TH">🇹🇭 태국어</option>
+            <option value="ID">🇮🇩 인도네시아어</option>
+          </select>
         </div>
-        <div class="field" style="margin-top: 15px;">
-          <div class="ui form">
-            <textarea id="sourceText" rows="8" placeholder="번역할 텍스트를 입력하세요..."></textarea>
-          </div>
-          <div class="ui mini right aligned basic segment">
-            <span id="charCount">0</span> 글자
-          </div>
+
+        <!-- 원본 텍스트 입력 -->
+        <div class="form-control mt-4">
+          <textarea
+            id="sourceText"
+            class="textarea textarea-bordered h-48 resize-none"
+            placeholder="번역할 텍스트를 입력하세요..."></textarea>
+          <label class="label">
+            <span class="label-text-alt text-gray-500">
+              <span id="charCount">0</span> 글자
+            </span>
+          </label>
         </div>
       </div>
     </div>
-    <div class="column">
-      <div class="ui segment">
-        <div class="field">
-          <label>대상 언어</label>
-          <div id="targetLanguage" class="ui selection dropdown">
-            <input type="hidden" name="targetLanguage" value="KO">
-            <i class="dropdown icon"></i>
-            <div class="default text">언어 선택</div>
-            <div class="menu">
-              <div class="item" data-value="KO"><i class="kr flag"></i>한국어</div>
-              <div class="item" data-value="EN"><i class="us flag"></i>영어</div>
-              <div class="item" data-value="JA"><i class="jp flag"></i>일본어</div>
-              <div class="item" data-value="ZH_CN"><i class="cn flag"></i>중국어 (간체)</div>
-              <div class="item" data-value="ZH_TW"><i class="tw flag"></i>중국어 (번체)</div>
-              <div class="item" data-value="ES"><i class="es flag"></i>스페인어</div>
-              <div class="item" data-value="FR"><i class="fr flag"></i>프랑스어</div>
-              <div class="item" data-value="DE"><i class="de flag"></i>독일어</div>
-              <div class="item" data-value="RU"><i class="ru flag"></i>러시아어</div>
-              <div class="item" data-value="PT"><i class="pt flag"></i>포르투갈어</div>
-              <div class="item" data-value="IT"><i class="it flag"></i>이탈리아어</div>
-              <div class="item" data-value="VI"><i class="vn flag"></i>베트남어</div>
-              <div class="item" data-value="TH"><i class="th flag"></i>태국어</div>
-              <div class="item" data-value="ID"><i class="id flag"></i>인도네시아어</div>
-            </div>
-          </div>
+
+    <!-- 번역 결과 영역 -->
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body">
+        <!-- 대상 언어 선택 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">대상 언어</span>
+          </label>
+          <select id="targetLanguage" class="select select-bordered w-full">
+            <option value="KO" selected>🇰🇷 한국어</option>
+            <option value="EN">🇺🇸 영어</option>
+            <option value="JA">🇯🇵 일본어</option>
+            <option value="ZH_CN">🇨🇳 중국어 (간체)</option>
+            <option value="ZH_TW">🇹🇼 중국어 (번체)</option>
+            <option value="ES">🇪🇸 스페인어</option>
+            <option value="FR">🇫🇷 프랑스어</option>
+            <option value="DE">🇩🇪 독일어</option>
+            <option value="RU">🇷🇺 러시아어</option>
+            <option value="PT">🇵🇹 포르투갈어</option>
+            <option value="IT">🇮🇹 이탈리아어</option>
+            <option value="VI">🇻🇳 베트남어</option>
+            <option value="TH">🇹🇭 태국어</option>
+            <option value="ID">🇮🇩 인도네시아어</option>
+          </select>
         </div>
-        <div class="field" style="margin-top: 15px;">
-          <div id="targetText" class="ui segment" style="min-height: 225px; overflow-y: auto; background-color: #f9f9f9;"></div>
+
+        <!-- 번역 결과 -->
+        <div class="form-control mt-4">
+          <div id="targetText" class="bg-gray-50 border border-gray-200 rounded-lg p-4 h-48 overflow-y-auto text-gray-700">
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="ui center aligned basic segment">
-    <button id="translateBtn" class="ui primary animated button">
-      <div class="visible content">
-        <i class="language icon"></i>번역하기
-      </div>
-      <div class="hidden content">
-        <i class="arrow right icon"></i>
-      </div>
+
+  <!-- 버튼 영역 -->
+  <div class="flex justify-center gap-4 mt-6">
+    <button id="translateBtn" class="btn btn-primary">
+      <i class="fa-solid fa-language"></i>
+      번역하기
     </button>
-    <button id="copyBtn" class="ui secondary button">
-      <i class="copy icon"></i>복사하기
+    <button id="copyBtn" class="btn btn-outline">
+      <i class="fa-solid fa-copy"></i>
+      복사하기
     </button>
   </div>
 </div>
@@ -101,14 +115,9 @@
 
 <script>
   $(document).ready(function () {
-    initSemantic();
     initElements();
     setupEventHandlers();
   });
-
-  function initSemantic() {
-    $('.ui.dropdown').dropdown({ clearable: true, forceSelection: false });
-  }
 
   function initElements() {
     window.elements = {
@@ -116,12 +125,10 @@
       targetText: document.getElementById('targetText'),
       translateBtn: document.getElementById('translateBtn'),
       copyBtn: document.getElementById('copyBtn'),
-      sourceLanguage: $('#sourceLanguage'),
-      targetLanguage: $('#targetLanguage'),
+      sourceLanguage: document.getElementById('sourceLanguage'),
+      targetLanguage: document.getElementById('targetLanguage'),
       charCount: document.getElementById('charCount')
     };
-    window.elements.targetLanguage.dropdown('set selected', 'KO');
-    window.elements.sourceLanguage.dropdown('set selected', 'AUTO');
     updateTranslationPlaceholder();
   }
 
@@ -136,12 +143,12 @@
         updateTranslationPlaceholder();
       }
     }, 1000));
-    window.elements.sourceLanguage.on('change', function() {
+    window.elements.sourceLanguage.addEventListener('change', function() {
       if (window.elements.sourceText.value.trim().length > 0) {
         translateText();
       }
     });
-    window.elements.targetLanguage.on('change', function() {
+    window.elements.targetLanguage.addEventListener('change', function() {
       if (window.elements.sourceText.value.trim().length > 0) {
         translateText();
       }
@@ -163,15 +170,16 @@
       return;
     }
     window.elements.targetText.innerHTML = `
-    <div class="ui active inverted dimmer">
-      <div class="ui small text loader">번역 중...</div>
-    </div>
-  `;
+      <div class="flex items-center justify-center h-full">
+        <span class="loading loading-spinner loading-md text-primary"></span>
+        <span class="ml-2 text-gray-500">번역 중...</span>
+      </div>
+    `;
     var formData = new FormData();
     formData.append("text", sourceText);
     formData.append("translatorType", "PAPAGO");
-    formData.append("sourceLang", window.elements.sourceLanguage.dropdown('get value'));
-    formData.append("targetLang", window.elements.targetLanguage.dropdown('get value'));
+    formData.append("sourceLang", window.elements.sourceLanguage.value);
+    formData.append("targetLang", window.elements.targetLanguage.value);
 
     $.ajax({
       url: '/api/translate',
@@ -196,24 +204,28 @@
       showToast("복사할 번역 텍스트가 없습니다.", "warning");
       return;
     }
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    showToast("번역 결과가 클립보드에 복사되었습니다.", "positive");
+    navigator.clipboard.writeText(text).then(function() {
+      showToast("번역 결과가 클립보드에 복사되었습니다.", "positive");
+    }).catch(function() {
+      // 폴백 방식
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast("번역 결과가 클립보드에 복사되었습니다.", "positive");
+    });
   }
 
   function updateTranslationPlaceholder() {
-    window.elements.targetText.innerHTML = '';
+    window.elements.targetText.innerHTML = '<span class="text-gray-400">번역 결과가 여기에 표시됩니다...</span>';
   }
 
   function updateCharCount() {
     const count = window.elements.sourceText.value.length;
     window.elements.charCount.textContent = count;
   }
-
 </script>
 </body>
 </html>
