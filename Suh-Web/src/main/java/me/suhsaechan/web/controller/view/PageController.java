@@ -34,6 +34,11 @@ public class PageController {
 		return "pages/login";
 	}
 
+	@GetMapping("/profile")
+	public String profilePage() {
+		return "pages/profile";
+	}
+
 	@GetMapping("/dashboard")
 	public String dashboardPage(Model model){
 		NoticeResponse noticeResponse = noticeService.getActiveNotices();

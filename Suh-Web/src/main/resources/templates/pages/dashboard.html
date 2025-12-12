@@ -1,877 +1,702 @@
 <!-- src/main/resources/templates/pages/dashboard.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-theme="light">
 <head th:replace="~{fragments/header :: head(title='대시보드-SAECHAN-LAB')}"></head>
-<body class="dashboard-page">
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
-  <!-- 스켈레톤 로딩 컨테이너 - 페이지 로딩 시 임시 표시 -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 스켈레톤 로딩 컨테이너 -->
   <div id="skeleton-container">
-    <!-- 메인 대시보드 스켈레톤 -->
-    <div class="ui segment skeleton">
-      <div class="skeleton skeleton-header-large"></div>
-      <div class="skeleton skeleton-text-medium"></div>
+    <!-- 웰컴 스켈레톤 -->
+    <div class="mb-8">
+      <div class="skeleton h-10 w-80 mb-3"></div>
+      <div class="skeleton h-5 w-96"></div>
     </div>
-    
     <!-- 공지사항 스켈레톤 -->
-    <div class="ui segment skeleton">
-      <div class="skeleton skeleton-header-medium"></div>
-      <div class="skeleton skeleton-text-small"></div>
-      <div class="ui items">
-        <div class="item skeleton-notice" th:each="i : ${#numbers.sequence(1, 3)}">
-          <div class="content">
-            <div class="header skeleton"></div>
-            <div class="meta skeleton"></div>
-            <div class="description skeleton"></div>
-          </div>
+    <div class="card bg-white shadow-sm mb-8">
+      <div class="card-body">
+        <div class="skeleton h-6 w-32 mb-4"></div>
+        <div class="space-y-3">
+          <div class="skeleton h-16 w-full"></div>
+          <div class="skeleton h-16 w-full"></div>
+          <div class="skeleton h-16 w-full"></div>
         </div>
       </div>
     </div>
-    
-    <!-- 기능 목록 카드 스켈레톤 -->
-    <div class="ui segment skeleton">
-      <div class="skeleton skeleton-header-medium"></div>
-      <div class="skeleton skeleton-text-small"></div>
-      <div class="ui four column doubling stackable grid">
-        <div class="column" th:each="i : ${#numbers.sequence(1, 4)}">
-          <div class="ui fluid card skeleton-card">
-            <div class="content">
-              <div class="header skeleton"></div>
-              <div class="meta skeleton"></div>
-              <div class="description skeleton"></div>
-            </div>
-            <div class="extra content">
-              <div class="button skeleton"></div>
-            </div>
-          </div>
+    <!-- 카드 그리드 스켈레톤 -->
+    <div class="card bg-white shadow-sm mb-8">
+      <div class="card-body">
+        <div class="skeleton h-7 w-48 mb-2"></div>
+        <div class="skeleton h-4 w-32 mb-6"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="skeleton h-48 w-full" th:each="i : ${#numbers.sequence(1, 4)}"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 실제 콘텐츠 - 로딩 후 표시 -->
-  <div id="real-content" class="hide">
-    <!-- 메인 대시보드 헤더 -->
-    <div class="ui segment">
-      <h2 class="ui header">새찬 서버 실험실</h2>
-      
-      <!-- 공지사항 섹션 - 메인 헤더 바로 아래에 배치 -->
-      <div class="ui divider"></div>
-      <h6 class="ui horizontal divider header">
-        <i class="bullhorn icon"></i>
-        Notice
-      </h6>
-      
-      <!-- 공지사항 아코디언 -->
-      <div class="ui styled fluid accordion" id="notice-accordion">
-        <!-- 공지사항이 여기에 동적으로 로드됩니다 -->
-        <div class="notice-empty">
-          <div class="title">
-            <i class="info circle icon"></i>
+  <!-- 실제 콘텐츠 -->
+  <div id="real-content" class="hidden">
+    <!-- 웰컴 섹션 -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">새찬 서버 실험실</h1>
+      <p class="text-gray-600">SOMANSA 서버모듈팀에서 개발 중인 프로젝트와 유틸리티를 관리하세요.</p>
+    </div>
+
+    <!-- 공지사항 섹션 -->
+    <section class="card bg-white shadow-sm mb-8">
+      <div class="card-body">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <i class="fa-solid fa-bullhorn text-blue-500"></i>
+            공지사항
+          </h2>
+          <span class="badge badge-outline badge-primary">Notice</span>
+        </div>
+
+        <!-- 공지사항 목록 -->
+        <div id="notice-accordion" class="space-y-2">
+          <div class="notice-empty text-gray-500 py-4 text-center">
+            <i class="fa-solid fa-info-circle mr-2"></i>
             등록된 공지사항이 없습니다.
           </div>
-          <div class="content">
-            <p>새로운 공지사항이 등록되면 이곳에 표시됩니다.</p>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="notice-pagination hidden flex justify-center mt-4">
+          <div class="join">
+            <!-- 동적으로 생성 -->
           </div>
         </div>
       </div>
-      
-      <!-- 공지사항 페이지네이션 -->
-      <div class="ui center aligned container notice-pagination hide" style="margin-top: 1em;">
-        <div class="ui mini pagination menu">
-          <!-- 페이지네이션은 동적으로 생성됩니다 -->
+    </section>
+
+    <!-- 유틸리티 애플리케이션 섹션 -->
+    <section class="card bg-white shadow-sm mb-8">
+      <div class="card-body">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xl font-semibold text-gray-900">UTILITY APPLICATION</h2>
+          <span class="badge badge-outline">유틸리티</span>
         </div>
-      </div>
-    </div>
+        <p class="text-gray-500 text-sm mb-6">개발 유틸리티 도구</p>
 
-    <!-- 유틸리티 애플리케이션 섹션 - 개발 도구 모음 -->
-    <div class="ui segment">
-      <h3 class="dashboard-section-header">UTILITY APPLICATION</h3>
-      <p class="dashboard-section-description">개발 유틸리티 도구</p>
-      <div class="ui four column doubling stackable grid">
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="github icon"></i> 깃헙 이슈 도우미
-              </div>
-              <div class="meta">
-                <span class="category">SUH-PROJECT</span>
-              </div>
-              <div class="description">
-                커밋, 브랜치 자동 생성
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="/issue-helper" class="ui blue fluid button shortcut-btn" target="_blank">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- 컨테이너 로그 -->
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="terminal icon"></i>컨테이너 로그
-              </div>
-              <div class="meta">
-                <span class="category">Docker</span>
-              </div>
-              <div class="description">
-                실시간 로그 스트리밍
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="/docker-logs" class="ui blue fluid button shortcut-btn">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="server icon"></i> AI 서버 관리
-                <span class="ui green tiny label dashboard-badge-new">NEW</span>
-              </div>
-              <div class="tunnel-status-modern" style="margin-top: 10px; margin-bottom: -20px;">
-                <div class="ui basic button" id="ai-server-status" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
-                  <div style="display: flex; align-items: center; color: #666;">
-                    <i class="signal icon"></i>&nbsp;연결 상태
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- 깃헙 이슈 도우미 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                    <i class="fa-brands fa-github text-xl"></i>
                   </div>
-                  <div class="ui basic button status-main-btn loading" style="margin: 0;">
-                    <i class="circle notched loading icon"></i>
-                    연결 확인중
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">깃헙 이슈 도우미</h3>
+                    <span class="badge badge-ghost badge-xs">SUH-PROJECT</span>
                   </div>
                 </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-            </div>
-            <div class="extra content">
-              <a href="/ai-server" class="ui purple fluid button shortcut-btn">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
+              <p class="text-gray-500 text-sm mb-4">커밋, 브랜치 자동 생성</p>
+              <a href="/issue-helper" class="btn btn-primary btn-sm w-full" target="_blank">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
               </a>
             </div>
           </div>
-        </div>
 
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="comment alternate icon"></i> OpenAI 챗봇
+          <!-- 컨테이너 로그 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center">
+                    <i class="fa-solid fa-terminal text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">컨테이너 로그</h3>
+                    <span class="badge badge-ghost badge-xs">Docker</span>
+                  </div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="meta">
-                <span class="category">AI Assistant</span>
-              </div>
-              <div class="description">
-                시놀로지 CPU only Ollama 서버
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://chat.suhsaechan.me" class="ui blue fluid button shortcut-btn" target="_blank">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
+              <p class="text-gray-500 text-sm mb-4">실시간 로그 스트리밍</p>
+              <a href="/docker-logs" class="btn btn-primary btn-sm w-full">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
               </a>
             </div>
           </div>
-        </div>
 
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="chrome icon"></i> 원격 크롬
+          <!-- AI 서버 관리 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
+                    <i class="fa-solid fa-server text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">AI 서버 관리</h3>
+                    <span class="badge badge-success badge-xs">NEW</span>
+                  </div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="meta">
-                <span class="category">Server Chrome</span>
+              <!-- AI 서버 상태 -->
+              <div id="ai-server-status" class="flex items-center justify-between text-sm text-gray-500 mb-4 p-2 bg-gray-50 rounded-lg">
+                <span class="flex items-center gap-1">
+                  <i class="fa-solid fa-signal"></i>
+                  연결 상태
+                </span>
+                <span class="status-main-btn loading flex items-center gap-1 text-gray-400">
+                  <span class="loading loading-spinner loading-xs"></span>
+                  확인중
+                </span>
               </div>
-              <div class="description">
-                외부 크롬 원격 접속
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="https://web.suhsaechan.me" class="ui blue fluid button shortcut-btn" target="_blank">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
+              <a href="/ai-server" class="btn btn-secondary btn-sm w-full">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
               </a>
             </div>
           </div>
-        </div>
 
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="language icon"></i>커스텀 AI 번역기
+          <!-- OpenAI 챗봇 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
+                    <i class="fa-solid fa-comment-dots text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">OpenAI 챗봇</h3>
+                    <span class="badge badge-ghost badge-xs">AI Assistant</span>
+                  </div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="meta">
-                <span class="category">커스텀 API</span>
-              </div>
-              <div class="description">
-                API 사용 가능
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="/translator" class="ui blue fluid button shortcut-btn" target="_blank">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
+              <p class="text-gray-500 text-sm mb-4">시놀로지 CPU only Ollama 서버</p>
+              <a href="https://chat.suhsaechan.me" class="btn btn-primary btn-sm w-full" target="_blank">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
               </a>
             </div>
           </div>
-        </div>
 
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="book icon"></i>스터디 플랜
-                <span class="ui green tiny label dashboard-badge-new">NEW</span>
+          <!-- 원격 크롬 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center">
+                    <i class="fa-brands fa-chrome text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">원격 크롬</h3>
+                    <span class="badge badge-ghost badge-xs">Server Chrome</span>
+                  </div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="meta">
-                <span class="category">Study Management</span>
-              </div>
-              <div class="description">
-                마크다운 지원 스터디 노트
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="/study-management" class="ui blue fluid button shortcut-btn">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
+              <p class="text-gray-500 text-sm mb-4">외부 크롬 원격 접속</p>
+              <a href="https://web.suhsaechan.me" class="btn btn-primary btn-sm w-full" target="_blank">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
               </a>
             </div>
           </div>
-        </div>
 
-        <div class="column">
-          <div class="ui fluid card equal-height-card">
-            <div class="content">
-              <div class="header">
-                <i class="leaf icon"></i>Grass Planter
-                <span class="ui green tiny label dashboard-badge-new">NEW</span>
+          <!-- 커스텀 AI 번역기 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                    <i class="fa-solid fa-language text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">커스텀 AI 번역기</h3>
+                    <span class="badge badge-ghost badge-xs">커스텀 API</span>
+                  </div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="meta">
-                <span class="category">GitHub Automation</span>
-              </div>
-              <div class="description">
-                GitHub 자동 커밋 관리
-              </div>
-            </div>
-            <div class="extra content">
-              <a href="/grass" class="ui blue fluid button shortcut-btn">
-                <i class="arrow right icon"></i>
-                <span>바로가기</span>
+              <p class="text-gray-500 text-sm mb-4">API 사용 가능</p>
+              <a href="/translator" class="btn btn-primary btn-sm w-full" target="_blank">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
               </a>
             </div>
           </div>
-        </div>
 
-      </div>
-    </div>
-
-    <!-- CUSTOM CHATGPT 섹션 - AI 모델 모음 -->
-    <div class="ui segment">
-      <h3 class="dashboard-section-header">CUSTOM CHATGPT</h3>
-      <p class="dashboard-section-description">일상이 딸깍의 연속! 커스텀 AI 모델</p>
-     <!-- Project GPT 섹션 - 개발 관련 GPT -->
-      <div class="dashboard-project-section">
-        <h4 class="dashboard-project-title">
-          <i class="code icon"></i> PROJECT GPT </h4>
-        <div class="ui four column doubling stackable grid">
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <i class="code icon"></i>Swaager Docs 생성기
+          <!-- 스터디 플랜 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
+                    <i class="fa-solid fa-book text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">스터디 플랜</h3>
+                    <span class="badge badge-success badge-xs">NEW</span>
+                  </div>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  Controller, Service, Repo, Dto
-                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
+              <p class="text-gray-500 text-sm mb-4">마크다운 지원 스터디 노트</p>
+              <a href="/study-management" class="btn btn-primary btn-sm w-full">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
+              </a>
             </div>
           </div>
 
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <i class="code icon"></i>TypeScript API 변환기
+          <!-- Grass Planter -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <i class="fa-solid fa-leaf text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900 text-sm">Grass Planter</h3>
+                    <span class="badge badge-success badge-xs">NEW</span>
+                  </div>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  Spring > Typescript
-                </div>
+                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <i class="code icon"></i>변수명 초고수 변환기
-                </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  변수명 확실하게 알려줌
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
+              <p class="text-gray-500 text-sm mb-4">GitHub 자동 커밋 관리</p>
+              <a href="/grass" class="btn btn-primary btn-sm w-full">
+                <i class="fa-solid fa-arrow-right"></i>
+                바로가기
+              </a>
             </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Somansa GPT 섹션 - 소만사 관련 GPT -->
-      <div class="dashboard-project-section">
-        <h4 class="dashboard-project-title">
-          <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-          SOMANSA GPT </h4>
-        <div class="ui four column doubling stackable grid">
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                  CM Tag Creator
+    <!-- CUSTOM CHATGPT 섹션 -->
+    <section class="card bg-white shadow-sm mb-8">
+      <div class="card-body">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xl font-semibold text-gray-900">CUSTOM CHATGPT</h2>
+          <span class="badge badge-outline">AI 모델</span>
+        </div>
+        <p class="text-gray-500 text-sm mb-6">일상이 딸깍의 연속! 커스텀 AI 모델</p>
+
+        <!-- PROJECT GPT -->
+        <div class="bg-gray-50 rounded-xl p-5 mb-6">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-blue-500 pl-3">
+            <i class="fa-solid fa-code text-blue-500"></i>
+            PROJECT GPT
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Swagger Docs 생성기 -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-code text-blue-500"></i>
+                  <h4 class="font-semibold text-sm">Swagger Docs 생성기</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">Somansa 소만사</span>
-                </div>
-                <div class="description">
-                  다국어 Tag Coder
-                </div>
+                <span class="badge badge-ghost badge-xs mb-2">SUH-PROJECT</span>
+                <p class="text-gray-500 text-xs mb-3">Controller, Service, Repo, Dto</p>
+                <a href="https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
               </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+            </div>
+
+            <!-- TypeScript API 변환기 -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-code text-blue-500"></i>
+                  <h4 class="font-semibold text-sm">TypeScript API 변환기</h4>
+                </div>
+                <span class="badge badge-ghost badge-xs mb-2">SUH-PROJECT</span>
+                <p class="text-gray-500 text-xs mb-3">Spring > Typescript</p>
+                <a href="https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
+              </div>
+            </div>
+
+            <!-- 변수명 초고수 변환기 -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <i class="fa-solid fa-code text-blue-500"></i>
+                  <h4 class="font-semibold text-sm">변수명 초고수 변환기</h4>
+                </div>
+                <span class="badge badge-ghost badge-xs mb-2">SUH-PROJECT</span>
+                <p class="text-gray-500 text-xs mb-3">변수명 확실하게 알려줌</p>
+                <a href="https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                  CM Branch Creator
+        <!-- SOMANSA GPT -->
+        <div class="bg-gray-50 rounded-xl p-5">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-orange-500 pl-3">
+            <img src="/images/소만사_로고.png" alt="소만사" class="w-5 h-5">
+            SOMANSA GPT
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- CM Tag Creator -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">CM Tag Creator</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">Somansa 소만사</span>
-                </div>
-                <div class="description">
-                  일감 Info > 브랜치, 커밋 Msg
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
+                <p class="text-gray-500 text-xs mb-3">다국어 Tag Coder</p>
+                <a href="https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
 
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                  Issue PPT Guide
+            <!-- CM Branch Creator -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">CM Branch Creator</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">Somansa 소만사</span>
-                </div>
-                <div class="description">
-                  일감 Info > PPT Template
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
+                <p class="text-gray-500 text-xs mb-3">일감 Info > 브랜치, 커밋</p>
+                <a href="https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
 
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/소만사_로고.png" alt="소만사 로고" class="ui mini image u-margin-right-tiny">
-                  SpringBooster
+            <!-- Issue PPT Guide -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">Issue PPT Guide</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">Somansa 소만사</span>
-                </div>
-                <div class="description">
-                  Spring Improve Strategy By PPT
-                </div>
+                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
+                <p class="text-gray-500 text-xs mb-3">일감 Info > PPT Template</p>
+                <a href="https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
               </div>
-              <div class="extra content">
-                <a href="https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+            </div>
+
+            <!-- SpringBooster -->
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">SpringBooster</h4>
+                </div>
+                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
+                <p class="text-gray-500 text-xs mb-3">Spring Improve By PPT</p>
+                <a href="https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- PROJECTS 섹션 - 진행 중인 프로젝트 리소스 -->
-    <div class="ui segment">
-      <h3 class="dashboard-section-header">PROJECTS</h3>
-      <p class="dashboard-section-description">진행 중인 프로젝트 및 관련 리소스</p>
+    <!-- PROJECTS 섹션 -->
+    <section class="card bg-white shadow-sm mb-8">
+      <div class="card-body">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xl font-semibold text-gray-900">PROJECTS</h2>
+          <span class="badge badge-outline">프로젝트</span>
+        </div>
+        <p class="text-gray-500 text-sm mb-6">진행 중인 프로젝트 및 관련 리소스</p>
 
-      <!-- SEJONG-MALSAMI 프로젝트 섹션 -->
-      <div class="dashboard-project-section">
-        <h4 class="dashboard-project-title">
-          <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-          SEJONG-MALSAMI </h4>
-        <div class="ui four column doubling stackable grid">
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-                  메인 페이지
+        <!-- SEJONG-MALSAMI -->
+        <div class="bg-gray-50 rounded-xl p-5 mb-6">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-blue-500 pl-3">
+            <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-5 h-5">
+            SEJONG-MALSAMI
+            <span class="badge badge-primary badge-xs">활성</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">메인 페이지</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  세종말싸미 메인 페이지
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://test.sejong-malsami.co.kr" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <p class="text-gray-500 text-xs mb-3">세종말싸미 메인 페이지</p>
+                <a href="https://test.sejong-malsami.co.kr" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
-
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-                  Swagger Docs
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">Swagger Docs</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  세종말싸미 Swagger Docs
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <p class="text-gray-500 text-xs mb-3">세종말싸미 API 문서</p>
+                <a href="https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
-
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미 로고" class="ui mini image u-margin-right-tiny">
-                  관리자 페이지
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">관리자 페이지</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  세종말싸미 관리자 페이지
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://api.sejong-malsami.co.kr" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <p class="text-gray-500 text-xs mb-3">세종말싸미 관리자</p>
+                <a href="https://api.sejong-malsami.co.kr" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
-          
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
-                  Figma 디자인 (Test)
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">Figma (Test)</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  세종말싸미 테스트 디자인
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://www.figma.com/design/g3TWHt8CvADqj2fXcf9uIA/%EC%84%B8%EC%A2%85%EB%B0%9C%EC%8B%B8%EB%AF%B9-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&p=f&t=LubXbhTDNNRuyQK6-0" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <p class="text-gray-500 text-xs mb-3">테스트 디자인</p>
+                <a href="https://www.figma.com/design/g3TWHt8CvADqj2fXcf9uIA/%EC%84%B8%EC%A2%85%EB%B0%9C%EC%8B%B8%EB%AF%B9-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&p=f&t=LubXbhTDNNRuyQK6-0" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
-          
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
-                  Figma 디자인 (Prod)
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">Figma (Prod)</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  아직 미정
-                </div>
-              </div>
-              <div class="extra content">
-                <span class="ui grey fluid button shortcut-btn">
-                  <i class="clock icon"></i>
-                  <span>준비 중</span>
+                <p class="text-gray-500 text-xs mb-3">아직 미정</p>
+                <span class="btn btn-ghost btn-xs w-full cursor-not-allowed opacity-50">
+                  <i class="fa-solid fa-clock"></i> 준비 중
                 </span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- PLANE ACCIDENT FINDER 프로젝트 섹션 -->
-      <div class="dashboard-project-section">
-        <h4 class="dashboard-project-title">
-          <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-          PLANE ACCIDENT FINDER </h4>
-        <div class="ui four column doubling stackable grid">
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-                  DOWNLOAD APK
+        <!-- PLANE ACCIDENT FINDER -->
+        <div class="bg-gray-50 rounded-xl p-5 mb-6">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-amber-500 pl-3">
+            <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-5 h-5">
+            PLANE ACCIDENT FINDER
+            <span class="badge badge-primary badge-xs">활성</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">DOWNLOAD APK</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  APK Download Page
-                </div>
+                <p class="text-gray-500 text-xs mb-3">APK Download Page</p>
+                <a href="http://suh-project.synology.me/plane-accident-finder/" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
               </div>
-              <div class="extra content">
-                <a href="http://suh-project.synology.me/plane-accident-finder/" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+            </div>
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">HTTPS Swagger</h4>
+                </div>
+                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
+                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
+              </div>
+            </div>
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">HTTP Swagger</h4>
+                </div>
+                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
+                <a href="http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-                  HTTPS Swagger
+        <!-- ROM ROM -->
+        <div class="bg-gray-50 rounded-xl p-5">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-pink-500 pl-3">
+            <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-5 h-5">
+            ROM ROM
+            <span class="badge badge-primary badge-xs">활성</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">DOWNLOAD APK</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  Swagger Docs
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+                <p class="text-gray-500 text-xs mb-3">[CICD] APK Download</p>
+                <a href="http://suh-project.synology.me/romrom" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
-          </div>
-
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE_ACCIDENT_FINDER_로고" class="ui mini image u-margin-right-tiny">
-                  HTTP Swagger
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">HTTPS Swagger</h4>
                 </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  Swagger Docs
-                </div>
+                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
+                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
               </div>
-              <div class="extra content">
-                <a href="http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
+            </div>
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">HTTP Swagger</h4>
+                </div>
+                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
+                <a href="http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
+              </div>
+            </div>
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">Figma (Test)</h4>
+                </div>
+                <p class="text-gray-500 text-xs mb-3">롬롬 테스트 디자인</p>
+                <a href="https://www.figma.com/design/qXvwG0b5GYk9xkzgw9fdhb/%EB%A1%AC%EB%A1%AC-%ED%9A%8C%EC%9D%98?node-id=2049-5172&t=TFPO78n7GC2JipNk-0" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
+                </a>
+              </div>
+            </div>
+            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 mb-2">
+                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
+                  <h4 class="font-semibold text-sm">Figma (Prod)</h4>
+                </div>
+                <p class="text-gray-500 text-xs mb-3">롬롬 프로덕션</p>
+                <a href="https://www.figma.com/design/dq4HUUqmTlVkmWr4cd2RE5/%F0%9F%94%84-romrom?node-id=1344-2435&t=lbULaVU0rbuntb79-0" class="btn btn-primary btn-xs w-full" target="_blank">
+                  <i class="fa-solid fa-arrow-right"></i> 바로가기
                 </a>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- ROM ROM 프로젝트 섹션 -->
-      <div class="dashboard-project-section">
-        <h4 class="dashboard-project-title">
-          <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-          ROM ROM </h4>
-        <div class="ui four column doubling stackable grid">
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-                  DOWNLOAD APK
-                </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  [CICD] APK Download Page
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="http://suh-project.synology.me/romrom" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-                  HTTPS Swagger
-                </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  Swagger Docs
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM 로고" class="ui mini image u-margin-right-tiny">
-                  HTTP Swagger
-                </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  Swagger Docs
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
-                  Figma 디자인 (Test)
-                </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  롬롬 테스트 디자인
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://www.figma.com/design/qXvwG0b5GYk9xkzgw9fdhb/%EB%A1%AC%EB%A1%AC-%ED%9A%8C%EC%9D%98?node-id=2049-5172&t=TFPO78n7GC2JipNk-0" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          <div class="column">
-            <div class="ui fluid card equal-height-card">
-              <div class="content">
-                <div class="header">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="figma-logo">
-                  Figma 디자인 (Prod)
-                </div>
-                <div class="meta">
-                  <span class="category">SUH-PROJECT</span>
-                </div>
-                <div class="description">
-                  롬롬 프로덕션 디자인
-                </div>
-              </div>
-              <div class="extra content">
-                <a href="https://www.figma.com/design/dq4HUUqmTlVkmWr4cd2RE5/%F0%9F%94%84-romrom?node-id=1344-2435&t=lbULaVU0rbuntb79-0" class="ui blue fluid button shortcut-btn" target="_blank">
-                  <i class="arrow right icon"></i>
-                  <span>바로가기</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
   </div>
-</div>
+</main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <!-- 공지사항 상세 모달 -->
-<div class="ui small modal" id="notice-detail-modal">
-  <i class="close icon"></i>
-  <div class="header" id="modal-notice-title"></div>
-  <div class="content">
-    <div class="ui stackable grid">
-      <div class="eight wide column">
-        <p><i class="user icon"></i> <span id="modal-notice-author"></span></p>
-        <p><i class="calendar icon"></i> <span id="modal-notice-date"></span></p>
-      </div>
-      <div class="eight wide column">
-        <p><i class="eye icon"></i> 조회수: <span id="modal-notice-views"></span></p>
-        <p id="modal-notice-important" class="hide">
-          <i class="exclamation circle red icon"></i> <strong>중요 공지사항</strong>
-        </p>
-      </div>
-    </div>
-    <div class="ui divider"></div>
-    <div class="ui basic segment" id="modal-notice-content"></div>
-    
-    <!-- 댓글 섹션 -->
-    <div class="ui divider"></div>
-    <h4 class="ui header"><i class="comments icon"></i>댓글</h4>
-    
-    <!-- 댓글 목록 -->
-    <div class="ui comments" id="comment-list">
-      <div id="comments-loading" class="ui active centered inline loader"></div>
-      <div id="no-comments-message" class="ui message hide">
-        <p>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
-      </div>
-    </div>
-    
-    <!-- 댓글 작성 폼 -->
-    <form class="ui reply form" id="comment-form">
-      <div class="field">
-        <div class="ui fluid action input">
-          <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)">
-        </div>
-      </div>
-      <div class="field">
-        <textarea id="comment-content" placeholder="댓글을 입력하세요" rows="3"></textarea>
-      </div>
-      <button type="button" id="comment-submit" class="ui blue labeled submit icon button">
-        <i class="icon edit"></i> 댓글 작성
+<dialog id="notice-detail-modal" class="modal">
+  <div class="modal-box max-w-2xl">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        <i class="fa-solid fa-xmark"></i>
       </button>
     </form>
+    <h3 class="font-bold text-lg mb-4" id="modal-notice-title"></h3>
+
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-4">
+      <p><i class="fa-solid fa-user mr-2"></i><span id="modal-notice-author"></span></p>
+      <p><i class="fa-solid fa-calendar mr-2"></i><span id="modal-notice-date"></span></p>
+      <p><i class="fa-solid fa-eye mr-2"></i>조회수: <span id="modal-notice-views"></span></p>
+      <p id="modal-notice-important" class="hidden text-red-500">
+        <i class="fa-solid fa-exclamation-circle mr-2"></i><strong>중요 공지사항</strong>
+      </p>
+    </div>
+
+    <div class="divider"></div>
+    <div class="prose max-w-none" id="modal-notice-content"></div>
+
+    <!-- 댓글 섹션 -->
+    <div class="divider"></div>
+    <h4 class="font-semibold mb-4"><i class="fa-solid fa-comments mr-2"></i>댓글</h4>
+
+    <div id="comment-list" class="space-y-3 mb-4">
+      <div id="comments-loading" class="flex justify-center py-4">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      <div id="no-comments-message" class="hidden text-center text-gray-500 py-4">
+        아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!
+      </div>
+    </div>
+
+    <!-- 댓글 작성 폼 -->
+    <div class="bg-gray-50 rounded-lg p-4">
+      <div class="form-control mb-3">
+        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-bordered input-sm w-full">
+      </div>
+      <div class="form-control mb-3">
+        <textarea id="comment-content" class="textarea textarea-bordered" rows="3" placeholder="댓글을 입력하세요"></textarea>
+      </div>
+      <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-pen mr-1"></i> 댓글 작성
+      </button>
+    </div>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-primary">확인</button>
+      </form>
+    </div>
   </div>
-  <div class="actions">
-    <div class="ui positive button">확인</div>
-  </div>
-</div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <script>
   $(document).ready(function() {
-    // 드롭다운 메뉴 초기화
-    $('.ui.dropdown').dropdown();
-    
     // 공지사항 로드
     loadActiveNotices();
-    
+
     // 페이지 로딩 효과
     setTimeout(function() {
-      document.getElementById('skeleton-container').classList.add('hide');
-      document.getElementById('real-content').classList.remove('hide');
-      
-      // 아코디언 초기화 - 기본적으로 모두 닫힌 상태로 시작
-      $('.ui.accordion').accordion({
-        exclusive: false,
-        closeNested: true
-      });
-    }, 500); // 0.5초 후 실제 콘텐츠로 전환
-    
+      document.getElementById('skeleton-container').classList.add('hidden');
+      document.getElementById('real-content').classList.remove('hidden');
+    }, 500);
+
     // 페이지네이션 클릭 이벤트
-    $(document).on('click', '.notice-pagination .item', function(e) {
+    $(document).on('click', '.notice-pagination .join .btn', function(e) {
       e.preventDefault();
-      if (!$(this).hasClass('active') && !$(this).hasClass('disabled')) {
+      if (!$(this).hasClass('btn-active') && !$(this).hasClass('btn-disabled')) {
         const page = $(this).data('page');
         loadActiveNoticesByPage(page);
       }
     });
   });
-  
+
   // 전역 변수 - 공지사항 데이터 및 페이지네이션 상태
   let noticeData = {
     notices: [],
@@ -879,224 +704,176 @@
     totalPages: 1,
     noticesPerPage: 5
   };
-  
+
   // 활성화된 공지사항 로드 함수
   function loadActiveNotices() {
-    // 공통 함수 사용
     sendFormRequest(
       '/api/notice/get/active',
       null,
       function(response) {
         if (response && response.notices && response.notices.length > 0) {
-          // 공지사항 데이터 저장
           noticeData.notices = response.notices;
-          
-          // 중요 공지사항 먼저 정렬
           noticeData.notices.sort(function(a, b) {
             if (a.isImportant && !b.isImportant) return -1;
             if (!a.isImportant && b.isImportant) return 1;
             return new Date(b.createdDate) - new Date(a.createdDate);
           });
-          
-          // 총 페이지 수 계산
           noticeData.totalPages = Math.ceil(noticeData.notices.length / noticeData.noticesPerPage);
-          
-          // 첫 페이지 로드
           loadActiveNoticesByPage(1);
         } else {
-          // 공지사항이 없으면 기본 메시지 표시
           $('#notice-accordion').html(`
-            <div class="title">
-              <i class="info circle icon"></i>
+            <div class="text-gray-500 py-4 text-center">
+              <i class="fa-solid fa-info-circle mr-2"></i>
               등록된 공지사항이 없습니다.
             </div>
-            <div class="content">
-              <p>새로운 공지사항이 등록되면 이곳에 표시됩니다.</p>
-            </div>
           `);
-          
-          // 페이지네이션 숨김
-          $('.notice-pagination').addClass('hide');
-          
-          // 아코디언 초기화
-          $('#notice-accordion').accordion('refresh');
+          $('.notice-pagination').addClass('hidden');
         }
       },
       function(xhr, status, error) {
         console.error('공지사항 로드 오류:', error);
         $('#notice-accordion').html(`
-          <div class="title">
-            <i class="warning circle icon"></i>
+          <div class="text-red-500 py-4 text-center">
+            <i class="fa-solid fa-exclamation-triangle mr-2"></i>
             공지사항을 불러올 수 없습니다.
           </div>
-          <div class="content">
-            <p>서버 오류가 발생했습니다. 나중에 다시 시도해주세요.</p>
-          </div>
         `);
-        
-        // 페이지네이션 숨김
-        $('.notice-pagination').addClass('hide');
-        
-        // 아코디언 초기화
-        $('#notice-accordion').accordion('refresh');
+        $('.notice-pagination').addClass('hidden');
       }
     );
   }
-  
+
   // 페이지별 공지사항 표시 함수
   function loadActiveNoticesByPage(page) {
-    // 현재 페이지 업데이트
     noticeData.currentPage = page;
-    
-    // 페이지에 해당하는 공지사항만 추출
     const startIndex = (page - 1) * noticeData.noticesPerPage;
     const endIndex = Math.min(startIndex + noticeData.noticesPerPage, noticeData.notices.length);
     const pageNotices = noticeData.notices.slice(startIndex, endIndex);
-    
-    // 공지사항 아코디언 비우기
+
     $('#notice-accordion').empty();
-    
-    // 공지사항 표시
+
     if (pageNotices.length > 0) {
       pageNotices.forEach(function(notice) {
-        const isImportant = notice.isImportant ? 
-          '<div class="ui red mini label">중요</div> ' : '';
-        
+        const isImportant = notice.isImportant ?
+          '<span class="badge badge-error badge-xs">중요</span> ' : '';
+
         const noticeItem = `
-          <div class="title" data-id="${notice.noticeId}">
-            <i class="dropdown icon"></i>
-            ${isImportant}${notice.title}
-            <div class="notice-meta-inline">
-              <span class="notice-author"><i class="user outline icon"></i>${notice.author || '관리자'}</span>
-              <span class="notice-date"><i class="calendar outline icon"></i>${timeAgo(notice.createdDate)}</span>
+          <div class="collapse collapse-arrow bg-base-100 border border-gray-100 rounded-lg mb-2" data-id="${notice.noticeId}">
+            <input type="checkbox" class="peer" />
+            <div class="collapse-title font-medium flex items-center gap-2">
+              ${isImportant}
+              <span class="flex-1">${notice.title}</span>
+              <span class="text-xs text-gray-400 hidden sm:inline">
+                <i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}
+                <i class="fa-regular fa-calendar ml-2 mr-1"></i>${timeAgo(notice.createdDate)}
+              </span>
             </div>
-          </div>
-          <div class="content">
-            <div class="notice-meta">
-              <span><i class="user outline icon"></i> ${notice.author || '관리자'}</span>
-              <span><i class="calendar outline icon"></i> ${new Date(notice.createdDate).toLocaleDateString()}</span>
-              <span><i class="eye outline icon"></i> 조회수 ${notice.viewCount || 0}</span>
-            </div>
-            <p class="notice-preview">${notice.content.substring(0, 150)}${notice.content.length > 150 ? '...' : ''}</p>
-            <div class="ui right aligned container">
-              <button class="ui mini blue button view-notice-btn" data-id="${notice.noticeId}">
-                <i class="eye icon"></i> 상세보기
-              </button>
+            <div class="collapse-content">
+              <div class="text-sm text-gray-500 mb-2 sm:hidden">
+                <span><i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}</span>
+                <span class="ml-3"><i class="fa-regular fa-calendar mr-1"></i>${new Date(notice.createdDate).toLocaleDateString()}</span>
+                <span class="ml-3"><i class="fa-regular fa-eye mr-1"></i>${notice.viewCount || 0}</span>
+              </div>
+              <p class="text-gray-600 mb-3">${notice.content.substring(0, 150)}${notice.content.length > 150 ? '...' : ''}</p>
+              <div class="text-right">
+                <button class="btn btn-primary btn-xs view-notice-btn" data-id="${notice.noticeId}">
+                  <i class="fa-solid fa-eye mr-1"></i> 상세보기
+                </button>
+              </div>
             </div>
           </div>
         `;
-        
+
         $('#notice-accordion').append(noticeItem);
       });
-      
+
       // 상세보기 버튼 이벤트 바인딩
       $('.view-notice-btn').click(function(e) {
-        e.stopPropagation(); // 아코디언 토글 방지
+        e.stopPropagation();
         const noticeId = $(this).data('id');
         showNoticeDetail(noticeId);
       });
-      
+
       // 페이지네이션 업데이트
       updatePagination();
-      
-      // 5개 이상이면 페이지네이션 표시
+
       if (noticeData.notices.length > noticeData.noticesPerPage) {
-        $('.notice-pagination').removeClass('hide');
+        $('.notice-pagination').removeClass('hidden');
       } else {
-        $('.notice-pagination').addClass('hide');
+        $('.notice-pagination').addClass('hidden');
       }
     } else {
-      // 공지사항이 없으면 기본 메시지 표시
       $('#notice-accordion').html(`
-        <div class="title">
-          <i class="info circle icon"></i>
+        <div class="text-gray-500 py-4 text-center">
+          <i class="fa-solid fa-info-circle mr-2"></i>
           등록된 공지사항이 없습니다.
         </div>
-        <div class="content">
-          <p>새로운 공지사항이 등록되면 이곳에 표시됩니다.</p>
-        </div>
       `);
-      
-      // 페이지네이션 숨김
-      $('.notice-pagination').addClass('hide');
+      $('.notice-pagination').addClass('hidden');
     }
-    
-    // 아코디언 초기화 - 기본적으로 모두 닫힌 상태로 시작
-    $('#notice-accordion').accordion('refresh');
   }
-  
+
   // 페이지네이션 업데이트 함수
   function updatePagination() {
-    const paginationContainer = $('.notice-pagination .pagination');
+    const paginationContainer = $('.notice-pagination .join');
     paginationContainer.empty();
-    
-    // 페이지가 1개 이하면 페이지네이션 숨김
+
     if (noticeData.totalPages <= 1) {
-      $('.notice-pagination').addClass('hide');
+      $('.notice-pagination').addClass('hidden');
       return;
     }
-    
-    // 이전 페이지 버튼
-    const prevDisabled = noticeData.currentPage === 1 ? 'disabled' : '';
+
+    // 이전 버튼
+    const prevDisabled = noticeData.currentPage === 1 ? 'btn-disabled' : '';
     paginationContainer.append(`
-      <a class="item ${prevDisabled}" data-page="${noticeData.currentPage - 1}">
-        <i class="angle left icon"></i>
-      </a>
+      <button class="btn btn-sm join-item ${prevDisabled}" data-page="${noticeData.currentPage - 1}">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
     `);
-    
-    // 페이지 번호 버튼
+
+    // 페이지 번호
     for (let i = 1; i <= noticeData.totalPages; i++) {
-      const isActive = i === noticeData.currentPage ? 'active' : '';
+      const isActive = i === noticeData.currentPage ? 'btn-active btn-primary' : '';
       paginationContainer.append(`
-        <a class="item ${isActive}" data-page="${i}">${i}</a>
+        <button class="btn btn-sm join-item ${isActive}" data-page="${i}">${i}</button>
       `);
     }
-    
-    // 다음 페이지 버튼
-    const nextDisabled = noticeData.currentPage === noticeData.totalPages ? 'disabled' : '';
+
+    // 다음 버튼
+    const nextDisabled = noticeData.currentPage === noticeData.totalPages ? 'btn-disabled' : '';
     paginationContainer.append(`
-      <a class="item ${nextDisabled}" data-page="${noticeData.currentPage + 1}">
-        <i class="angle right icon"></i>
-      </a>
+      <button class="btn btn-sm join-item ${nextDisabled}" data-page="${noticeData.currentPage + 1}">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
     `);
   }
-  
+
   // 공지사항 상세 보기 함수
   function showNoticeDetail(noticeId) {
-    // 공통 함수 사용
     sendFormRequest(
       '/api/notice/get/detail',
       { noticeId: noticeId },
       function(response) {
         if (response) {
           const notice = response;
-          
-          // 모달 내용 채우기
+
           $('#modal-notice-title').text(notice.title).data('id', notice.noticeId);
           $('#modal-notice-author').text(notice.author || '관리자');
           $('#modal-notice-date').text(new Date(notice.createdDate).toLocaleString());
           $('#modal-notice-views').text(notice.viewCount || 0);
           $('#modal-notice-content').html(notice.content.replace(/\n/g, '<br>'));
-          
-          // 중요 공지사항 표시
+
           if (notice.isImportant) {
-            $('#modal-notice-important').removeClass('hide');
+            $('#modal-notice-important').removeClass('hidden');
           } else {
-            $('#modal-notice-important').addClass('hide');
+            $('#modal-notice-important').addClass('hidden');
           }
-          
-          // 댓글 목록 로드
+
           loadComments(notice.noticeId);
-          
-          // 댓글 폼 초기화
           $('#comment-author').val('');
           $('#comment-content').val('');
-          
-          // 모달 표시
-          $('#notice-detail-modal').modal({
-            centered: false,
-            closable: true
-          }).modal('show');
+
+          document.getElementById('notice-detail-modal').showModal();
         } else {
           alert('공지사항을 불러올 수 없습니다.');
         }
@@ -1106,28 +883,25 @@
       }
     );
   }
-  
+
   // 댓글 목록 로드 함수
   function loadComments(noticeId) {
     $('#comments-loading').show();
-    $('#comment-list .comment').remove();
-    $('#no-comments-message').addClass('hide');
-    
-    // 댓글 로드 요청
+    $('#comment-list .comment-item').remove();
+    $('#no-comments-message').addClass('hidden');
+
     sendFormRequest(
       '/api/notice/comment/list',
       { noticeId: noticeId },
       function(response) {
         $('#comments-loading').hide();
-        
+
         if (response && response.noticeCommentDtos && response.noticeCommentDtos.length > 0) {
-          // 댓글 목록 표시
           response.noticeCommentDtos.forEach(function(comment) {
             const commentHtml = createCommentHtml(comment);
             $('#comment-list').append(commentHtml);
           });
-          
-          // 댓글 삭제 버튼 이벤트 연결
+
           $('.delete-comment-btn').click(function() {
             const commentId = $(this).data('id');
             if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
@@ -1135,68 +909,64 @@
             }
           });
         } else {
-          // 댓글이 없는 경우
-          $('#no-comments-message').removeClass('hide');
+          $('#no-comments-message').removeClass('hidden');
         }
       },
       function(xhr, status, error) {
         $('#comments-loading').hide();
         console.error('댓글 로드 오류:', error);
-        $('#no-comments-message').removeClass('hide')
-          .addClass('negative')
-          .html('<div class="header">댓글 로드 실패</div><p>댓글을 불러오는 중 오류가 발생했습니다.</p>');
+        $('#no-comments-message').removeClass('hidden').addClass('text-red-500').text('댓글을 불러오는 중 오류가 발생했습니다.');
       }
     );
   }
-  
+
   // 댓글 HTML 생성 함수
   function createCommentHtml(comment) {
     const date = new Date(comment.createdDate).toLocaleString();
-    const clientHashFromSession = getClientHashFromStorage(); // 세션에 저장된 클라이언트 해시값 가져오기
-    const isMyComment = clientHashFromSession && clientHashFromSession === comment.clientHash; // 내 댓글인지 확인
-    
-    const deleteButton = isMyComment ? 
-      `<button class="ui mini red right floated button delete-comment-btn" data-id="${comment.noticeCommentId}">
-        <i class="trash icon"></i> 삭제
+    const clientHashFromSession = getClientHashFromStorage();
+    const isMyComment = clientHashFromSession && clientHashFromSession === comment.clientHash;
+
+    const deleteButton = isMyComment ?
+      `<button class="btn btn-ghost btn-xs text-red-500 delete-comment-btn" data-id="${comment.noticeCommentId}">
+        <i class="fa-solid fa-trash"></i>
       </button>` : '';
-    
+
     return `
-      <div class="comment modern-comment">
-        <div class="avatar">
-          <i class="big user circle icon"></i>
-        </div>
-        <div class="content">
-          <div class="comment-header">
-            <span class="author">${comment.author}</span>
-            ${comment.anonymizedIp ? `<span class="metadata">(${comment.anonymizedIp})</span>` : ''}
-            <span class="metadata">${date}</span>
+      <div class="comment-item bg-gray-50 rounded-lg p-4 border border-gray-100">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+            <i class="fa-solid fa-user"></i>
           </div>
-          <div class="text">${comment.content}</div>
-          <div class="actions">
-            ${deleteButton}
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-semibold text-gray-900">${comment.author}</span>
+              ${comment.anonymizedIp ? `<span class="text-gray-400 text-xs">(${comment.anonymizedIp})</span>` : ''}
+              <span class="text-gray-400 text-xs">${date}</span>
+            </div>
+            <p class="text-gray-600 text-sm whitespace-pre-line">${comment.content}</p>
           </div>
+          ${deleteButton}
         </div>
       </div>
     `;
   }
-  
-  // 클라이언트 해시값 가져오기 (세션 또는 로컬 스토리지에서)
+
+  // 클라이언트 해시값 가져오기
   function getClientHashFromStorage() {
     return sessionStorage.getItem('clientHash');
   }
-  
+
   // 댓글 작성 이벤트
   $(document).on('click', '#comment-submit', function() {
     const noticeId = $('#modal-notice-title').data('id');
     const authorName = $('#comment-author').val() || '익명';
     const content = $('#comment-content').val();
-    
+
     if (!content) {
       alert('댓글 내용을 입력해주세요.');
       return;
     }
-    
-    // 댓글 등록 요청
+
     sendFormRequest(
       '/api/notice/comment/create',
       {
@@ -1206,9 +976,8 @@
       },
       function(response) {
         if (response) {
-          // 댓글 작성 성공
           $('#comment-content').val('');
-          loadComments(noticeId); // 댓글 목록 새로고침
+          loadComments(noticeId);
         } else {
           alert('댓글 등록 실패');
         }
@@ -1218,16 +987,15 @@
       }
     );
   });
-  
+
   // 댓글 삭제 함수
   function deleteComment(commentId, noticeId) {
-    // 댓글 삭제 요청
     sendFormRequest(
       '/api/notice/comment/delete',
       { commentId: commentId },
       function(response) {
         if (response) {
-          loadComments(noticeId); // 댓글 목록 새로고침
+          loadComments(noticeId);
         } else {
           alert('댓글 삭제 실패');
         }
@@ -1253,35 +1021,31 @@
         const statusBtn = statusContainer.find('.status-main-btn');
 
         if (response.isHealthy) {
-          // 정상 작동 상태
-          statusBtn.removeClass('loading inactive warning').addClass('active');
-          statusBtn.html('<i class="check circle icon"></i>정상');
+          statusBtn.removeClass('loading text-gray-400').addClass('text-green-500');
+          statusBtn.html('<i class="fa-solid fa-check-circle"></i> 정상');
         } else {
-          // 비정상 상태
-          statusBtn.removeClass('loading active warning').addClass('inactive');
-          statusBtn.html('<i class="times circle icon"></i>비정상');
+          statusBtn.removeClass('loading text-gray-400').addClass('text-red-500');
+          statusBtn.html('<i class="fa-solid fa-times-circle"></i> 비정상');
         }
       },
       error: function() {
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
 
-        // 오류 상태
-        statusBtn.removeClass('loading active inactive').addClass('warning');
-        statusBtn.html('<i class="exclamation triangle icon"></i>연결 오류');
+        statusBtn.removeClass('loading text-gray-400').addClass('text-yellow-500');
+        statusBtn.html('<i class="fa-solid fa-exclamation-triangle"></i> 연결 오류');
       }
     });
   }
 
   // 페이지 로드 시 AI 서버 상태 확인
   $(document).ready(function() {
-    // 기존 로드 함수들 실행 후 AI 서버 상태도 로드
     setTimeout(function() {
       loadAiServerStatus();
     }, 1000);
-    
+
     // 10분마다 AI 서버 상태 새로고침
-    setInterval(loadAiServerStatus, 600000); // 10분 = 600,000ms
+    setInterval(loadAiServerStatus, 600000);
   });
 
 </script>

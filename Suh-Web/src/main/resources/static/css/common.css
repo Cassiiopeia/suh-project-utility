@@ -2,7 +2,7 @@
 
 /*
 ===========================================
-COMMON.CSS - 공통 컴포넌트 스타일
+COMMON.CSS - Tailwind + DaisyUI 호환 스타일
 ===========================================
 */
 
@@ -18,257 +18,40 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
-  Responsive, Mobile Styles
+  Toast Styles
 ===========================
 */
 
-/* 카드 반응형 개선 */
-.ui.doubling.grid > .column {
-  padding: 1em !important;
+/* Toast container 중앙정렬: 상단 중앙 */
+#toast-container {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  pointer-events: none;
 }
 
-/* 태블릿 반응형 개선 */
-@media only screen and (min-width: 768px) and (max-width: 991px) {
-  .ui.doubling.grid > .column {
-    padding: 0.8em !important;
-  }
+/* Toast 개별 아이템 스타일 */
+.toast {
+  background-color: #1f2937;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  font-size: 0.95rem;
+  opacity: 0;
+  animation: fadeInOut 3s forwards;
 }
 
-
-@media (max-width: 767px) {
-  .table-container .total-count {
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
-
-  .table-container {
-    margin: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .table-container::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .table-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  .table-container::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-  }
-
-  .dashboard-container .ui.five.column.grid {
-    margin: 0 !important;
-  }
-
-  .dashboard-container .column {
-    padding: 0.5rem !important;
-  }
+/* 등장 + 유지 + 사라짐 애니메이션 */
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: translateY(-10px); }
+  20%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
 }
-
-@media (min-width: 768px) and (max-width: 991px) {
-  .table-container {
-    margin: 0;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .ui.card {
-    width: 100%;
-  }
-}
-
-/* 모바일 반응형 스타일 개선 */
-@media only screen and (max-width: 767px) {
-  .nested-accordion {
-    margin-left: 5px !important;
-    padding-left: 5px !important;
-  }
-
-  .version-accordion > .active.title:first-of-type {
-    padding-left: 5px !important;
-  }
-}
-
-@media only screen and (max-width: 767px) {
-  .version-row {
-    flex-direction: row !important;
-    align-items: center !important;
-  }
-
-  .version-date {
-    margin-left: 1.5rem;
-    margin-top: 0.2rem;
-    font-size: 0.8em;
-  }
-
-  .version-info-segment {
-    margin-bottom: 1rem;
-    padding: 0 !important;
-  }
-}
-
-/*
-===========================
-   Header Styles
-===========================
-*/
-
-/* 기본 메뉴 스타일 */
-.ui.menu .item {
-  font-weight: 500;
-  padding: 10px 10px;
-}
-
-.ui.menu .item i.icon {
-  margin-right: 8px;
-}
-
-.ui.menu .right.menu {
-  display: flex !important;
-}
-
-/* 모바일 메뉴 헤더 스타일 */
-.mobile-menu-header {
-  display: none;
-  padding: 1rem;
-  font-weight: bold;
-  background: #f8f9fa;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-/*
-===========================
-  translator.html
-===========================
-*/
-.translator-page .ui.header {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.translator-page .ui.segment {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: box-shadow 0.3s ease;
-}
-
-.translator-page .ui.segment:hover {
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
-
-.translator-page textarea {
-  width: 100%;
-  min-height: 170px;
-  border: 1px solid rgba(34, 36, 38, 0.15);
-  border-radius: 0.28571429rem;
-  padding: 0.78571429em 1em;
-  resize: vertical;
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 1em;
-  line-height: 1.5;
-}
-
-.translator-page textarea:focus {
-  border-color: #85b7d9;
-  outline: none;
-}
-
-.translator-page #targetText {
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 1em;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.translator-page #translateBtn {
-  transition: all 0.3s ease;
-}
-
-.translator-page #translateBtn:hover {
-  transform: translateY(-2px);
-}
-
-/* 반응형 스타일 */
-@media only screen and (max-width: 767px) {
-  .translator-page .ui.container {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-
-  .translator-page textarea,
-  .translator-page #targetText {
-    min-height: 120px;
-  }
-
-  .translator-page .ui.header {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-  }
-}
-
-/* 모바일 반응형 스타일 */
-@media only screen and (max-width: 767px) {
-  /* 상단 헤더 크기 조정 */
-  .ui.fixed.menu {
-    padding: 0.5em 1em;
-  }
-
-  /* 로고 이미지 크기 조정 */
-  .ui.menu .header.item img {
-    width: 40px;
-    height: auto;
-  }
-
-  /* 로고 텍스트 크기 조정 */
-  .ui.menu .header.item span.title {
-    font-size: 1.2em;
-  }
-
-  /* 햄버거 메뉴 아이콘 크기 조정 */
-  .ui.dropdown.item i.icon {
-    font-size: 1.5em !important;
-    margin: 0;
-  }
-
-  /* 드롭다운 메뉴 스타일 개선 */
-  .ui.dropdown .menu {
-    width: 100vw;
-    position: fixed !important;
-    top: 60px !important;
-    left: 0 !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    max-height: calc(100vh - 60px) !important;
-    overflow-y: auto;
-  }
-
-  /* 드롭다운 메뉴 아이템 크기 조정 */
-  .ui.dropdown .menu > .item {
-    padding: 1rem !important;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  /* 드롭다운 메뉴 아이콘 크기 조정 */
-  .ui.dropdown .menu > .item i.icon {
-    font-size: 1.2em;
-    width: 1.5em;
-    margin-right: 1rem;
-  }
-
-  /* 컨테이너 여백 조정 */
-  .ui.container {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    width: 100% !important;
-  }
-}
-
 
 /*
 ===========================
@@ -281,7 +64,7 @@ html, body, button, input, select, textarea {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   background: #ffffff;
-  border-radius: 0.28571429rem;
+  border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);
   margin-bottom: 2em;
 }
@@ -303,7 +86,7 @@ html, body, button, input, select, textarea {
 
 .table-container .tabulator-header {
   background-color: #f9fafb;
-  border-bottom: 2px solid #d4d4d5;
+  border-bottom: 2px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 3;
@@ -319,14 +102,16 @@ html, body, button, input, select, textarea {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   background: #ffffff;
-  border-radius: 0.28571429rem;
+  border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12);
   margin-bottom: 2em;
+  min-height: 400px;
+  position: relative;
 }
 
 .modal-table-container .tabulator-header {
   background-color: #f9fafb;
-  border-bottom: 2px solid #d4d4d5;
+  border-bottom: 2px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 3;
@@ -336,266 +121,6 @@ html, body, button, input, select, textarea {
   width: 100%;
   background: #ffffff;
 }
-
-
-/*
-===========================
-   login.html Styles
-===========================
-*/
-
-.login-page .login-segment {
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-/*
-===========================
-   Dashboard CSS Fixes & Improvements
-===========================
-*/
-
-/* 기존 대시보드 카드 스타일 수정 - 카드 겹침 문제 해결 */
-.dashboard-page .ui.card {
-  width: 100% !important; /* 고정 너비 제거하고 100%로 설정 */
-  min-width: auto !important; /* 최소 너비 제한 제거 */
-  margin: 0.5em 0 !important; /* 상하 마진 조정 */
-}
-
-/* 대시보드 섹션 헤더 개선 */
-.dashboard-section-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 2px solid #f0f0f0;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #333;
-}
-
-/* 섹션 설명 스타일 */
-.dashboard-section-description {
-  color: #666;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-
-/* 프로젝트 섹션 스타일 */
-.dashboard-project-section {
-  margin-top: 2rem;
-  margin-bottom: 1.5rem;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-/* 프로젝트 타이틀 스타일 */
-.dashboard-project-title {
-  font-size: 1.4rem;
-  font-weight: 500;
-  margin-bottom: 1.2rem;
-  color: #444;
-  border-left: 4px solid #2185d0;
-  padding-left: 10px;
-}
-
-/* 카드 호버 이펙트 */
-.dashboard-page .ui.card:hover {
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}
-
-/* 카테고리 태그 스타일 개선 */
-.dashboard-page .ui.card .meta .category {
-  background-color: rgba(0,0,0,0.05);
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.8em;
-  font-weight: 500;
-}
-
-/* 카드 고정 높이 설정 */
-.equal-height-card.card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.equal-height-card .content {
-  flex-grow: 1;
-}
-
-/* 바로가기 버튼 스타일 */
-.shortcut-btn {
-  position: relative !important;
-  height: 40px !important; /* 버튼 높이 고정 */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.shortcut-btn i.arrow.right.icon {
-  margin-right: 8px !important;
-  position: static !important;
-  transform: none !important;
-  background-color: white !important;
-  color: #2185d0 !important;
-  border-radius: 50% !important;
-  width: 24px !important;
-  height: 24px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-.shortcut-btn span {
-  position: static !important;
-  transform: none !important;
-}
-
-/* Figma 로고 스타일 */
-.figma-logo {
-  width: 24px;
-  height: 24px;
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-/* 스켈레톤 로딩 효과 */
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  background-color: #EEEEEE;
-  border-radius: 4px;
-}
-
-.skeleton::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
-  animation: skeleton-loading 1.5s infinite;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.skeleton-card .header {
-  height: 24px;
-  width: 80%;
-  margin-bottom: 8px;
-}
-
-.skeleton-card .meta {
-  height: 16px;
-  width: 60%;
-  margin-bottom: 12px;
-}
-
-.skeleton-card .description {
-  height: 18px;
-  width: 90%;
-}
-
-.skeleton-card .button {
-  height: 36px;
-  width: 100%;
-}
-
-/* 스켈레톤 로딩 사이즈 클래스 */
-.skeleton-header-large {
-  height: 32px;
-  width: 30%; 
-  margin-bottom: 15px;
-}
-
-.skeleton-text-medium {
-  height: 18px;
-  width: 60%;
-}
-
-.skeleton-header-medium {
-  height: 28px;
-  width: 25%; 
-  margin-bottom: 10px;
-}
-
-.skeleton-text-small {
-  height: 18px;
-  width: 40%; 
-  margin-bottom: 20px;
-}
-
-/* 요소 숨김 클래스 (CSP 준수) */
-.hide {
-  display: none;
-}
-
-/* 대시보드 모바일 반응형 개선 */
-@media only screen and (max-width: 767px) {
-  .dashboard-project-section {
-    padding: 1rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .dashboard-section-header {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .dashboard-project-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-}
-
-/*
-===========================
-  Toast Styles
-===========================
-*/
-
-/* Toast container 중앙정렬: 상단 중앙 */
-#toast-container {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  pointer-events: none;
-}
-
-/* Toast 개별 아이템 스타일 */
-.toast {
-  background-color: #1b1c1d; /* Semantic UI에서 검정색(기본) 배경 */
-  color: #fff;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1rem;
-  border-radius: 0.28571429rem;
-  box-shadow: 0 0 2px rgba(0,0,0,0.2);
-  font-size: 1rem;
-  opacity: 0; /* 처음엔 투명 */
-  animation: fadeInOut 3s forwards; /* 등장 애니메이션 */
-}
-
-/* 등장 + 유지 + 사라짐 애니메이션 */
-@keyframes fadeInOut {
-  0%   { opacity: 0;   transform: translateY(-10px); }
-  20%  { opacity: 1;   transform: translateY(0);     }
-  80%  { opacity: 1;   transform: translateY(0);     }
-  100% { opacity: 0;   transform: translateY(-10px); }
-}
-
 
 /*
 ===========================
@@ -608,17 +133,6 @@ html, body, button, input, select, textarea {
   cursor: pointer;
 }
 
-/* 버전 정보 섹션 스타일 */
-.version-info-segment {
-  margin-bottom: 2rem;
-}
-
-/* 버전 아코디언 스타일 */
-.version-accordion {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
-  border-radius: 0.4rem !important;
-}
-
 /* 버전 행 레이아웃 */
 .version-row {
   display: flex;
@@ -627,486 +141,67 @@ html, body, button, input, select, textarea {
   width: 100%;
 }
 
-/* 기존 스타일 개선 */
-.version-label {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-}
-
 /* 버전 태그 스타일 */
 .version-tag {
   font-weight: bold;
-  color: #2185d0;
+  color: #3b82f6;
   font-family: 'Courier New', monospace;
   margin: 0 0.4rem;
 }
 
 /* 버전 날짜 스타일 */
 .version-date {
-  color: #767676;
+  color: #6b7280;
   font-size: 0.9em;
   font-family: 'Courier New', monospace;
 }
 
-/* 아이콘 색상 */
-.version-accordion .icon.green {
-  color: #21ba45 !important;
+/*
+===========================
+   Translator Page Styles
+===========================
+*/
+
+.translator-page textarea {
+  width: 100%;
+  min-height: 170px;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  resize: vertical;
+  font-size: 1em;
+  line-height: 1.5;
+  transition: border-color 0.2s ease;
 }
 
-.version-accordion .icon.blue {
-  color: #2185d0 !important;
+.translator-page textarea:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.version-accordion .icon.orange {
-  color: #f2711c !important;
-}
-
-/* 중첩 아코디언 스타일 */
-.nested-accordion {
-  margin-top: 10px !important;
-  margin-left: 10px !important;
-  box-shadow: none !important;
-  border-left: 2px solid #f0f0f0 !important;
-  padding-left: 10px !important;
-}
-
-/* 최신 버전 강조 */
-.version-accordion > .active.title:first-of-type {
-  border-left: 3px solid #21ba45 !important;
-  padding-left: 10px !important;
-  background-color: rgba(33, 186, 69, 0.05) !important;
-}
-
-/* 전체 버전 기록 아이콘 */
-.version-accordion .history.icon {
-  color: #767676 !important;
-}
-
-/* 가독성 개선을 위한 여백 조정 */
-.version-accordion .content {
-  padding-top: 0.5em !important;
-  padding-bottom: 1em !important;
+.translator-page #targetText {
+  font-size: 1em;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /*
 ===========================
-   Notice Styles
+   Docker Container Item Styles
 ===========================
 */
-
-/* 공지사항 아이템 스타일 */
-.notice-item {
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  padding: 0.8rem !important;
-  border-radius: 0.28571429rem;
-}
-
-.notice-item:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.notice-meta {
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 0.9em;
-  margin-bottom: 0.5em;
-  display: block;
-}
-
-.notice-meta span {
-  margin-right: 1em;
-}
-
-.notice-preview {
-  margin-top: 0.5em;
-  line-height: 1.4;
-  color: rgba(0, 0, 0, 0.8);
-}
-
-.notice-empty {
-  color: rgba(0, 0, 0, 0.5);
-  padding: 1rem 0;
-}
-
-/* 공지사항 스켈레톤 로딩 스타일 */
-.skeleton-notice {
-  padding: 15px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.skeleton-notice .header {
-  height: 18px;
-  width: 70%;
-  margin-bottom: 10px;
-}
-
-.skeleton-notice .meta {
-  height: 14px;
-  width: 40%;
-  margin-bottom: 10px;
-}
-
-.skeleton-notice .description {
-  height: 14px;
-  width: 90%;
-}
-
-/* 공지사항 관리 페이지 스타일 */
-.notice-management-page .ui.action.input {
-  width: 100%;
-}
-
-/* 공지사항 상세 모달 스타일 */
-.notice-detail-modal .content {
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-/* 모달 관련 스타일 */
-.modal-table-container {
-  min-height: 400px;
-  position: relative;
-}
-
-/* 모달 중앙 정렬 및 크기 조정 */
-.ui.modal {
-  margin: 0 auto !important;
-  top: 10% !important;
-  left: 0 !important;
-  right: 0 !important;
-  transform: none !important;
-}
-
-.ui.small.modal {
-  width: 500px;
-  max-width: 90%;
-}
-
-/* Tabulator 버튼 그룹 스타일 */
-.ui.mini.buttons {
-  display: inline-flex;
-  justify-content: center;
-}
-
-.ui.mini.buttons .button {
-  padding: 0.5em !important;
-  margin: 0 2px !important;
-}
-
-/* 스켈레톤 로딩 효과 */
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-.skeleton::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0.2) 20%,
-    rgba(255, 255, 255, 0.5) 60%,
-    rgba(255, 255, 255, 0)
-  );
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.skeleton-header-large {
-  height: 32px;
-  width: 70%;
-  margin-bottom: 15px;
-}
-
-.skeleton-header-medium {
-  height: 24px;
-  width: 50%;
-  margin-bottom: 10px;
-}
-
-.skeleton-text-medium {
-  height: 16px;
-  width: 80%;
-  margin-bottom: 10px;
-}
-
-.skeleton-text-small {
-  height: 14px;
-  width: 60%;
-  margin-bottom: 20px;
-}
-
-.skeleton-card {
-  min-height: 180px;
-}
-
-.skeleton-card .header {
-  height: 24px;
-  width: 80%;
-  margin-bottom: 10px;
-}
-
-.skeleton-card .meta {
-  height: 16px;
-  width: 60%;
-  margin-bottom: 10px;
-}
-
-.skeleton-card .description {
-  height: 16px;
-  width: 90%;
-  margin-bottom: 10px;
-}
-
-.skeleton-card .button {
-  height: 36px;
-  width: 100%;
-}
-
-/* 아코디언 스타일 개선 */
-.ui.styled.accordion .title {
-  font-size: 1em;
-  padding: 0.8em 1em;
-}
-
-.ui.styled.accordion .title .icon {
-  font-size: 0.9em;
-}
-
-.ui.styled.accordion .title .label {
-  margin-right: 0.5em;
-  vertical-align: middle;
-}
-
-.ui.styled.accordion .content {
-  padding: 1em 1.5em;
-}
-
-/* 유틸리티 클래스 */
-.hide {
-  display: none !important;
-}
-
-/* 공지사항 스타일 */
-.notice-meta-inline {
-  float: right;
-  font-size: 0.85em;
-  color: rgba(0, 0, 0, 0.6);
-  margin-right: 10px;
-}
-
-.notice-meta-inline .notice-author,
-.notice-meta-inline .notice-date {
-  margin-left: 15px;
-}
-
-.notice-meta-inline i.icon {
-  margin-right: 3px;
-  opacity: 0.7;
-}
-
-/* 중요 공지사항 강조 */
-.ui.accordion .title[data-important="true"] {
-  background-color: rgba(255, 236, 236, 0.7);
-}
-
-/* 공지사항 페이지네이션 */
-.notice-pagination {
-  margin-top: 0.8em;
-}
-
-.notice-pagination .pagination {
-  box-shadow: none;
-  border: none;
-}
-
-.notice-pagination .pagination .item {
-  min-width: 2em;
-  text-align: center;
-}
-
-/* 아코디언 내 메타 정보 */
-.notice-meta {
-  margin-bottom: 0.8em;
-  font-size: 0.9em;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.notice-meta span {
-  margin-right: 15px;
-}
-
-/* 공지사항 미리보기 텍스트 */
-.notice-preview {
-  margin: 0.8em 0;
-  line-height: 1.5;
-  color: rgba(0, 0, 0, 0.8);
-}
-
-/* 모바일 반응형 */
-@media only screen and (max-width: 767px) {
-  .notice-meta-inline {
-    display: block;
-    float: none;
-    margin-top: 5px;
-    margin-left: 25px; /* 드롭다운 아이콘 공간만큼 여백 */
-  }
-  
-  .notice-meta-inline .notice-author,
-  .notice-meta-inline .notice-date {
-    display: inline-block;
-    margin-left: 0;
-    margin-right: 10px;
-  }
-}
-
-/* 댓글 스타일 - 모던한 디자인 */
-.ui.comments {
-  max-width: 100%;
-  width: 100%;
-}
-
-.ui.comments .comment.modern-comment {
-  display: flex;
-  margin-bottom: 1.5em;
-  padding: 1em;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  background-color: #f9f9f9;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.ui.comments .comment.modern-comment:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-  border-color: rgba(33, 133, 208, 0.2);
-}
-
-.ui.comments .comment .avatar {
-  margin-right: 15px;
-}
-
-.ui.comments .comment .avatar i.big.user.circle.icon {
-  color: #2185d0;
-  font-size: 2.5em;
-}
-
-.ui.comments .comment .content {
-  flex-grow: 1;
-  margin-left: 0 !important; /* Semantic UI 기본 스타일 덮어쓰기 */
-}
-
-.ui.comments .comment .comment-header {
-  margin-bottom: 0.5em;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.ui.comments .comment .author {
-  font-weight: bold;
-  color: #1a1a1a;
-  margin-right: 10px;
-  font-size: 1.1em;
-}
-
-.ui.comments .comment .metadata {
-  color: #767676;
-  margin-right: 10px;
-  font-size: 0.9em;
-}
-
-.ui.comments .comment .text {
-  font-size: 1em;
-  line-height: 1.6;
-  color: #333;
-  margin-bottom: 0.8em;
-  word-break: break-word;
-  white-space: pre-line;
-}
-
-.ui.comments .comment .actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.ui.comments .comment .actions .button {
-  margin-left: 10px;
-  transition: all 0.2s ease;
-  opacity: 0.7;
-}
-
-.ui.comments .comment .actions .button:hover {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
-/* 댓글 작성 폼 개선 */
-.ui.reply.form {
-  background-color: #f5f8fa;
-  padding: 1.2em;
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.03);
-  margin-top: 2em;
-  transition: all 0.3s ease;
-}
-
-.ui.reply.form:focus-within {
-  box-shadow: 0 2px 12px rgba(33, 133, 208, 0.1);
-}
-
-.ui.reply.form textarea {
-  border-color: rgba(34, 36, 38, 0.1);
-  border-radius: 6px;
-}
-
-.ui.reply.form textarea:focus {
-  border-color: #2185d0;
-}
-
-.ui.reply.form .field {
-  margin-bottom: 1em;
-}
-
-.ui.reply.form .button {
-  border-radius: 20px;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.ui.reply.form .button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(33, 133, 208, 0.2);
-}
-
-/* Docker Container Item Styles */
 .container-item {
   display: flex !important;
   align-items: center !important;
   padding: 0.75rem !important;
-  border-radius: 6px !important;
+  border-radius: 0.5rem !important;
   transition: all 0.2s ease !important;
 }
 
 .container-item:hover {
-  background: #f5f5f5 !important;
+  background: #f3f4f6 !important;
   transform: translateY(-1px) !important;
 }
 
@@ -1134,7 +229,326 @@ html, body, button, input, select, textarea {
 
 .container-item .content .header {
   font-weight: 600 !important;
-  color: #333 !important;
+  color: #1f2937 !important;
   margin-bottom: 0.25rem !important;
 }
+
+/*
+===========================
+   Utility Classes
+===========================
+*/
+
+/* 요소 숨김 클래스 */
+.hide {
+  display: none !important;
+}
+
+/* Figma 로고 스타일 */
+.figma-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+/*
+===========================
+   Mobile Responsive Styles
+===========================
+*/
+
+@media (max-width: 767px) {
+  .table-container .total-count {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .table-container {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .table-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .table-container {
+    margin: 0;
+  }
+}
+
+/*
+===========================
+   Grass Planter Styles
+===========================
+*/
+
+.grass-planter-dashboard .stat-card {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.grass-planter-dashboard .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
+}
+
+.grass-planter-dashboard .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.grass-planter-dashboard .stat-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+/*
+===========================
+   Study Page Styles
+===========================
+*/
+
+.study-page .markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.study-page .category-tree {
+  border-right: 1px solid #e5e7eb;
+  min-height: calc(100vh - 200px);
+}
+
+.study-page .category-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.study-page .category-item:hover {
+  background-color: #f3f4f6;
+}
+
+.study-page .category-item.active {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+/*
+===========================
+   AI Server Page Styles
+===========================
+*/
+
+.ai-server-page .server-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ai-server-page .server-status .status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.ai-server-page .server-status .status-indicator.online {
+  background-color: #10b981;
+}
+
+.ai-server-page .server-status .status-indicator.offline {
+  background-color: #ef4444;
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/*
+===========================
+   Notice Management Styles
+===========================
+*/
+
+.notice-management-page .notice-item {
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.notice-management-page .notice-item:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.notice-management-page .notice-item.important {
+  border-left: 4px solid #ef4444;
+  background-color: #fef2f2;
+}
+
+/*
+===========================
+   Login Page Styles
+===========================
+*/
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+}
+
+.login-page .login-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-page .login-card .logo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-page .login-card .logo img {
+  width: 80px;
+  height: 80px;
+}
+
+.login-page .login-card .logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-top: 1rem;
+}
+
+/*
+===========================
+   Issue Helper Page Styles
+===========================
+*/
+
+.issue-helper-page .issue-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.issue-helper-page .issue-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.issue-helper-page .issue-card .issue-title {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.issue-helper-page .issue-card .issue-meta {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/*
+===========================
+   Form Styles (Tailwind Override)
+===========================
+*/
+
+/* Input focus 스타일 */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button hover 효과 */
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/*
+===========================
+   Scrollbar Styles
+===========================
+*/
+
+/* 커스텀 스크롤바 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/*
+===========================
+   Print Styles
+===========================
+*/
+
+@media print {
+  .navbar, footer, .btn, .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
 }

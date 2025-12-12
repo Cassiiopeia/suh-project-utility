@@ -22,8 +22,8 @@ public class SshCommandExecutor {
   }
 
   /**
-   * (1) 기본 SSH 명령어 실행
-   *     - sudo 없이 바로 실행
+   * 기본 SSH 명령어 실행
+   * sudo 없이 바로 실행
    */
   public String executeCommand(String command) {
     Session session = null;
@@ -94,7 +94,7 @@ public class SshCommandExecutor {
   }
 
   /**
-   * (2) sudo + 표준입력(-S)으로 비번 전달 + PATH 설정
+   * sudo + 표준입력(-S)으로 비번 전달 + PATH 설정
    *     - 'tty 없이' sudo 인증
    *     - docker 등 PATH 문제 해결을 위해 env 설정
    *

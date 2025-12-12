@@ -1,123 +1,69 @@
 <!-- src/main/resources/templates/fragments/footer.html -->
 <!DOCTYPE html>
 <div th:fragment="footer">
-  <div class="ui vertical footer segment" style="padding: 2em 0; margin-top: 3em; border-top: 2px solid #4183c4;">
-    <div class="ui container">
-      <div class="ui stackable two column grid center aligned horizontally padded">
+  <footer class="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-2 border-blue-500 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
 
         <!-- Developer 섹션 -->
-        <div class="column">
-          <h4 class="ui header" style="color: #1b1c1d; margin-bottom: 1em;">
-            Developer
-          </h4>
-          <div style="color: #1b1c1d; margin: 1em;">
-            <p style="margin-bottom: 0.7em;">
-              <i class="user circle icon" style="color: #4183c4;" aria-hidden="true"></i>
-              서새찬 연구원
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Developer</h4>
+          <div class="space-y-2 text-gray-600">
+            <p class="flex items-center justify-center gap-2">
+              <i class="fa-solid fa-user-circle text-blue-500"></i>
+              SUHSAECHAN
             </p>
-            <p style="margin-bottom: 0.7em;">
-              <i class="building icon" style="color: #4183c4;" aria-hidden="true"></i>
-              SOMANSA(소만사) 서버모듈팀
+            <p class="flex items-center justify-center gap-2">
+              <i class="fa-solid fa-building text-blue-500"></i>
+              <a href="https://www.somansa.com/" target="_blank"
+                 class="text-blue-500 hover:text-blue-600 transition-colors hover:underline">
+                SOMANSA
+              </a>
+              Server Module Team
             </p>
-            <p style="margin-bottom: 0.7em;">
-              <i class="code icon" style="color: #4183c4;" aria-hidden="true"></i>
+            <p class="flex items-center justify-center gap-2">
+              <i class="fa-solid fa-code text-blue-500"></i>
               Spring, Postgres, Java, ElasticSearch
             </p>
           </div>
         </div>
 
-        <!-- Contact Us 섹션 -->
-        <div class="column">
-          <h4 class="ui header" style="color: #1b1c1d; margin-bottom: 1em;">
-            Contact Me
-          </h4>
-          <p style="color: #1b1c1d; margin-bottom: 1em;">
-            <i class="envelope open outline icon" style="color: #4183c4;"></i>
-            Email:
-            <a href="mailto:chan4760@gmail.com"
-               style="color: #4183c4; transition: all 0.3s ease;"
-               onmouseover="this.style.color='#5a95d4'"
-               onmouseout="this.style.color='#4183c4'">
-              chan4760@gmail.com
-            </a>
-          </p>
-          <p style="color: #1b1c1d;">
-            <i class="github icon" style="color: #4183c4;"></i>
-            GitHub:
-            <a href="https://github.com/Cassiiopeia/suh-project-utility"
-               target="_blank"
-               style="color: #4183c4; transition: all 0.3s ease;"
-               onmouseover="this.style.color='#5a95d4'"
-               onmouseout="this.style.color='#4183c4'">
-              SUH-PROJECT-UTILITY
-            </a>
-          </p>
+        <!-- Contact Me 섹션 -->
+        <div>
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Contact Me</h4>
+          <div class="space-y-2 text-gray-600">
+            <p class="flex items-center justify-center gap-2">
+              <i class="fa-solid fa-envelope text-blue-500"></i>
+              Email:
+              <a href="mailto:chan4760@gmail.com"
+                 class="text-blue-500 hover:text-blue-600 transition-colors hover:underline">
+                chan4760@gmail.com
+              </a>
+            </p>
+            <p class="flex items-center justify-center gap-2">
+              <i class="fa-brands fa-github text-blue-500"></i>
+              GitHub:
+              <a href="https://github.com/Cassiiopeia/suh-project-utility"
+                 target="_blank"
+                 class="text-blue-500 hover:text-blue-600 transition-colors hover:underline">
+                SUH-PROJECT-UTILITY
+              </a>
+            </p>
+          </div>
         </div>
 
       </div>
 
       <!-- 저작권 정보 -->
-      <div style="color: #666; text-align: center; margin-top: 2em;">
-        <i class="copyright outline icon" aria-hidden="true"></i>
-        2025 SAECHAN-LAB |
-        <i class="code icon" style="color: #4183c4;" aria-hidden="true"></i>
-        서새찬
-        <i class="gem outline icon" style="color: #4183c4;" aria-hidden="true"></i>
+      <div class="text-center text-gray-500 text-sm mt-8 pt-6 border-t border-gray-200">
+        <p class="flex items-center justify-center gap-2">
+          <i class="fa-regular fa-copyright"></i>
+          2025 SAECHAN-LAB |
+          <i class="fa-solid fa-code text-blue-500"></i>
+          SUHSAECHAN
+          <i class="fa-regular fa-gem text-blue-500"></i>
+        </p>
       </div>
     </div>
-  </div>
-
-  <!-- 반응형 스타일 적용 -->
-  <style>
-    .ui.footer.segment {
-      margin-top: 3em;
-      padding: 2em 0;
-      border-top: 2px solid #4183c4;
-    }
-
-    @media only screen and (max-width: 767px) {
-      .ui.footer.segment {
-        padding: 1em;
-        margin-top: 2em;
-      }
-
-      .ui.stackable.grid .column {
-        padding: 1em !important;
-      }
-
-      .ui.footer.segment .column p {
-        font-size: 0.9em;
-        margin-bottom: 0.5em;
-      }
-
-      .ui.footer.segment .copyright {
-        font-size: 0.8em;
-      }
-    }
-  </style>
-
-  <script>
-    $(document).ready(function() {
-      $('.ui.dropdown').dropdown({
-        transition: 'drop'
-      });
-
-      // 모바일에서 메뉴 클릭 시 자동으로 닫히도록 설정
-      $('.ui.dropdown').dropdown({
-        transition: 'drop',
-        onHide: function() {
-          if (window.innerWidth <= 767) {
-            $('.ui.dropdown').dropdown('hide');
-          }
-        }
-      });
-
-      // 모바일에서 메뉴 아이템 클릭 시 메뉴 닫기
-      $('.ui.dropdown .menu .item').on('click', function() {
-        if (window.innerWidth <= 767) {
-          $('.ui.dropdown').dropdown('hide');
-        }
-      });
-    });
-  </script>
+  </footer>
 </div>

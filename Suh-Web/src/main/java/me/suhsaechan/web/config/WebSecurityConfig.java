@@ -2,7 +2,6 @@ package me.suhsaechan.web.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.service.UserAuthority;
@@ -40,25 +39,13 @@ public class WebSecurityConfig {
     allPublicEndpoints.addAll(publicResourceEndpoints);
     allPublicEndpoints.addAll(publicApiEndpoints);
 
-    // API 경로 > AntPathRequestMatcher 목록 생성
-    List<AntPathRequestMatcher> apiMatchers = publicApiEndpoints.stream()
-        .map(AntPathRequestMatcher::new)
-        .collect(Collectors.toList());
-
-    // CSRF 설정
-    // CSRF 토큰을 사용할 경우, form에서 반드시 _csrf 필드를 사용해야 합니다.
+    // CSRF 설정 : _csrf 필드 필요
     http
         .csrf(csrf -> csrf
             // API 경로에 대해 CSRF 토큰 검사 비활성화
-                .ignoringRequestMatchers("/api/issue-helper/create/commit-branch/github-workflow")
-                .ignoringRequestMatchers("/api/grass/**")  // GrassPlanter API CSRF 비활성화
-//            //FIXME: DEV 에서만 추가
-//                .ignoringRequestMatchers("/api/**")
-
-            // XSRF-TOKEN 쿠키 처리
-//            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-
-        ); // 다른 경로는 기본적으로 _csrf 필드 필요
+            .ignoringRequestMatchers("/api/issue-helper/create/commit-branch/github-workflow")
+            .ignoringRequestMatchers("/api/grass/**")  // GrassPlanter API CSRF 비활성화
+        );
 
     http
         .authorizeHttpRequests(auth -> auth
@@ -66,7 +53,7 @@ public class WebSecurityConfig {
             .requestMatchers(allPublicEndpoints.toArray(new String[0])).permitAll()
             .requestMatchers(HttpMethod.POST, "/api/docker/get/container-info").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/module/get/versions").hasAnyRole("USER", "ADMIN")
-            .anyRequest().authenticated() // 나머지 경로는 인증 필요
+            .anyRequest().authenticated()
         );
 
     // Form Login 설정
@@ -76,8 +63,6 @@ public class WebSecurityConfig {
             .loginPage("/login")
             // 실제 로그인을 처리할 URL (POST)
             .loginProcessingUrl("/login")
-            // 로그인 성공시 이동할 페이지
-//            .defaultSuccessUrl("/dashboard", true)
             .successHandler(new CustomAuthenticationSuccessHandler(aesUtil, userAuthority))
             // 로그인 실패시 이동할 페이지
             .failureUrl("/login?error=true")
@@ -87,10 +72,10 @@ public class WebSecurityConfig {
     // Logout 설정
     http
         .logout(logout -> logout
-            .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // GET/POST 둘 다 대응
-            .logoutSuccessUrl("/login?logout=true") // 로그아웃 성공 시
-            .invalidateHttpSession(true)    // 세션 무효화
-            .deleteCookies("JSESSIONID")    // JSESSIONID 쿠키 삭제
+            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .logoutSuccessUrl("/login?logout=true")             // 로그아웃 성공 시
+            .invalidateHttpSession(true)                        // 세션 무효화
+            .deleteCookies("JSESSIONID")  // JSESSIONID 쿠키 삭제
             .permitAll()
         );
 
@@ -105,7 +90,6 @@ public class WebSecurityConfig {
     // CORS 설정
     http
         .cors(Customizer.withDefaults());
-
     return http.build();
   }
 }

@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = 'me.suhsaechan'
-    version = '1.3.4'
+    version = '1.4.5'
     
     repositories {
         mavenCentral()
@@ -14,6 +14,7 @@ allprojects {
         // spring-integration-smb 문제로 인해 주석 처리
         // maven { url 'https://repo.spring.io/plugins-release/' }
 
+        // SUH Nexus 저장소
         maven {
             name = 'SUH-NEXUS'
             url "https://nexus.suhsaechan.kr/repository/maven-releases/"

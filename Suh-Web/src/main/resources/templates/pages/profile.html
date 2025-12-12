@@ -1,0 +1,594 @@
+<!-- src/main/resources/templates/pages/profile.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head th:replace="~{fragments/header :: head(title='Profile - SAECHAN LAB')}"></head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- 프로필 헤더 카드 -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <!-- 프로필 이미지 -->
+        <div class="avatar">
+          <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-0">
+            <img src="/images/suhSaeChanProfile.jpeg" alt="Profile Photo" onerror="this.src='/images/logo_no_text.png'" />
+          </div>
+        </div>
+        <!-- 기본 정보 -->
+        <div class="text-center md:text-left flex-1">
+          <h1 class="text-3xl font-bold text-gray-900">Saechan Suh</h1>
+          <p class="text-lg text-gray-600 mt-1">서새찬</p>
+          <p class="text-md text-blue-600 font-medium mt-2">
+            <i class="fa-solid fa-building mr-1"></i>
+            Server Module Team Researcher @ SOMANSA
+          </p>
+          <p class="text-gray-500 mt-2">
+            Backend Developer who enjoys experimentation and problem-solving
+          </p>
+          <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+            <span class="badge badge-primary">Spring Boot</span>
+            <span class="badge badge-secondary">Java</span>
+            <span class="badge badge-accent">PostgreSQL</span>
+            <span class="badge badge-info">Flutter</span>
+            <span class="badge badge-success">Docker</span>
+          </div>
+        </div>
+        <!-- 연락처 버튼 -->
+        <div class="flex flex-col gap-2">
+          <a href="mailto:chan4760@gmail.com" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-envelope mr-1"></i> Email
+          </a>
+          <a href="https://github.com/Cassiiopeia" target="_blank" class="btn btn-outline btn-sm">
+            <i class="fa-brands fa-github mr-1"></i> GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Me -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">
+        <i class="fa-solid fa-user text-blue-500"></i>
+        About Me
+      </h2>
+      <div class="prose max-w-none text-gray-600">
+        <p>
+          Hi! I'm Saechan Suh, a backend developer who enjoys building experimental features and solving problems.
+        </p>
+        <p class="mt-3">
+          I majored in Integrative Bioscience and Biotechnology at Sejong University, gaining a deep understanding of life sciences.
+          Later, I dove into the world of development through the Zerobase Bootcamp.
+          Currently, I'm working at SOMANSA, contributing to DLP solution development as a Server Module Team Researcher.
+        </p>
+        <p class="mt-3">
+          This site serves as my personal lab — a space to test various technologies and build useful utilities.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 경력 타임라인 -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-6">
+        <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+        Timeline
+      </h2>
+
+      <ul class="timeline timeline-vertical timeline-snap-icon">
+        <!-- 소만사 -->
+        <li class="timeline-item">
+          <div class="timeline-middle">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/somansaLogo.jpg" alt="SOMANSA" class="w-full h-full object-contain" />
+            </div>
+          </div>
+          <div class="timeline-end timeline-box bg-blue-50 border-blue-200">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="badge badge-primary badge-sm">Current</span>
+              <time class="text-xs text-gray-500">2024.07 - Present</time>
+            </div>
+            <div class="font-bold text-gray-900">SOMANSA</div>
+            <div class="text-sm text-gray-600">Server Module Team Researcher - DLP Solution Development</div>
+          </div>
+          <hr/>
+        </li>
+
+        <!-- 제로베이스 -->
+        <li class="timeline-item">
+          <hr/>
+          <div class="timeline-middle">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/day1CompanyLogo.jpg" alt="데이원컴퍼니" class="w-full h-full object-contain" />
+            </div>
+          </div>
+          <div class="timeline-start timeline-box">
+            <time class="text-xs text-gray-500">2023.06 - 2024.03</time>
+            <div class="font-bold text-gray-900">Zerobase (Day1Company)</div>
+            <div class="text-sm text-gray-600">Backend Development Bootcamp Completed</div>
+          </div>
+          <hr/>
+        </li>
+
+        <!-- 세종대학교 -->
+        <li class="timeline-item">
+          <hr/>
+          <div class="timeline-middle">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/sejongUniversityLogo.jpeg" alt="세종대학교" class="w-full h-full object-contain" />
+            </div>
+          </div>
+          <div class="timeline-end timeline-box">
+            <time class="text-xs text-gray-500">2018.03 - 2024.09</time>
+            <div class="font-bold text-gray-900">Sejong University</div>
+            <div class="text-sm text-gray-600">B.S. in Integrative Bioscience and Biotechnology</div>
+          </div>
+          <hr/>
+        </li>
+
+        <!-- 휘문고등학교 -->
+        <li class="timeline-item">
+          <hr/>
+          <div class="timeline-middle">
+            <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
+              <img src="/images/whimoonHighschoolLogo.jpeg" alt="휘문고등학교" class="w-full h-full object-contain" />
+            </div>
+          </div>
+          <div class="timeline-start timeline-box">
+            <time class="text-xs text-gray-500">2015.03 - 2018.02</time>
+            <div class="font-bold text-gray-900">Whimoon High School</div>
+            <div class="text-sm text-gray-600">Seoul, South Korea</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 기술 스택 -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">
+        <i class="fa-solid fa-code text-blue-500"></i>
+        Tech Stack
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Backend -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-server text-blue-500"></i>
+            Backend
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="badge badge-outline">Java</span>
+            <span class="badge badge-outline">Spring Boot</span>
+            <span class="badge badge-outline">Spring Data JPA</span>
+            <span class="badge badge-outline">Spring Security</span>
+            <span class="badge badge-outline">Gradle</span>
+          </div>
+        </div>
+
+        <!-- Database -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-database text-green-500"></i>
+            Database
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="badge badge-outline">PostgreSQL</span>
+            <span class="badge badge-outline">Redis</span>
+            <span class="badge badge-outline">ElasticSearch</span>
+            <span class="badge badge-outline">MongoDB</span>
+          </div>
+        </div>
+
+        <!-- Frontend -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-display text-purple-500"></i>
+            Frontend
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="badge badge-outline">Thymeleaf</span>
+            <span class="badge badge-outline">TailwindCSS</span>
+            <span class="badge badge-outline">DaisyUI</span>
+            <span class="badge badge-outline">JavaScript</span>
+          </div>
+        </div>
+
+        <!-- Mobile & DevOps -->
+        <div class="bg-gray-50 rounded-lg p-4">
+          <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-mobile-screen text-orange-500"></i>
+            Mobile & DevOps
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="badge badge-outline">Flutter</span>
+            <span class="badge badge-outline">Docker</span>
+            <span class="badge badge-outline">GitHub Actions</span>
+            <span class="badge badge-outline">Synology NAS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 협업 프로젝트 -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">
+        <i class="fa-solid fa-users text-blue-500"></i>
+        Team Projects
+      </h2>
+      <p class="text-gray-500 text-sm mb-6">Collaborative projects I'm working on</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- 세종말싸미 -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-blue-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Sejong Malsami</h3>
+                <span class="badge badge-primary badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">AI-powered learning platform for Sejong University students</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">React</span>
+              <span class="badge badge-ghost badge-xs">PostgreSQL</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="https://test.sejong-malsami.co.kr" target="_blank" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Visit
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROM ROM -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
+                <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-pink-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">ROM ROM</h3>
+                <span class="badge badge-primary badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Character-based social platform app</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Flutter</span>
+              <span class="badge badge-ghost badge-xs">PostgreSQL</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="http://suh-project.synology.me/romrom" target="_blank" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Download APK
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLANE ACCIDENT FINDER -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-plane text-amber-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">PLANE ACCIDENT FINDER</h3>
+                <span class="badge badge-primary badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Aircraft accident information lookup app</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Flutter</span>
+              <span class="badge badge-ghost badge-xs">API</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="http://suh-project.synology.me/plane-accident-finder/" target="_blank" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Download APK
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tripgether -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                <img src="/images/tripgetherLogo.png" alt="Tripgether" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Tripgether</h3>
+                <span class="badge badge-primary badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">AI-powered travel guide app - extracts places from SNS posts via OCR & video analysis</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Flutter</span>
+              <span class="badge badge-ghost badge-xs">Python</span>
+              <span class="badge badge-ghost badge-xs">AI/OCR</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="https://github.com/TEAM-Tripgether" target="_blank" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 개인 프로젝트 -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">
+        <i class="fa-solid fa-flask text-purple-500"></i>
+        Personal Projects
+      </h2>
+      <p class="text-gray-500 text-sm mb-6">Personal experiments and side projects</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- SUH-PROJECT-UTILITY -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                <i class="fa-solid fa-flask text-blue-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">SUH-PROJECT-UTILITY</h3>
+                <span class="badge badge-success badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Dev utility collection (This site!)</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Thymeleaf</span>
+              <span class="badge badge-ghost badge-xs">DaisyUI</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- GitHub 이슈 도우미 -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                <i class="fa-brands fa-github text-gray-700 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">GitHub Issue Helper</h3>
+                <span class="badge badge-success badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Auto-generate branch names and commit messages from issues</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">GitHub API</span>
+              <span class="badge badge-ghost badge-xs">Automation</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="/issue-helper" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Visit
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI 번역기 -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <i class="fa-solid fa-language text-indigo-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Custom AI Translator</h3>
+                <span class="badge badge-success badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">OpenAI-powered custom translation service</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">OpenAI API</span>
+              <span class="badge badge-ghost badge-xs">Translation</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="/translator" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Visit
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grass Planter -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <i class="fa-solid fa-leaf text-emerald-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Grass Planter</h3>
+                <span class="badge badge-success badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">GitHub contribution graph auto-commit manager</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">GitHub API</span>
+              <span class="badge badge-ghost badge-xs">Scheduler</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="/grass" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Visit
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 스터디 플랜 -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-teal-100 flex items-center justify-center">
+                <i class="fa-solid fa-book text-teal-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Study Plan</h3>
+                <span class="badge badge-success badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Markdown-supported study note manager</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">Markdown</span>
+              <span class="badge badge-ghost badge-xs">Notes</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="/study-management" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> Visit
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 커스텀 GPT 모음 -->
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                <i class="fa-solid fa-robot text-green-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Custom GPTs</h3>
+                <span class="badge badge-success badge-xs">Active</span>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Custom GPT collection for workflow automation</p>
+            <div class="flex flex-wrap gap-1 mb-3">
+              <span class="badge badge-ghost badge-xs">ChatGPT</span>
+              <span class="badge badge-ghost badge-xs">Automation</span>
+            </div>
+            <div class="card-actions justify-end">
+              <a href="/dashboard" class="btn btn-primary btn-xs">
+                <i class="fa-solid fa-arrow-right"></i> View in Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="card bg-white shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">
+        <i class="fa-solid fa-envelope text-blue-500"></i>
+        Contact
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="mailto:chan4760@gmail.com" class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <i class="fa-solid fa-envelope text-blue-500"></i>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">Email</div>
+            <div class="text-sm text-blue-500">chan4760@gmail.com</div>
+          </div>
+        </a>
+
+        <a href="https://github.com/Cassiiopeia" target="_blank" class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <i class="fa-brands fa-github text-gray-700"></i>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">GitHub</div>
+            <div class="text-sm text-gray-600">@Cassiiopeia</div>
+          </div>
+        </a>
+
+        <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <i class="fa-solid fa-code text-blue-500"></i>
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">This Project</div>
+            <div class="text-sm text-blue-500">suh-project-utility</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<style>
+  /* Timeline Scroll Animation */
+  .timeline-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -50px 0px',
+      threshold: 0.1
+    };
+
+    let visibleCount = 0;
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
+          // 순차적 딜레이 적용
+          setTimeout(function() {
+            entry.target.classList.add('visible');
+          }, visibleCount * 150);
+          visibleCount++;
+        }
+      });
+    }, observerOptions);
+
+    timelineItems.forEach(function(item) {
+      observer.observe(item);
+    });
+  });
+</script>
+
+</body>
+</html>

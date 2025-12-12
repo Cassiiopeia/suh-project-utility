@@ -36,7 +36,7 @@ public class TimeUtil {
   }
 
   // 현재시간 LocalDateTime -> '년 월 일 시 분 초' 형식 문자열 변환
-  public static String readableCurrentLocalDateTime(){
+  public static String readableCurrentLocalDateTime() {
     return readableLocalDateTime(LocalDateTime.now());
   }
 
@@ -44,8 +44,6 @@ public class TimeUtil {
   public static String readableLocalDateTime(LocalDateTime dateTime) {
     return KOREAN_DATE_TIME_FORMATTER.format(dateTime);
   }
-
-
 
   /**
    * ms -> m / s
@@ -66,6 +64,7 @@ public class TimeUtil {
       return minutes + "분 " + seconds + "초";
     }
   }
+
   public static String convertDurationToReadableTime(Duration duration) {
     long millis = duration.toMillis();
 

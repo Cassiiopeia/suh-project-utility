@@ -1,5 +1,6 @@
 package me.suhsaechan.aiserver.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +25,11 @@ public class AiServerResponse {
     private Boolean isHealthy;
     private String healthMessage;
 
-    // 모델 목록 API 응답 JSON (원본 그대로)
+    // 모델 목록 API 응답 JSON (원본 그대로) - 하위 호환성용
     private String modelsJson;
+
+    // 모델 목록 (파싱된 배열)
+    private List<ModelDto> models;
 
     // 임베딩 API 응답 JSON (원본 그대로) - 하위 호환성용
     private String embeddingsJson;

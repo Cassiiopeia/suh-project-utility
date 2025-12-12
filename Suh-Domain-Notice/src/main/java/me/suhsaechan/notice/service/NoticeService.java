@@ -158,9 +158,11 @@ public class NoticeService {
     notice.setEndDate(request.getEndDate());
     notice.setIsActive(request.getIsActive());
     notice.setAuthor(request.getAuthor());
-    
-    noticeRepository.save(notice);
-    return NoticeResponse.builder().build();
+
+    SuhProjectUtilityNotice savedNotice = noticeRepository.save(notice);
+    return NoticeResponse.builder()
+        .suhProjectUtilityNotice(savedNotice)
+        .build();
   }
   
   /**
@@ -174,7 +176,9 @@ public class NoticeService {
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     noticeRepository.delete(notice);
-    return NoticeResponse.builder().build();
+    return NoticeResponse.builder()
+        .suhProjectUtilityNotice(notice)
+        .build();
   }
   
   /**
@@ -188,9 +192,11 @@ public class NoticeService {
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
     notice.setIsActive(!notice.getIsActive());
-    noticeRepository.save(notice);
-    
-    return NoticeResponse.builder().build();
+    SuhProjectUtilityNotice savedNotice = noticeRepository.save(notice);
+
+    return NoticeResponse.builder()
+        .suhProjectUtilityNotice(savedNotice)
+        .build();
   }
   
   /**

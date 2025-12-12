@@ -17,11 +17,17 @@
 # - react/node: package.json
 # - react-native: Info.plist + build.gradle
 # - react-native-expo: app.json
+# - python: pyproject.toml
 # - basic: version.yml만 관리
 #
 # ===================================================================
 
 name: PROJECT-VERSION-CONTROL
+
+# 동시 실행 방지 (https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/issues/63)
+concurrency:
+  group: version-increment
+  cancel-in-progress: false
 
 on:
   push:
@@ -46,6 +52,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch || 'main' }}
 
       - name: 버전 관리 스크립트 권한 설정
         run: |
@@ -56,7 +63,7 @@ jobs:
         id: current_version
         run: |
           echo "🔍 현재 버전 확인 및 동기화 중..."
-          CURRENT_VERSION=$(./.github/scripts/version_manager.sh get 2>/dev/null | tail -n 1)
+          CURRENT_VERSION=$(./.github/scripts/version_manager.sh get | tail -n 1)
           if [ -z "$CURRENT_VERSION" ]; then
             echo "❌ 버전 확인 실패"
             exit 1
@@ -68,7 +75,7 @@ jobs:
         id: version
         run: |
           echo "⬆️ 패치 버전 증가 중..."
-          NEW_VERSION=$(./.github/scripts/version_manager.sh increment 2>/dev/null | tail -n 1)
+          NEW_VERSION=$(./.github/scripts/version_manager.sh increment | tail -n 1)
           if [ -z "$NEW_VERSION" ]; then
             echo "❌ 버전 업데이트 실패"
             exit 1
@@ -104,7 +111,7 @@ jobs:
             echo "📤 변경사항 커밋 중..."
             REPO_NAME=$(basename "${{ github.repository }}")
             COMMIT_MSG="$REPO_NAME 버전 정보 관리: chore: 버전 ${{ steps.version.outputs.new_version }} [skip ci]"
-            
+          
             if git commit -m "$COMMIT_MSG"; then
               git push
               echo "✅ 버전 업데이트 커밋 완료"

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Arrays;
 
 /**
- * 인증 없이 접근 가능한 공개 엔드포인트를 관리
+ * 인증 없이 접근 가능한 공개 엔드포인트 관리
  */
 @Component
 public class PublicEndpointConfig {
@@ -28,6 +28,7 @@ public class PublicEndpointConfig {
     return Arrays.asList(
         "/login",
         "/logout",
+        "/profile",
         "/css/**",
         "/js/**",
         "/images/**",
