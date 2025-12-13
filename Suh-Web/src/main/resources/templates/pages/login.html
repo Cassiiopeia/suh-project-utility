@@ -10,17 +10,27 @@
 <main class="flex-1 flex items-center justify-center px-4 py-12">
   <div class="card bg-base-100 shadow-xl w-full max-w-md">
     <div class="card-body">
+      <!-- 타이핑 효과 텍스트 -->
+      <div class="text-center mb-2">
+        <span id="typing-text" class="text-lg font-semibold text-gray-700"></span>
+        <span id="typing-cursor" class="typing-cursor">|</span>
+      </div>
+
       <!-- 로고 영역 -->
       <div class="text-center">
         <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="w-48 mx-auto">
       </div>
 
-      <!-- 개발자 프로필 배지 -->
-      <div class="text-center">
+      <!-- 개발자 프로필 배지 + 버전 배지 -->
+      <div class="text-center flex justify-center gap-2 flex-wrap">
         <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity">
           <i class="fa-solid fa-user-circle"></i>
           ABOUT ME
         </a>
+        <button onclick="openChangelogModal()" class="badge badge-soft badge-info gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer">
+          <i class="fa-solid fa-code-branch"></i>
+          <span th:text="${appVersion}">v1.0.0</span>
+        </button>
       </div>
 
       <!-- 로그인 폼 -->
@@ -78,6 +88,67 @@
   </div>
 </div>
 
+<!-- Changelog 모달 -->
+<dialog id="changelog-modal" class="modal">
+  <div class="modal-box max-w-lg bg-base-100">
+    <!-- 모달 헤더 -->
+    <div class="flex items-start gap-4 mb-4">
+      <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-code-branch text-primary text-xl"></i>
+      </div>
+      <div class="flex-1">
+        <h3 class="font-bold text-lg">Changelog</h3>
+        <p class="text-sm text-gray-500">SUH Project Utility</p>
+      </div>
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- 최신 버전 정보 -->
+    <div id="changelog-content" class="space-y-4">
+      <!-- 로딩 스켈레톤 -->
+      <div id="changelog-loading" class="space-y-3">
+        <div class="skeleton h-6 w-32"></div>
+        <div class="skeleton h-4 w-full"></div>
+        <div class="skeleton h-4 w-3/4"></div>
+        <div class="skeleton h-4 w-5/6"></div>
+      </div>
+
+      <!-- 실제 컨텐츠 (JS로 채움) -->
+      <div id="changelog-data" class="hidden">
+        <!-- 버전 헤더 -->
+        <div class="flex items-center gap-2 mb-3">
+          <span id="changelog-version" class="font-bold text-lg">v1.4.6</span>
+          <span class="badge badge-soft badge-success text-xs">Latest</span>
+          <span id="changelog-date" class="text-sm text-gray-500">2025-12-13</span>
+        </div>
+
+        <!-- 변경사항 목록 -->
+        <ul id="changelog-items" class="space-y-2 text-sm text-gray-700">
+          <!-- JS로 채워짐 -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- 모달 푸터 -->
+    <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+      <span id="changelog-updated" class="text-xs text-gray-400">Last updated: -</span>
+      <a href="https://github.com/Cassiiopeia/suh-project-utility/blob/main/CHANGELOG.md"
+         target="_blank"
+         class="text-sm text-primary hover:underline flex items-center gap-1">
+        View on GitHub
+        <i class="fa-solid fa-arrow-right text-xs"></i>
+      </a>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
 <!-- footer fragment -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
@@ -85,10 +156,15 @@
   // 페이지 로드 시 즉시 IP 정보 요청 시작
   const getClientIPPromise = $.getJSON('https://api.ipify.org?format=json');
 
+  // 타이핑 효과 설정
+  const typingText = "Welcome To SUH-LAB";
+  let typingIndex = 0;
+
   $(document).ready(function() {
     // DOM 로드 후 이벤트 리스너 설정
     setupLoginForm();
     setupPasswordToggle();
+    startTypingEffect();
 
     // IP 정보 처리 (이미 요청 시작)
     getClientIPPromise
@@ -99,6 +175,110 @@
       console.error("IP 주소를 가져오는 데 실패했습니다");
     });
   });
+
+  // 타이핑 효과 함수 (부드러운 fade-in)
+  function startTypingEffect() {
+    const textElement = document.getElementById('typing-text');
+    const cursorElement = document.getElementById('typing-cursor');
+
+    if (!textElement) return;
+
+    // 컨테이너를 inline-flex로 설정하여 글자들이 나란히 표시되도록
+    textElement.style.display = 'inline';
+
+    function typeNextChar() {
+      if (typingIndex < typingText.length) {
+        const char = typingText.charAt(typingIndex);
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.className = 'typing-char';
+        span.style.opacity = '0';
+        span.style.transition = 'opacity 0.15s ease-in';
+        textElement.appendChild(span);
+
+        // 약간의 지연 후 fade-in
+        setTimeout(() => {
+          span.style.opacity = '1';
+        }, 10);
+
+        typingIndex++;
+        // 타이핑 속도 (70ms)
+        setTimeout(typeNextChar, 70);
+      }
+    }
+
+    typeNextChar();
+  }
+
+  // Changelog 모달 열기
+  function openChangelogModal() {
+    const modal = document.getElementById('changelog-modal');
+    modal.showModal();
+    loadChangelog();
+  }
+
+  // Changelog 데이터 로드
+  function loadChangelog() {
+    const loadingEl = document.getElementById('changelog-loading');
+    const dataEl = document.getElementById('changelog-data');
+
+    // 이미 로드된 경우 스킵
+    if (!dataEl.classList.contains('hidden')) return;
+
+    // GitHub raw URL에서 CHANGELOG.json 가져오기
+    fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
+      .then(response => response.json())
+      .then(data => {
+        renderChangelog(data);
+        loadingEl.classList.add('hidden');
+        dataEl.classList.remove('hidden');
+      })
+      .catch(error => {
+        console.error('Changelog 로드 실패:', error);
+        loadingEl.innerHTML = `
+          <div class="text-center text-gray-500">
+            <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
+            <p>변경 이력을 불러올 수 없습니다.</p>
+          </div>
+        `;
+      });
+  }
+
+  // Changelog 데이터 렌더링
+  function renderChangelog(data) {
+    const latestRelease = data.releases[0];
+    const metadata = data.metadata;
+
+    // 버전 정보
+    document.getElementById('changelog-version').textContent = 'v' + latestRelease.version;
+    document.getElementById('changelog-date').textContent = latestRelease.date;
+
+    // 마지막 업데이트
+    const lastUpdated = new Date(metadata.lastUpdated);
+    document.getElementById('changelog-updated').textContent =
+      'Last updated: ' + lastUpdated.toLocaleDateString('ko-KR');
+
+    // 변경사항 목록
+    const itemsEl = document.getElementById('changelog-items');
+    itemsEl.innerHTML = '';
+
+    // parsed_changes에서 아이템 추출
+    const changes = latestRelease.parsed_changes;
+    for (const category in changes) {
+      const categoryData = changes[category];
+      if (categoryData.items && categoryData.items.length > 0) {
+        categoryData.items.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'flex items-start gap-2';
+          li.innerHTML = `
+            <span class="text-primary mt-1">•</span>
+            <span>${item}</span>
+          `;
+          itemsEl.appendChild(li);
+        });
+      }
+    }
+  }
 
   function processClientIP(clientIP) {
     console.log("실제 클라이언트 IP:", clientIP);
