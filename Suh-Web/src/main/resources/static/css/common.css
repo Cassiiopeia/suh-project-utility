@@ -55,6 +55,25 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
+  Typing Effect Styles
+===========================
+*/
+
+/* 타이핑 커서 깜빡임 */
+.typing-cursor {
+  display: inline-block;
+  color: #3b82f6;
+  font-weight: bold;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/*
+===========================
    Table Container Styles
 ===========================
 */

@@ -9,6 +9,7 @@ import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.grassplanter.dto.GrassRequest;
 import me.suhsaechan.grassplanter.dto.GrassResponse;
 import me.suhsaechan.grassplanter.service.GrassService;
+import me.suhsaechan.web.config.ServerInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 @RequiredArgsConstructor
 public class PageController {
-	
+
 	private final UserAuthority userAuthority;
 	private final NoticeService noticeService;
 	private final GrassService grassService;
+	private final ServerInfo serverInfo;
 
 	@GetMapping("/")
 	public String indexPage(Model model) {
@@ -30,7 +32,8 @@ public class PageController {
 	}
 
 	@GetMapping("/login")
-	public String loginPage() {
+	public String loginPage(Model model) {
+		model.addAttribute("appVersion", serverInfo.getVersionWithPrefix());
 		return "pages/login";
 	}
 

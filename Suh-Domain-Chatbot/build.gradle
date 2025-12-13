@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+dependencies {
+    // 공통 모듈 의존성
+    implementation project(':Suh-Common')
+
+    // Qdrant Java Client (gRPC 기반)
+    implementation 'io.qdrant:client:1.7.2'
+
+    // gRPC 관련 의존성
+    implementation 'io.grpc:grpc-netty-shaded:1.59.0'
+    implementation 'io.grpc:grpc-protobuf:1.59.0'
+    implementation 'io.grpc:grpc-stub:1.59.0'
+}
