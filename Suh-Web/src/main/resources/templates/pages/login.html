@@ -11,6 +11,25 @@
   <div class="card bg-base-100 shadow-xl w-full max-w-md">
     <div class="card-body">
       <!-- 타이핑 효과 텍스트 -->
+      <style>
+        /* 현재 타이핑 중인 글자 - 밑줄 표시 */
+        .typing-char.current {
+          text-decoration: underline;
+          text-decoration-thickness: 2px;
+          text-underline-offset: 2px;
+        }
+        /* 파이프 커서 깜빡임 (타이핑 완료 후) */
+        .typing-cursor {
+          opacity: 0;
+        }
+        .typing-cursor.blink {
+          animation: cursorBlink 1s step-end infinite;
+        }
+        @keyframes cursorBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      </style>
       <div class="text-center mb-2">
         <span id="typing-text" class="text-lg font-semibold text-gray-700"></span>
         <span id="typing-cursor" class="typing-cursor">|</span>
@@ -27,7 +46,7 @@
           <i class="fa-solid fa-user-circle"></i>
           ABOUT ME
         </a>
-        <button onclick="openChangelogModal()" class="badge badge-soft badge-info gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer">
+        <button onclick="openChangelogModal()" class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer" style="background-color: #e9d5ff; color: #7c3aed; border: none;">
           <i class="fa-solid fa-code-branch"></i>
           <span th:text="${appVersion}">v1.0.0</span>
         </button>
@@ -176,34 +195,46 @@
     });
   });
 
-  // 타이핑 효과 함수 (부드러운 fade-in)
+  // 타이핑 효과 함수 (글자 아래 밑줄 스타일)
   function startTypingEffect() {
     const textElement = document.getElementById('typing-text');
     const cursorElement = document.getElementById('typing-cursor');
 
     if (!textElement) return;
 
-    // 컨테이너를 inline-flex로 설정하여 글자들이 나란히 표시되도록
-    textElement.style.display = 'inline';
-
     function typeNextChar() {
       if (typingIndex < typingText.length) {
+        // 이전 글자의 밑줄 제거
+        const prevChar = textElement.querySelector('.typing-char.current');
+        if (prevChar) {
+          prevChar.classList.remove('current');
+        }
+
         const char = typingText.charAt(typingIndex);
         const span = document.createElement('span');
-        span.textContent = char;
-        span.className = 'typing-char';
-        span.style.opacity = '0';
-        span.style.transition = 'opacity 0.15s ease-in';
-        textElement.appendChild(span);
+        span.className = 'typing-char current'; // 현재 글자에 밑줄
 
-        // 약간의 지연 후 fade-in
-        setTimeout(() => {
-          span.style.opacity = '1';
-        }, 10);
+        // 공백 처리 - &nbsp;로 변환하여 너비 확보
+        if (char === ' ') {
+          span.innerHTML = '&nbsp;';
+        } else {
+          span.textContent = char;
+        }
+
+        textElement.appendChild(span);
 
         typingIndex++;
         // 타이핑 속도 (70ms)
         setTimeout(typeNextChar, 70);
+      } else {
+        // 타이핑 완료 - 마지막 글자 밑줄 제거, 파이프 커서 깜빡임 시작
+        const lastChar = textElement.querySelector('.typing-char.current');
+        if (lastChar) {
+          lastChar.classList.remove('current');
+        }
+        if (cursorElement) {
+          cursorElement.classList.add('blink');
+        }
       }
     }
 

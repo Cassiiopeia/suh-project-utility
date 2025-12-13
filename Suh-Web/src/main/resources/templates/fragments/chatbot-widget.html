@@ -1,0 +1,51 @@
+<!-- src/main/resources/templates/fragments/chatbot-widget.html -->
+<!-- 플로팅 챗봇 위젯 - SuhNi (서니) -->
+<div th:fragment="chatbot">
+  <!-- 플로팅 버튼 (FAB) -->
+  <button class="chatbot-fab" aria-label="SuhNi 챗봇 열기">
+    <i class="fa-solid fa-comment-dots"></i>
+  </button>
+
+  <!-- 챗봇 패널 -->
+  <div class="chatbot-panel">
+    <!-- 메시지 영역 -->
+    <div class="chatbot-messages" id="chatbot-messages">
+      <!-- 웰컴 메시지 -->
+      <div class="chatbot-welcome">
+        <div class="welcome-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <h3>SuhNi</h3>
+        <p>안녕하세요! 서니입니다.<br/>사이트 이용에 관해 궁금한 점을 물어보세요.</p>
+        <div class="welcome-suggestions">
+          <button class="suggestion-btn" data-message="이 사이트는 어떤 기능이 있나요?">
+            <i class="fa-solid fa-lightbulb"></i> 사이트 기능 안내
+          </button>
+          <button class="suggestion-btn" data-message="스터디 노트는 어떻게 사용하나요?">
+            <i class="fa-solid fa-book"></i> 스터디 노트
+          </button>
+          <button class="suggestion-btn" data-message="Docker 로그는 어디서 볼 수 있나요?">
+            <i class="fa-solid fa-terminal"></i> Docker 로그
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 입력 영역 -->
+    <div class="chatbot-input-area">
+      <button id="chatbot-reset-btn" class="chatbot-reset-btn" aria-label="새 대화" title="새 대화 시작">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+      <textarea id="chatbot-input"
+                placeholder="메시지를 입력하세요..."
+                rows="1"
+                maxlength="500"></textarea>
+      <button id="chatbot-send-btn" aria-label="전송">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 챗봇 스크립트 -->
+  <script th:src="@{/js/chatbot.js}"></script>
+</div>
