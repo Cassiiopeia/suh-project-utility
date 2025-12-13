@@ -1,11 +1,43 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-13T06:59:57Z",
-    "currentVersion": "1.4.6",
+    "lastUpdated": "2025-12-13T11:01:39Z",
+    "currentVersion": "1.4.8",
     "projectType": "spring",
-    "totalReleases": 17
+    "totalReleases": 18
   },
   "releases": [
+    {
+      "version": "1.4.8",
+      "project_type": "spring",
+      "date": "2025-12-13",
+      "pr_number": 109,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트 - v1.4.8\n\n* **새로운 기능**\n  * AI 챗봇 위젯 추가: 실시간 메시지, 세션 관리, 피드백 기능 포함\n  * 대시보드 재설계: Dev Tools 및 AI Assistants 섹션 추가\n  * 로그인 페이지 타이핑 효과 및 변경 이력 조회 기능\n\n* **스타일**\n  * 프로필 이미지 링 스타일 조정\n  * 챗봇 위젯 UI/UX 개선\n\n* **Chores**\n  * 버전 업데이트: v1.4.8\n  * 보안 강화: 메서드 레벨 보안 활성화",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "AI 챗봇 위젯 추가: 실시간 메시지, 세션 관리, 피드백 기능 포함",
+            "대시보드 재설계: Dev Tools 및 AI Assistants 섹션 추가",
+            "로그인 페이지 타이핑 효과 및 변경 이력 조회 기능"
+          ]
+        },
+        "스타일": {
+          "title": "스타일",
+          "items": [
+            "프로필 이미지 링 스타일 조정",
+            "챗봇 위젯 UI/UX 개선"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 업데이트: v1.4.8",
+            "보안 강화: 메서드 레벨 보안 활성화"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.4.6",
       "project_type": "spring",
