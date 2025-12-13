@@ -18,7 +18,7 @@
 # 프로젝트 타입별 동기화 파일:
 # - spring: build.gradle (version = "x.y.z")
 # - flutter: pubspec.yaml (version: x.y.z+i, buildNumber 포함)
-# - react/next/node: package.json ("version": "x.y.z")
+# - react/node: package.json ("version": "x.y.z")
 # - react-native: iOS Info.plist 또는 Android build.gradle
 # - react-native-expo: app.json (expo.version)
 # - python: pyproject.toml (version = "x.y.z")
@@ -41,4 +41,4 @@ metadata:
   last_updated_by: "Cassiiopeia"
   default_branch: "main"
   integrated_from: "SUH-DEVOPS-TEMPLATE"
-  integration_date: "2025-12-11"
+  integration_date: "2025-12-13"

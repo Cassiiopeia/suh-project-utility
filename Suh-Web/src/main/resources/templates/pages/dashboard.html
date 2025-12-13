@@ -72,221 +72,331 @@
       </div>
     </section>
 
-    <!-- 유틸리티 애플리케이션 섹션 -->
+    <!-- Dev Tools 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
       <div class="card-body">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-xl font-semibold text-gray-900">UTILITY APPLICATION</h2>
-          <span class="badge badge-outline">유틸리티</span>
+        <h2 class="card-title text-xl mb-4">
+          <i class="fa-solid fa-wrench text-blue-500"></i>
+          Dev Tools
+        </h2>
+        <p class="text-gray-500 text-sm mb-6">개발 유틸리티 도구 모음</p>
+
+        <!-- Internal Tools -->
+        <div class="bg-gray-50 rounded-xl p-5 mb-6">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-blue-500 pl-3">
+            <i class="fa-solid fa-house text-blue-500"></i>
+            Internal Tools
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 깃헙 이슈 도우미 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <i class="fa-brands fa-github text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">이슈 도우미</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">Utility</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/issue-helper" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">커밋, 브랜치 자동 생성</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">GitHub API</span>
+                  <span class="badge badge-ghost badge-xs">Automation</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 컨테이너 로그 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                      <i class="fa-solid fa-terminal text-gray-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">컨테이너 로그</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-secondary badge-xs">Docker</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/docker-logs" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">실시간 로그 스트리밍</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">Docker</span>
+                  <span class="badge badge-ghost badge-xs">SSE</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI 서버 관리 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                      <i class="fa-solid fa-server text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">AI 서버 관리</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-accent badge-xs">AI</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/ai-server" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <!-- AI 서버 상태 -->
+                <div id="ai-server-status" class="flex items-center justify-between text-sm text-gray-500 mb-3 p-2 bg-gray-50 rounded-lg">
+                  <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-signal"></i>
+                    연결 상태
+                  </span>
+                  <span class="status-main-btn loading flex items-center gap-1 text-gray-400">
+                    <span class="loading loading-spinner loading-xs"></span>
+                    확인중
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">Ollama</span>
+                  <span class="badge badge-ghost badge-xs">LLM</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-project-control" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 커스텀 AI 번역기 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
+                      <i class="fa-solid fa-language text-indigo-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">AI 번역기</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-accent badge-xs">AI</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/translator" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">커스텀 API 번역 서비스</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">OpenAI</span>
+                  <span class="badge badge-ghost badge-xs">Translation</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 스터디 플랜 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-teal-100 flex items-center justify-center">
+                      <i class="fa-solid fa-book text-teal-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">스터디 플랜</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">Notes</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/study-management" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">마크다운 지원 스터디 노트</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">Markdown</span>
+                  <span class="badge badge-ghost badge-xs">Notes</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grass Planter -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                      <i class="fa-solid fa-leaf text-emerald-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Grass Planter</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">Scheduler</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/grass" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">GitHub 자동 커밋 관리</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">GitHub</span>
+                  <span class="badge badge-ghost badge-xs">Scheduler</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 버스 자동 예약 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <i class="fa-solid fa-bus text-orange-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">버스 자동 예약</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Somansa</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://github.com/Cassiiopeia/auto-bus-reservation" target="_blank" class="btn btn-primary btn-xs btn-circle" title="GitHub">
+                    <i class="fa-brands fa-github"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">버스 자동 예약 시스템</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">Automation</span>
+                  <span class="badge badge-ghost badge-xs">Scheduler</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/auto-bus-reservation" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <p class="text-gray-500 text-sm mb-6">개발 유틸리티 도구</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <!-- 깃헙 이슈 도우미 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                    <i class="fa-brands fa-github text-xl"></i>
+        <!-- External Services -->
+        <div class="bg-gray-50 rounded-xl p-5">
+          <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-yellow-500 pl-3">
+            <i class="fa-solid fa-globe text-yellow-500"></i>
+            External Services
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 원격 크롬 (JJ) -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center">
+                      <i class="fa-brands fa-chrome text-yellow-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">원격 크롬 (JJ)</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Remote</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">깃헙 이슈 도우미</h3>
-                    <span class="badge badge-ghost badge-xs">SUH-PROJECT</span>
-                  </div>
+                  <a href="https://web.suhsaechan.kr/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
+                <p class="text-gray-500 text-sm mb-3">외부 크롬 원격 접속 (JJ 서버)</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Chrome</span>
+                  <span class="badge badge-ghost badge-xs">Remote Desktop</span>
+                </div>
               </div>
-              <p class="text-gray-500 text-sm mb-4">커밋, 브랜치 자동 생성</p>
-              <a href="/issue-helper" class="btn btn-primary btn-sm w-full" target="_blank">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
             </div>
-          </div>
 
-          <!-- 컨테이너 로그 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center">
-                    <i class="fa-solid fa-terminal text-xl"></i>
+            <!-- 원격 크롬 (House) -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <i class="fa-brands fa-chrome text-amber-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">원격 크롬 (House)</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Remote</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">컨테이너 로그</h3>
-                    <span class="badge badge-ghost badge-xs">Docker</span>
-                  </div>
+                  <a href="https://chrome.suhsaechan.kr/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
-              </div>
-              <p class="text-gray-500 text-sm mb-4">실시간 로그 스트리밍</p>
-              <a href="/docker-logs" class="btn btn-primary btn-sm w-full">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
-            </div>
-          </div>
-
-          <!-- AI 서버 관리 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
-                    <i class="fa-solid fa-server text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">AI 서버 관리</h3>
-                    <span class="badge badge-success badge-xs">NEW</span>
-                  </div>
+                <p class="text-gray-500 text-sm mb-3">외부 크롬 원격 접속 (House 서버)</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Chrome</span>
+                  <span class="badge badge-ghost badge-xs">Remote Desktop</span>
                 </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
               </div>
-              <!-- AI 서버 상태 -->
-              <div id="ai-server-status" class="flex items-center justify-between text-sm text-gray-500 mb-4 p-2 bg-gray-50 rounded-lg">
-                <span class="flex items-center gap-1">
-                  <i class="fa-solid fa-signal"></i>
-                  연결 상태
-                </span>
-                <span class="status-main-btn loading flex items-center gap-1 text-gray-400">
-                  <span class="loading loading-spinner loading-xs"></span>
-                  확인중
-                </span>
-              </div>
-              <a href="/ai-server" class="btn btn-secondary btn-sm w-full">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
-            </div>
-          </div>
-
-          <!-- OpenAI 챗봇 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
-                    <i class="fa-solid fa-comment-dots text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">OpenAI 챗봇</h3>
-                    <span class="badge badge-ghost badge-xs">AI Assistant</span>
-                  </div>
-                </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
-              </div>
-              <p class="text-gray-500 text-sm mb-4">시놀로지 CPU only Ollama 서버</p>
-              <a href="https://chat.suhsaechan.me" class="btn btn-primary btn-sm w-full" target="_blank">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
-            </div>
-          </div>
-
-          <!-- 원격 크롬 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-yellow-100 text-yellow-600 flex items-center justify-center">
-                    <i class="fa-brands fa-chrome text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">원격 크롬</h3>
-                    <span class="badge badge-ghost badge-xs">Server Chrome</span>
-                  </div>
-                </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
-              </div>
-              <p class="text-gray-500 text-sm mb-4">외부 크롬 원격 접속</p>
-              <a href="https://web.suhsaechan.me" class="btn btn-primary btn-sm w-full" target="_blank">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
-            </div>
-          </div>
-
-          <!-- 커스텀 AI 번역기 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                    <i class="fa-solid fa-language text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">커스텀 AI 번역기</h3>
-                    <span class="badge badge-ghost badge-xs">커스텀 API</span>
-                  </div>
-                </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
-              </div>
-              <p class="text-gray-500 text-sm mb-4">API 사용 가능</p>
-              <a href="/translator" class="btn btn-primary btn-sm w-full" target="_blank">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
-            </div>
-          </div>
-
-          <!-- 스터디 플랜 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
-                    <i class="fa-solid fa-book text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">스터디 플랜</h3>
-                    <span class="badge badge-success badge-xs">NEW</span>
-                  </div>
-                </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
-              </div>
-              <p class="text-gray-500 text-sm mb-4">마크다운 지원 스터디 노트</p>
-              <a href="/study-management" class="btn btn-primary btn-sm w-full">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
-            </div>
-          </div>
-
-          <!-- Grass Planter -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                    <i class="fa-solid fa-leaf text-xl"></i>
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900 text-sm">Grass Planter</h3>
-                    <span class="badge badge-success badge-xs">NEW</span>
-                  </div>
-                </div>
-                <div class="w-2 h-2 rounded-full bg-green-500" title="활성"></div>
-              </div>
-              <p class="text-gray-500 text-sm mb-4">GitHub 자동 커밋 관리</p>
-              <a href="/grass" class="btn btn-primary btn-sm w-full">
-                <i class="fa-solid fa-arrow-right"></i>
-                바로가기
-              </a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- CUSTOM CHATGPT 섹션 -->
+    <!-- AI Assistants 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
       <div class="card-body">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-xl font-semibold text-gray-900">CUSTOM CHATGPT</h2>
-          <span class="badge badge-outline">AI 모델</span>
-        </div>
-        <p class="text-gray-500 text-sm mb-6">일상이 딸깍의 연속! 커스텀 AI 모델</p>
+        <h2 class="card-title text-xl mb-4">
+          <i class="fa-solid fa-robot text-violet-500"></i>
+          AI Assistants
+        </h2>
+        <p class="text-gray-500 text-sm mb-6">커스텀 ChatGPT 모델 모음</p>
 
         <!-- PROJECT GPT -->
         <div class="bg-gray-50 rounded-xl p-5 mb-6">
@@ -296,47 +406,83 @@
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- Swagger Docs 생성기 -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <i class="fa-solid fa-code text-blue-500"></i>
-                  <h4 class="font-semibold text-sm">Swagger Docs 생성기</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <i class="fa-solid fa-file-code text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Swagger 생성기</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">GPT</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">SUH-PROJECT</span>
-                <p class="text-gray-500 text-xs mb-3">Controller, Service, Repo, Dto</p>
-                <a href="https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">Controller, Service, Repo, Dto</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Swagger</span>
+                  <span class="badge badge-ghost badge-xs">Documentation</span>
+                </div>
               </div>
             </div>
 
             <!-- TypeScript API 변환기 -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <i class="fa-solid fa-code text-blue-500"></i>
-                  <h4 class="font-semibold text-sm">TypeScript API 변환기</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                      <i class="fa-brands fa-js text-cyan-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">TS API 변환기</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">GPT</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">SUH-PROJECT</span>
-                <p class="text-gray-500 text-xs mb-3">Spring > Typescript</p>
-                <a href="https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">Spring > TypeScript 변환</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">TypeScript</span>
+                  <span class="badge badge-ghost badge-xs">Spring</span>
+                </div>
               </div>
             </div>
 
             <!-- 변수명 초고수 변환기 -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <i class="fa-solid fa-code text-blue-500"></i>
-                  <h4 class="font-semibold text-sm">변수명 초고수 변환기</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                      <i class="fa-solid fa-spell-check text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">변수명 전문가</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">GPT</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">SUH-PROJECT</span>
-                <p class="text-gray-500 text-xs mb-3">변수명 확실하게 알려줌</p>
-                <a href="https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">변수명 확실하게 알려줌</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Naming</span>
+                  <span class="badge badge-ghost badge-xs">Convention</span>
+                </div>
               </div>
             </div>
           </div>
@@ -350,62 +496,110 @@
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- CM Tag Creator -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">CM Tag Creator</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <img src="/images/소만사_로고.png" alt="소만사" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">CM Tag Creator</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Somansa</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
-                <p class="text-gray-500 text-xs mb-3">다국어 Tag Coder</p>
-                <a href="https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">다국어 Tag Coder</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Tag</span>
+                  <span class="badge badge-ghost badge-xs">i18n</span>
+                </div>
               </div>
             </div>
 
             <!-- CM Branch Creator -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">CM Branch Creator</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <img src="/images/소만사_로고.png" alt="소만사" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">CM Branch Creator</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Somansa</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
-                <p class="text-gray-500 text-xs mb-3">일감 Info > 브랜치, 커밋</p>
-                <a href="https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">일감 Info > 브랜치, 커밋</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Branch</span>
+                  <span class="badge badge-ghost badge-xs">Commit</span>
+                </div>
               </div>
             </div>
 
             <!-- Issue PPT Guide -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">Issue PPT Guide</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <img src="/images/소만사_로고.png" alt="소만사" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Issue PPT Guide</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Somansa</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
-                <p class="text-gray-500 text-xs mb-3">일감 Info > PPT Template</p>
-                <a href="https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">일감 Info > PPT Template</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">PPT</span>
+                  <span class="badge badge-ghost badge-xs">Template</span>
+                </div>
               </div>
             </div>
 
             <!-- SpringBooster -->
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/소만사_로고.png" alt="소만사" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">SpringBooster</h4>
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <img src="/images/소만사_로고.png" alt="소만사" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">SpringBooster</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Somansa</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <span class="badge badge-ghost badge-xs mb-2">Somansa</span>
-                <p class="text-gray-500 text-xs mb-3">Spring Improve By PPT</p>
-                <a href="https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm mb-3">Spring Improve By PPT</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Spring</span>
+                  <span class="badge badge-ghost badge-xs">Improvement</span>
+                </div>
               </div>
             </div>
           </div>
@@ -413,13 +607,13 @@
       </div>
     </section>
 
-    <!-- PROJECTS 섹션 -->
+    <!-- Projects 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
       <div class="card-body">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-xl font-semibold text-gray-900">PROJECTS</h2>
-          <span class="badge badge-outline">프로젝트</span>
-        </div>
+        <h2 class="card-title text-xl mb-4">
+          <i class="fa-solid fa-folder-open text-amber-500"></i>
+          Projects
+        </h2>
         <p class="text-gray-500 text-sm mb-6">진행 중인 프로젝트 및 관련 리소스</p>
 
         <!-- SEJONG-MALSAMI -->
@@ -427,67 +621,121 @@
           <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-blue-500 pl-3">
             <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-5 h-5">
             SEJONG-MALSAMI
-            <span class="badge badge-primary badge-xs">활성</span>
+            <span class="badge badge-soft badge-primary badge-xs">활성</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">메인 페이지</h4>
+            <!-- 메인 페이지 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">메인 페이지</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">FE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://test.sejong-malsami.co.kr" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">세종말싸미 메인 페이지</p>
-                <a href="https://test.sejong-malsami.co.kr" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">세종말싸미 메인 페이지</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">Swagger Docs</h4>
+
+            <!-- Swagger Docs -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Swagger Docs</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">BE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">세종말싸미 API 문서</p>
-                <a href="https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">세종말싸미 API 문서</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">관리자 페이지</h4>
+
+            <!-- 관리자 페이지 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">관리자 페이지</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Admin</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://api.sejong-malsami.co.kr" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">세종말싸미 관리자</p>
-                <a href="https://api.sejong-malsami.co.kr" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">세종말싸미 관리자</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">Figma (Test)</h4>
+
+            <!-- Figma (Test) -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                      <img src="/icons/figmaLogo.svg" alt="Figma" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Figma (Test)</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-secondary badge-xs">Design</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://www.figma.com/design/g3TWHt8CvADqj2fXcf9uIA/%EC%84%B8%EC%A2%85%EB%B0%9C%EC%8B%B8%EB%AF%B9-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&p=f&t=LubXbhTDNNRuyQK6-0" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">테스트 디자인</p>
-                <a href="https://www.figma.com/design/g3TWHt8CvADqj2fXcf9uIA/%EC%84%B8%EC%A2%85%EB%B0%9C%EC%8B%B8%EB%AF%B9-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&p=f&t=LubXbhTDNNRuyQK6-0" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">테스트 디자인</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">Figma (Prod)</h4>
+
+            <!-- Figma (Prod) -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <img src="/icons/figmaLogo.svg" alt="Figma" class="w-7 h-7 opacity-50">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-400">Figma (Prod)</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-ghost badge-xs">준비 중</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span class="btn btn-ghost btn-xs btn-circle opacity-50 cursor-not-allowed">
+                    <i class="fa-solid fa-clock"></i>
+                  </span>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">아직 미정</p>
-                <span class="btn btn-ghost btn-xs w-full cursor-not-allowed opacity-50">
-                  <i class="fa-solid fa-clock"></i> 준비 중
-                </span>
+                <p class="text-gray-400 text-sm">아직 미정</p>
               </div>
             </div>
           </div>
@@ -498,43 +746,75 @@
           <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-amber-500 pl-3">
             <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-5 h-5">
             PLANE ACCIDENT FINDER
-            <span class="badge badge-primary badge-xs">활성</span>
+            <span class="badge badge-soft badge-primary badge-xs">활성</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">DOWNLOAD APK</h4>
+            <!-- DOWNLOAD APK -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">DOWNLOAD APK</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">Mobile</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="http://suh-project.synology.me/plane-accident-finder/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="다운로드">
+                    <i class="fa-solid fa-download"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">APK Download Page</p>
-                <a href="http://suh-project.synology.me/plane-accident-finder/" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">APK Download Page</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">HTTPS Swagger</h4>
+
+            <!-- HTTPS Swagger -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">HTTPS Swagger</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">BE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
-                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">Swagger Docs</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">HTTP Swagger</h4>
+
+            <!-- HTTP Swagger -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">HTTP Swagger</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">BE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
-                <a href="http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">Swagger Docs</p>
               </div>
             </div>
           </div>
@@ -545,67 +825,121 @@
           <h3 class="font-semibold text-gray-800 mb-4 flex items-center gap-2 border-l-4 border-pink-500 pl-3">
             <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-5 h-5">
             ROM ROM
-            <span class="badge badge-primary badge-xs">활성</span>
+            <span class="badge badge-soft badge-primary badge-xs">활성</span>
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">DOWNLOAD APK</h4>
+            <!-- DOWNLOAD APK -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
+                      <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">DOWNLOAD APK</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-info badge-xs">Mobile</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="http://suh-project.synology.me/romrom" target="_blank" class="btn btn-primary btn-xs btn-circle" title="다운로드">
+                    <i class="fa-solid fa-download"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">[CICD] APK Download</p>
-                <a href="http://suh-project.synology.me/romrom" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">[CICD] APK Download</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">HTTPS Swagger</h4>
+
+            <!-- HTTPS Swagger -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
+                      <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">HTTPS Swagger</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">BE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
-                <a href="https://api.romrom.xyz/docs/swagger-ui/index.html" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">Swagger Docs</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">HTTP Swagger</h4>
+
+            <!-- HTTP Swagger -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
+                      <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">HTTP Swagger</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-success badge-xs">BE</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">Swagger Docs</p>
-                <a href="http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">Swagger Docs</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">Figma (Test)</h4>
+
+            <!-- Figma (Test) -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                      <img src="/icons/figmaLogo.svg" alt="Figma" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Figma (Test)</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-secondary badge-xs">Design</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://www.figma.com/design/qXvwG0b5GYk9xkzgw9fdhb/%EB%A1%AC%EB%A1%AC-%ED%9A%8C%EC%9D%98?node-id=2049-5172&t=TFPO78n7GC2JipNk-0" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">롬롬 테스트 디자인</p>
-                <a href="https://www.figma.com/design/qXvwG0b5GYk9xkzgw9fdhb/%EB%A1%AC%EB%A1%AC-%ED%9A%8C%EC%9D%98?node-id=2049-5172&t=TFPO78n7GC2JipNk-0" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">롬롬 테스트 디자인</p>
               </div>
             </div>
-            <div class="card bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="card-body p-4">
-                <div class="flex items-center gap-2 mb-2">
-                  <img src="/icons/figmaLogo.svg" alt="Figma" class="w-4 h-4">
-                  <h4 class="font-semibold text-sm">Figma (Prod)</h4>
+
+            <!-- Figma (Prod) -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                      <img src="/icons/figmaLogo.svg" alt="Figma" class="w-7 h-7">
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">Figma (Prod)</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-secondary badge-xs">Design</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="https://www.figma.com/design/dq4HUUqmTlVkmWr4cd2RE5/%F0%9F%94%84-romrom?node-id=1344-2435&t=lbULaVU0rbuntb79-0" target="_blank" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
                 </div>
-                <p class="text-gray-500 text-xs mb-3">롬롬 프로덕션</p>
-                <a href="https://www.figma.com/design/dq4HUUqmTlVkmWr4cd2RE5/%F0%9F%94%84-romrom?node-id=1344-2435&t=lbULaVU0rbuntb79-0" class="btn btn-primary btn-xs w-full" target="_blank">
-                  <i class="fa-solid fa-arrow-right"></i> 바로가기
-                </a>
+                <p class="text-gray-500 text-sm">롬롬 프로덕션</p>
               </div>
             </div>
           </div>
