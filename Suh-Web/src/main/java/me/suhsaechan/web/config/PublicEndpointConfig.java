@@ -29,6 +29,8 @@ public class PublicEndpointConfig {
         "/login",
         "/logout",
         "/profile",
+        "/issue-helper",  // GitHub 이슈 도우미 페이지
+        "/translator",    // AI 번역기 페이지
         "/css/**",
         "/js/**",
         "/images/**",

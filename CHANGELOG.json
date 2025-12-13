@@ -1,11 +1,74 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-12T10:04:21Z",
-    "currentVersion": "1.4.3",
+    "lastUpdated": "2025-12-13T11:01:39Z",
+    "currentVersion": "1.4.8",
     "projectType": "spring",
-    "totalReleases": 16
+    "totalReleases": 18
   },
   "releases": [
+    {
+      "version": "1.4.8",
+      "project_type": "spring",
+      "date": "2025-12-13",
+      "pr_number": 109,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트 - v1.4.8\n\n* **새로운 기능**\n  * AI 챗봇 위젯 추가: 실시간 메시지, 세션 관리, 피드백 기능 포함\n  * 대시보드 재설계: Dev Tools 및 AI Assistants 섹션 추가\n  * 로그인 페이지 타이핑 효과 및 변경 이력 조회 기능\n\n* **스타일**\n  * 프로필 이미지 링 스타일 조정\n  * 챗봇 위젯 UI/UX 개선\n\n* **Chores**\n  * 버전 업데이트: v1.4.8\n  * 보안 강화: 메서드 레벨 보안 활성화",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "AI 챗봇 위젯 추가: 실시간 메시지, 세션 관리, 피드백 기능 포함",
+            "대시보드 재설계: Dev Tools 및 AI Assistants 섹션 추가",
+            "로그인 페이지 타이핑 효과 및 변경 이력 조회 기능"
+          ]
+        },
+        "스타일": {
+          "title": "스타일",
+          "items": [
+            "프로필 이미지 링 스타일 조정",
+            "챗봇 위젯 UI/UX 개선"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 업데이트: v1.4.8",
+            "보안 강화: 메서드 레벨 보안 활성화"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
+    {
+      "version": "1.4.6",
+      "project_type": "spring",
+      "date": "2025-12-13",
+      "pr_number": 105,
+      "raw_summary": "## Summary by CodeRabbit\n\n## Release Notes\n\n* **New Features**\n  * 프로필 페이지에 인증서 섹션 추가\n  * 기술 모듈 및 프로젝트 링크 확장\n  * 소셜 미디어 연락처 아이콘 추가\n\n* **Style**\n  * 프로필 이미지 컨테이너 스타일 업데이트\n  * 기술 배지 및 레이아웃 개선\n\n* **Chores**\n  * 버전을 1.4.6으로 업데이트",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "프로필 페이지에 인증서 섹션 추가",
+            "기술 모듈 및 프로젝트 링크 확장",
+            "소셜 미디어 연락처 아이콘 추가"
+          ]
+        },
+        "style": {
+          "title": "Style",
+          "items": [
+            "프로필 이미지 컨테이너 스타일 업데이트",
+            "기술 배지 및 레이아웃 개선"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전을 1.4.6으로 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.4.3",
       "project_type": "spring",

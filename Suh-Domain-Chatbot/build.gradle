@@ -1,0 +1,28 @@
+plugins {
+    id 'java-library'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ''
+}
+
+dependencies {
+    // 공통 모듈 의존성
+    implementation project(':Suh-Common')
+
+    // Qdrant Java Client (gRPC 기반)
+    // 보안 취약점 해결: CVE-2024-3829 해결을 위해 1.9.0 이상 필요
+    implementation 'io.qdrant:client:1.16.1'
+
+    // gRPC 관련 의존성
+    // 보안 취약점 해결: CVE-2024-7246, CVE-2023-33953 해결을 위해 1.59.5 이상 필요
+    // Qdrant 클라이언트 1.16.1과 호환되는 버전 사용
+    implementation 'io.grpc:grpc-netty-shaded:1.68.2'
+    implementation 'io.grpc:grpc-protobuf:1.68.2'
+    implementation 'io.grpc:grpc-stub:1.68.2'
+}

@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -18,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * 웹 보안 설정 클래스
  */
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 @Slf4j
 public class WebSecurityConfig {
@@ -53,6 +55,7 @@ public class WebSecurityConfig {
             .requestMatchers(allPublicEndpoints.toArray(new String[0])).permitAll()
             .requestMatchers(HttpMethod.POST, "/api/docker/get/container-info").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/module/get/versions").hasAnyRole("USER", "ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/chatbot/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         );
 
