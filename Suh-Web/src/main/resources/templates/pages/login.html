@@ -29,7 +29,7 @@
         </a>
         <button onclick="openChangelogModal()" class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer" style="background-color: #e9d5ff; color: #7c3aed; border: none;">
           <i class="fa-solid fa-code-branch"></i>
-          <span th:text="${appVersion}">v1.0.0</span>
+          <span id="version-tag">v1.0.0</span>
         </button>
       </div>
 
@@ -165,6 +165,7 @@
     setupLoginForm();
     setupPasswordToggle();
     startTypingEffect();
+    loadVersionFromChangelog();
 
     // IP 정보 처리 (이미 요청 시작)
     getClientIPPromise
@@ -220,6 +221,22 @@
     }
 
     typeNextChar();
+  }
+
+  // 버전 태그 업데이트 (changelog.json에서)
+  function loadVersionFromChangelog() {
+    fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
+      .then(response => response.json())
+      .then(data => {
+        const versionTag = document.getElementById('version-tag');
+        if (versionTag && data.metadata && data.metadata.currentVersion) {
+          versionTag.textContent = 'v' + data.metadata.currentVersion;
+        }
+      })
+      .catch(error => {
+        console.error('버전 정보 로드 실패:', error);
+        // 실패 시 기본값 유지
+      });
   }
 
   // Changelog 모달 열기
