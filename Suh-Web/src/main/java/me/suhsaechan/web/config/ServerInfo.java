@@ -26,14 +26,4 @@ public class ServerInfo {
 
   // 사용자 인증 관련 정보를 위한 필드
   private boolean authenticationRequired = true;
-
-  // 버전 정보 (version.yml에서 로드)
-  private String appVersion = "1.0.0";
-
-  /**
-   * 버전 문자열 반환 (v 접두사 포함)
-   */
-  public String getVersionWithPrefix() {
-    return "v" + appVersion;
-  }
 }

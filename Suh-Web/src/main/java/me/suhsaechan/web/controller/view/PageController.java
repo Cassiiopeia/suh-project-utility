@@ -33,7 +33,6 @@ public class PageController {
 
 	@GetMapping("/login")
 	public String loginPage(Model model) {
-		model.addAttribute("appVersion", serverInfo.getVersionWithPrefix());
 		return "pages/login";
 	}
 
