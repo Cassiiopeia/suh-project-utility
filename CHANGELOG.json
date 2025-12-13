@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-13T11:36:31Z",
-    "currentVersion": "1.4.9",
+    "lastUpdated": "2025-12-13T11:53:51Z",
+    "currentVersion": "1.4.10",
     "projectType": "spring",
-    "totalReleases": 19
+    "totalReleases": 20
   },
   "releases": [
+    {
+      "version": "1.4.10",
+      "project_type": "spring",
+      "date": "2025-12-13",
+      "pr_number": 111,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 모바일 환경에서 채팅 패널 전체화면 표시 및 닫기 버튼 추가로 사용자 경험 개선\n\n* **업데이트**\n  * 버전 1.4.10으로 업데이트",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "모바일 환경에서 채팅 패널 전체화면 표시 및 닫기 버튼 추가로 사용자 경험 개선"
+          ]
+        },
+        "업데이트": {
+          "title": "업데이트",
+          "items": [
+            "버전 1.4.10으로 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.4.9",
       "project_type": "spring",
