@@ -1,11 +1,42 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-12T10:04:21Z",
-    "currentVersion": "1.4.3",
+    "lastUpdated": "2025-12-13T06:59:57Z",
+    "currentVersion": "1.4.6",
     "projectType": "spring",
-    "totalReleases": 16
+    "totalReleases": 17
   },
   "releases": [
+    {
+      "version": "1.4.6",
+      "project_type": "spring",
+      "date": "2025-12-13",
+      "pr_number": 105,
+      "raw_summary": "## Summary by CodeRabbit\n\n## Release Notes\n\n* **New Features**\n  * 프로필 페이지에 인증서 섹션 추가\n  * 기술 모듈 및 프로젝트 링크 확장\n  * 소셜 미디어 연락처 아이콘 추가\n\n* **Style**\n  * 프로필 이미지 컨테이너 스타일 업데이트\n  * 기술 배지 및 레이아웃 개선\n\n* **Chores**\n  * 버전을 1.4.6으로 업데이트",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "프로필 페이지에 인증서 섹션 추가",
+            "기술 모듈 및 프로젝트 링크 확장",
+            "소셜 미디어 연락처 아이콘 추가"
+          ]
+        },
+        "style": {
+          "title": "Style",
+          "items": [
+            "프로필 이미지 컨테이너 스타일 업데이트",
+            "기술 배지 및 레이아웃 개선"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전을 1.4.6으로 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.4.3",
       "project_type": "spring",
