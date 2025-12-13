@@ -982,6 +982,41 @@ input:focus, textarea:focus, select:focus {
   color: #ef4444;
 }
 
+/* 헤더 (기본적으로 숨김, 모바일에서만 표시) */
+.chatbot-header-mobile {
+  display: none;
+}
+
+/* 닫기 버튼 */
+.chatbot-close-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chatbot-close-btn:hover {
+  background: #e5e7eb;
+  color: #374151;
+  transform: scale(1.05);
+}
+
+.chatbot-close-btn:active {
+  transform: scale(0.95);
+}
+
+.chatbot-close-btn i {
+  font-size: 18px;
+}
+
 /* 모바일 반응형 */
 @media (max-width: 480px) {
   .chatbot-panel {
@@ -994,14 +1029,27 @@ input:focus, textarea:focus, select:focus {
     border-radius: 0;
   }
 
+  /* 모바일 헤더 표시 및 스타일 */
+  .chatbot-header-mobile {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    padding: 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  /* 플로팅 버튼 숨기기 (패널이 열려있을 때) */
+  body.chatbot-open .chatbot-fab {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
   .chatbot-fab {
     bottom: 20px;
     right: 20px;
-  }
-
-  .chatbot-panel.active ~ .chatbot-fab {
-    opacity: 0;
-    pointer-events: none;
   }
 
   .chatbot-welcome {

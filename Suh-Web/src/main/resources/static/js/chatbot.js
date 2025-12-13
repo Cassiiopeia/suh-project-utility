@@ -77,6 +77,11 @@ const ChatbotWidget = {
     $(document).on('click', '#chatbot-reset-btn', function() {
       self.resetChat();
     });
+
+    // 닫기 버튼 클릭
+    $(document).on('click', '#chatbot-close-btn', function() {
+      self.toggle();
+    });
   },
 
   /**
@@ -112,10 +117,12 @@ const ChatbotWidget = {
     if (this.isOpen) {
       $('.chatbot-panel').addClass('active');
       $('.chatbot-fab').addClass('active');
+      $('body').addClass('chatbot-open');
       $('#chatbot-input').focus();
     } else {
       $('.chatbot-panel').removeClass('active');
       $('.chatbot-fab').removeClass('active');
+      $('body').removeClass('chatbot-open');
     }
   },
 
