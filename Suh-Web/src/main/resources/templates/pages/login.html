@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" data-theme="light">
 <head th:replace="~{fragments/header :: head(title='Login - SAECHAN LAB')}"></head>
-<body class="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
+<body class="login-page min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
 <!-- 헤더 영역 -->
 <div th:replace="~{fragments/header :: header}"></div>
 
@@ -11,25 +11,6 @@
   <div class="card bg-base-100 shadow-xl w-full max-w-md">
     <div class="card-body">
       <!-- 타이핑 효과 텍스트 -->
-      <style>
-        /* 현재 타이핑 중인 글자 - 밑줄 표시 */
-        .typing-char.current {
-          text-decoration: underline;
-          text-decoration-thickness: 2px;
-          text-underline-offset: 2px;
-        }
-        /* 파이프 커서 깜빡임 (타이핑 완료 후) */
-        .typing-cursor {
-          opacity: 0;
-        }
-        .typing-cursor.blink {
-          animation: cursorBlink 1s step-end infinite;
-        }
-        @keyframes cursorBlink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-      </style>
       <div class="text-center mb-2">
         <span id="typing-text" class="text-lg font-semibold text-gray-700"></span>
         <span id="typing-cursor" class="typing-cursor">|</span>
@@ -176,7 +157,7 @@
   const getClientIPPromise = $.getJSON('https://api.ipify.org?format=json');
 
   // 타이핑 효과 설정
-  const typingText = "Welcome To SUH-LAB";
+  const typingText = "Welcome To SUH-LAB !!";
   let typingIndex = 0;
 
   $(document).ready(function() {

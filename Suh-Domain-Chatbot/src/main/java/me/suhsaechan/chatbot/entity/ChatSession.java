@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.Builder.Default;
 import lombok.experimental.SuperBuilder;
 import me.suhsaechan.common.entity.BasePostgresEntity;
 
@@ -51,11 +52,13 @@ public class ChatSession extends BasePostgresEntity {
 
     // 세션 활성화 여부
     @Column(nullable = false)
-    private Boolean isActive;
+    @Default
+    private Boolean isActive = Boolean.TRUE;
 
     // 총 메시지 수
     @Column
-    private Integer messageCount;
+    @Default
+    private Integer messageCount = 0;
 
     // 세션 제목 (자동 생성 또는 사용자 지정)
     @Column

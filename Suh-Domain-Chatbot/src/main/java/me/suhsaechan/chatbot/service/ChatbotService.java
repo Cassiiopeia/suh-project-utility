@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.config.QdrantProperties;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
-import me.suhsaechan.chatbot.dto.ChatRequest;
-import me.suhsaechan.chatbot.dto.ChatResponse;
-import me.suhsaechan.chatbot.dto.ChatResponse.ReferencedDocument;
+import me.suhsaechan.chatbot.dto.ChatbotRequest;
+import me.suhsaechan.chatbot.dto.ChatbotResponse;
+import me.suhsaechan.chatbot.dto.ChatbotResponse.ReferencedDocument;
 import me.suhsaechan.chatbot.dto.VectorSearchResult;
 import me.suhsaechan.chatbot.entity.ChatDocumentChunk;
 import me.suhsaechan.chatbot.entity.ChatMessage;
@@ -48,7 +48,7 @@ public class ChatbotService {
      * 현재는 LLM 연결 없이 RAG 검색 결과만 반환
      */
     @Transactional
-    public ChatResponse chat(ChatRequest request, String userIp, String userAgent) {
+    public ChatbotResponse chat(ChatbotRequest request, String userIp, String userAgent) {
         long startTime = System.currentTimeMillis();
         log.info("채팅 요청 처리 시작 - message: {}", request.getMessage());
 
@@ -95,7 +95,7 @@ public class ChatbotService {
         log.info("채팅 응답 완료 - sessionId: {}, responseTime: {}ms",
             session.getChatSessionId(), responseTime);
 
-        return ChatResponse.builder()
+        return ChatbotResponse.builder()
             .sessionToken(session.getSessionToken())
             .sessionId(session.getChatSessionId())
             .message(responseContent)

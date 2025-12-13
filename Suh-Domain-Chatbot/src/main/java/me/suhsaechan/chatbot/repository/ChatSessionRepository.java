@@ -20,7 +20,7 @@ public interface ChatSessionRepository extends JpaRepository<ChatSession, UUID> 
     // 활성 세션 목록 (최근 활동 순)
     List<ChatSession> findByIsActiveTrueOrderByLastActivityAtDesc();
 
-    // 특정 시간 이전의 비활성 세션 조회
+    // 비활성화 대상 세션 조회 (활성 상태이면서 특정 시간 이전에 마지막 활동)
     List<ChatSession> findByIsActiveTrueAndLastActivityAtBefore(LocalDateTime cutoffTime);
 
     // IP로 최근 세션 조회

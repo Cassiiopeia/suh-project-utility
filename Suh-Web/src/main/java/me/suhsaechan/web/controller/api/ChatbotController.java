@@ -6,14 +6,15 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
-import me.suhsaechan.chatbot.dto.ChatRequest;
-import me.suhsaechan.chatbot.dto.ChatResponse;
+import me.suhsaechan.chatbot.dto.ChatbotRequest;
+import me.suhsaechan.chatbot.dto.ChatbotResponse;
 import me.suhsaechan.chatbot.service.ChatbotService;
 import me.suhsaechan.chatbot.service.DocumentService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,12 +37,12 @@ public class ChatbotController {
    */
   @PostMapping(value = "/chat", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<ChatResponse> chat(@ModelAttribute ChatRequest request,
+  public ResponseEntity<ChatbotResponse> chat(@ModelAttribute ChatbotRequest request,
                                            HttpServletRequest httpRequest) {
     String userIp = extractClientIp(httpRequest);
     String userAgent = httpRequest.getHeader("User-Agent");
 
-    ChatResponse response = chatbotService.chat(request, userIp, userAgent);
+    ChatbotResponse response = chatbotService.chat(request, userIp, userAgent);
     return ResponseEntity.ok(response);
   }
 
@@ -50,7 +51,7 @@ public class ChatbotController {
    */
   @PostMapping(value = "/history", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<List<ChatHistoryDto>> getChatHistory(@ModelAttribute ChatRequest request) {
+  public ResponseEntity<List<ChatHistoryDto>> getChatHistory(@ModelAttribute ChatbotRequest request) {
     List<ChatHistoryDto> history = chatbotService.getChatHistory(request.getSessionToken());
     return ResponseEntity.ok(history);
   }
@@ -61,8 +62,11 @@ public class ChatbotController {
   @PostMapping(value = "/feedback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
   public ResponseEntity<Void> saveFeedback(@ModelAttribute FeedbackRequest request) {
+    if (request.getMessageId() == null || request.getIsHelpful() == null) {
+      return ResponseEntity.badRequest().build();
+    }
     chatbotService.saveMessageFeedback(request.getMessageId(), request.getIsHelpful());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 
   /**
@@ -70,7 +74,7 @@ public class ChatbotController {
    */
   @PostMapping(value = "/session/end", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<Void> endSession(@ModelAttribute ChatRequest request) {
+  public ResponseEntity<Void> endSession(@ModelAttribute ChatbotRequest request) {
     chatbotService.endSession(request.getSessionToken());
     return ResponseEntity.noContent().build();
   }
@@ -80,6 +84,7 @@ public class ChatbotController {
    */
   @PostMapping(value = "/admin/init-collection", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> initializeCollection() {
     documentService.initializeCollection();
     return ResponseEntity.status(HttpStatus.CREATED).build();

@@ -14,7 +14,7 @@ public class QdrantConfig {
 
     private final QdrantProperties qdrantProperties;
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public QdrantClient qdrantClient() {
         log.info("Qdrant 클라이언트 초기화 - host: {}, grpcPort: {}",
             qdrantProperties.getHost(), qdrantProperties.getGrpcPort());

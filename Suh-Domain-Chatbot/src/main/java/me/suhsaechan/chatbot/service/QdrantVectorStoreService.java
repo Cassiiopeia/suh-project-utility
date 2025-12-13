@@ -118,6 +118,23 @@ public class QdrantVectorStoreService implements VectorStoreService {
     public void upsertPoints(String collectionName, List<UUID> pointIds, List<List<Float>> vectors,
         List<String> contents, List<Map<String, String>> metadataList) {
 
+        // 입력 검증
+        if (pointIds == null || vectors == null || contents == null) {
+            throw new IllegalArgumentException("upsertPoints 필수 파라미터는 null일 수 없습니다");
+        }
+
+        if (pointIds.size() != vectors.size() || pointIds.size() != contents.size()) {
+            throw new IllegalArgumentException(
+                String.format("upsertPoints 입력 크기 불일치: pointIds=%d, vectors=%d, contents=%d",
+                    pointIds.size(), vectors.size(), contents.size()));
+        }
+
+        if (metadataList != null && metadataList.size() != pointIds.size()) {
+            throw new IllegalArgumentException(
+                String.format("upsertPoints 입력 크기 불일치: metadataList=%d (기대값: %d)",
+                    metadataList.size(), pointIds.size()));
+        }
+
         try {
             List<PointStruct> points = new ArrayList<>();
 
@@ -188,10 +205,10 @@ public class QdrantVectorStoreService implements VectorStoreService {
     @Override
     public void deletePoints(String collectionName, List<UUID> pointIds) {
         try {
-            List<io.qdrant.client.grpc.Points.PointId> qdrantPointIds = pointIds.stream()
+            var qdrantPointIds = pointIds.stream()
                 .map(uuid -> id(uuid))
-                .collect(Collectors.toList());
-
+                .toList();
+            
             qdrantClient.deleteAsync(collectionName, qdrantPointIds).get();
             log.info("Qdrant 포인트 삭제 완료 - 개수: {}", pointIds.size());
 

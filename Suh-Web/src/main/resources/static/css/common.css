@@ -74,6 +74,33 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
+  Login Page Typing Effect Styles
+===========================
+*/
+
+/* 현재 타이핑 중인 글자 - 밑줄 표시 */
+.typing-char.current {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+/* 로그인 페이지 전용 타이핑 커서 (기본 숨김, blink 클래스 추가 시 깜빡임) */
+.login-page .typing-cursor {
+  opacity: 0;
+}
+
+.login-page .typing-cursor.blink {
+  animation: cursorBlink 2s step-end infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/*
+===========================
    Table Container Styles
 ===========================
 */
@@ -434,46 +461,6 @@ html, body, button, input, select, textarea {
 .notice-management-page .notice-item.important {
   border-left: 4px solid #ef4444;
   background-color: #fef2f2;
-}
-
-/*
-===========================
-   Login Page Styles
-===========================
-*/
-
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
-}
-
-.login-page .login-card {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  padding: 2rem;
-  width: 100%;
-  max-width: 400px;
-}
-
-.login-page .login-card .logo {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.login-page .login-card .logo img {
-  width: 80px;
-  height: 80px;
-}
-
-.login-page .login-card .logo h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e40af;
-  margin-top: 1rem;
 }
 
 /*
