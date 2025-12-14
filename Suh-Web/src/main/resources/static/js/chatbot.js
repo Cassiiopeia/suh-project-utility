@@ -9,6 +9,8 @@ const ChatbotWidget = {
   sessionToken: null,
   isOpen: false,
   isLoading: false,
+  useStreaming: true,  // 스트리밍 모드 사용 여부
+  currentEventSource: null,  // 현재 SSE 연결
 
   /**
    * 초기화
@@ -127,7 +129,7 @@ const ChatbotWidget = {
   },
 
   /**
-   * 메시지 전송
+   * 메시지 전송 (스트리밍/비스트리밍 자동 선택)
    */
   sendMessage: function() {
     const input = $('#chatbot-input');
@@ -144,6 +146,96 @@ const ChatbotWidget = {
     // 사용자 메시지 표시
     this.appendMessage('user', message);
 
+    // 웰컴 메시지 숨기기
+    $('.chatbot-welcome').hide();
+
+    // 스트리밍 모드 사용 여부에 따라 분기
+    if (this.useStreaming) {
+      this.sendMessageStream(message);
+    } else {
+      this.sendMessageNonStream(message);
+    }
+  },
+
+  /**
+   * 스트리밍 메시지 전송 (SSE)
+   */
+  sendMessageStream: function(message) {
+    const self = this;
+
+    // 타이핑 인디케이터 대신 빈 AI 메시지 버블 생성
+    const aiMessageId = 'ai-stream-' + Date.now();
+    this.appendStreamingMessage(aiMessageId);
+
+    // API 요청
+    this.isLoading = true;
+    $('#chatbot-send-btn').prop('disabled', true);
+
+    // SSE URL 구성
+    const params = new URLSearchParams({
+      message: message,
+      topK: 3,
+      minScore: 0.5
+    });
+    if (this.sessionToken) {
+      params.append('sessionToken', this.sessionToken);
+    }
+
+    const url = '/api/chatbot/chat/stream?' + params.toString();
+
+    // 기존 연결이 있으면 종료
+    if (this.currentEventSource) {
+      this.currentEventSource.close();
+    }
+
+    // SSE 연결
+    const eventSource = new EventSource(url);
+    this.currentEventSource = eventSource;
+
+    // 메시지 수신
+    eventSource.addEventListener('message', function(e) {
+      self.appendToStreamingMessage(aiMessageId, e.data);
+    });
+
+    // 완료 이벤트
+    eventSource.addEventListener('done', function(e) {
+      eventSource.close();
+      self.currentEventSource = null;
+      self.isLoading = false;
+      $('#chatbot-send-btn').prop('disabled', false);
+      self.finalizeStreamingMessage(aiMessageId);
+      console.log('Streaming completed');
+    });
+
+    // 에러 이벤트
+    eventSource.addEventListener('error', function(e) {
+      eventSource.close();
+      self.currentEventSource = null;
+      self.isLoading = false;
+      $('#chatbot-send-btn').prop('disabled', false);
+
+      // 빈 응답이면 에러 메시지 표시
+      const bubble = document.querySelector('#' + aiMessageId + ' .bubble');
+      if (bubble && !bubble.textContent.trim()) {
+        bubble.innerHTML = self.formatMessage(self.escapeHtml('죄송합니다. 응답 생성 중 오류가 발생했습니다.'));
+      }
+      console.error('SSE error:', e);
+    });
+
+    // 일반 error 이벤트 (서버에서 보낸 error 이벤트)
+    eventSource.addEventListener('error', function(e) {
+      if (e.data) {
+        console.error('Server error:', e.data);
+      }
+    });
+  },
+
+  /**
+   * 비스트리밍 메시지 전송
+   */
+  sendMessageNonStream: function(message) {
+    const self = this;
+
     // 타이핑 인디케이터 표시
     this.showTypingIndicator();
 
@@ -151,7 +243,6 @@ const ChatbotWidget = {
     this.isLoading = true;
     $('#chatbot-send-btn').prop('disabled', true);
 
-    const self = this;
     const params = {
       sessionToken: this.sessionToken,
       message: message,
@@ -185,6 +276,65 @@ const ChatbotWidget = {
         console.error('Chatbot API error:', error);
       }
     );
+  },
+
+  /**
+   * 스트리밍용 빈 메시지 버블 생성
+   */
+  appendStreamingMessage: function(messageId) {
+    const messagesContainer = $('#chatbot-messages');
+    const time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+
+    const html = `
+      <div class="chat-message assistant" id="${messageId}">
+        <div class="bubble"><span class="streaming-cursor">|</span></div>
+        <div class="time">${time}</div>
+      </div>
+    `;
+
+    messagesContainer.append(html);
+    this.scrollToBottom();
+  },
+
+  /**
+   * 스트리밍 메시지에 텍스트 추가
+   */
+  appendToStreamingMessage: function(messageId, chunk) {
+    const bubble = document.querySelector('#' + messageId + ' .bubble');
+    if (bubble) {
+      // 기존 커서 제거
+      const cursor = bubble.querySelector('.streaming-cursor');
+      if (cursor) {
+        cursor.remove();
+      }
+
+      // 현재 텍스트 가져오기 (HTML 태그 제외한 순수 텍스트)
+      const currentText = bubble.textContent || '';
+      const newText = currentText + chunk;
+
+      // 포맷팅 적용 후 커서 추가
+      bubble.innerHTML = this.formatMessage(this.escapeHtml(newText)) + '<span class="streaming-cursor">|</span>';
+
+      this.scrollToBottom();
+    }
+  },
+
+  /**
+   * 스트리밍 메시지 완료 처리
+   */
+  finalizeStreamingMessage: function(messageId) {
+    const bubble = document.querySelector('#' + messageId + ' .bubble');
+    if (bubble) {
+      // 커서 제거
+      const cursor = bubble.querySelector('.streaming-cursor');
+      if (cursor) {
+        cursor.remove();
+      }
+
+      // 최종 포맷팅
+      const text = bubble.textContent || '';
+      bubble.innerHTML = this.formatMessage(this.escapeHtml(text));
+    }
   },
 
   /**

@@ -1,8 +1,10 @@
 package me.suhsaechan.web.controller.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import kr.suhsaechan.ai.service.StreamCallback;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
@@ -15,10 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * 챗봇 API 컨트롤러
@@ -33,7 +38,7 @@ public class ChatbotController {
   private final DocumentService documentService;
 
   /**
-   * 채팅 메시지 전송
+   * 채팅 메시지 전송 (비스트리밍)
    */
   @PostMapping(value = "/chat", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
@@ -44,6 +49,76 @@ public class ChatbotController {
 
     ChatbotResponse response = chatbotService.chat(request, userIp, userAgent);
     return ResponseEntity.ok(response);
+  }
+
+  /**
+   * 스트리밍 채팅 (SSE)
+   * 토큰 단위로 실시간 응답 전송
+   */
+  @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+  public SseEmitter chatStream(
+          @RequestParam(required = false) String sessionToken,
+          @RequestParam String message,
+          @RequestParam(defaultValue = "3") int topK,
+          @RequestParam(defaultValue = "0.5") float minScore,
+          HttpServletRequest httpRequest) {
+
+    log.info("스트리밍 채팅 요청 - message: {}", message);
+
+    String userIp = extractClientIp(httpRequest);
+    String userAgent = httpRequest.getHeader("User-Agent");
+
+    // SSE 타임아웃 2분 (LLM 응답 시간 고려)
+    SseEmitter emitter = new SseEmitter(120000L);
+
+    // 연결 끊김 처리
+    emitter.onCompletion(() -> log.debug("SSE 연결 완료"));
+    emitter.onTimeout(() -> log.warn("SSE 타임아웃"));
+    emitter.onError(e -> log.error("SSE 오류: {}", e.getMessage()));
+
+    // 스트리밍 응답 시작
+    chatbotService.chatStream(sessionToken, message, topK, minScore, userIp, userAgent,
+        new StreamCallback() {
+          @Override
+          public void onNext(String chunk) {
+            try {
+              emitter.send(SseEmitter.event()
+                  .name("message")
+                  .data(chunk));
+            } catch (IOException e) {
+              log.error("SSE 전송 오류: {}", e.getMessage());
+              emitter.completeWithError(e);
+            }
+          }
+
+          @Override
+          public void onComplete() {
+            try {
+              emitter.send(SseEmitter.event()
+                  .name("done")
+                  .data(""));
+              emitter.complete();
+            } catch (IOException e) {
+              log.error("SSE 완료 전송 오류: {}", e.getMessage());
+              emitter.completeWithError(e);
+            }
+          }
+
+          @Override
+          public void onError(Throwable error) {
+            log.error("스트리밍 오류: {}", error.getMessage());
+            try {
+              emitter.send(SseEmitter.event()
+                  .name("error")
+                  .data(error.getMessage()));
+            } catch (IOException e) {
+              log.error("SSE 오류 전송 실패: {}", e.getMessage());
+            }
+            emitter.completeWithError(error);
+          }
+        });
+
+    return emitter;
   }
 
   /**

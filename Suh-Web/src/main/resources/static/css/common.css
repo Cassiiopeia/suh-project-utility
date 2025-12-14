@@ -819,6 +819,23 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
+/* 스트리밍 커서 애니메이션 */
+.streaming-cursor {
+  display: inline;
+  animation: streamingBlink 0.7s infinite;
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+@keyframes streamingBlink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
 /* 입력 영역 */
 .chatbot-input-area {
   padding: 16px;
