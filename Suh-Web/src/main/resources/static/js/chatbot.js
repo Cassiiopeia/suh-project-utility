@@ -9,6 +9,9 @@ const ChatbotWidget = {
   sessionToken: null,
   isOpen: false,
   isLoading: false,
+  useStreaming: true,  // 스트리밍 모드 사용 여부
+  currentEventSource: null,  // 현재 SSE 연결
+  streamingTextMap: {},  // 스트리밍 중인 원본 텍스트 저장 (messageId -> text)
 
   /**
    * 초기화
@@ -127,7 +130,7 @@ const ChatbotWidget = {
   },
 
   /**
-   * 메시지 전송
+   * 메시지 전송 (스트리밍/비스트리밍 자동 선택)
    */
   sendMessage: function() {
     const input = $('#chatbot-input');
@@ -144,6 +147,107 @@ const ChatbotWidget = {
     // 사용자 메시지 표시
     this.appendMessage('user', message);
 
+    // 웰컴 메시지 숨기기
+    $('.chatbot-welcome').hide();
+
+    // 스트리밍 모드 사용 여부에 따라 분기
+    if (this.useStreaming) {
+      this.sendMessageStream(message);
+    } else {
+      this.sendMessageNonStream(message);
+    }
+  },
+
+  /**
+   * 스트리밍 메시지 전송 (SSE)
+   */
+  sendMessageStream: function(message) {
+    const self = this;
+
+    // 타이핑 인디케이터 대신 빈 AI 메시지 버블 생성
+    const aiMessageId = 'ai-stream-' + Date.now();
+    this.appendStreamingMessage(aiMessageId);
+
+    // API 요청
+    this.isLoading = true;
+    this.streamCompleted = false;  // 스트리밍 완료 플래그
+    this.hasReceivedData = false;  // 데이터 수신 플래그
+    $('#chatbot-send-btn').prop('disabled', true);
+
+    // SSE URL 구성
+    const params = new URLSearchParams({
+      message: message,
+      topK: 3,
+      minScore: 0.5
+    });
+    if (this.sessionToken) {
+      params.append('sessionToken', this.sessionToken);
+    }
+
+    const url = '/api/chatbot/chat/stream?' + params.toString();
+
+    // 기존 연결이 있으면 종료
+    if (this.currentEventSource) {
+      this.currentEventSource.close();
+    }
+
+    // SSE 연결
+    const eventSource = new EventSource(url);
+    this.currentEventSource = eventSource;
+
+    // 연결 확인 이벤트
+    eventSource.addEventListener('connected', function(e) {
+      console.log('SSE 연결 확인:', e.data);
+    });
+
+    // 메시지 수신
+    eventSource.addEventListener('message', function(e) {
+      self.hasReceivedData = true;
+      console.log('SSE 메시지 수신:', e.data.substring(0, 50));
+      self.appendToStreamingMessage(aiMessageId, e.data);
+    });
+
+    // 완료 이벤트
+    eventSource.addEventListener('done', function(e) {
+      self.streamCompleted = true;
+      eventSource.close();
+      self.currentEventSource = null;
+      self.isLoading = false;
+      $('#chatbot-send-btn').prop('disabled', false);
+      self.finalizeStreamingMessage(aiMessageId);
+      console.log('Streaming completed');
+    });
+
+    // 에러 이벤트
+    eventSource.addEventListener('error', function(e) {
+      // 이미 완료된 경우 무시 (정상 종료 후 error 이벤트가 발생할 수 있음)
+      if (self.streamCompleted) {
+        return;
+      }
+
+      eventSource.close();
+      self.currentEventSource = null;
+      self.isLoading = false;
+      $('#chatbot-send-btn').prop('disabled', false);
+
+      // 데이터를 한 번도 받지 못했을 때만 에러 메시지 표시
+      const bubble = document.querySelector('#' + aiMessageId + ' .bubble');
+      if (bubble && !self.hasReceivedData) {
+        bubble.innerHTML = '<span class="error-message"><i class="fa-solid fa-circle-exclamation"></i> 죄송합니다. 응답 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</span>';
+        console.error('SSE error:', e);
+      } else if (bubble) {
+        // 데이터를 받았지만 완료되지 않은 경우 - 현재 내용 유지하고 마무리
+        self.finalizeStreamingMessage(aiMessageId);
+      }
+    });
+  },
+
+  /**
+   * 비스트리밍 메시지 전송
+   */
+  sendMessageNonStream: function(message) {
+    const self = this;
+
     // 타이핑 인디케이터 표시
     this.showTypingIndicator();
 
@@ -151,7 +255,6 @@ const ChatbotWidget = {
     this.isLoading = true;
     $('#chatbot-send-btn').prop('disabled', true);
 
-    const self = this;
     const params = {
       sessionToken: this.sessionToken,
       message: message,
@@ -185,6 +288,76 @@ const ChatbotWidget = {
         console.error('Chatbot API error:', error);
       }
     );
+  },
+
+  /**
+   * 스트리밍용 빈 메시지 버블 생성
+   */
+  appendStreamingMessage: function(messageId) {
+    const messagesContainer = $('#chatbot-messages');
+    const time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+
+    // 원본 텍스트 저장소 초기화
+    this.streamingTextMap[messageId] = '';
+
+    const html = `
+      <div class="chat-message assistant" id="${messageId}">
+        <div class="bubble">
+          <span class="analyzing-indicator">
+            <span class="analyzing-text">분석 중</span>
+            <span class="analyzing-dots"><span>.</span><span>.</span><span>.</span></span>
+          </span>
+        </div>
+        <div class="time">${time}</div>
+      </div>
+    `;
+
+    messagesContainer.append(html);
+    this.scrollToBottom();
+  },
+
+  /**
+   * 스트리밍 메시지에 텍스트 추가
+   */
+  appendToStreamingMessage: function(messageId, chunk) {
+    const bubble = document.querySelector('#' + messageId + ' .bubble');
+    if (bubble) {
+      // 분석 중 인디케이터 제거
+      const analyzingIndicator = bubble.querySelector('.analyzing-indicator');
+      if (analyzingIndicator) {
+        analyzingIndicator.remove();
+      }
+
+      // 원본 텍스트에 청크 추가 (DOM에서 읽지 않고 별도 저장소 사용)
+      this.streamingTextMap[messageId] = (this.streamingTextMap[messageId] || '') + chunk;
+      const fullText = this.streamingTextMap[messageId];
+
+      // 스트리밍 중에는 간단한 렌더링만 (줄바꿈 + 커서)
+      bubble.innerHTML = this.formatMessageStreaming(this.escapeHtml(fullText)) + '<span class="streaming-cursor">|</span>';
+
+      this.scrollToBottom();
+    }
+  },
+
+  /**
+   * 스트리밍 메시지 완료 처리
+   */
+  finalizeStreamingMessage: function(messageId) {
+    const bubble = document.querySelector('#' + messageId + ' .bubble');
+    if (bubble) {
+      // 분석 중 인디케이터 제거
+      const analyzingIndicator = bubble.querySelector('.analyzing-indicator');
+      if (analyzingIndicator) {
+        analyzingIndicator.remove();
+      }
+
+      // 원본 텍스트에서 최종 마크다운 렌더링
+      const fullText = this.streamingTextMap[messageId] || '';
+      bubble.innerHTML = this.formatMessage(this.escapeHtml(fullText));
+
+      // 메모리 정리
+      delete this.streamingTextMap[messageId];
+    }
   },
 
   /**
@@ -313,20 +486,52 @@ const ChatbotWidget = {
   },
 
   /**
-   * 메시지 포맷팅 (간단한 마크다운)
+   * 스트리밍 중 메시지 포맷팅 (실시간 마크다운 렌더링)
+   */
+  formatMessageStreaming: function(text) {
+    if (!text) return '';
+
+    // 스트리밍 중에도 마크다운 실시간 적용
+    return this.formatMessage(text);
+  },
+
+  /**
+   * 메시지 포맷팅 (마크다운 → HTML)
    */
   formatMessage: function(text) {
     if (!text) return '';
 
-    return text
-      // 줄바꿈
-      .replace(/\n/g, '<br>')
-      // 볼드 (**text**)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      // 이탤릭 (*text*)
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      // 코드 (`code`)
-      .replace(/`(.+?)`/g, '<code style="background:#f3f4f6;padding:2px 4px;border-radius:4px;">$1</code>');
+    let result = text;
+
+    // 코드 블록 (```code```) - 먼저 처리
+    result = result.replace(/```(\w*)\n?([\s\S]*?)```/g, function(match, lang, code) {
+      return '<pre class="code-block"><code>' + code.trim() + '</code></pre>';
+    });
+
+    // 인라인 코드 (`code`) - 코드 블록 처리 후
+    result = result.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+
+    // 헤더 (### 제목)
+    result = result.replace(/^### (.+)$/gm, '<strong class="chat-h3">$1</strong>');
+    result = result.replace(/^## (.+)$/gm, '<strong class="chat-h2">$1</strong>');
+    result = result.replace(/^# (.+)$/gm, '<strong class="chat-h1">$1</strong>');
+
+    // 볼드 (**text**)
+    result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // 이탤릭 (*text*) - 볼드 처리 후
+    result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+    // 번호 리스트 (1. 2. 3.)
+    result = result.replace(/^(\d+)\. (.+)$/gm, '<div class="chat-list-item"><span class="list-number">$1.</span> $2</div>');
+
+    // 불릿 리스트 (- item)
+    result = result.replace(/^- (.+)$/gm, '<div class="chat-list-item"><span class="list-bullet">•</span> $1</div>');
+
+    // 줄바꿈 (마지막에 처리)
+    result = result.replace(/\n/g, '<br>');
+
+    return result;
   }
 };
 

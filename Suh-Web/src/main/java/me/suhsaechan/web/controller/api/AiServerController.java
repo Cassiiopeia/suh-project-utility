@@ -128,4 +128,36 @@ public class AiServerController {
         }
         return ResponseEntity.ok(progress);
     }
+
+    /**
+     * SuhAiderEngine을 사용하여 Health Check를 수행합니다.
+     */
+    @PostMapping(value = "/suh-aider/health", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> getSuhAiderHealth(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.getSuhAiderHealth());
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 모델 목록을 조회합니다.
+     */
+    @PostMapping(value = "/suh-aider/models", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> getSuhAiderModels(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.getSuhAiderModels());
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 텍스트를 생성합니다.
+     */
+    @PostMapping(value = "/suh-aider/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> suhAiderGenerate(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.suhAiderGenerate(request));
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 임베딩을 생성합니다.
+     */
+    @PostMapping(value = "/suh-aider/embed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> suhAiderEmbed(AiServerRequest request) {
+        return ResponseEntity.ok(aiServerService.suhAiderEmbed(request));
+    }
 }

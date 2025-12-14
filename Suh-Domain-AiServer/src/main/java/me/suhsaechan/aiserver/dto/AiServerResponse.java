@@ -52,4 +52,19 @@ public class AiServerResponse {
     // 스트림 모드 사용 여부
     private Boolean stream;
 
+    // SuhAider 임베딩 결과
+    private List<Double> embeddingVector;
+
+    // SuhAider 배치 임베딩 결과
+    private List<List<Double>> embeddingVectors;
+
+    // 벡터 차원 수
+    private Integer vectorDimension;
+
+    // generate 응답 텍스트 (파싱된)
+    private String generatedText;
+
+    // 처리 시간 (ms)
+    private Long processingTime;
+
 }

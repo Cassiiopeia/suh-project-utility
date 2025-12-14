@@ -100,9 +100,26 @@
     <div class="card-body">
       <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
         <i class="fa-solid fa-code text-blue-500"></i>
-        API 테스트
+        API 테스트 (SuhAider)
       </h3>
-      <p class="text-gray-500 text-sm mb-6">텍스트 생성 및 임베딩 테스트</p>
+      <p class="text-gray-500 text-sm mb-6">SuhAiderEngine 기반 텍스트 생성 및 임베딩 테스트</p>
+
+      <!-- 테스트 유형 선택 -->
+      <div class="form-control mb-6">
+        <label class="label">
+          <span class="label-text font-medium">테스트 유형</span>
+        </label>
+        <div class="flex gap-4">
+          <label class="label cursor-pointer gap-2">
+            <input type="radio" name="testType" value="generate" class="radio radio-primary" checked>
+            <span class="label-text">텍스트 생성 (Generate)</span>
+          </label>
+          <label class="label cursor-pointer gap-2">
+            <input type="radio" name="testType" value="embedding" class="radio radio-primary">
+            <span class="label-text">임베딩 (Embedding)</span>
+          </label>
+        </div>
+      </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- 모델 선택 -->
@@ -129,19 +146,27 @@
               </div>
             </div>
           </div>
+
+          <!-- 임베딩 모델 안내 -->
+          <div id="embeddingModelHint" class="hidden mt-4">
+            <div class="alert alert-warning">
+              <i class="fa-solid fa-info-circle"></i>
+              <span>임베딩 테스트시 embedding 모델(예: embeddinggemma:latest)을 선택하세요. 모델을 선택하지 않으면 기본 임베딩 모델이 사용됩니다.</span>
+            </div>
+          </div>
         </div>
 
         <!-- API 설정 -->
         <div>
           <div class="form-control mb-4">
             <label class="label">
-              <span class="label-text font-medium">입력 텍스트</span>
+              <span class="label-text font-medium" id="inputTextLabel">입력 텍스트</span>
             </label>
             <textarea id="inputText" class="textarea textarea-bordered h-32" placeholder="프롬프트를 여기에 입력하세요"></textarea>
           </div>
           <button class="btn btn-primary w-full" id="runApiTestBtn">
             <i class="fa-solid fa-play"></i>
-            API 호출 테스트
+            <span id="testBtnText">텍스트 생성 테스트</span>
           </button>
         </div>
       </div>
@@ -159,9 +184,54 @@
             </p>
           </div>
         </div>
+
+        <!-- 텍스트 생성 결과 -->
+        <div id="generateResultSection" class="hidden">
+          <div class="bg-gray-100 rounded-lg p-4 mb-4">
+            <div class="flex justify-between items-center mb-3">
+              <span class="font-medium text-gray-700">생성된 텍스트</span>
+              <button class="btn btn-sm btn-outline" id="copyGeneratedTextBtn">
+                <i class="fa-solid fa-copy"></i>
+                복사
+              </button>
+            </div>
+            <div id="generatedText" class="bg-white p-4 rounded-lg border border-gray-200 whitespace-pre-wrap"></div>
+          </div>
+        </div>
+
+        <!-- 임베딩 결과 -->
+        <div id="embeddingResultSection" class="hidden">
+          <div class="bg-gray-100 rounded-lg p-4 mb-4">
+            <div class="flex justify-between items-center mb-3">
+              <span class="font-medium text-gray-700">임베딩 벡터 정보</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div class="stat bg-white rounded-lg p-3">
+                <div class="stat-title text-xs">벡터 차원</div>
+                <div class="stat-value text-lg" id="vectorDimension">-</div>
+              </div>
+              <div class="stat bg-white rounded-lg p-3">
+                <div class="stat-title text-xs">처리 시간</div>
+                <div class="stat-value text-lg" id="embeddingProcessingTime">-</div>
+              </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-gray-600">벡터 미리보기 (처음 10개 값)</span>
+                <button class="btn btn-xs btn-outline" id="copyVectorBtn">
+                  <i class="fa-solid fa-copy"></i>
+                  전체 벡터 복사
+                </button>
+              </div>
+              <code id="vectorPreview" class="text-xs text-gray-700 break-all"></code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 원본 JSON 응답 -->
         <div class="bg-gray-100 rounded-lg p-4">
           <div class="flex justify-between items-center mb-3">
-            <span class="font-medium text-gray-700">응답 데이터</span>
+            <span class="font-medium text-gray-700">원본 응답 데이터</span>
             <button class="btn btn-sm btn-outline" id="copyResponseBtn">
               <i class="fa-solid fa-copy"></i>
               복사
@@ -180,6 +250,7 @@
 <script>
 // 전역 변수
 let availableModels = [];
+let currentEmbeddingVector = null;
 
 $(document).ready(function() {
   console.log('AI 서버 페이지 로드');
@@ -193,6 +264,8 @@ $(document).ready(function() {
   $('#downloadModelBtn').click(downloadModel);
   $('#runApiTestBtn').click(runApiTest);
   $('#copyResponseBtn').click(copyResponseToClipboard);
+  $('#copyGeneratedTextBtn').click(copyGeneratedText);
+  $('#copyVectorBtn').click(copyVector);
 
   // 모델 선택 이벤트
   $('#modelSelect').change(function() {
@@ -200,16 +273,37 @@ $(document).ready(function() {
     console.log('모델 선택됨:', value);
     showModelInfo(value);
   });
+
+  // 테스트 유형 변경 이벤트
+  $('input[name="testType"]').change(function() {
+    const testType = $(this).val();
+    updateTestTypeUI(testType);
+  });
 });
 
-// Health Check
+// 테스트 유형에 따른 UI 업데이트
+function updateTestTypeUI(testType) {
+  if (testType === 'embedding') {
+    $('#inputTextLabel').text('임베딩할 텍스트');
+    $('#inputText').attr('placeholder', '임베딩할 텍스트를 입력하세요');
+    $('#testBtnText').text('임베딩 테스트');
+    $('#embeddingModelHint').removeClass('hidden');
+  } else {
+    $('#inputTextLabel').text('입력 텍스트');
+    $('#inputText').attr('placeholder', '프롬프트를 여기에 입력하세요');
+    $('#testBtnText').text('텍스트 생성 테스트');
+    $('#embeddingModelHint').addClass('hidden');
+  }
+}
+
+// Health Check (SuhAider 사용)
 function checkServerHealth() {
-  console.log('서버 Health Check 시작');
+  console.log('서버 Health Check 시작 (SuhAider)');
 
   const formData = new FormData();
 
   $.ajax({
-    url: '/api/ai-server/health',
+    url: '/api/ai-server/suh-aider/health',
     method: 'POST',
     data: formData,
     processData: false,
@@ -217,7 +311,7 @@ function checkServerHealth() {
     success: function(response) {
       console.log('Health Check 성공:', response);
       if (response.isHealthy) {
-        $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-600 font-medium">정상 작동 중</span></div>');
+        $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-600 font-medium">정상 작동 중 (SuhAider)</span></div>');
       } else {
         $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-yellow-600 font-medium">' + (response.healthMessage || '상태 불명') + '</span></div>');
       }
@@ -229,9 +323,9 @@ function checkServerHealth() {
   });
 }
 
-// 모델 목록 로드
+// 모델 목록 로드 (SuhAider 사용)
 function loadModelsList() {
-  console.log('모델 목록 로드 시작');
+  console.log('모델 목록 로드 시작 (SuhAider)');
 
   const formData = new FormData();
   const tbody = $('#modelsTableBody');
@@ -239,7 +333,7 @@ function loadModelsList() {
   tbody.html('<tr><td colspan="4" class="text-center py-8"><span class="loading loading-spinner loading-md text-primary"></span><span class="ml-2 text-gray-500">로딩 중...</span></td></tr>');
 
   $.ajax({
-    url: '/api/ai-server/models',
+    url: '/api/ai-server/suh-aider/models',
     method: 'POST',
     data: formData,
     processData: false,
@@ -250,17 +344,6 @@ function loadModelsList() {
       let models = [];
       if (response.models && Array.isArray(response.models)) {
         models = response.models;
-      } else if (response.modelsJson) {
-        try {
-          const data = JSON.parse(response.modelsJson);
-          if (data.models && data.models.length > 0) {
-            models = data.models;
-          }
-        } catch (e) {
-          console.error('JSON 파싱 오류:', e);
-          tbody.html('<tr><td colspan="4" class="text-center py-8 text-red-500">응답 파싱 실패</td></tr>');
-          return;
-        }
       }
 
       if (models.length > 0) {
@@ -548,18 +631,20 @@ function deleteModel(modelName) {
   });
 }
 
-// API 테스트 실행
+// API 테스트 실행 (SuhAider)
 function runApiTest() {
+  const testType = $('input[name="testType"]:checked').val();
   const selectedModel = $('#modelSelect').val();
   const inputText = $('#inputText').val().trim();
 
-  if (!selectedModel) {
-    alert('모델을 선택해주세요');
+  if (!inputText) {
+    alert('입력 텍스트를 입력해주세요');
     return;
   }
 
-  if (!inputText) {
-    alert('입력 텍스트를 입력해주세요');
+  // Generate 테스트는 모델 필수, 임베딩은 선택
+  if (testType === 'generate' && !selectedModel) {
+    alert('텍스트 생성 테스트는 모델을 선택해주세요');
     return;
   }
 
@@ -569,60 +654,148 @@ function runApiTest() {
 
   const startTime = Date.now();
 
+  if (testType === 'embedding') {
+    runEmbeddingTest(selectedModel, inputText, startTime, testBtn);
+  } else {
+    runGenerateTest(selectedModel, inputText, startTime, testBtn);
+  }
+}
+
+// 텍스트 생성 테스트 (SuhAider)
+function runGenerateTest(model, prompt, startTime, testBtn) {
   const formData = new FormData();
-  formData.append('model', selectedModel);
-  formData.append('prompt', inputText);
-  formData.append('stream', 'false');
+  formData.append('model', model);
+  formData.append('prompt', prompt);
 
   $.ajax({
-    url: '/api/ai-server/generate',
+    url: '/api/ai-server/suh-aider/generate',
     method: 'POST',
     data: formData,
     processData: false,
     contentType: false,
     success: function(response) {
       const responseTime = Date.now() - startTime;
-
-      let generateResponse;
-      if (response.generatedJson) {
-        try {
-          generateResponse = JSON.parse(response.generatedJson);
-        } catch (e) {
-          generateResponse = { error: '응답 파싱 오류', raw: response.generatedJson };
-        }
-      } else {
-        generateResponse = { error: 'generate 응답이 없습니다' };
-      }
-
-      showApiResponse(generateResponse, 200, responseTime);
+      showGenerateResponse(response, 200, responseTime);
     },
     error: function(xhr, status, error) {
       const responseTime = Date.now() - startTime;
-
       let errorResponse;
       try {
         errorResponse = JSON.parse(xhr.responseText);
       } catch (e) {
         errorResponse = { error: error, status: xhr.status };
       }
-
-      showApiResponse(errorResponse, xhr.status, responseTime);
+      showApiResponse(errorResponse, xhr.status, responseTime, 'generate');
     },
     complete: function() {
-      testBtn.html('<i class="fa-solid fa-play"></i> API 호출 테스트');
+      const testType = $('input[name="testType"]:checked').val();
+      testBtn.html('<i class="fa-solid fa-play"></i> <span id="testBtnText">' + (testType === 'embedding' ? '임베딩 테스트' : '텍스트 생성 테스트') + '</span>');
       testBtn.prop('disabled', false);
     }
   });
 }
 
-// API 응답 표시
-function showApiResponse(response, statusCode, responseTime) {
+// 임베딩 테스트 (SuhAider)
+function runEmbeddingTest(model, input, startTime, testBtn) {
+  const formData = new FormData();
+  if (model) {
+    formData.append('model', model);
+  }
+  formData.append('input', input);
+
+  $.ajax({
+    url: '/api/ai-server/suh-aider/embed',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      const responseTime = Date.now() - startTime;
+      showEmbeddingResponse(response, 200, responseTime);
+    },
+    error: function(xhr, status, error) {
+      const responseTime = Date.now() - startTime;
+      let errorResponse;
+      try {
+        errorResponse = JSON.parse(xhr.responseText);
+      } catch (e) {
+        errorResponse = { error: error, status: xhr.status };
+      }
+      showApiResponse(errorResponse, xhr.status, responseTime, 'embedding');
+    },
+    complete: function() {
+      const testType = $('input[name="testType"]:checked').val();
+      testBtn.html('<i class="fa-solid fa-play"></i> <span id="testBtnText">' + (testType === 'embedding' ? '임베딩 테스트' : '텍스트 생성 테스트') + '</span>');
+      testBtn.prop('disabled', false);
+    }
+  });
+}
+
+// 텍스트 생성 응답 표시
+function showGenerateResponse(response, statusCode, responseTime) {
+  $('#statusCode').text(statusCode);
+  $('#responseTime').text(responseTime + 'ms');
+  $('#callTime').text(new Date().toLocaleString());
+
+  // 생성된 텍스트 표시
+  $('#generatedText').text(response.generatedText || '응답 없음');
+  $('#generateResultSection').removeClass('hidden');
+  $('#embeddingResultSection').addClass('hidden');
+
+  // 원본 JSON
+  const formattedJson = JSON.stringify(response, null, 2);
+  $('#responseJson').text(formattedJson);
+
+  $('#responseSection').removeClass('hidden');
+  $('#responseSection')[0].scrollIntoView({ behavior: 'smooth' });
+}
+
+// 임베딩 응답 표시
+function showEmbeddingResponse(response, statusCode, responseTime) {
+  $('#statusCode').text(statusCode);
+  $('#responseTime').text(responseTime + 'ms');
+  $('#callTime').text(new Date().toLocaleString());
+
+  // 임베딩 결과 표시
+  currentEmbeddingVector = response.embeddingVector;
+  $('#vectorDimension').text(response.vectorDimension || '-');
+  $('#embeddingProcessingTime').text((response.processingTime || responseTime) + 'ms');
+
+  // 벡터 미리보기 (처음 10개)
+  if (response.embeddingVector && response.embeddingVector.length > 0) {
+    const preview = response.embeddingVector.slice(0, 10).map(v => v.toFixed(6)).join(', ');
+    $('#vectorPreview').text('[' + preview + ', ...]');
+  } else {
+    $('#vectorPreview').text('벡터 없음');
+  }
+
+  $('#embeddingResultSection').removeClass('hidden');
+  $('#generateResultSection').addClass('hidden');
+
+  // 원본 JSON (벡터는 축약해서 표시)
+  const displayResponse = { ...response };
+  if (displayResponse.embeddingVector && displayResponse.embeddingVector.length > 10) {
+    displayResponse.embeddingVector = displayResponse.embeddingVector.slice(0, 10).concat(['... (' + (response.embeddingVector.length - 10) + ' more)']);
+  }
+  const formattedJson = JSON.stringify(displayResponse, null, 2);
+  $('#responseJson').text(formattedJson);
+
+  $('#responseSection').removeClass('hidden');
+  $('#responseSection')[0].scrollIntoView({ behavior: 'smooth' });
+}
+
+// 일반 API 응답 표시 (에러용)
+function showApiResponse(response, statusCode, responseTime, testType) {
   $('#statusCode').text(statusCode);
   $('#responseTime').text(responseTime + 'ms');
   $('#callTime').text(new Date().toLocaleString());
 
   const formattedJson = JSON.stringify(response, null, 2);
   $('#responseJson').text(formattedJson);
+
+  // 결과 섹션 숨김
+  $('#generateResultSection').addClass('hidden');
+  $('#embeddingResultSection').addClass('hidden');
 
   $('#responseSection').removeClass('hidden');
   $('#responseSection')[0].scrollIntoView({ behavior: 'smooth' });
@@ -631,20 +804,39 @@ function showApiResponse(response, statusCode, responseTime) {
 // 응답 복사
 function copyResponseToClipboard() {
   const responseText = $('#responseJson').text();
+  copyToClipboard(responseText, $('#copyResponseBtn'));
+}
 
-  navigator.clipboard.writeText(responseText).then(function() {
-    const btn = $('#copyResponseBtn');
+// 생성된 텍스트 복사
+function copyGeneratedText() {
+  const text = $('#generatedText').text();
+  copyToClipboard(text, $('#copyGeneratedTextBtn'));
+}
+
+// 벡터 복사
+function copyVector() {
+  if (!currentEmbeddingVector) {
+    alert('복사할 벡터가 없습니다');
+    return;
+  }
+  const vectorText = JSON.stringify(currentEmbeddingVector);
+  copyToClipboard(vectorText, $('#copyVectorBtn'));
+}
+
+// 클립보드 복사 유틸리티
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(function() {
     const originalHtml = btn.html();
     btn.html('<i class="fa-solid fa-check"></i> 복사됨');
     setTimeout(() => btn.html(originalHtml), 2000);
   }).catch(function() {
     const textArea = document.createElement('textarea');
-    textArea.value = responseText;
+    textArea.value = text;
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand('copy');
     document.body.removeChild(textArea);
-    alert('응답이 클립보드에 복사되었습니다');
+    alert('클립보드에 복사되었습니다');
   });
 }
 

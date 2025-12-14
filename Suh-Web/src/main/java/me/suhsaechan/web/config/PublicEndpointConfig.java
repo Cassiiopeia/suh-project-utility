@@ -17,7 +17,11 @@ public class PublicEndpointConfig {
     return Arrays.asList(
         "/api/translate",   // 번역
         "/api/status",      // 상태 확인
-        "/api/issue-helper/create/commit-branch/github-workflow"  // GitHub 이슈 자동 코멘트 엔드포인트
+        "/api/issue-helper/create/commit-branch/github-workflow",  // GitHub 이슈 자동 코멘트 엔드포인트
+        "/api/chatbot/chat",        // 챗봇 채팅 (비스트리밍)
+        "/api/chatbot/chat/stream", // 챗봇 채팅 (스트리밍 SSE)
+        "/api/chatbot/feedback",    // 챗봇 피드백
+        "/api/chatbot/history"      // 챗봇 대화 이력
     );
   }
 

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import kr.suhsaechan.ai.exception.SuhAiderException;
+import kr.suhsaechan.ai.service.StreamCallback;
+import kr.suhsaechan.ai.service.SuhAiderEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.config.QdrantProperties;
@@ -13,7 +16,6 @@ import me.suhsaechan.chatbot.dto.ChatbotRequest;
 import me.suhsaechan.chatbot.dto.ChatbotResponse;
 import me.suhsaechan.chatbot.dto.ChatbotResponse.ReferencedDocument;
 import me.suhsaechan.chatbot.dto.VectorSearchResult;
-import me.suhsaechan.chatbot.entity.ChatDocumentChunk;
 import me.suhsaechan.chatbot.entity.ChatMessage;
 import me.suhsaechan.chatbot.entity.ChatMessage.MessageRole;
 import me.suhsaechan.chatbot.entity.ChatSession;
@@ -38,14 +40,17 @@ public class ChatbotService {
     private final EmbeddingService embeddingService;
     private final VectorStoreService vectorStoreService;
     private final QdrantProperties qdrantProperties;
+    private final SuhAiderEngine suhAiderEngine;
 
     // 기본 설정
     private static final int DEFAULT_TOP_K = 3;
     private static final float DEFAULT_MIN_SCORE = 0.5f;
+    private static final String LLM_MODEL = "granite4:1b-h";
+    private static final int MAX_HISTORY_MESSAGES = 6;  // 최근 대화 이력 포함 수
 
     /**
      * 채팅 메시지 처리
-     * 현재는 LLM 연결 없이 RAG 검색 결과만 반환
+     * RAG 검색 + LLM 응답 생성
      */
     @Transactional
     public ChatbotResponse chat(ChatbotRequest request, String userIp, String userAgent) {
@@ -65,10 +70,13 @@ public class ChatbotService {
 
         List<VectorSearchResult> searchResults = searchRelevantDocuments(request.getMessage(), topK, minScore);
 
-        // 4. 검색 결과로 응답 생성 (LLM 연결 전 임시 응답)
-        String responseContent = generateTemporaryResponse(request.getMessage(), searchResults);
+        // 4. 최근 대화 이력 조회
+        List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES);
 
-        // 5. AI 응답 저장
+        // 5. LLM으로 응답 생성
+        String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory);
+
+        // 6. AI 응답 저장
         List<String> referencedDocIds = searchResults.stream()
             .map(r -> r.getMetadata().get("documentId"))
             .filter(id -> id != null)
@@ -84,12 +92,12 @@ public class ChatbotService {
         assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
         messageRepository.save(assistantMessage);
 
-        // 6. 세션 업데이트
+        // 7. 세션 업데이트
         updateSessionActivity(session);
 
         long responseTime = System.currentTimeMillis() - startTime;
 
-        // 7. 응답 생성
+        // 8. 응답 생성
         List<ReferencedDocument> references = buildReferences(searchResults);
 
         log.info("채팅 응답 완료 - sessionId: {}, responseTime: {}ms",
@@ -103,6 +111,171 @@ public class ChatbotService {
             .references(references)
             .responseTimeMs(responseTime)
             .build();
+    }
+
+    /**
+     * 스트리밍 채팅 메시지 처리
+     * RAG 검색 + LLM 스트리밍 응답 생성
+     */
+    @Transactional
+    public void chatStream(String sessionToken, String message, int topK, float minScore,
+                           String userIp, String userAgent, StreamCallback callback) {
+        log.info("스트리밍 채팅 요청 처리 시작 - message: {}", message);
+
+        try {
+            // 1. 세션 조회 또는 생성
+            ChatSession session = getOrCreateSession(sessionToken, userIp, userAgent);
+
+            // 2. 사용자 메시지 저장
+            int messageIndex = (int) messageRepository.countByChatSession(session);
+            saveMessage(session, MessageRole.USER, message, messageIndex);
+
+            // 3. RAG 검색
+            List<VectorSearchResult> searchResults = searchRelevantDocuments(message, topK, minScore);
+
+            // 4. 최근 대화 이력 조회
+            List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES);
+
+            // 5. 프롬프트 구성
+            String fullPrompt = buildFullPrompt(message, searchResults, recentHistory);
+
+            // 6. 스트리밍 응답 생성
+            StringBuilder fullResponse = new StringBuilder();
+            final ChatSession finalSession = session;
+            final int finalMessageIndex = messageIndex;
+            final List<String> referencedDocIds = searchResults.stream()
+                .map(r -> r.getMetadata().get("documentId"))
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+
+            suhAiderEngine.generateStreamAsync(LLM_MODEL, fullPrompt, new StreamCallback() {
+                @Override
+                public void onNext(String chunk) {
+                    fullResponse.append(chunk);
+                    callback.onNext(chunk);
+                }
+
+                @Override
+                public void onComplete() {
+                    // AI 응답 저장
+                    ChatMessage assistantMessage = saveMessage(
+                        finalSession,
+                        MessageRole.ASSISTANT,
+                        fullResponse.toString(),
+                        finalMessageIndex + 1
+                    );
+                    assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
+                    messageRepository.save(assistantMessage);
+
+                    // 세션 업데이트
+                    updateSessionActivity(finalSession);
+
+                    log.info("스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
+                        finalSession.getChatSessionId(), fullResponse.length());
+                    log.info(fullResponse.toString());
+
+                    callback.onComplete();
+                }
+
+                @Override
+                public void onError(Throwable error) {
+                    log.error("스트리밍 응답 생성 중 오류: {}", error.getMessage(), error);
+                    callback.onError(error);
+                }
+            });
+
+        } catch (Exception e) {
+            log.error("스트리밍 채팅 처리 중 오류: {}", e.getMessage(), e);
+            callback.onError(e);
+        }
+    }
+
+    /**
+     * 최근 대화 이력 조회
+     */
+    private List<ChatMessage> getRecentHistory(ChatSession session, int maxMessages) {
+        List<ChatMessage> allMessages = messageRepository.findByChatSessionOrderByMessageIndexAsc(session);
+        if (allMessages.size() <= maxMessages) {
+            return allMessages;
+        }
+        return allMessages.subList(allMessages.size() - maxMessages, allMessages.size());
+    }
+
+    /**
+     * LLM 응답 생성
+     */
+    private String generateAiResponse(String userMessage, List<VectorSearchResult> searchResults,
+                                       List<ChatMessage> recentHistory) {
+        String fullPrompt = buildFullPrompt(userMessage, searchResults, recentHistory);
+
+        try {
+            log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", LLM_MODEL, fullPrompt.length());
+            String response = suhAiderEngine.generate(LLM_MODEL, fullPrompt);
+            log.debug("LLM 응답 생성 완료 - 응답 길이: {}", response.length());
+            return response;
+        } catch (SuhAiderException e) {
+            log.error("LLM 응답 생성 실패: {} - {}", e.getErrorCode(), e.getMessage());
+            return "죄송합니다. AI 서비스에 일시적인 문제가 있습니다. 잠시 후 다시 시도해주세요.";
+        } catch (Exception e) {
+            log.error("LLM 응답 생성 중 예외 발생: {}", e.getMessage(), e);
+            return "죄송합니다. 응답 생성 중 오류가 발생했습니다.";
+        }
+    }
+
+    /**
+     * 전체 프롬프트 구성
+     */
+    private String buildFullPrompt(String userMessage, List<VectorSearchResult> searchResults,
+                                   List<ChatMessage> recentHistory) {
+        StringBuilder prompt = new StringBuilder();
+
+        // 시스템 프롬프트
+        prompt.append(buildSystemPrompt(searchResults));
+
+        // 대화 이력
+        if (!recentHistory.isEmpty()) {
+            prompt.append("\n\n### 이전 대화:\n");
+            for (ChatMessage msg : recentHistory) {
+                String role = msg.getRole() == MessageRole.USER ? "사용자" : "서니";
+                prompt.append(role).append(": ").append(msg.getContent()).append("\n");
+            }
+        }
+
+        // 현재 질문
+        prompt.append("\n### 사용자 질문:\n");
+        prompt.append(userMessage);
+
+        // 응답 시작 유도
+        prompt.append("\n\n### 서니의 응답:\n");
+
+        return prompt.toString();
+    }
+
+    /**
+     * 시스템 프롬프트 구성
+     */
+    private String buildSystemPrompt(List<VectorSearchResult> searchResults) {
+        StringBuilder systemPrompt = new StringBuilder();
+
+        systemPrompt.append("당신은 SUH Project Utility의 친절한 도우미 'SuhNi(서니)'입니다.\n");
+        systemPrompt.append("사용자의 질문에 친절하고 간결하게 답변해주세요.\n");
+        systemPrompt.append("한국어로 답변하며, 존댓말을 사용합니다.\n");
+
+        if (searchResults.isEmpty()) {
+            systemPrompt.append("\n관련 참고 문서를 찾지 못했습니다. 일반적인 안내를 제공해주세요.\n");
+        } else {
+            systemPrompt.append("\n### 참고 문서:\n");
+            for (int i = 0; i < searchResults.size(); i++) {
+                VectorSearchResult result = searchResults.get(i);
+                String title = result.getMetadata().getOrDefault("title", "제목 없음");
+                systemPrompt.append(String.format("[%d] %s\n%s\n\n",
+                    i + 1, title, result.getContent()));
+            }
+            systemPrompt.append("위 참고 문서를 바탕으로 사용자 질문에 답변해주세요.\n");
+        }
+
+        return systemPrompt.toString();
     }
 
     /**
@@ -172,33 +345,6 @@ public class ChatbotService {
         session.setLastActivityAt(LocalDateTime.now());
         session.setMessageCount((int) messageRepository.countByChatSession(session));
         sessionRepository.save(session);
-    }
-
-    /**
-     * 임시 응답 생성 (LLM 연결 전)
-     */
-    private String generateTemporaryResponse(String query, List<VectorSearchResult> searchResults) {
-        if (searchResults.isEmpty()) {
-            return "죄송합니다. 관련된 정보를 찾지 못했습니다. 다른 질문을 해주시거나, 더 구체적으로 질문해 주세요.";
-        }
-
-        StringBuilder response = new StringBuilder();
-        response.append("다음은 관련된 정보입니다:\n\n");
-
-        for (int i = 0; i < searchResults.size(); i++) {
-            VectorSearchResult result = searchResults.get(i);
-            String title = result.getMetadata().getOrDefault("title", "제목 없음");
-            String category = result.getMetadata().getOrDefault("category", "기타");
-
-            response.append(String.format("**[%s] %s**\n", category, title));
-            response.append(result.getContent());
-            response.append("\n\n");
-        }
-
-        response.append("---\n");
-        response.append("*현재 LLM이 연결되지 않아 검색 결과만 표시됩니다. LLM 연결 후 자연스러운 대화가 가능합니다.*");
-
-        return response.toString();
     }
 
     /**

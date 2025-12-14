@@ -111,4 +111,14 @@ public class PageController {
 	public String aiServerPage() {
 		return "pages/aiServer";
 	}
+
+	/**
+	 * 챗봇 문서 관리 페이지 매핑
+	 *
+	 * @return 뷰 이름
+	 */
+	@GetMapping("/chatbot-management")
+	public String chatbotManagementPage() {
+		return "pages/chatbotManagement";
+	}
 }
