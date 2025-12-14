@@ -46,7 +46,7 @@ public class ChatbotService {
     private static final int DEFAULT_TOP_K = 3;
     private static final float DEFAULT_MIN_SCORE = 0.5f;
     private static final String LLM_MODEL = "granite4:1b-h";
-    private static final int MAX_HISTORY_MESSAGES = 6;  // 최근 대화 이력 포함 수
+    private static final int MAX_HISTORY_MESSAGES = 30;  // 최근 대화 이력 포함 수
 
     /**
      * 채팅 메시지 처리
@@ -70,8 +70,8 @@ public class ChatbotService {
 
         List<VectorSearchResult> searchResults = searchRelevantDocuments(request.getMessage(), topK, minScore);
 
-        // 4. 최근 대화 이력 조회
-        List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES);
+        // 4. 최근 대화 이력 조회 (현재 사용자 메시지 제외)
+        List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES, messageIndex);
 
         // 5. LLM으로 응답 생성
         String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory);
@@ -133,8 +133,8 @@ public class ChatbotService {
             // 3. RAG 검색
             List<VectorSearchResult> searchResults = searchRelevantDocuments(message, topK, minScore);
 
-            // 4. 최근 대화 이력 조회
-            List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES);
+            // 4. 최근 대화 이력 조회 (현재 사용자 메시지 제외)
+            List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES, messageIndex);
 
             // 5. 프롬프트 구성
             String fullPrompt = buildFullPrompt(message, searchResults, recentHistory);
@@ -192,14 +192,36 @@ public class ChatbotService {
     }
 
     /**
-     * 최근 대화 이력 조회
+     * 최근 대화 이력 조회 (현재 사용자 메시지 제외)
+     *
+     * @param session 세션
+     * @param maxMessages 최대 이력 메시지 수
+     * @param currentMessageIndex 현재 사용자 메시지의 인덱스 (이 메시지는 제외됨)
+     * @return 최근 대화 이력 (현재 메시지 제외)
      */
-    private List<ChatMessage> getRecentHistory(ChatSession session, int maxMessages) {
+    private List<ChatMessage> getRecentHistory(ChatSession session, int maxMessages, int currentMessageIndex) {
         List<ChatMessage> allMessages = messageRepository.findByChatSessionOrderByMessageIndexAsc(session);
-        if (allMessages.size() <= maxMessages) {
-            return allMessages;
+
+        // 현재 사용자 메시지 제외 (messageIndex가 currentMessageIndex 미만인 메시지만 포함)
+        List<ChatMessage> historyWithoutCurrent = allMessages.stream()
+            .filter(msg -> msg.getMessageIndex() < currentMessageIndex)
+            .collect(Collectors.toList());
+
+        log.debug("대화 이력 조회 - 전체 메시지 수: {}, 현재 메시지 인덱스: {}, 제외 후 메시지 수: {}, 최대 이력: {}",
+            allMessages.size(), currentMessageIndex, historyWithoutCurrent.size(), maxMessages);
+
+        // 최대 개수 제한
+        if (historyWithoutCurrent.size() <= maxMessages) {
+            log.debug("반환할 이력 메시지 수: {}", historyWithoutCurrent.size());
+            return historyWithoutCurrent;
         }
-        return allMessages.subList(allMessages.size() - maxMessages, allMessages.size());
+
+        List<ChatMessage> result = historyWithoutCurrent.subList(
+            historyWithoutCurrent.size() - maxMessages,
+            historyWithoutCurrent.size()
+        );
+        log.debug("반환할 이력 메시지 수: {} (최대 {}개로 제한)", result.size(), maxMessages);
+        return result;
     }
 
     /**
@@ -249,7 +271,12 @@ public class ChatbotService {
         // 응답 시작 유도
         prompt.append("\n\n### 서니의 응답:\n");
 
-        return prompt.toString();
+        String fullPrompt = prompt.toString();
+        log.debug("프롬프트 구성 완료 - 이력 메시지 수: {}, 전체 프롬프트 길이: {} 문자",
+            recentHistory.size(), fullPrompt.length());
+        log.trace("전체 프롬프트 내용:\n{}", fullPrompt);
+
+        return fullPrompt;
     }
 
     /**
