@@ -836,6 +836,126 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
+/* 분석 중 인디케이터 */
+.analyzing-indicator {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.analyzing-text {
+  margin-right: 2px;
+}
+
+.analyzing-dots {
+  display: inline-flex;
+}
+
+.analyzing-dots span {
+  animation: analyzingDots 1.4s infinite;
+  opacity: 0;
+}
+
+.analyzing-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.analyzing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.analyzing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes analyzingDots {
+  0%, 20% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  60%, 100% {
+    opacity: 0;
+  }
+}
+
+/* 에러 메시지 */
+.error-message {
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.error-message i {
+  font-size: 16px;
+}
+
+/* 챗봇 마크다운 스타일 */
+.chat-message .bubble .inline-code {
+  background: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+}
+
+.chat-message .bubble .code-block {
+  background: #1f2937;
+  color: #f3f4f6;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 8px 0;
+  overflow-x: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.chat-message .bubble .code-block code {
+  background: transparent;
+  padding: 0;
+}
+
+.chat-message .bubble .chat-h1 {
+  display: block;
+  font-size: 18px;
+  margin: 12px 0 8px 0;
+}
+
+.chat-message .bubble .chat-h2 {
+  display: block;
+  font-size: 16px;
+  margin: 10px 0 6px 0;
+}
+
+.chat-message .bubble .chat-h3 {
+  display: block;
+  font-size: 15px;
+  margin: 8px 0 4px 0;
+}
+
+.chat-message .bubble .chat-list-item {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0;
+  padding-left: 4px;
+}
+
+.chat-message .bubble .list-number {
+  color: #3b82f6;
+  font-weight: 600;
+  min-width: 20px;
+}
+
+.chat-message .bubble .list-bullet {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
 /* 입력 영역 */
 .chatbot-input-area {
   padding: 16px;

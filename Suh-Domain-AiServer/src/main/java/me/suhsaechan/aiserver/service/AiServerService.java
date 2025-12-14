@@ -12,6 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import kr.suhsaechan.ai.model.ModelInfo;
+import kr.suhsaechan.ai.model.ModelListResponse;
+import kr.suhsaechan.ai.model.SuhAiderRequest;
+import kr.suhsaechan.ai.model.SuhAiderResponse;
+import kr.suhsaechan.ai.service.SuhAiderEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.aiserver.dto.AiServerRequest;
@@ -19,6 +25,7 @@ import me.suhsaechan.aiserver.dto.AiServerResponse;
 import me.suhsaechan.aiserver.dto.DownloadProgressDto;
 import me.suhsaechan.aiserver.dto.EmbeddingsPayload;
 import me.suhsaechan.aiserver.dto.GeneratePayload;
+import me.suhsaechan.aiserver.dto.ModelDetailsDto;
 import me.suhsaechan.aiserver.dto.ModelDto;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
@@ -29,6 +36,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -41,6 +49,9 @@ public class AiServerService {
     private final NetworkUtil networkUtil;
     private final ObjectMapper objectMapper;
     private final SshCommandExecutor sshCommandExecutor;
+
+    @Autowired(required = false)
+    private SuhAiderEngine suhAiderEngine;
 
     @Value("${ai-server.base-url}")
     private String baseUrl;
@@ -910,5 +921,222 @@ public class AiServerService {
      */
     public DownloadProgressDto getModelDownloadStatus(String modelName) {
         return downloadProgressMap.get(modelName);
+    }
+
+    // ============================================================================
+    // SuhAiderEngine 기반 API (신규)
+    // ============================================================================
+
+    /**
+     * SuhAiderEngine이 사용 가능한지 확인합니다.
+     */
+    private void checkSuhAiderEngine() {
+        if (suhAiderEngine == null) {
+            log.error("SuhAiderEngine이 주입되지 않았습니다");
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 Health Check를 수행합니다.
+     */
+    public AiServerResponse getSuhAiderHealth() {
+        log.info("SuhAider Health Check 시작");
+        checkSuhAiderEngine();
+
+        try {
+            boolean isHealthy = suhAiderEngine.isHealthy();
+            log.info("SuhAider Health Check 결과: {}", isHealthy);
+
+            return AiServerResponse.builder()
+                    .isHealthy(isHealthy)
+                    .isActive(isHealthy)
+                    .healthMessage(isHealthy ? "SuhAider AI 서버가 정상 작동 중입니다" : "SuhAider AI 서버에 연결할 수 없습니다")
+                    .build();
+        } catch (Exception e) {
+            log.error("SuhAider Health Check 실패: {}", e.getMessage(), e);
+            return AiServerResponse.builder()
+                    .isHealthy(false)
+                    .isActive(false)
+                    .healthMessage("SuhAider AI 서버에 연결할 수 없습니다: " + e.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 모델 목록을 조회합니다.
+     */
+    public AiServerResponse getSuhAiderModels() {
+        log.info("SuhAider 모델 목록 조회 시작");
+        checkSuhAiderEngine();
+
+        try {
+            ModelListResponse modelListResponse = suhAiderEngine.getModels();
+            List<ModelInfo> modelInfoList = modelListResponse.getModels();
+
+            // ModelInfo -> ModelDto 변환
+            List<ModelDto> modelDtos = modelInfoList.stream()
+                    .map(this::convertToModelDto)
+                    .collect(Collectors.toList());
+
+            log.info("SuhAider 모델 목록 조회 완료 - 모델 개수: {}", modelDtos.size());
+
+            return AiServerResponse.builder()
+                    .isActive(true)
+                    .models(modelDtos)
+                    .build();
+        } catch (Exception e) {
+            log.error("SuhAider 모델 목록 조회 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * ModelInfo를 ModelDto로 변환합니다.
+     */
+    private ModelDto convertToModelDto(ModelInfo modelInfo) {
+        ModelDetailsDto details = null;
+        if (modelInfo.getDetails() != null) {
+            details = ModelDetailsDto.builder()
+                    .family(modelInfo.getDetails().getFamily())
+                    .parameterSize(modelInfo.getDetails().getParameterSize())
+                    .quantizationLevel(modelInfo.getDetails().getQuantizationLevel())
+                    .build();
+        }
+
+        return ModelDto.builder()
+                .name(modelInfo.getName())
+                .size(modelInfo.getSize())
+                .digest(modelInfo.getDigest())
+                .modifiedAt(modelInfo.getModifiedAt())
+                .details(details)
+                .build();
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 텍스트를 생성합니다.
+     */
+    public AiServerResponse suhAiderGenerate(AiServerRequest request) {
+        log.info("SuhAider generate 호출 시작 - 모델: {}, 프롬프트 길이: {}",
+                request.getModel(), request.getPrompt() != null ? request.getPrompt().length() : 0);
+        checkSuhAiderEngine();
+
+        if (request.getModel() == null || request.getModel().trim().isEmpty()) {
+            log.error("모델명이 비어있습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+        if (request.getPrompt() == null || request.getPrompt().trim().isEmpty()) {
+            log.error("프롬프트가 비어있습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        try {
+            long startTime = System.currentTimeMillis();
+
+            SuhAiderRequest suhAiderRequest = SuhAiderRequest.builder()
+                    .model(request.getModel())
+                    .prompt(request.getPrompt())
+                    .stream(false)
+                    .build();
+
+            SuhAiderResponse suhAiderResponse = suhAiderEngine.generate(suhAiderRequest);
+
+            long processingTime = System.currentTimeMillis() - startTime;
+            log.info("SuhAider generate 완료 - 처리 시간: {}ms", processingTime);
+
+            return AiServerResponse.builder()
+                    .isActive(true)
+                    .model(request.getModel())
+                    .prompt(request.getPrompt())
+                    .generatedText(suhAiderResponse.getResponse())
+                    .processingTime(processingTime)
+                    .build();
+        } catch (Exception e) {
+            log.error("SuhAider generate 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 단일 텍스트의 임베딩을 생성합니다.
+     */
+    public AiServerResponse suhAiderEmbed(AiServerRequest request) {
+        log.info("SuhAider embed 호출 시작 - 모델: {}, 입력 길이: {}",
+                request.getModel(), request.getInput() != null ? request.getInput().length() : 0);
+        checkSuhAiderEngine();
+
+        String inputText = request.getInput() != null ? request.getInput() : request.getPrompt();
+        if (inputText == null || inputText.trim().isEmpty()) {
+            log.error("입력 텍스트가 비어있습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        // 모델명이 없으면 기본 임베딩 모델 사용
+        String model = request.getModel();
+        if (model == null || model.trim().isEmpty()) {
+            model = "embeddinggemma:latest";
+        }
+
+        try {
+            long startTime = System.currentTimeMillis();
+
+            List<Double> embeddingVector = suhAiderEngine.embed(model, inputText);
+
+            long processingTime = System.currentTimeMillis() - startTime;
+            log.info("SuhAider embed 완료 - 벡터 차원: {}, 처리 시간: {}ms",
+                    embeddingVector.size(), processingTime);
+
+            return AiServerResponse.builder()
+                    .isActive(true)
+                    .model(model)
+                    .input(inputText)
+                    .embeddingVector(embeddingVector)
+                    .vectorDimension(embeddingVector.size())
+                    .processingTime(processingTime)
+                    .build();
+        } catch (Exception e) {
+            log.error("SuhAider embed 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * SuhAiderEngine을 사용하여 여러 텍스트의 임베딩을 일괄 생성합니다.
+     */
+    public AiServerResponse suhAiderEmbedBatch(String model, List<String> texts) {
+        log.info("SuhAider embedBatch 호출 시작 - 모델: {}, 텍스트 개수: {}", model, texts.size());
+        checkSuhAiderEngine();
+
+        if (texts == null || texts.isEmpty()) {
+            log.error("입력 텍스트 목록이 비어있습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        // 모델명이 없으면 기본 임베딩 모델 사용
+        if (model == null || model.trim().isEmpty()) {
+            model = "embeddinggemma:latest";
+        }
+
+        try {
+            long startTime = System.currentTimeMillis();
+
+            List<List<Double>> embeddingVectors = suhAiderEngine.embed(model, texts);
+
+            long processingTime = System.currentTimeMillis() - startTime;
+            int dimension = embeddingVectors.isEmpty() ? 0 : embeddingVectors.get(0).size();
+            log.info("SuhAider embedBatch 완료 - 벡터 개수: {}, 차원: {}, 처리 시간: {}ms",
+                    embeddingVectors.size(), dimension, processingTime);
+
+            return AiServerResponse.builder()
+                    .isActive(true)
+                    .model(model)
+                    .embeddingVectors(embeddingVectors)
+                    .vectorDimension(dimension)
+                    .processingTime(processingTime)
+                    .build();
+        } catch (Exception e) {
+            log.error("SuhAider embedBatch 실패: {}", e.getMessage(), e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }

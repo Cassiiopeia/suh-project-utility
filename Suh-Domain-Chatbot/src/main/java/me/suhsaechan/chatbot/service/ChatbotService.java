@@ -173,6 +173,7 @@ public class ChatbotService {
 
                     log.info("스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
                         finalSession.getChatSessionId(), fullResponse.length());
+                    log.info(fullResponse.toString());
 
                     callback.onComplete();
                 }
