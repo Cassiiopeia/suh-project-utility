@@ -1,11 +1,38 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-13T11:53:51Z",
-    "currentVersion": "1.4.10",
+    "lastUpdated": "2025-12-14T16:03:57Z",
+    "currentVersion": "2.0.0",
     "projectType": "spring",
-    "totalReleases": 20
+    "totalReleases": 21
   },
   "releases": [
+    {
+      "version": "2.0.0",
+      "project_type": "spring",
+      "date": "2025-12-14",
+      "pr_number": 112,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * SuhAider AI 엔진 통합: 텍스트 생성, 임베딩, 모델 관리 기능 추가\n  * 채팅 스트리밍 지원: Server-Sent Events를 통한 실시간 응답 전달\n  * 챗봇 문서 관리 시스템: 문서 생성, 수정, 삭제 및 벡터화 기능\n  * 향상된 채팅 UI: 마크다운 포맷팅, 코드 블록, 로딩 인디케이터 추가\n\n* **업데이트**\n  * 의존성 업그레이드 (suh-aider 0.2.1)\n  * 버전 2.0.0 릴리스\n  * 새로운 네비게이션 메뉴 및 대시보드 카드 추가",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "SuhAider AI 엔진 통합: 텍스트 생성, 임베딩, 모델 관리 기능 추가",
+            "채팅 스트리밍 지원: Server-Sent Events를 통한 실시간 응답 전달",
+            "챗봇 문서 관리 시스템: 문서 생성, 수정, 삭제 및 벡터화 기능",
+            "향상된 채팅 UI: 마크다운 포맷팅, 코드 블록, 로딩 인디케이터 추가"
+          ]
+        },
+        "업데이트": {
+          "title": "업데이트",
+          "items": [
+            "의존성 업그레이드 (suh-aider 0.2.1)",
+            "버전 2.0.0 릴리스",
+            "새로운 네비게이션 메뉴 및 대시보드 카드 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "1.4.10",
       "project_type": "spring",
