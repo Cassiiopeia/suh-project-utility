@@ -11,10 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
 import me.suhsaechan.chatbot.dto.ChatbotRequest;
 import me.suhsaechan.chatbot.dto.ChatbotResponse;
+import me.suhsaechan.chatbot.dto.ChatbotConfigDto;
+import me.suhsaechan.chatbot.dto.ChatbotConfigRequest;
 import me.suhsaechan.chatbot.dto.DocumentDto;
 import me.suhsaechan.chatbot.dto.DocumentRequest;
 import me.suhsaechan.chatbot.dto.DocumentResponse;
 import me.suhsaechan.chatbot.entity.ChatDocument;
+import me.suhsaechan.chatbot.service.ChatbotConfigService;
 import me.suhsaechan.chatbot.service.ChatbotService;
 import me.suhsaechan.chatbot.service.DocumentService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
@@ -96,10 +99,12 @@ public class ChatbotController {
           @Override
           public void onNext(String chunk) {
             try {
-              log.debug("SSE 청크 전송 시도: {} bytes", chunk.length());
+              log.debug("SSE 청크 전송: [{}] ({} bytes)", chunk, chunk.length());
+              // JSON 형식으로 감싸서 공백 보존
+              String jsonData = "{\"text\":\"" + chunk.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\"}";
               emitter.send(SseEmitter.event()
                   .name("message")
-                  .data(chunk));
+                  .data(jsonData));
             } catch (IOException e) {
               log.error("SSE 전송 오류: {}", e.getMessage());
               emitter.completeWithError(e);

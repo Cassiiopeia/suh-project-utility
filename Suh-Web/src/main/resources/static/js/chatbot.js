@@ -203,8 +203,17 @@ const ChatbotWidget = {
     // 메시지 수신
     eventSource.addEventListener('message', function(e) {
       self.hasReceivedData = true;
-      console.log('SSE 메시지 수신:', e.data.substring(0, 50));
-      self.appendToStreamingMessage(aiMessageId, e.data);
+      try {
+        // JSON 형식으로 감싸진 데이터 파싱 (공백 보존을 위해)
+        const data = JSON.parse(e.data);
+        const chunk = data.text;
+        console.log('SSE 메시지 수신:', chunk.substring(0, 50));
+        self.appendToStreamingMessage(aiMessageId, chunk);
+      } catch (parseError) {
+        // JSON 파싱 실패 시 원본 데이터 사용 (하위 호환성)
+        console.log('SSE 메시지 수신 (raw):', e.data.substring(0, 50));
+        self.appendToStreamingMessage(aiMessageId, e.data);
+      }
     });
 
     // 완료 이벤트
