@@ -71,7 +71,7 @@ public class ChatbotController {
           @RequestParam(defaultValue = "0.5") float minScore,
           HttpServletRequest httpRequest) {
 
-    log.info("스트리밍 채팅 요청 - message: {}", message);
+    log.info("스트리밍 채팅 요청 - message: {}, sessionToken: {}", message, sessionToken);
 
     String userIp = extractClientIp(httpRequest);
     String userAgent = httpRequest.getHeader("User-Agent");
@@ -84,16 +84,7 @@ public class ChatbotController {
     emitter.onTimeout(() -> log.warn("SSE 타임아웃"));
     emitter.onError(e -> log.error("SSE 오류: {}", e.getMessage()));
 
-    // 연결 확인용 초기 이벤트 전송
-    try {
-      emitter.send(SseEmitter.event()
-          .name("connected")
-          .data("SSE 연결됨"));
-    } catch (IOException e) {
-      log.error("SSE 초기 연결 실패: {}", e.getMessage());
-    }
-
-    // 스트리밍 응답 시작
+    // 스트리밍 응답 시작 (세션 토큰 콜백 포함)
     chatbotService.chatStream(sessionToken, message, topK, minScore, userIp, userAgent,
         new StreamCallback() {
           @Override
@@ -136,6 +127,17 @@ public class ChatbotController {
               log.error("SSE 오류 전송 실패: {}", e.getMessage());
             }
             emitter.completeWithError(error);
+          }
+        },
+        // 세션 토큰 콜백 - SSE 연결 직후 세션 토큰을 프론트엔드에 전달
+        (newSessionToken) -> {
+          try {
+            log.info("세션 토큰 전송 - sessionToken: {}", newSessionToken);
+            emitter.send(SseEmitter.event()
+                .name("connected")
+                .data("{\"sessionToken\":\"" + newSessionToken + "\"}"));
+          } catch (IOException e) {
+            log.error("세션 토큰 SSE 전송 실패: {}", e.getMessage());
           }
         });
 

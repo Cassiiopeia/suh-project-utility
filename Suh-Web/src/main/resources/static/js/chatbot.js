@@ -195,9 +195,21 @@ const ChatbotWidget = {
     const eventSource = new EventSource(url);
     this.currentEventSource = eventSource;
 
-    // 연결 확인 이벤트
+    // 연결 확인 이벤트 (세션 토큰 수신)
     eventSource.addEventListener('connected', function(e) {
-      console.log('SSE 연결 확인:', e.data);
+      console.log('🔗 SSE 연결 확인:', e.data);
+      try {
+        // 세션 토큰 파싱 및 저장
+        const data = JSON.parse(e.data);
+        if (data.sessionToken) {
+          self.sessionToken = data.sessionToken;
+          localStorage.setItem('chatbot_session_token', data.sessionToken);
+          console.log('✅ 세션 토큰 저장됨:', data.sessionToken);
+        }
+      } catch (parseError) {
+        // 레거시 포맷 지원 (단순 문자열)
+        console.log('SSE 연결 (레거시):', e.data);
+      }
     });
 
     // 메시지 수신
