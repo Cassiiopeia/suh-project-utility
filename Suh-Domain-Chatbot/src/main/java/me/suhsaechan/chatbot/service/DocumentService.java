@@ -31,9 +31,9 @@ public class DocumentService {
     private final VectorStoreService vectorStoreService;
     private final QdrantProperties qdrantProperties;
 
-    // 청크 분할 설정
-    private static final int DEFAULT_CHUNK_SIZE = 500;       // 기본 청크 크기 (문자 수)
-    private static final int DEFAULT_CHUNK_OVERLAP = 50;     // 청크 중첩 크기
+    // 청크 분할 설정 (토큰 수 기준, 근사치)
+    private static final int DEFAULT_CHUNK_SIZE_TOKENS = 3000;       // 기본 청크 크기 (토큰 수)
+    private static final int DEFAULT_CHUNK_OVERLAP_TOKENS = 300;     // 청크 중첩 크기 (토큰 수, 10%)
 
     /**
      * 벡터 컬렉션 초기화
@@ -83,8 +83,8 @@ public class DocumentService {
         // 1. 기존 청크 삭제 (재처리 시)
         deleteDocumentChunks(document);
 
-        // 2. 청크 분할
-        List<String> chunks = splitIntoChunks(document.getContent(), DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP);
+        // 2. 청크 분할 (토큰 수 기준)
+        List<String> chunks = splitIntoChunksByTokens(document.getContent(), DEFAULT_CHUNK_SIZE_TOKENS, DEFAULT_CHUNK_OVERLAP_TOKENS);
         log.info("청크 분할 완료 - 총 {} 개", chunks.size());
 
         // 3. 임베딩 생성
@@ -245,10 +245,10 @@ public class DocumentService {
     }
 
     /**
-     * 텍스트를 청크로 분할
-     * 문장 경계를 고려하여 분할
+     * 텍스트를 토큰 수 기준으로 청크로 분할
+     * 문장 경계를 고려하여 분할 (토큰 수는 근사치로 계산)
      */
-    private List<String> splitIntoChunks(String text, int chunkSize, int overlap) {
+    private List<String> splitIntoChunksByTokens(String text, int chunkSizeTokens, int overlapTokens) {
         List<String> chunks = new ArrayList<>();
 
         if (text == null || text.isEmpty()) {
@@ -258,38 +258,50 @@ public class DocumentService {
         // 문단 단위로 먼저 분할
         String[] paragraphs = text.split("\n\n+");
         StringBuilder currentChunk = new StringBuilder();
+        int currentTokenCount = 0;
 
         for (String paragraph : paragraphs) {
-            // 문단이 청크 크기보다 크면 문장 단위로 분할
-            if (paragraph.length() > chunkSize) {
+            int paragraphTokens = estimateTokenCount(paragraph);
+
+            // 문단이 청크 크기를 초과하면 문장 단위로 분할
+            if (paragraphTokens > chunkSizeTokens) {
                 // 현재 청크가 있으면 저장
                 if (currentChunk.length() > 0) {
                     chunks.add(currentChunk.toString().trim());
-                    currentChunk = new StringBuilder();
+                    // 오버랩 처리 (토큰 수 기준)
+                    String overlapText = getOverlapTextByTokens(currentChunk.toString(), overlapTokens);
+                    currentChunk = new StringBuilder(overlapText);
+                    currentTokenCount = estimateTokenCount(overlapText);
                 }
 
                 // 긴 문단을 문장 단위로 분할
                 String[] sentences = paragraph.split("(?<=[.!?。！？])+\\s*");
                 for (String sentence : sentences) {
-                    if (currentChunk.length() + sentence.length() > chunkSize) {
+                    int sentenceTokens = estimateTokenCount(sentence);
+
+                    if (currentTokenCount + sentenceTokens > chunkSizeTokens) {
                         if (currentChunk.length() > 0) {
                             chunks.add(currentChunk.toString().trim());
-                            // 오버랩 처리
-                            String overlapText = getOverlapText(currentChunk.toString(), overlap);
+                            // 오버랩 처리 (토큰 수 기준)
+                            String overlapText = getOverlapTextByTokens(currentChunk.toString(), overlapTokens);
                             currentChunk = new StringBuilder(overlapText);
+                            currentTokenCount = estimateTokenCount(overlapText);
                         }
                     }
                     currentChunk.append(sentence).append(" ");
+                    currentTokenCount += sentenceTokens;
                 }
             } else {
                 // 현재 청크에 문단 추가
-                if (currentChunk.length() + paragraph.length() > chunkSize) {
+                if (currentTokenCount + paragraphTokens > chunkSizeTokens) {
                     chunks.add(currentChunk.toString().trim());
-                    // 오버랩 처리
-                    String overlapText = getOverlapText(currentChunk.toString(), overlap);
+                    // 오버랩 처리 (토큰 수 기준)
+                    String overlapText = getOverlapTextByTokens(currentChunk.toString(), overlapTokens);
                     currentChunk = new StringBuilder(overlapText);
+                    currentTokenCount = estimateTokenCount(overlapText);
                 }
                 currentChunk.append(paragraph).append("\n\n");
+                currentTokenCount += paragraphTokens;
             }
         }
 
@@ -302,7 +314,7 @@ public class DocumentService {
     }
 
     /**
-     * 오버랩 텍스트 추출
+     * 오버랩 텍스트 추출 (문자 수 기준, 하위 호환성 유지)
      */
     private String getOverlapText(String text, int overlap) {
         if (text.length() <= overlap) {
@@ -312,28 +324,82 @@ public class DocumentService {
     }
 
     /**
+     * 오버랩 텍스트 추출 (토큰 수 기준, 근사치)
+     * 토큰 비율로 시작 위치를 추정하여 성능 최적화
+     */
+    private String getOverlapTextByTokens(String text, int overlapTokens) {
+        if (text == null || text.isEmpty() || overlapTokens <= 0) {
+            return "";
+        }
+
+        // 전체 텍스트의 토큰 수가 목표보다 작으면 전체 반환
+        int totalTokens = estimateTokenCount(text);
+        if (totalTokens <= overlapTokens) {
+            return text;
+        }
+
+        // 토큰 비율로 시작 위치 추정 (간단한 근사 방식)
+        double tokenRatio = (double) overlapTokens / totalTokens;
+        int estimatedStartIndex = (int) (text.length() * (1 - tokenRatio));
+        
+        // 안전하게 시작 위치 보정
+        int startIndex = Math.max(0, estimatedStartIndex);
+        String candidate = text.substring(startIndex);
+        
+        // 한 번만 토큰 수 확인하고 필요시 조정
+        int candidateTokens = estimateTokenCount(candidate);
+        if (candidateTokens < overlapTokens && startIndex > 0) {
+            // 토큰이 부족하면 앞으로 조금 이동
+            int adjustChars = (int) ((overlapTokens - candidateTokens) * 2); // 한글 기준
+            startIndex = Math.max(0, startIndex - adjustChars);
+            candidate = text.substring(startIndex);
+        } else if (candidateTokens > overlapTokens * 1.2) {
+            // 토큰이 너무 많으면 뒤로 조금 이동
+            int adjustChars = (int) ((candidateTokens - overlapTokens) * 2);
+            startIndex = Math.min(text.length(), startIndex + adjustChars);
+            candidate = text.substring(startIndex);
+        }
+
+        return candidate;
+    }
+
+    /**
      * 토큰 수 추정 (간단한 휴리스틱)
-     * 영어: 단어 수 ≈ 토큰 수 * 0.75
-     * 한글: 글자 수 ≈ 토큰 수 * 0.5
+     * 한글: 글자 수 × 0.5 ≈ 토큰 수
+     * 영어: 단어 수 ≈ 토큰 수
+     * 혼합: 한글/영어 비율에 따라 가중 평균
      */
     private int estimateTokenCount(String text) {
         if (text == null || text.isEmpty()) {
             return 0;
         }
 
-        // 한글 비율 확인
+        int totalLength = text.length();
+        if (totalLength == 0) {
+            return 0;
+        }
+
+        // 한글 문자 수 계산
         long koreanCount = text.chars()
             .filter(c -> Character.UnicodeScript.of(c) == Character.UnicodeScript.HANGUL)
             .count();
 
-        double koreanRatio = (double) koreanCount / text.length();
+        double koreanRatio = (double) koreanCount / totalLength;
 
         if (koreanRatio > 0.5) {
-            // 한글 위주
-            return (int) (text.length() * 0.5);
+            // 한글 위주: 문자 수 × 0.5
+            return (int) (totalLength * 0.5);
+        } else if (koreanRatio < 0.1) {
+            // 영어 위주: 단어 수
+            String[] words = text.split("\\s+");
+            return words.length > 0 ? words.length : 1;
         } else {
-            // 영어 위주
-            return text.split("\\s+").length;
+            // 혼합 텍스트: 한글과 영어를 분리하여 계산
+            int koreanTokens = (int) (koreanCount * 0.5);
+            // 비한글 문자 길이 기반으로 영어 토큰 추정 (평균 영단어 길이 ~4)
+            int nonKoreanLength = totalLength - (int) koreanCount;
+            int englishTokens = Math.max(1, (int) (nonKoreanLength / 4.0));
+            return koreanTokens + englishTokens;
         }
     }
 }
