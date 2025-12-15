@@ -26,7 +26,7 @@ public class ChatbotProperties {
     public static class Models {
         /**
          * 의도 분류 모델 (경량 모델)
-         * 예: gemma2:2b
+         * 예: gemma3:1b
          */
         private String intentClassifier = "gemma3:1b";
 

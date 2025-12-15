@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <p>Agent-LLM 멀티스텝 처리 흐름:</p>
  * <pre>
- * Step 1: [의도 분류] 경량 LLM (gemma2:2b) → IntentClassificationDto
+ * Step 1: [의도 분류] 경량 LLM (gemma3:1b) → IntentClassificationDto
  *         - 질문 유형 분류 (KNOWLEDGE_QUERY, GREETING, CHITCHAT, CLARIFICATION)
  *         - RAG 검색 필요 여부 판단
  *         - 질문 요약 (다음 스텝에 전달)
@@ -177,28 +177,17 @@ public class ChatbotService {
      *
      * @param sessionTokenCallback 세션 토큰을 받을 콜백 (null 가능)
      */
-    @Transactional
     public void chatStream(String sessionToken, String message, int topK, float minScore,
                            String userIp, String userAgent, StreamCallback callback,
                            Consumer<String> sessionTokenCallback) {
         log.info("🤖 [Agent-LLM Stream] 스트리밍 채팅 요청 처리 시작 - message: {}", message);
 
         try {
-            // 1. 세션 조회 또는 생성
-            ChatSession session = getOrCreateSession(sessionToken, userIp, userAgent);
-
-            // 세션 토큰 즉시 전달 (SSE 'connected' 이벤트용)
-            if (sessionTokenCallback != null) {
-                sessionTokenCallback.accept(session.getSessionToken());
-                log.debug("세션 토큰 콜백 전달: {}", session.getSessionToken());
-            }
-
-            // 2. 사용자 메시지 저장
-            int messageIndex = (int) messageRepository.countByChatSession(session);
-            saveMessage(session, MessageRole.USER, message, messageIndex);
-
-            // 3. 최근 대화 이력 조회 (의도 분류 전에 미리 조회)
-            List<ChatMessage> recentHistory = getRecentHistory(session, chatbotProperties.getAgent().getHistory().getMaxMessages(), messageIndex);
+            // 초기 DB 작업 (트랜잭션으로 처리)
+            StreamingContext context = initializeStreamingContext(sessionToken, message, userIp, userAgent, sessionTokenCallback);
+            ChatSession session = context.getSession();
+            int messageIndex = context.getMessageIndex();
+            List<ChatMessage> recentHistory = context.getRecentHistory();
 
             // ===== Agent Step 1: 의도 분류 =====
             log.info("📋 [Agent Step 1/3] 의도 분류 시작");
@@ -248,18 +237,8 @@ public class ChatbotService {
 
                 @Override
                 public void onComplete() {
-                    // AI 응답 저장
-                    ChatMessage assistantMessage = saveMessage(
-                        finalSession,
-                        MessageRole.ASSISTANT,
-                        fullResponse.toString(),
-                        finalMessageIndex + 1
-                    );
-                    assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
-                    messageRepository.save(assistantMessage);
-
-                    // 세션 업데이트
-                    updateSessionActivity(finalSession);
+                    // AI 응답 저장 (별도 트랜잭션으로 처리)
+                    saveStreamingResponse(finalSession, fullResponse.toString(), finalMessageIndex + 1, referencedDocIds);
 
                     log.info("💬 [Agent Step 3/3] 스트리밍 응답 생성 완료");
                     log.info("🤖 [Agent-LLM Stream] 스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
@@ -318,7 +297,7 @@ public class ChatbotService {
     /**
      * Agent Step 1: 사용자 의도 분류 (경량 LLM + Structured Output)
      *
-     * <p>경량 모델(gemma2:2b)을 사용하여 빠르게 의도를 분류합니다.</p>
+     * <p>경량 모델(gemma3:1b)을 사용하여 빠르게 의도를 분류합니다.</p>
      * <p>SUH-AIDER의 Structured Output 기능으로 JSON 파싱 오류를 방지합니다.</p>
      *
      * @param userMessage 사용자 질문
@@ -582,6 +561,61 @@ public class ChatbotService {
         session = sessionRepository.save(session);
         log.info("새 세션 생성 - sessionId: {}", session.getChatSessionId());
         return session;
+    }
+
+    /**
+     * 스트리밍 초기 컨텍스트 생성 (트랜잭션)
+     */
+    @Transactional
+    private StreamingContext initializeStreamingContext(String sessionToken, String message, String userIp, 
+                                                         String userAgent, Consumer<String> sessionTokenCallback) {
+        // 1. 세션 조회 또는 생성
+        ChatSession session = getOrCreateSession(sessionToken, userIp, userAgent);
+
+        // 세션 토큰 즉시 전달 (SSE 'connected' 이벤트용)
+        if (sessionTokenCallback != null) {
+            sessionTokenCallback.accept(session.getSessionToken());
+            log.debug("세션 토큰 콜백 전달: {}", session.getSessionToken());
+        }
+
+        // 2. 사용자 메시지 저장
+        int messageIndex = (int) messageRepository.countByChatSession(session);
+        saveMessage(session, MessageRole.USER, message, messageIndex);
+
+        // 3. 최근 대화 이력 조회 (의도 분류 전에 미리 조회)
+        List<ChatMessage> recentHistory = getRecentHistory(session, chatbotProperties.getAgent().getHistory().getMaxMessages(), messageIndex);
+
+        return new StreamingContext(session, messageIndex, recentHistory);
+    }
+
+    /**
+     * 스트리밍 컨텍스트 (내부 클래스)
+     */
+    private static class StreamingContext {
+        private final ChatSession session;
+        private final int messageIndex;
+        private final List<ChatMessage> recentHistory;
+
+        public StreamingContext(ChatSession session, int messageIndex, List<ChatMessage> recentHistory) {
+            this.session = session;
+            this.messageIndex = messageIndex;
+            this.recentHistory = recentHistory;
+        }
+
+        public ChatSession getSession() { return session; }
+        public int getMessageIndex() { return messageIndex; }
+        public List<ChatMessage> getRecentHistory() { return recentHistory; }
+    }
+
+    /**
+     * 스트리밍 응답 저장 (별도 트랜잭션)
+     */
+    @Transactional
+    public void saveStreamingResponse(ChatSession session, String content, int messageIndex, List<String> referencedDocIds) {
+        ChatMessage assistantMessage = saveMessage(session, MessageRole.ASSISTANT, content, messageIndex);
+        assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
+        messageRepository.save(assistantMessage);
+        updateSessionActivity(session);
     }
 
     /**

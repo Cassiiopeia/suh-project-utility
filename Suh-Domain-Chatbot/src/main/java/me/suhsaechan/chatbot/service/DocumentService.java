@@ -325,7 +325,7 @@ public class DocumentService {
 
     /**
      * 오버랩 텍스트 추출 (토큰 수 기준, 근사치)
-     * 뒤에서부터 문자를 추가하면서 목표 토큰 수에 도달할 때까지 추출
+     * 토큰 비율로 시작 위치를 추정하여 성능 최적화
      */
     private String getOverlapTextByTokens(String text, int overlapTokens) {
         if (text == null || text.isEmpty() || overlapTokens <= 0) {
@@ -338,23 +338,29 @@ public class DocumentService {
             return text;
         }
 
-        // 뒤에서부터 문자를 추가하면서 토큰 수 확인
-        StringBuilder overlap = new StringBuilder();
-        int currentTokens = 0;
-
-        // 역순으로 문자 추가
-        for (int i = text.length() - 1; i >= 0; i--) {
-            char c = text.charAt(i);
-            overlap.insert(0, c);
-            currentTokens = estimateTokenCount(overlap.toString());
-
-            // 목표 토큰 수에 도달하면 중단
-            if (currentTokens >= overlapTokens) {
-                break;
-            }
+        // 토큰 비율로 시작 위치 추정 (간단한 근사 방식)
+        double tokenRatio = (double) overlapTokens / totalTokens;
+        int estimatedStartIndex = (int) (text.length() * (1 - tokenRatio));
+        
+        // 안전하게 시작 위치 보정
+        int startIndex = Math.max(0, estimatedStartIndex);
+        String candidate = text.substring(startIndex);
+        
+        // 한 번만 토큰 수 확인하고 필요시 조정
+        int candidateTokens = estimateTokenCount(candidate);
+        if (candidateTokens < overlapTokens && startIndex > 0) {
+            // 토큰이 부족하면 앞으로 조금 이동
+            int adjustChars = (int) ((overlapTokens - candidateTokens) * 2); // 한글 기준
+            startIndex = Math.max(0, startIndex - adjustChars);
+            candidate = text.substring(startIndex);
+        } else if (candidateTokens > overlapTokens * 1.2) {
+            // 토큰이 너무 많으면 뒤로 조금 이동
+            int adjustChars = (int) ((candidateTokens - overlapTokens) * 2);
+            startIndex = Math.min(text.length(), startIndex + adjustChars);
+            candidate = text.substring(startIndex);
         }
 
-        return overlap.toString();
+        return candidate;
     }
 
     /**
@@ -388,11 +394,11 @@ public class DocumentService {
             String[] words = text.split("\\s+");
             return words.length > 0 ? words.length : 1;
         } else {
-            // 혼합 텍스트: 가중 평균
+            // 혼합 텍스트: 한글과 영어를 분리하여 계산
             int koreanTokens = (int) (koreanCount * 0.5);
-            String[] words = text.split("\\s+");
-            int englishTokens = words.length > 0 ? words.length : 1;
-            // 영어 부분의 토큰 수는 전체 단어 수에서 한글 부분을 제외한 것으로 추정
+            // 비한글 문자 길이 기반으로 영어 토큰 추정 (평균 영단어 길이 ~4)
+            int nonKoreanLength = totalLength - (int) koreanCount;
+            int englishTokens = Math.max(1, (int) (nonKoreanLength / 4.0));
             return koreanTokens + englishTokens;
         }
     }
