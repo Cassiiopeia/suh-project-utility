@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-15T01:40:50Z",
-    "currentVersion": "2.0.2",
+    "lastUpdated": "2025-12-15T02:24:40Z",
+    "currentVersion": "2.0.3",
     "projectType": "spring",
-    "totalReleases": 23
+    "totalReleases": 24
   },
   "releases": [
+    {
+      "version": "2.0.3",
+      "project_type": "spring",
+      "date": "2025-12-15",
+      "pr_number": 118,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트 v2.0.3\n\n* **버그 수정**\n  * 챗봇 시스템 프롬프트 구조를 개선하여 응답 품질 향상\n  * RAG 검색 쿼리 처리 로직 최적화\n\n* **개선 사항**\n  * 로깅 메시지 형식 표준화로 더욱 명확한 시스템 동작 표시\n  * 인사말 의도 감지 시 개선된 응답 제공\n\n* **버전**\n  * 버전 2.0.3로 업데이트 완료",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "챗봇 시스템 프롬프트 구조를 개선하여 응답 품질 향상",
+            "RAG 검색 쿼리 처리 로직 최적화"
+          ]
+        },
+        "개선_사항": {
+          "title": "개선 사항",
+          "items": [
+            "로깅 메시지 형식 표준화로 더욱 명확한 시스템 동작 표시",
+            "인사말 의도 감지 시 개선된 응답 제공"
+          ]
+        },
+        "버전": {
+          "title": "버전",
+          "items": [
+            "버전 2.0.3로 업데이트 완료"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.0.2",
       "project_type": "spring",
