@@ -88,7 +88,7 @@ public class ChatbotService {
     @Transactional
     public ChatbotResponse chat(ChatbotRequest request, String userIp, String userAgent) {
         long startTime = System.currentTimeMillis();
-        log.info("🤖 [Agent-LLM] 채팅 요청 처리 시작 - message: {}", request.getMessage());
+        log.info("[Agent-LLM] 채팅 요청 처리 시작 - message: {}", request.getMessage());
 
         // 1. 세션 조회 또는 생성
         ChatSession session = getOrCreateSession(request.getSessionToken(), userIp, userAgent);
@@ -101,15 +101,15 @@ public class ChatbotService {
         List<ChatMessage> recentHistory = getRecentHistory(session, chatbotProperties.getAgent().getHistory().getMaxMessages(), messageIndex);
 
         // ===== Agent Step 1: 의도 분류 =====
-        log.info("📋 [Agent Step 1/3] 의도 분류 시작");
+        log.info("[Agent Step 1/3] 의도 분류 시작");
         IntentClassificationDto intent = classifyUserIntent(request.getMessage(), recentHistory);
-        log.info("📋 [Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, summary: {}",
+        log.info("[Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, summary: {}",
             intent.getIntentType(), intent.getNeedsRagSearch(), intent.getConfidence(), intent.getSummary());
 
         // ===== Agent Step 2: RAG 검색 (조건부) =====
         List<VectorSearchResult> searchResults = new ArrayList<>();
         if (Boolean.TRUE.equals(intent.getNeedsRagSearch())) {
-            log.info("🔍 [Agent Step 2/3] RAG 검색 시작");
+            log.info("[Agent Step 2/3] RAG 검색 시작");
             int topK = request.getTopK() != null ? request.getTopK() : chatbotProperties.getAgent().getRag().getTopK();
             float minScore = request.getMinScore() != null ? request.getMinScore() : chatbotProperties.getAgent().getRag().getMinScore();
 
@@ -119,13 +119,13 @@ public class ChatbotService {
                 : request.getMessage();
 
             searchResults = searchRelevantDocuments(searchQuery, topK, minScore);
-            log.info("🔍 [Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
+            log.info("[Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
         } else {
-            log.info("⏭️ [Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
+            log.info("[Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
         }
 
         // ===== Agent Step 3: 응답 생성 (고품질 LLM) =====
-        log.info("💬 [Agent Step 3/3] 응답 생성 시작");
+        log.info("[Agent Step 3/3] 응답 생성 시작");
         String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory, intent);
 
         // 6. AI 응답 저장
@@ -180,7 +180,7 @@ public class ChatbotService {
     public void chatStream(String sessionToken, String message, int topK, float minScore,
                            String userIp, String userAgent, StreamCallback callback,
                            Consumer<String> sessionTokenCallback) {
-        log.info("🤖 [Agent-LLM Stream] 스트리밍 채팅 요청 처리 시작 - message: {}", message);
+        log.info("[Agent-LLM Stream] 스트리밍 채팅 요청 처리 시작 - message: {}", message);
 
         try {
             // 초기 DB 작업 (트랜잭션으로 처리)
@@ -190,15 +190,15 @@ public class ChatbotService {
             List<ChatMessage> recentHistory = context.getRecentHistory();
 
             // ===== Agent Step 1: 의도 분류 =====
-            log.info("📋 [Agent Step 1/3] 의도 분류 시작");
+            log.info("[Agent Step 1/3] 의도 분류 시작");
             IntentClassificationDto intent = classifyUserIntent(message, recentHistory);
-            log.info("📋 [Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, summary: {}",
+            log.info("[Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, summary: {}",
                 intent.getIntentType(), intent.getNeedsRagSearch(), intent.getConfidence(), intent.getSummary());
 
             // ===== Agent Step 2: RAG 검색 (조건부) =====
             List<VectorSearchResult> searchResults = new ArrayList<>();
             if (Boolean.TRUE.equals(intent.getNeedsRagSearch())) {
-                log.info("🔍 [Agent Step 2/3] RAG 검색 시작");
+                log.info("[Agent Step 2/3] RAG 검색 시작");
                 int actualTopK = topK > 0 ? topK : chatbotProperties.getAgent().getRag().getTopK();
                 float actualMinScore = minScore > 0 ? minScore : chatbotProperties.getAgent().getRag().getMinScore();
 
@@ -208,13 +208,13 @@ public class ChatbotService {
                     : message;
 
                 searchResults = searchRelevantDocuments(searchQuery, actualTopK, actualMinScore);
-                log.info("🔍 [Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
+                log.info("[Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
             } else {
-                log.info("⏭️ [Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
+                log.info("[Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
             }
 
             // ===== Agent Step 3: 응답 생성 (고품질 LLM, 스트리밍) =====
-            log.info("💬 [Agent Step 3/3] 스트리밍 응답 생성 시작");
+            log.info("[Agent Step 3/3] 스트리밍 응답 생성 시작");
             String fullPrompt = buildFullPrompt(message, searchResults, recentHistory, intent);
 
             // 스트리밍 응답 생성
@@ -240,8 +240,8 @@ public class ChatbotService {
                     // AI 응답 저장 (별도 트랜잭션으로 처리)
                     saveStreamingResponse(finalSession, fullResponse.toString(), finalMessageIndex + 1, referencedDocIds);
 
-                    log.info("💬 [Agent Step 3/3] 스트리밍 응답 생성 완료");
-                    log.info("🤖 [Agent-LLM Stream] 스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
+                    log.info("[Agent Step 3/3] 스트리밍 응답 생성 완료");
+                    log.info("[Agent-LLM Stream] 스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
                         finalSession.getChatSessionId(), fullResponse.length());
                     log.debug("응답 내용: {}", fullResponse.toString());
 
@@ -413,7 +413,7 @@ public class ChatbotService {
             log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", model, fullPrompt.length());
             String response = suhAiderEngine.generate(model, fullPrompt);
             log.debug("LLM 응답 생성 완료 - 응답 길이: {}", response.length());
-            log.info("💬 [Agent Step 3/3] 응답 생성 완료");
+            log.info("[Agent Step 3/3] 응답 생성 완료");
             return response;
         } catch (SuhAiderException e) {
             log.error("LLM 응답 생성 실패: {} - {}", e.getErrorCode(), e.getMessage());
@@ -468,16 +468,23 @@ public class ChatbotService {
     private String buildSystemPrompt(List<VectorSearchResult> searchResults, IntentClassificationDto intent) {
         StringBuilder systemPrompt = new StringBuilder();
 
-        systemPrompt.append("당신은 SUH Project Utility의 친절한 도우미 'SuhNi(서니)'입니다.\n");
-        systemPrompt.append("사용자의 질문에 친절하고 간결하게 답변해주세요.\n");
-        systemPrompt.append("한국어로 답변하며, 존댓말을 사용합니다.\n\n");
-        
-        // URL 관련 질문 처리 안내
-        systemPrompt.append("## 중요 안내:\n");
-        systemPrompt.append("- URL이나 링크를 요청하는 질문이 들어오면, 참고 문서에서 찾은 URL을 명확하게 제공해주세요.\n");
-        systemPrompt.append("- URL은 마크다운 링크 형식 [링크 텍스트](URL)으로 제공하거나, 직접 URL을 명시해주세요.\n");
-        systemPrompt.append("- 상대 경로(/issue-helper)는 절대 경로(https://lab.suhsaechan.kr/issue-helper)로 변환하여 제공하는 것이 좋습니다.\n");
-        systemPrompt.append("- 여러 URL이 관련되어 있으면 모두 나열해주세요.\n\n");
+        // 역할 정의 (간결하게)
+        systemPrompt.append("## 역할\n");
+        systemPrompt.append("- 이름: SuhNi(서니)\n");
+        systemPrompt.append("- 사이트: SUH Project Utility 도우미\n\n");
+
+        // 응답 규칙 (명확하게)
+        systemPrompt.append("## 응답 규칙\n");
+
+        // GREETING 의도는 예외 처리
+        if (intent != null && "GREETING".equals(intent.getIntentType())) {
+            systemPrompt.append("1. 사용자가 인사를 건넸습니다. 간단히 인사를 받고 도움 여부를 물어보세요.\n");
+        } else {
+            systemPrompt.append("1. 질문에 대해 즉시 본론으로 답변하세요. 자기소개나 \"질문이 무엇인가요?\" 같은 말은 생략하세요.\n");
+        }
+
+        systemPrompt.append("2. 한국어 존댓말을 사용하되, 간결하고 정확하게 답변하세요.\n");
+        systemPrompt.append("3. 확실하지 않은 내용은 추측하지 말고 솔직히 알려주세요.\n\n");
 
         // Agent 분석 결과 제공 (디버깅 및 컨텍스트 강화)
         if (intent != null) {
