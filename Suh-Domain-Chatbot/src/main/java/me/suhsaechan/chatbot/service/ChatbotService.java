@@ -311,24 +311,33 @@ public class ChatbotService {
         prompt.append("당신은 사용자 질문을 분석하여 의도를 분류하는 Agent AI입니다.\n\n");
         prompt.append("## 분류 기준:\n\n");
         prompt.append("**1. KNOWLEDGE_QUERY (지식 질문)**\n");
-        prompt.append("   - 특정 기능, 사용법, 정보를 묻는 구체적인 질문\n");
-        prompt.append("   - RAG 검색 필요: true\n");
-        prompt.append("   - 예시: \"Docker 로그는 어디서 볼 수 있나요?\", \"스터디 노트 작성 방법 알려줘\", \"GitHub 이슈 헬퍼 사용법\"\n\n");
+        prompt.append("   - SUH Project Utility의 기능, 모듈, 사용법에 대한 질문\n");
+        prompt.append("   - 개발자(서새찬, suhsaechan) 정보에 대한 질문\n");
+        prompt.append("   - 예시:\n");
+        prompt.append("     * 기능: \"Docker 로그는 어디서 볼 수 있나요?\", \"스터디 노트 작성 방법\", \"GitHub 이슈 헬퍼 사용법\"\n");
+        prompt.append("     * 개발자: \"서새찬은 누구?\", \"suhsaechan 알려줘\", \"개발자 소개\", \"만든 사람은?\"\n");
+        prompt.append("   - RAG 검색 필요: **항상 true**\n\n");
 
         prompt.append("**2. GREETING (인사/감사)**\n");
         prompt.append("   - 인사말, 감사 표현, 작별 인사\n");
         prompt.append("   - RAG 검색 필요: false\n");
         prompt.append("   - 예시: \"안녕하세요\", \"고마워요\", \"잘 부탁드립니다\", \"안녕히 가세요\"\n\n");
 
-        prompt.append("**3. CHITCHAT (잡담)**\n");
-        prompt.append("   - 일반적인 대화, 감정 표현, 날씨 등 사이트와 무관한 주제\n");
+        prompt.append("**3. CHITCHAT (잡담/요청)**\n");
+        prompt.append("   - 농담, 이야기 등의 행동 요청 OR 일반적인 잡담\n");
         prompt.append("   - RAG 검색 필요: false\n");
-        prompt.append("   - 예시: \"오늘 날씨 어때?\", \"심심해\", \"기분 좋아\", \"점심 뭐 먹지?\"\n\n");
+        prompt.append("   - 예시: \"농담해줘\", \"재밌는 이야기 해줘\", \"오늘 날씨 어때?\", \"심심해\"\n\n");
 
         prompt.append("**4. CLARIFICATION (추가 질문)**\n");
         prompt.append("   - 이전 답변에 대한 추가 설명 요청\n");
         prompt.append("   - RAG 검색 필요: 컨텍스트에 따라 판단 (대부분 true)\n");
         prompt.append("   - 예시: \"그럼 그건 어떻게 해?\", \"좀 더 자세히 알려줘\", \"다른 방법은 없어?\"\n\n");
+
+        prompt.append("## 중요 판단 기준:\n");
+        prompt.append("- SUH Project Utility / 기능 / 모듈 관련 → **무조건 KNOWLEDGE_QUERY**\n");
+        prompt.append("- 개발자(서새찬, suhsaechan) 관련 → **무조건 KNOWLEDGE_QUERY**\n");
+        prompt.append("- 농담/이야기 요청 → **CHITCHAT**\n");
+        prompt.append("- 애매하면 **KNOWLEDGE_QUERY 우선** (RAG 검색 활성화)\n\n");
 
         // 대화 이력 포함 (컨텍스트 제공)
         if (!recentHistory.isEmpty()) {
@@ -471,20 +480,31 @@ public class ChatbotService {
         // 역할 정의 (간결하게)
         systemPrompt.append("## 역할\n");
         systemPrompt.append("- 이름: SuhNi(서니)\n");
-        systemPrompt.append("- 사이트: SUH Project Utility 도우미\n\n");
+        systemPrompt.append("- 사이트: SUH Project Utility 도우미\n");
+        systemPrompt.append("- 목적: SUH Project Utility의 기능, 모듈, 개발자 정보를 안내합니다\n");
+        systemPrompt.append("- 개발자: 서새찬(suhsaechan)\n\n");
 
         // 응답 규칙 (명확하게)
         systemPrompt.append("## 응답 규칙\n");
 
-        // GREETING 의도는 예외 처리
+        // 의도별 맞춤 응답 규칙
         if (intent != null && "GREETING".equals(intent.getIntentType())) {
             systemPrompt.append("1. 사용자가 인사를 건넸습니다. 간단히 인사를 받고 도움 여부를 물어보세요.\n");
+        } else if (intent != null && "CHITCHAT".equals(intent.getIntentType())) {
+            systemPrompt.append("**사용자가 잡담이나 행동 요청을 했습니다.**\n");
+            systemPrompt.append("1. 농담/이야기 요청: 지금 바로 재밌는 농담이나 이야기를 해주세요\n");
+            systemPrompt.append("2. 절대 \"어떤 종류를 좋아하세요?\" 같은 추가 질문 금지\n");
+            systemPrompt.append("3. 즉시 수행하세요\n");
+            systemPrompt.append("4. 일반 잡담: 친근하게 대화해주세요\n");
         } else {
             systemPrompt.append("1. 질문에 대해 즉시 본론으로 답변하세요. 자기소개나 \"질문이 무엇인가요?\" 같은 말은 생략하세요.\n");
         }
 
-        systemPrompt.append("2. 한국어 존댓말을 사용하되, 간결하고 정확하게 답변하세요.\n");
-        systemPrompt.append("3. 확실하지 않은 내용은 추측하지 말고 솔직히 알려주세요.\n\n");
+        if (intent == null || !"CHITCHAT".equals(intent.getIntentType())) {
+            systemPrompt.append("2. 한국어 존댓말을 사용하되, 간결하고 정확하게 답변하세요.\n");
+            systemPrompt.append("3. 확실하지 않은 내용은 추측하지 말고 솔직히 알려주세요.\n");
+        }
+        systemPrompt.append("\n");
 
         // Agent 분석 결과 제공 (디버깅 및 컨텍스트 강화)
         if (intent != null) {
@@ -499,8 +519,10 @@ public class ChatbotService {
         // RAG 검색 결과 처리
         if (searchResults.isEmpty()) {
             // 의도에 따라 메시지 조정
-            if (intent != null && ("GREETING".equals(intent.getIntentType()) || "CHITCHAT".equals(intent.getIntentType()))) {
-                systemPrompt.append("참고 문서 없이 친근하게 대화해주세요.\n");
+            if (intent != null && "GREETING".equals(intent.getIntentType())) {
+                systemPrompt.append("참고 문서 없이 친근하게 인사해주세요.\n");
+            } else if (intent != null && "CHITCHAT".equals(intent.getIntentType())) {
+                // CHITCHAT은 위의 응답 규칙에서 이미 명확히 지시했으므로 추가 메시지 불필요
             } else {
                 systemPrompt.append("관련 참고 문서를 찾지 못했습니다. 일반적인 안내를 제공하되, 확실하지 않은 내용은 솔직하게 모른다고 말씀해주세요.\n");
             }
