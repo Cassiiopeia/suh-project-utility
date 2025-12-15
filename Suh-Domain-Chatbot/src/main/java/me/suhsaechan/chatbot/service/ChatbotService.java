@@ -1,20 +1,28 @@
 package me.suhsaechan.chatbot.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import kr.suhsaechan.ai.exception.SuhAiderException;
+import kr.suhsaechan.ai.model.JsonSchema;
+import kr.suhsaechan.ai.model.SuhAiderRequest;
+import kr.suhsaechan.ai.model.SuhAiderResponse;
 import kr.suhsaechan.ai.service.StreamCallback;
 import kr.suhsaechan.ai.service.SuhAiderEngine;
+import kr.suhsaechan.ai.util.JsonSchemaClassParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.chatbot.config.ChatbotProperties;
 import me.suhsaechan.chatbot.config.QdrantProperties;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
 import me.suhsaechan.chatbot.dto.ChatbotRequest;
 import me.suhsaechan.chatbot.dto.ChatbotResponse;
 import me.suhsaechan.chatbot.dto.ChatbotResponse.ReferencedDocument;
+import me.suhsaechan.chatbot.dto.IntentClassificationDto;
 import me.suhsaechan.chatbot.dto.VectorSearchResult;
 import me.suhsaechan.chatbot.entity.ChatMessage;
 import me.suhsaechan.chatbot.entity.ChatMessage.MessageRole;
@@ -26,8 +34,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 챗봇 메인 서비스
- * 대화 처리, 세션 관리, RAG 검색 등 핵심 기능 제공
+ * 챗봇 메인 서비스 (Agent-LLM 스타일)
+ *
+ * <p>Agent-LLM 멀티스텝 처리 흐름:</p>
+ * <pre>
+ * Step 1: [의도 분류] 경량 LLM (gemma2:2b) → IntentClassificationDto
+ *         - 질문 유형 분류 (KNOWLEDGE_QUERY, GREETING, CHITCHAT, CLARIFICATION)
+ *         - RAG 검색 필요 여부 판단
+ *         - 질문 요약 (다음 스텝에 전달)
+ *
+ * Step 2: [RAG 검색] (Step 1에서 needsRagSearch=true인 경우에만)
+ *         - 벡터 임베딩 생성
+ *         - Qdrant 유사도 검색
+ *         - 관련 문서 청크 반환
+ *
+ * Step 3: [응답 생성] 고품질 LLM (rnj-1:8b)
+ *         - Step 1의 요약 + Step 2의 검색 결과 + 대화 이력
+ *         - 컨텍스트 기반 최종 응답 생성
+ * </pre>
+ *
+ * <p>이러한 멀티스텝 방식은:</p>
+ * <ul>
+ *   <li>불필요한 RAG 검색을 제거하여 응답 속도 개선</li>
+ *   <li>경량 모델과 고품질 모델을 적재적소에 활용하여 비용 최적화</li>
+ *   <li>각 스텝의 로깅으로 Agent 동작 추적 가능</li>
+ * </ul>
  */
 @Slf4j
 @Service
@@ -41,21 +72,23 @@ public class ChatbotService {
     private final VectorStoreService vectorStoreService;
     private final QdrantProperties qdrantProperties;
     private final SuhAiderEngine suhAiderEngine;
-
-    // 기본 설정
-    private static final int DEFAULT_TOP_K = 3;
-    private static final float DEFAULT_MIN_SCORE = 0.5f;
-    private static final String LLM_MODEL = "granite4:1b-h";
-    private static final int MAX_HISTORY_MESSAGES = 30;  // 최근 대화 이력 포함 수
+    private final ChatbotProperties chatbotProperties;
+    private final ObjectMapper objectMapper;
 
     /**
-     * 채팅 메시지 처리
-     * RAG 검색 + LLM 응답 생성
+     * 채팅 메시지 처리 (Agent-LLM 멀티스텝)
+     *
+     * <p>Agent 흐름:</p>
+     * <pre>
+     * Step 1: 의도 분류 (경량 LLM)
+     * Step 2: RAG 검색 (조건부)
+     * Step 3: 응답 생성 (고품질 LLM)
+     * </pre>
      */
     @Transactional
     public ChatbotResponse chat(ChatbotRequest request, String userIp, String userAgent) {
         long startTime = System.currentTimeMillis();
-        log.info("채팅 요청 처리 시작 - message: {}", request.getMessage());
+        log.info("🤖 [Agent-LLM] 채팅 요청 처리 시작 - message: {}", request.getMessage());
 
         // 1. 세션 조회 또는 생성
         ChatSession session = getOrCreateSession(request.getSessionToken(), userIp, userAgent);
@@ -64,17 +97,36 @@ public class ChatbotService {
         int messageIndex = (int) messageRepository.countByChatSession(session);
         ChatMessage userMessage = saveMessage(session, MessageRole.USER, request.getMessage(), messageIndex);
 
-        // 3. RAG 검색
-        int topK = request.getTopK() != null ? request.getTopK() : DEFAULT_TOP_K;
-        float minScore = request.getMinScore() != null ? request.getMinScore() : DEFAULT_MIN_SCORE;
+        // 3. 최근 대화 이력 조회 (의도 분류 전에 미리 조회)
+        List<ChatMessage> recentHistory = getRecentHistory(session, chatbotProperties.getAgent().getHistory().getMaxMessages(), messageIndex);
 
-        List<VectorSearchResult> searchResults = searchRelevantDocuments(request.getMessage(), topK, minScore);
+        // ===== Agent Step 1: 의도 분류 =====
+        log.info("📋 [Agent Step 1/3] 의도 분류 시작");
+        IntentClassificationDto intent = classifyUserIntent(request.getMessage(), recentHistory);
+        log.info("📋 [Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, summary: {}",
+            intent.getIntentType(), intent.getNeedsRagSearch(), intent.getConfidence(), intent.getSummary());
 
-        // 4. 최근 대화 이력 조회 (현재 사용자 메시지 제외)
-        List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES, messageIndex);
+        // ===== Agent Step 2: RAG 검색 (조건부) =====
+        List<VectorSearchResult> searchResults = new ArrayList<>();
+        if (Boolean.TRUE.equals(intent.getNeedsRagSearch())) {
+            log.info("🔍 [Agent Step 2/3] RAG 검색 시작");
+            int topK = request.getTopK() != null ? request.getTopK() : chatbotProperties.getAgent().getRag().getTopK();
+            float minScore = request.getMinScore() != null ? request.getMinScore() : chatbotProperties.getAgent().getRag().getMinScore();
 
-        // 5. LLM으로 응답 생성
-        String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory);
+            // 검색 쿼리는 원본 메시지 또는 요약 사용
+            String searchQuery = intent.getSummary() != null && !intent.getSummary().isEmpty()
+                ? intent.getSummary()
+                : request.getMessage();
+
+            searchResults = searchRelevantDocuments(searchQuery, topK, minScore);
+            log.info("🔍 [Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
+        } else {
+            log.info("⏭️ [Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
+        }
+
+        // ===== Agent Step 3: 응답 생성 (고품질 LLM) =====
+        log.info("💬 [Agent Step 3/3] 응답 생성 시작");
+        String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory, intent);
 
         // 6. AI 응답 저장
         List<String> referencedDocIds = searchResults.stream()
@@ -114,32 +166,69 @@ public class ChatbotService {
     }
 
     /**
-     * 스트리밍 채팅 메시지 처리
-     * RAG 검색 + LLM 스트리밍 응답 생성
+     * 스트리밍 채팅 메시지 처리 (Agent-LLM)
+     *
+     * <p>Agent 흐름:</p>
+     * <pre>
+     * Step 1: 의도 분류 (경량 LLM)
+     * Step 2: RAG 검색 (조건부)
+     * Step 3: 응답 생성 (고품질 LLM, 스트리밍)
+     * </pre>
+     *
+     * @param sessionTokenCallback 세션 토큰을 받을 콜백 (null 가능)
      */
     @Transactional
     public void chatStream(String sessionToken, String message, int topK, float minScore,
-                           String userIp, String userAgent, StreamCallback callback) {
-        log.info("스트리밍 채팅 요청 처리 시작 - message: {}", message);
+                           String userIp, String userAgent, StreamCallback callback,
+                           Consumer<String> sessionTokenCallback) {
+        log.info("🤖 [Agent-LLM Stream] 스트리밍 채팅 요청 처리 시작 - message: {}", message);
 
         try {
             // 1. 세션 조회 또는 생성
             ChatSession session = getOrCreateSession(sessionToken, userIp, userAgent);
 
+            // 세션 토큰 즉시 전달 (SSE 'connected' 이벤트용)
+            if (sessionTokenCallback != null) {
+                sessionTokenCallback.accept(session.getSessionToken());
+                log.debug("세션 토큰 콜백 전달: {}", session.getSessionToken());
+            }
+
             // 2. 사용자 메시지 저장
             int messageIndex = (int) messageRepository.countByChatSession(session);
             saveMessage(session, MessageRole.USER, message, messageIndex);
 
-            // 3. RAG 검색
-            List<VectorSearchResult> searchResults = searchRelevantDocuments(message, topK, minScore);
+            // 3. 최근 대화 이력 조회 (의도 분류 전에 미리 조회)
+            List<ChatMessage> recentHistory = getRecentHistory(session, chatbotProperties.getAgent().getHistory().getMaxMessages(), messageIndex);
 
-            // 4. 최근 대화 이력 조회 (현재 사용자 메시지 제외)
-            List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES, messageIndex);
+            // ===== Agent Step 1: 의도 분류 =====
+            log.info("📋 [Agent Step 1/3] 의도 분류 시작");
+            IntentClassificationDto intent = classifyUserIntent(message, recentHistory);
+            log.info("📋 [Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, summary: {}",
+                intent.getIntentType(), intent.getNeedsRagSearch(), intent.getConfidence(), intent.getSummary());
 
-            // 5. 프롬프트 구성
-            String fullPrompt = buildFullPrompt(message, searchResults, recentHistory);
+            // ===== Agent Step 2: RAG 검색 (조건부) =====
+            List<VectorSearchResult> searchResults = new ArrayList<>();
+            if (Boolean.TRUE.equals(intent.getNeedsRagSearch())) {
+                log.info("🔍 [Agent Step 2/3] RAG 검색 시작");
+                int actualTopK = topK > 0 ? topK : chatbotProperties.getAgent().getRag().getTopK();
+                float actualMinScore = minScore > 0 ? minScore : chatbotProperties.getAgent().getRag().getMinScore();
 
-            // 6. 스트리밍 응답 생성
+                // 검색 쿼리는 원본 메시지 또는 요약 사용
+                String searchQuery = intent.getSummary() != null && !intent.getSummary().isEmpty()
+                    ? intent.getSummary()
+                    : message;
+
+                searchResults = searchRelevantDocuments(searchQuery, actualTopK, actualMinScore);
+                log.info("🔍 [Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
+            } else {
+                log.info("⏭️ [Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
+            }
+
+            // ===== Agent Step 3: 응답 생성 (고품질 LLM, 스트리밍) =====
+            log.info("💬 [Agent Step 3/3] 스트리밍 응답 생성 시작");
+            String fullPrompt = buildFullPrompt(message, searchResults, recentHistory, intent);
+
+            // 스트리밍 응답 생성
             StringBuilder fullResponse = new StringBuilder();
             final ChatSession finalSession = session;
             final int finalMessageIndex = messageIndex;
@@ -149,7 +238,8 @@ public class ChatbotService {
                 .distinct()
                 .collect(Collectors.toList());
 
-            suhAiderEngine.generateStreamAsync(LLM_MODEL, fullPrompt, new StreamCallback() {
+            String model = chatbotProperties.getModels().getResponseGenerator();
+            suhAiderEngine.generateStreamAsync(model, fullPrompt, new StreamCallback() {
                 @Override
                 public void onNext(String chunk) {
                     fullResponse.append(chunk);
@@ -171,9 +261,10 @@ public class ChatbotService {
                     // 세션 업데이트
                     updateSessionActivity(finalSession);
 
-                    log.info("스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
+                    log.info("💬 [Agent Step 3/3] 스트리밍 응답 생성 완료");
+                    log.info("🤖 [Agent-LLM Stream] 스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
                         finalSession.getChatSessionId(), fullResponse.length());
-                    log.info(fullResponse.toString());
+                    log.debug("응답 내용: {}", fullResponse.toString());
 
                     callback.onComplete();
                 }
@@ -225,16 +316,125 @@ public class ChatbotService {
     }
 
     /**
-     * LLM 응답 생성
+     * Agent Step 1: 사용자 의도 분류 (경량 LLM + Structured Output)
+     *
+     * <p>경량 모델(gemma2:2b)을 사용하여 빠르게 의도를 분류합니다.</p>
+     * <p>SUH-AIDER의 Structured Output 기능으로 JSON 파싱 오류를 방지합니다.</p>
+     *
+     * @param userMessage 사용자 질문
+     * @param recentHistory 최근 대화 이력 (컨텍스트)
+     * @return 의도 분류 결과
      */
-    private String generateAiResponse(String userMessage, List<VectorSearchResult> searchResults,
-                                       List<ChatMessage> recentHistory) {
-        String fullPrompt = buildFullPrompt(userMessage, searchResults, recentHistory);
+    private IntentClassificationDto classifyUserIntent(String userMessage, List<ChatMessage> recentHistory) {
+        StringBuilder prompt = new StringBuilder();
+
+        // 의도 분류 시스템 프롬프트
+        prompt.append("당신은 사용자 질문을 분석하여 의도를 분류하는 Agent AI입니다.\n\n");
+        prompt.append("## 분류 기준:\n\n");
+        prompt.append("**1. KNOWLEDGE_QUERY (지식 질문)**\n");
+        prompt.append("   - 특정 기능, 사용법, 정보를 묻는 구체적인 질문\n");
+        prompt.append("   - RAG 검색 필요: true\n");
+        prompt.append("   - 예시: \"Docker 로그는 어디서 볼 수 있나요?\", \"스터디 노트 작성 방법 알려줘\", \"GitHub 이슈 헬퍼 사용법\"\n\n");
+
+        prompt.append("**2. GREETING (인사/감사)**\n");
+        prompt.append("   - 인사말, 감사 표현, 작별 인사\n");
+        prompt.append("   - RAG 검색 필요: false\n");
+        prompt.append("   - 예시: \"안녕하세요\", \"고마워요\", \"잘 부탁드립니다\", \"안녕히 가세요\"\n\n");
+
+        prompt.append("**3. CHITCHAT (잡담)**\n");
+        prompt.append("   - 일반적인 대화, 감정 표현, 날씨 등 사이트와 무관한 주제\n");
+        prompt.append("   - RAG 검색 필요: false\n");
+        prompt.append("   - 예시: \"오늘 날씨 어때?\", \"심심해\", \"기분 좋아\", \"점심 뭐 먹지?\"\n\n");
+
+        prompt.append("**4. CLARIFICATION (추가 질문)**\n");
+        prompt.append("   - 이전 답변에 대한 추가 설명 요청\n");
+        prompt.append("   - RAG 검색 필요: 컨텍스트에 따라 판단 (대부분 true)\n");
+        prompt.append("   - 예시: \"그럼 그건 어떻게 해?\", \"좀 더 자세히 알려줘\", \"다른 방법은 없어?\"\n\n");
+
+        // 대화 이력 포함 (컨텍스트 제공)
+        if (!recentHistory.isEmpty()) {
+            prompt.append("## 최근 대화 이력:\n\n");
+            int historyLimit = Math.min(recentHistory.size(), 3);
+            for (int i = recentHistory.size() - historyLimit; i < recentHistory.size(); i++) {
+                ChatMessage msg = recentHistory.get(i);
+                String role = msg.getRole() == MessageRole.USER ? "사용자" : "서니";
+                prompt.append(role).append(": ").append(msg.getContent()).append("\n");
+            }
+            prompt.append("\n");
+        }
+
+        // 현재 질문
+        prompt.append("## 현재 질문:\n\n");
+        prompt.append(userMessage);
+        prompt.append("\n\n");
+        prompt.append("위 질문을 분석하고, 다음 정보를 JSON 형식으로 반환하세요:\n");
+        prompt.append("- intentType: 질문 유형 (KNOWLEDGE_QUERY | GREETING | CHITCHAT | CLARIFICATION)\n");
+        prompt.append("- needsRagSearch: RAG 검색 필요 여부 (true | false)\n");
+        prompt.append("- confidence: 분류 신뢰도 (0.0 ~ 1.0)\n");
+        prompt.append("- reason: 이렇게 분류한 구체적인 이유 (50자 이내)\n");
+        prompt.append("- summary: 질문의 핵심 내용 요약 (30자 이내)");
 
         try {
-            log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", LLM_MODEL, fullPrompt.length());
-            String response = suhAiderEngine.generate(LLM_MODEL, fullPrompt);
+            // Structured Output 스키마 생성
+            JsonSchema schema = JsonSchemaClassParser.parse(IntentClassificationDto.class);
+
+            // 의도 분류용 경량 모델 사용
+            SuhAiderRequest request = SuhAiderRequest.builder()
+                    .model(chatbotProperties.getModels().getIntentClassifier())
+                    .prompt(prompt.toString())
+                    .stream(false)
+                    .responseSchema(schema)  // Structured Output 활성화
+                    .build();
+
+            SuhAiderResponse response = suhAiderEngine.generate(request);
+
+            // JSON 파싱 (SUH-AIDER가 자동으로 정제한 JSON)
+            IntentClassificationDto intent = objectMapper.readValue(
+                response.getResponse(),
+                IntentClassificationDto.class
+            );
+
+            log.debug("의도 분류 성공 - type: {}, needsRAG: {}, confidence: {}, reason: {}, summary: {}",
+                intent.getIntentType(), intent.getNeedsRagSearch(),
+                intent.getConfidence(), intent.getReason(), intent.getSummary());
+
+            return intent;
+
+        } catch (Exception e) {
+            log.error("의도 분류 실패, 안전 모드로 전환 (RAG 검색 수행): {}", e.getMessage(), e);
+            // 실패 시 안전하게 RAG 검색 수행
+            return IntentClassificationDto.builder()
+                .intentType("UNKNOWN")
+                .needsRagSearch(true)
+                .confidence(0.5f)
+                .reason("분류 오류로 인한 기본값")
+                .summary(userMessage.length() > 30 ? userMessage.substring(0, 30) + "..." : userMessage)
+                .build();
+        }
+    }
+
+    /**
+     * Agent Step 3: LLM 응답 생성 (고품질 모델)
+     *
+     * <p>Agent의 최종 단계로, 고품질 모델(rnj-1:8b)을 사용합니다.</p>
+     * <p>의도 분류 결과와 RAG 검색 결과를 조합하여 최적의 응답을 생성합니다.</p>
+     *
+     * @param userMessage 사용자 질문
+     * @param searchResults RAG 검색 결과 (비어있을 수 있음)
+     * @param recentHistory 최근 대화 이력
+     * @param intent 의도 분류 결과
+     * @return 생성된 응답 텍스트
+     */
+    private String generateAiResponse(String userMessage, List<VectorSearchResult> searchResults,
+                                       List<ChatMessage> recentHistory, IntentClassificationDto intent) {
+        String fullPrompt = buildFullPrompt(userMessage, searchResults, recentHistory, intent);
+
+        try {
+            String model = chatbotProperties.getModels().getResponseGenerator();
+            log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", model, fullPrompt.length());
+            String response = suhAiderEngine.generate(model, fullPrompt);
             log.debug("LLM 응답 생성 완료 - 응답 길이: {}", response.length());
+            log.info("💬 [Agent Step 3/3] 응답 생성 완료");
             return response;
         } catch (SuhAiderException e) {
             log.error("LLM 응답 생성 실패: {} - {}", e.getErrorCode(), e.getMessage());
@@ -246,14 +446,16 @@ public class ChatbotService {
     }
 
     /**
-     * 전체 프롬프트 구성
+     * 전체 프롬프트 구성 (Agent-LLM)
+     *
+     * <p>의도 분류 결과를 반영하여 프롬프트를 최적화합니다.</p>
      */
     private String buildFullPrompt(String userMessage, List<VectorSearchResult> searchResults,
-                                   List<ChatMessage> recentHistory) {
+                                   List<ChatMessage> recentHistory, IntentClassificationDto intent) {
         StringBuilder prompt = new StringBuilder();
 
         // 시스템 프롬프트
-        prompt.append(buildSystemPrompt(searchResults));
+        prompt.append(buildSystemPrompt(searchResults, intent));
 
         // 대화 이력
         if (!recentHistory.isEmpty()) {
@@ -280,26 +482,57 @@ public class ChatbotService {
     }
 
     /**
-     * 시스템 프롬프트 구성
+     * 시스템 프롬프트 구성 (Agent-LLM)
+     *
+     * <p>의도 분류 결과에 따라 프롬프트를 최적화합니다.</p>
      */
-    private String buildSystemPrompt(List<VectorSearchResult> searchResults) {
+    private String buildSystemPrompt(List<VectorSearchResult> searchResults, IntentClassificationDto intent) {
         StringBuilder systemPrompt = new StringBuilder();
 
         systemPrompt.append("당신은 SUH Project Utility의 친절한 도우미 'SuhNi(서니)'입니다.\n");
         systemPrompt.append("사용자의 질문에 친절하고 간결하게 답변해주세요.\n");
-        systemPrompt.append("한국어로 답변하며, 존댓말을 사용합니다.\n");
+        systemPrompt.append("한국어로 답변하며, 존댓말을 사용합니다.\n\n");
+        
+        // URL 관련 질문 처리 안내
+        systemPrompt.append("## 중요 안내:\n");
+        systemPrompt.append("- URL이나 링크를 요청하는 질문이 들어오면, 참고 문서에서 찾은 URL을 명확하게 제공해주세요.\n");
+        systemPrompt.append("- URL은 마크다운 링크 형식 [링크 텍스트](URL)으로 제공하거나, 직접 URL을 명시해주세요.\n");
+        systemPrompt.append("- 상대 경로(/issue-helper)는 절대 경로(https://lab.suhsaechan.kr/issue-helper)로 변환하여 제공하는 것이 좋습니다.\n");
+        systemPrompt.append("- 여러 URL이 관련되어 있으면 모두 나열해주세요.\n\n");
 
+        // Agent 분석 결과 제공 (디버깅 및 컨텍스트 강화)
+        if (intent != null) {
+            systemPrompt.append("## Agent 분석 결과:\n");
+            systemPrompt.append("- 질문 유형: ").append(intent.getIntentType()).append("\n");
+            if (intent.getSummary() != null && !intent.getSummary().isEmpty()) {
+                systemPrompt.append("- 질문 요약: ").append(intent.getSummary()).append("\n");
+            }
+            systemPrompt.append("\n");
+        }
+
+        // RAG 검색 결과 처리
         if (searchResults.isEmpty()) {
-            systemPrompt.append("\n관련 참고 문서를 찾지 못했습니다. 일반적인 안내를 제공해주세요.\n");
+            // 의도에 따라 메시지 조정
+            if (intent != null && ("GREETING".equals(intent.getIntentType()) || "CHITCHAT".equals(intent.getIntentType()))) {
+                systemPrompt.append("참고 문서 없이 친근하게 대화해주세요.\n");
+            } else {
+                systemPrompt.append("관련 참고 문서를 찾지 못했습니다. 일반적인 안내를 제공하되, 확실하지 않은 내용은 솔직하게 모른다고 말씀해주세요.\n");
+            }
         } else {
-            systemPrompt.append("\n### 참고 문서:\n");
+            systemPrompt.append("### 참고 문서 (RAG 검색 결과):\n\n");
             for (int i = 0; i < searchResults.size(); i++) {
                 VectorSearchResult result = searchResults.get(i);
                 String title = result.getMetadata().getOrDefault("title", "제목 없음");
-                systemPrompt.append(String.format("[%d] %s\n%s\n\n",
-                    i + 1, title, result.getContent()));
+                String category = result.getMetadata().getOrDefault("category", "");
+                systemPrompt.append(String.format("[%d] %s%s\n%s\n\n",
+                    i + 1,
+                    title,
+                    category.isEmpty() ? "" : " (" + category + ")",
+                    result.getContent()));
             }
-            systemPrompt.append("위 참고 문서를 바탕으로 사용자 질문에 답변해주세요.\n");
+            systemPrompt.append("위 참고 문서를 바탕으로 사용자 질문에 정확하게 답변해주세요.\n");
+            systemPrompt.append("문서에 없는 내용은 추측하지 말고, 문서 기반으로만 답변해주세요.\n");
+            systemPrompt.append("URL 관련 질문의 경우, 문서에서 찾은 URL을 명확하게 제공하고, 가능하면 클릭 가능한 링크 형식으로 제공해주세요.\n");
         }
 
         return systemPrompt.toString();
