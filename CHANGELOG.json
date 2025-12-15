@@ -1,11 +1,34 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-15T02:24:40Z",
-    "currentVersion": "2.0.3",
+    "lastUpdated": "2025-12-15T06:57:05Z",
+    "currentVersion": "2.0.4",
     "projectType": "spring",
-    "totalReleases": 24
+    "totalReleases": 25
   },
   "releases": [
+    {
+      "version": "2.0.4",
+      "project_type": "spring",
+      "date": "2025-12-15",
+      "pr_number": 119,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **New Features**\n  * 챗봇 응답 기능 개선: 사용자의 질문을 지식 관련 질문과 일반 잡담으로 더욱 정확하게 분류하여 처리하며, 관련 문서 검색 기반의 응답 생성 능력을 강화\n\n* **Chores**\n  * 프로젝트 버전을 2.0.4로 업데이트\n  * 빌드 설정 및 배포 메타데이터 최신화",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "챗봇 응답 기능 개선: 사용자의 질문을 지식 관련 질문과 일반 잡담으로 더욱 정확하게 분류하여 처리하며, 관련 문서 검색 기반의 응답 생성 능력을 강화"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "프로젝트 버전을 2.0.4로 업데이트",
+            "빌드 설정 및 배포 메타데이터 최신화"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.0.3",
       "project_type": "spring",
