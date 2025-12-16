@@ -339,6 +339,20 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 - **분기점**: 모바일(~767px), 태블릿(768px~991px), 데스크탑(992px~)
 - **미디어 쿼리**: 화면 크기별 최적화
 
+### 다크모드 지원 ⚠️ 중요
+- **테마 전환**: DaisyUI `data-theme="dark"` 속성 사용
+- **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
+- **초기화**: `common.js`의 `initTheme()` 함수에서 자동 처리
+- **CSS 스타일 추가 시**: `common.css`의 `[data-theme="dark"]` 셀렉터로 오버라이드
+```css
+/* 다크모드 스타일 추가 예시 */
+[data-theme="dark"] .my-component {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+```
+- **하드코딩 배경색 주의**: `bg-gradient-to-br from-slate-50 to-blue-50` 같은 Tailwind 클래스는 다크모드에서 자동 변환 안 됨 → CSS 오버라이드 필수
+
 ## 빌드 및 실행
 
 ### 개발 환경

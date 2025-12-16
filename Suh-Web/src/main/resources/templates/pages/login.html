@@ -43,10 +43,11 @@
             <span class="label-text font-medium">Username</span>
           </label>
           <div class="relative">
-            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="text" name="username" placeholder="Enter your username"
-                   class="input input-bordered w-full pl-5" />
+                   class="input input-bordered w-full pl-10 validator" required />
           </div>
+          <p class="validator-hint text-error text-xs mt-1">Username is required</p>
         </div>
 
         <!-- 비밀번호 입력 -->
@@ -55,13 +56,14 @@
             <span class="label-text font-medium">Password</span>
           </label>
           <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
-                   class="input input-bordered w-full pl-5 pr-10" />
-            <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70">
+                   class="input input-bordered w-full pl-10 pr-12 validator" required />
+            <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70 z-20">
               <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
             </span>
           </div>
+          <p class="validator-hint text-error text-xs mt-1">Password is required</p>
         </div>
 
         <!-- 에러 메시지 (로그인 실패 시 표시) -->
