@@ -126,9 +126,10 @@ public class ChatbotService {
 
         // ===== Agent Step 3: 응답 생성 (고품질 LLM) =====
         log.info("[Agent Step 3/3] 응답 생성 시작");
+        String fullPrompt = buildFullPrompt(request.getMessage(), searchResults, recentHistory, intent);
         String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory, intent);
 
-        // 6. AI 응답 저장
+        // 6. AI 응답 저장 (토큰 정보 포함 - 임시 계산)
         List<String> referencedDocIds = searchResults.stream()
             .map(r -> r.getMetadata().get("documentId"))
             .filter(id -> id != null)
@@ -142,6 +143,9 @@ public class ChatbotService {
             messageIndex + 1
         );
         assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
+        // 토큰 사용량 저장 (임시: 문자열 길이 기반 추정, 한글 약 2자당 1토큰, 영문 약 4자당 1토큰)
+        assistantMessage.setInputTokens(estimateTokenCount(fullPrompt));
+        assistantMessage.setOutputTokens(estimateTokenCount(responseContent));
         messageRepository.save(assistantMessage);
 
         // 7. 세션 업데이트
@@ -221,6 +225,7 @@ public class ChatbotService {
             StringBuilder fullResponse = new StringBuilder();
             final ChatSession finalSession = session;
             final int finalMessageIndex = messageIndex;
+            final String finalFullPrompt = fullPrompt;
             final List<String> referencedDocIds = searchResults.stream()
                 .map(r -> r.getMetadata().get("documentId"))
                 .filter(id -> id != null)
@@ -237,8 +242,9 @@ public class ChatbotService {
 
                 @Override
                 public void onComplete() {
-                    // AI 응답 저장 (별도 트랜잭션으로 처리)
-                    saveStreamingResponse(finalSession, fullResponse.toString(), finalMessageIndex + 1, referencedDocIds);
+                    // AI 응답 저장 (별도 트랜잭션으로 처리, 토큰 계산 포함)
+                    saveStreamingResponse(finalSession, fullResponse.toString(), finalMessageIndex + 1,
+                        referencedDocIds, finalFullPrompt);
 
                     log.info("[Agent Step 3/3] 스트리밍 응답 생성 완료");
                     log.info("[Agent-LLM Stream] 스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
@@ -411,7 +417,7 @@ public class ChatbotService {
      * @param searchResults RAG 검색 결과 (비어있을 수 있음)
      * @param recentHistory 최근 대화 이력
      * @param intent 의도 분류 결과
-     * @return 생성된 응답 텍스트
+     * @return AI 응답 텍스트
      */
     private String generateAiResponse(String userMessage, List<VectorSearchResult> searchResults,
                                        List<ChatMessage> recentHistory, IntentClassificationDto intent) {
@@ -420,7 +426,9 @@ public class ChatbotService {
         try {
             String model = chatbotProperties.getModels().getResponseGenerator();
             log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", model, fullPrompt.length());
+
             String response = suhAiderEngine.generate(model, fullPrompt);
+
             log.debug("LLM 응답 생성 완료 - 응답 길이: {}", response.length());
             log.info("[Agent Step 3/3] 응답 생성 완료");
             return response;
@@ -431,6 +439,27 @@ public class ChatbotService {
             log.error("LLM 응답 생성 중 예외 발생: {}", e.getMessage(), e);
             return "죄송합니다. 응답 생성 중 오류가 발생했습니다.";
         }
+    }
+
+    /**
+     * 토큰 수 추정 (임시)
+     * 한글은 약 2자당 1토큰, 영문은 약 4자당 1토큰으로 추정
+     */
+    private Integer estimateTokenCount(String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+        int koreanCount = 0;
+        int otherCount = 0;
+        for (char c : text.toCharArray()) {
+            if (Character.UnicodeScript.of(c) == Character.UnicodeScript.HANGUL) {
+                koreanCount++;
+            } else {
+                otherCount++;
+            }
+        }
+        // 한글: 2자당 1토큰, 영문/기타: 4자당 1토큰
+        return (koreanCount / 2) + (otherCount / 4);
     }
 
     /**
@@ -637,12 +666,16 @@ public class ChatbotService {
     }
 
     /**
-     * 스트리밍 응답 저장 (별도 트랜잭션)
+     * 스트리밍 응답 저장 (별도 트랜잭션, 토큰 계산 포함)
      */
     @Transactional
-    public void saveStreamingResponse(ChatSession session, String content, int messageIndex, List<String> referencedDocIds) {
+    public void saveStreamingResponse(ChatSession session, String content, int messageIndex,
+                                       List<String> referencedDocIds, String fullPrompt) {
         ChatMessage assistantMessage = saveMessage(session, MessageRole.ASSISTANT, content, messageIndex);
         assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
+        // 토큰 사용량 저장 (임시 계산)
+        assistantMessage.setInputTokens(estimateTokenCount(fullPrompt));
+        assistantMessage.setOutputTokens(estimateTokenCount(content));
         messageRepository.save(assistantMessage);
         updateSessionActivity(session);
     }

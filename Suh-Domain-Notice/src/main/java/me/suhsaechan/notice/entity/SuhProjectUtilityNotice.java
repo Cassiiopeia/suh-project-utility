@@ -1,6 +1,5 @@
 package me.suhsaechan.notice.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,12 +47,10 @@ public class SuhProjectUtilityNotice extends BasePostgresEntity {
   private Boolean isImportant;
 
   // 게시 시작일
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   @Column
   private LocalDateTime startDate;
 
   // 게시 종료일 (null인 경우 무기한)
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   @Column
   private LocalDateTime endDate;
 
