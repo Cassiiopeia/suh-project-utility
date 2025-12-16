@@ -43,8 +43,9 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> 
     // 총 메시지 수
     long count();
 
-    // 기간별 메시지 수
-    long countByCreatedDateAfter(LocalDateTime after);
+    // 기간별 메시지 수 (오늘 이후)
+    @Query("SELECT COUNT(m) FROM ChatMessage m WHERE m.createdDate >= :after")
+    long countByCreatedDateAfter(@Param("after") LocalDateTime after);
 
     // 총 입력 토큰 합계
     @Query("SELECT COALESCE(SUM(m.inputTokens), 0) FROM ChatMessage m WHERE m.inputTokens IS NOT NULL")
