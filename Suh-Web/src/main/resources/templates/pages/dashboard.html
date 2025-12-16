@@ -124,7 +124,7 @@
                   <i class="fa-solid fa-comments text-purple-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-gray-500 font-medium mb-1">챗봇 대화</p>
+                  <p class="text-xs text-gray-500 font-medium mb-1">챗봇 메시지</p>
                   <p class="text-2xl font-bold text-gray-900" id="stat-total-chats">-</p>
                   <p class="text-xs text-gray-400">오늘: <span id="stat-today-chats" class="text-green-600 font-medium">+0</span></p>
                 </div>
@@ -1217,8 +1217,8 @@
           $('#stat-today-visitors').text('+' + formatNumber(response.todayUniqueVisitors || 0));
 
           // 챗봇 통계
-          $('#stat-total-chats').text(formatNumber(response.totalChatSessions || 0));
-          $('#stat-today-chats').text('+' + formatNumber(response.todayChatSessions || 0));
+          $('#stat-total-chats').text(formatNumber(response.totalChatMessages || 0));
+          $('#stat-today-chats').text('+' + formatNumber(response.todayChatMessages || 0));
 
           // 토큰 사용량
           const totalTokens = (response.totalInputTokens || 0) + (response.totalOutputTokens || 0);
@@ -1263,8 +1263,8 @@
           $('#stat-today-visitors').text('+' + formatNumber(response.todayUniqueVisitors || 0));
 
           // 챗봇 통계
-          $('#stat-total-chats').text(formatNumber(response.totalChatSessions || 0));
-          $('#stat-today-chats').text('+' + formatNumber(response.todayChatSessions || 0));
+          $('#stat-total-chats').text(formatNumber(response.totalChatMessages || 0));
+          $('#stat-today-chats').text('+' + formatNumber(response.todayChatMessages || 0));
 
           // 토큰 사용량
           const totalTokens = (response.totalInputTokens || 0) + (response.totalOutputTokens || 0);
