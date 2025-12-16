@@ -1,11 +1,34 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-16T16:20:39Z",
-    "currentVersion": "2.1.2",
+    "lastUpdated": "2025-12-16T16:39:20Z",
+    "currentVersion": "2.1.3",
     "projectType": "spring",
-    "totalReleases": 27
+    "totalReleases": 28
   },
   "releases": [
+    {
+      "version": "2.1.3",
+      "project_type": "spring",
+      "date": "2025-12-16",
+      "pr_number": 125,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **New Features**\n  * AI 응답에 대한 토큰 사용량 추적 기능 추가\n\n* **Chores**\n  * 버전을 2.1.3으로 업데이트\n  * 날짜/시간 직렬화 형식 전역 설정 추가로 API 응답 일관성 개선",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "AI 응답에 대한 토큰 사용량 추적 기능 추가"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전을 2.1.3으로 업데이트",
+            "날짜/시간 직렬화 형식 전역 설정 추가로 API 응답 일관성 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.1.2",
       "project_type": "spring",

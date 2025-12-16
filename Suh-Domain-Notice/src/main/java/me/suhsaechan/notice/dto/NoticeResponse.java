@@ -20,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoticeResponse {
-    
+
     // 단일 공지사항 정보
     private UUID noticeId;
     private String title;
