@@ -101,6 +101,99 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
+  Text Rotate Animation Styles
+===========================
+*/
+
+/* 텍스트 회전 컨테이너 */
+.text-rotate-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  overflow: hidden;
+}
+
+/* 텍스트 회전 래퍼 */
+.text-rotate {
+  display: inline-block;
+  height: 3rem;
+  line-height: 3rem;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+/* 회전되는 내부 요소 */
+.text-rotate-inner {
+  display: flex;
+  flex-direction: column;
+  animation: textRotate 10s infinite;
+}
+
+/* 각 회전 아이템 */
+.text-rotate-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3rem;
+  line-height: 3rem;
+}
+
+/* 아이콘 스타일 */
+.text-rotate-item i {
+  font-size: 1.25em;
+}
+
+/* 5개 아이템 회전 애니메이션 (각 2초씩 표시) */
+@keyframes textRotate {
+  0%, 16% {
+    transform: translateY(0);
+  }
+  20%, 36% {
+    transform: translateY(-3rem);
+  }
+  40%, 56% {
+    transform: translateY(-6rem);
+  }
+  60%, 76% {
+    transform: translateY(-9rem);
+  }
+  80%, 96% {
+    transform: translateY(-12rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* 다크모드 텍스트 회전 스타일 */
+[data-theme="dark"] .text-rotate-item {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-blue-500 {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-purple-500 {
+  color: #a78bfa !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-teal-500 {
+  color: #2dd4bf !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-orange-500 {
+  color: #fb923c !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-yellow-500 {
+  color: #fbbf24 !important;
+}
+
+/*
+===========================
    Table Container Styles
 ===========================
 */
@@ -1884,4 +1977,65 @@ input:focus, textarea:focus, select:focus {
 [data-theme="dark"] .badge-ghost {
   background-color: rgba(75, 85, 99, 0.3) !important;
   color: #9ca3af !important;
+}
+
+/*
+===========================
+   Dashboard Summary Card Dark Mode
+===========================
+*/
+
+/* Summary 헤더 */
+[data-theme="dark"] #summary-section h2.text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+/* Summary 카드 배경 및 테두리 */
+[data-theme="dark"] #summary-content .card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Summary 카드 내 텍스트 색상 */
+[data-theme="dark"] #summary-content .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] #summary-content .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] #summary-content .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Summary 카드 내 초록색 강조 텍스트 */
+[data-theme="dark"] #summary-content .text-green-600 {
+  color: #34d399 !important;
+}
+
+/* Summary 아이콘 배경색 (다크모드용 어두운 톤) */
+[data-theme="dark"] #summary-content .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] #summary-content .bg-purple-100 {
+  background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+[data-theme="dark"] #summary-content .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+[data-theme="dark"] #summary-content .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Summary 새로고침 버튼 */
+[data-theme="dark"] #refresh-summary-btn i {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] #refresh-summary-btn:hover i {
+  color: #60a5fa !important;
 }

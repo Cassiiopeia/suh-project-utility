@@ -47,6 +47,7 @@ public class ChatbotService {
     private static final float DEFAULT_MIN_SCORE = 0.5f;
     private static final String LLM_MODEL = "granite4:1b-h";
     private static final int MAX_HISTORY_MESSAGES = 30;  // 최근 대화 이력 포함 수
+    private static final int TOKEN_ESTIMATE_DIVISOR = 3;  // 한글 기준 약 3자 = 1토큰
 
     /**
      * 채팅 메시지 처리
@@ -73,8 +74,9 @@ public class ChatbotService {
         // 4. 최근 대화 이력 조회 (현재 사용자 메시지 제외)
         List<ChatMessage> recentHistory = getRecentHistory(session, MAX_HISTORY_MESSAGES, messageIndex);
 
-        // 5. LLM으로 응답 생성
-        String responseContent = generateAiResponse(request.getMessage(), searchResults, recentHistory);
+        // 5. 프롬프트 구성 및 LLM 응답 생성
+        String fullPrompt = buildFullPrompt(request.getMessage(), searchResults, recentHistory);
+        String responseContent = generateAiResponseFromPrompt(fullPrompt);
 
         // 6. AI 응답 저장
         List<String> referencedDocIds = searchResults.stream()
@@ -90,12 +92,14 @@ public class ChatbotService {
             messageIndex + 1
         );
         assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
+        assistantMessage.setInputTokens(estimateTokenCount(fullPrompt));
+        assistantMessage.setOutputTokens(estimateTokenCount(responseContent));
+        long responseTime = System.currentTimeMillis() - startTime;
+        assistantMessage.setResponseTimeMs(responseTime);
         messageRepository.save(assistantMessage);
 
         // 7. 세션 업데이트
         updateSessionActivity(session);
-
-        long responseTime = System.currentTimeMillis() - startTime;
 
         // 8. 응답 생성
         List<ReferencedDocument> references = buildReferences(searchResults);
@@ -121,6 +125,7 @@ public class ChatbotService {
     public void chatStream(String sessionToken, String message, int topK, float minScore,
                            String userIp, String userAgent, StreamCallback callback) {
         log.info("스트리밍 채팅 요청 처리 시작 - message: {}", message);
+        final long streamStartTime = System.currentTimeMillis();
 
         try {
             // 1. 세션 조회 또는 생성
@@ -138,6 +143,7 @@ public class ChatbotService {
 
             // 5. 프롬프트 구성
             String fullPrompt = buildFullPrompt(message, searchResults, recentHistory);
+            final int inputTokens = estimateTokenCount(fullPrompt);
 
             // 6. 스트리밍 응답 생성
             StringBuilder fullResponse = new StringBuilder();
@@ -158,7 +164,7 @@ public class ChatbotService {
 
                 @Override
                 public void onComplete() {
-                    // AI 응답 저장
+                    // AI 응답 저장 (토큰 및 응답 시간 포함)
                     ChatMessage assistantMessage = saveMessage(
                         finalSession,
                         MessageRole.ASSISTANT,
@@ -166,14 +172,17 @@ public class ChatbotService {
                         finalMessageIndex + 1
                     );
                     assistantMessage.setReferencedDocumentIds(String.join(",", referencedDocIds));
+                    assistantMessage.setInputTokens(inputTokens);
+                    assistantMessage.setOutputTokens(estimateTokenCount(fullResponse.toString()));
+                    assistantMessage.setResponseTimeMs(System.currentTimeMillis() - streamStartTime);
                     messageRepository.save(assistantMessage);
 
                     // 세션 업데이트
                     updateSessionActivity(finalSession);
 
-                    log.info("스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}",
-                        finalSession.getChatSessionId(), fullResponse.length());
-                    log.info(fullResponse.toString());
+                    log.info("스트리밍 채팅 완료 - sessionId: {}, 응답 길이: {}, 입력토큰: {}, 출력토큰: {}",
+                        finalSession.getChatSessionId(), fullResponse.length(),
+                        inputTokens, estimateTokenCount(fullResponse.toString()));
 
                     callback.onComplete();
                 }
@@ -225,12 +234,9 @@ public class ChatbotService {
     }
 
     /**
-     * LLM 응답 생성
+     * LLM 응답 생성 (프롬프트 직접 전달)
      */
-    private String generateAiResponse(String userMessage, List<VectorSearchResult> searchResults,
-                                       List<ChatMessage> recentHistory) {
-        String fullPrompt = buildFullPrompt(userMessage, searchResults, recentHistory);
-
+    private String generateAiResponseFromPrompt(String fullPrompt) {
         try {
             log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", LLM_MODEL, fullPrompt.length());
             String response = suhAiderEngine.generate(LLM_MODEL, fullPrompt);
@@ -243,6 +249,16 @@ public class ChatbotService {
             log.error("LLM 응답 생성 중 예외 발생: {}", e.getMessage(), e);
             return "죄송합니다. 응답 생성 중 오류가 발생했습니다.";
         }
+    }
+
+    /**
+     * 토큰 수 추정 (한글 기준 약 3자 = 1토큰)
+     */
+    private int estimateTokenCount(String text) {
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+        return Math.max(1, text.length() / TOKEN_ESTIMATE_DIVISOR);
     }
 
     /**

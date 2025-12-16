@@ -41,85 +41,127 @@
     <!-- 웰컴 섹션 -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">새찬 서버 실험실</h1>
-      <p class="text-gray-600">SOMANSA 서버모듈팀에서 개발 중인 프로젝트와 유틸리티를 관리하세요.</p>
+      <p class="text-gray-600">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
     </div>
 
     <!-- 서버 통계 Summary 섹션 -->
     <section id="summary-section" class="mb-8">
+      <!-- Summary 헤더 (새로고침 버튼 포함) -->
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">서버 통계</h2>
+        <button id="refresh-summary-btn" onclick="refreshDashboardSummary()" class="btn btn-sm btn-ghost btn-circle" title="통계 새로고침">
+          <i class="fa-solid fa-arrows-rotate text-gray-500"></i>
+        </button>
+      </div>
       <!-- Summary 스켈레톤 -->
-      <div id="summary-skeleton" class="stats stats-vertical lg:stats-horizontal shadow w-full bg-base-100">
-        <div class="stat">
-          <div class="skeleton h-4 w-20 mb-2"></div>
-          <div class="skeleton h-8 w-16 mb-1"></div>
-          <div class="skeleton h-3 w-24"></div>
+      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="skeleton h-4 w-20 mb-2"></div>
-          <div class="skeleton h-8 w-16 mb-1"></div>
-          <div class="skeleton h-3 w-24"></div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="skeleton h-4 w-20 mb-2"></div>
-          <div class="skeleton h-8 w-16 mb-1"></div>
-          <div class="skeleton h-3 w-24"></div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
         </div>
-        <div class="stat">
-          <div class="skeleton h-4 w-20 mb-2"></div>
-          <div class="skeleton h-8 w-16 mb-1"></div>
-          <div class="skeleton h-3 w-24"></div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Summary 실제 콘텐츠 -->
       <div id="summary-content" class="hidden">
-        <div class="stats stats-vertical lg:stats-horizontal shadow w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- 방문자 통계 -->
-          <div class="stat">
-            <div class="stat-figure text-white/80">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-              </svg>
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-users text-blue-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">총 방문자</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-visitors">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-visitors" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
             </div>
-            <div class="stat-title text-white/80">총 방문자</div>
-            <div class="stat-value text-2xl" id="stat-total-visitors">-</div>
-            <div class="stat-desc text-white/60">오늘: <span id="stat-today-visitors" class="text-green-300">+0</span></div>
           </div>
 
           <!-- 챗봇 통계 -->
-          <div class="stat">
-            <div class="stat-figure text-white/80">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-              </svg>
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-comments text-purple-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">챗봇 대화</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-chats">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-chats" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
             </div>
-            <div class="stat-title text-white/80">챗봇 대화</div>
-            <div class="stat-value text-2xl" id="stat-total-chats">-</div>
-            <div class="stat-desc text-white/60">오늘: <span id="stat-today-chats" class="text-green-300">+0</span></div>
           </div>
 
           <!-- 토큰 사용량 -->
-          <div class="stat">
-            <div class="stat-figure text-white/80">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-bolt text-amber-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">토큰 사용량</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-tokens">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-tokens" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
             </div>
-            <div class="stat-title text-white/80">토큰 사용량</div>
-            <div class="stat-value text-2xl" id="stat-total-tokens">-</div>
-            <div class="stat-desc text-white/60">오늘: <span id="stat-today-tokens" class="text-green-300">+0</span></div>
           </div>
 
           <!-- 콘텐츠 조회 -->
-          <div class="stat">
-            <div class="stat-figure text-white/80">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-              </svg>
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-eye text-emerald-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">콘텐츠 조회</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-views">-</p>
+                  <p class="text-xs text-gray-400">공지 + 스터디</p>
+                </div>
+              </div>
             </div>
-            <div class="stat-title text-white/80">콘텐츠 조회</div>
-            <div class="stat-value text-2xl" id="stat-total-views">-</div>
-            <div class="stat-desc text-white/60">공지 + 스터디</div>
           </div>
         </div>
       </div>
@@ -1198,6 +1240,50 @@
         // 에러 시에도 스켈레톤 숨기고 기본값 표시
         $('#summary-skeleton').addClass('hidden');
         $('#summary-content').removeClass('hidden');
+      }
+    );
+  }
+
+  // 대시보드 Summary 새로고침 함수 (캐시 무효화)
+  function refreshDashboardSummary() {
+    const refreshBtn = $('#refresh-summary-btn');
+    const icon = refreshBtn.find('i');
+
+    // 버튼 비활성화 및 회전 애니메이션
+    refreshBtn.prop('disabled', true);
+    icon.addClass('animate-spin');
+
+    sendFormRequest(
+      '/api/dashboard/summary/refresh',
+      null,
+      function(response) {
+        if (response) {
+          // 방문자 통계
+          $('#stat-total-visitors').text(formatNumber(response.totalUniqueVisitors || 0));
+          $('#stat-today-visitors').text('+' + formatNumber(response.todayUniqueVisitors || 0));
+
+          // 챗봇 통계
+          $('#stat-total-chats').text(formatNumber(response.totalChatSessions || 0));
+          $('#stat-today-chats').text('+' + formatNumber(response.todayChatSessions || 0));
+
+          // 토큰 사용량
+          const totalTokens = (response.totalInputTokens || 0) + (response.totalOutputTokens || 0);
+          const todayTokens = (response.todayInputTokens || 0) + (response.todayOutputTokens || 0);
+          $('#stat-total-tokens').text(formatTokens(totalTokens));
+          $('#stat-today-tokens').text('+' + formatTokens(todayTokens));
+
+          // 콘텐츠 조회
+          const totalViews = (response.totalNoticeViews || 0) + (response.totalStudyViews || 0);
+          $('#stat-total-views').text(formatNumber(totalViews));
+        }
+        // 버튼 복구
+        refreshBtn.prop('disabled', false);
+        icon.removeClass('animate-spin');
+      },
+      function(xhr, status, error) {
+        console.error('대시보드 Summary 새로고침 오류:', error);
+        refreshBtn.prop('disabled', false);
+        icon.removeClass('animate-spin');
       }
     );
   }

@@ -36,4 +36,10 @@ public interface SuhProjectUtilityNoticeRepository extends JpaRepository<SuhProj
    * 내용으로 공지사항 검색
    */
   List<SuhProjectUtilityNotice> findByContentContainingOrderByCreatedDateDesc(String content);
+
+  /**
+   * 총 조회수 합계 (통계용)
+   */
+  @Query("SELECT COALESCE(SUM(n.viewCount), 0) FROM SuhProjectUtilityNotice n WHERE n.viewCount IS NOT NULL")
+  Long sumTotalViewCount();
 }

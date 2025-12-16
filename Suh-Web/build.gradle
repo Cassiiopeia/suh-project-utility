@@ -21,6 +21,7 @@ dependencies {
     implementation project(':Suh-Domain-Study')
     implementation project(':Suh-Domain-GrassPlanter')
     implementation project(':Suh-Domain-Chatbot')
+    implementation project(':Suh-Domain-Statistics')
 }
 
 // Boot JAR 고정 > Dockerfile 재사용

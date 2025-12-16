@@ -25,4 +25,12 @@ public interface ChatSessionRepository extends JpaRepository<ChatSession, UUID> 
 
     // IP로 최근 세션 조회
     List<ChatSession> findByUserIpOrderByCreatedDateDesc(String userIp);
+
+    // === 통계 관련 쿼리 ===
+
+    // 총 세션 수
+    long count();
+
+    // 기간별 세션 수
+    long countByCreatedDateAfter(LocalDateTime after);
 }

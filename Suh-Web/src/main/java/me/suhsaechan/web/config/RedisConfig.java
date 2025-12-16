@@ -49,14 +49,22 @@ public class RedisConfig {
 
   @Bean
   public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
-    RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+    RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
         .entryTtl(Duration.ofMinutes(CACHE_EXPIRED_TIME))
         .disableCachingNullValues()
         .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
+    // 대시보드 Summary 캐시: 5분 TTL
+    RedisCacheConfiguration dashboardConfig = RedisCacheConfiguration.defaultCacheConfig()
+        .entryTtl(Duration.ofMinutes(5))
+        .disableCachingNullValues()
+        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+
     return RedisCacheManager.builder(factory)
-        .cacheDefaults(config)
+        .cacheDefaults(defaultConfig)
+        .withCacheConfiguration("dashboardSummary", dashboardConfig)
         .build();
   }
 
