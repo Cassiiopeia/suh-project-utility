@@ -63,6 +63,33 @@ public class EntityName extends BasePostgresEntity {
 }
 ```
 
+### LocalDateTime 직렬화 규칙 (Entity 직접 반환)
+- **Entity 직접 반환 허용**: Response에서 Entity를 직접 반환해도 됨 (DTO 변환 불필요)
+- **@JsonFormat 필수**: `LocalDateTime` 필드에는 반드시 `@JsonFormat` 어노테이션 추가
+- **BasePostgresEntity**: `createdDate`, `updatedDate`는 이미 `@JsonFormat` 적용됨
+- **Entity 자체 날짜 필드**: Entity에 별도 `LocalDateTime` 필드가 있으면 직접 `@JsonFormat` 추가
+
+```java
+// BasePostgresEntity - 이미 적용됨
+@CreatedDate
+@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+@Column(nullable = false, updatable = false)
+private LocalDateTime createdDate;
+
+// Entity 자체 LocalDateTime 필드 - 직접 추가 필요
+@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+@Column
+private LocalDateTime startDate;
+
+// Response에서 Entity 직접 반환 OK
+@Data
+@Builder
+public class NoticeResponse {
+    private List<SuhProjectUtilityNotice> notices;  // Entity 직접 사용 OK
+    private SuhProjectUtilityNotice notice;         // Entity 직접 사용 OK
+}
+```
+
 ### JPA 관계 매핑 규칙 ⚠️⚠️⚠️ 절대적 금지 사항 ⚠️⚠️⚠️
 - **@OneToMany 절대 금지**: 어떤 경우에도, 어떤 이유로도 @OneToMany는 절대 사용 금지!!!
 - **@OneToOne 절대 금지**: 양방향 관계 복잡도로 인해 절대 사용 금지!!!
@@ -157,6 +184,41 @@ return StudyResponse.builder()
 - **엔드포인트**: `/api/{도메인}/{기능}` (예: `/api/study/post/create`)
 - **응답**: `ResponseEntity<T>` 사용
 - **상태 코드**: HTTP 상태 코드로만 표현
+
+### Controller 작성 패턴
+- **단일 Request/Response**: 하나의 Controller에서는 하나의 Request, Response 클래스만 사용
+- **어노테이션**: `@PostMapping` + `consumes = MediaType.MULTIPART_FORM_DATA_VALUE` 고정
+- **파라미터**: `@ModelAttribute`로 Request 객체 받기
+- **로깅**: `@LogMonitor` 어노테이션으로 자동 로깅
+
+```java
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/notice")
+public class NoticeController {
+    private final NoticeService noticeService;
+
+    @PostMapping(value = "/get/active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @LogMonitor
+    public ResponseEntity<NoticeResponse> getActiveNotices() {
+        return ResponseEntity.ok(noticeService.getActiveNotices());
+    }
+
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @LogMonitor
+    public ResponseEntity<NoticeResponse> createNotice(@ModelAttribute NoticeRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.createNotice(request));
+    }
+
+    @PostMapping(value = "/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @LogMonitor
+    public ResponseEntity<Void> deleteNotice(@ModelAttribute NoticeRequest request) {
+        noticeService.deleteNotice(request.getNoticeId());
+        return ResponseEntity.noContent().build();
+    }
+}
+```
 
 ### API 응답 규칙 (⚠️절대 준수⚠️)
 - **Response DTO 금지 필드**: 

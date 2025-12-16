@@ -1,11 +1,34 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-16T15:50:18Z",
-    "currentVersion": "2.1.1",
+    "lastUpdated": "2025-12-16T16:20:39Z",
+    "currentVersion": "2.1.2",
     "projectType": "spring",
-    "totalReleases": 26
+    "totalReleases": 27
   },
   "releases": [
+    {
+      "version": "2.1.2",
+      "project_type": "spring",
+      "date": "2025-12-16",
+      "pr_number": 123,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **Documentation**\n  * 직렬화 규칙, API 컨트롤러 작성 패턴, API 응답 규칙에 대한 개발 가이드 추가.\n\n* **Chores**\n  * 버전을 2.1.2로 업데이트.\n  * JSON 응답의 날짜/시간 필드 형식을 표준화 (ISO 8601 포맷).",
+      "parsed_changes": {
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "직렬화 규칙, API 컨트롤러 작성 패턴, API 응답 규칙에 대한 개발 가이드 추가."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전을 2.1.2로 업데이트.",
+            "JSON 응답의 날짜/시간 필드 형식을 표준화 (ISO 8601 포맷)."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.1.1",
       "project_type": "spring",
