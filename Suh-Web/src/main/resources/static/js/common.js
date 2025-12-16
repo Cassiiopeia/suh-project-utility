@@ -33,10 +33,55 @@ $(function(){
   $(document).ajaxSend(function(e, xhr, options){
     xhr.setRequestHeader(header, token);
   });
-  
+
   // 세션에서 clientHash 가져와 저장
   fetchAndStoreClientHash();
+
+  // 다크모드 테마 초기화
+  initTheme();
 });
+
+/**
+ * 다크모드 테마 초기화 및 localStorage 연동
+ */
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  const isDark = savedTheme === 'dark';
+
+  // HTML 태그에 data-theme 속성 설정
+  if (isDark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+
+  // 모든 테마 토글 체크박스 동기화
+  const themeToggles = document.querySelectorAll('.theme-controller');
+  themeToggles.forEach(function(toggle) {
+    toggle.checked = isDark;
+  });
+
+  // 테마 변경 이벤트 리스너 등록
+  themeToggles.forEach(function(toggle) {
+    toggle.addEventListener('change', function() {
+      const newTheme = this.checked ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
+
+      if (this.checked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+
+      // 다른 토글 체크박스들도 동기화
+      themeToggles.forEach(function(otherToggle) {
+        if (otherToggle !== toggle) {
+          otherToggle.checked = toggle.checked;
+        }
+      });
+    });
+  });
+}
 
 /**
  * 서버 세션에 저장된 clientHash를 가져와 세션 스토리지에 저장

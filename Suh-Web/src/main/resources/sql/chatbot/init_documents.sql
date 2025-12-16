@@ -29,7 +29,7 @@ INSERT INTO chat_document (
     'site-info',
     '# 새찬 서버 실험실 (SAECHAN LAB)
 
-새찬 서버 실험실은 SOMANSA 서버모듈팀에서 개발 중인 프로젝트와 유틸리티를 관리하는 통합 플랫폼입니다.
+
 
 ## 주요 기능
 

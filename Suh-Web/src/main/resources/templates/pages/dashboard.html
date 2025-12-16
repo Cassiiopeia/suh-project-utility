@@ -41,8 +41,131 @@
     <!-- 웰컴 섹션 -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">새찬 서버 실험실</h1>
-      <p class="text-gray-600">SOMANSA 서버모듈팀에서 개발 중인 프로젝트와 유틸리티를 관리하세요.</p>
+      <p class="text-gray-600">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
     </div>
+
+    <!-- 서버 통계 Summary 섹션 -->
+    <section id="summary-section" class="mb-8">
+      <!-- Summary 헤더 (새로고침 버튼 포함) -->
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">서버 통계</h2>
+        <button id="refresh-summary-btn" onclick="refreshDashboardSummary()" class="btn btn-sm btn-ghost btn-circle" title="통계 새로고침">
+          <i class="fa-solid fa-arrows-rotate text-gray-500"></i>
+        </button>
+      </div>
+      <!-- Summary 스켈레톤 -->
+      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary 실제 콘텐츠 -->
+      <div id="summary-content" class="hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- 방문자 통계 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-users text-blue-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">총 방문자</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-visitors">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-visitors" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 챗봇 통계 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-comments text-purple-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">챗봇 대화</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-chats">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-chats" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 토큰 사용량 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-bolt text-amber-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">토큰 사용량</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-tokens">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-tokens" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 콘텐츠 조회 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-eye text-emerald-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">콘텐츠 조회</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-views">-</p>
+                  <p class="text-xs text-gray-400">공지 + 스터디</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- 공지사항 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
@@ -1047,6 +1170,9 @@
     // 공지사항 로드
     loadActiveNotices();
 
+    // 대시보드 Summary 로드
+    loadDashboardSummary();
+
     // 페이지 로딩 효과
     setTimeout(function() {
       document.getElementById('skeleton-container').classList.add('hidden');
@@ -1062,6 +1188,105 @@
       }
     });
   });
+
+  // 숫자 포맷 함수 (1000 -> 1K, 1000000 -> 1M)
+  function formatNumber(num) {
+    if (num === null || num === undefined) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+  }
+
+  // 토큰 포맷 함수
+  function formatTokens(tokens) {
+    if (tokens === null || tokens === undefined) return '0';
+    if (tokens >= 1000000) return (tokens / 1000000).toFixed(1) + 'M';
+    if (tokens >= 1000) return (tokens / 1000).toFixed(1) + 'K';
+    return tokens.toString();
+  }
+
+  // 대시보드 Summary 로드 함수
+  function loadDashboardSummary() {
+    sendFormRequest(
+      '/api/dashboard/summary',
+      null,
+      function(response) {
+        if (response) {
+          // 방문자 통계
+          $('#stat-total-visitors').text(formatNumber(response.totalUniqueVisitors || 0));
+          $('#stat-today-visitors').text('+' + formatNumber(response.todayUniqueVisitors || 0));
+
+          // 챗봇 통계
+          $('#stat-total-chats').text(formatNumber(response.totalChatSessions || 0));
+          $('#stat-today-chats').text('+' + formatNumber(response.todayChatSessions || 0));
+
+          // 토큰 사용량
+          const totalTokens = (response.totalInputTokens || 0) + (response.totalOutputTokens || 0);
+          const todayTokens = (response.todayInputTokens || 0) + (response.todayOutputTokens || 0);
+          $('#stat-total-tokens').text(formatTokens(totalTokens));
+          $('#stat-today-tokens').text('+' + formatTokens(todayTokens));
+
+          // 콘텐츠 조회
+          const totalViews = (response.totalNoticeViews || 0) + (response.totalStudyViews || 0);
+          $('#stat-total-views').text(formatNumber(totalViews));
+
+          // 스켈레톤 숨기고 실제 콘텐츠 표시
+          $('#summary-skeleton').addClass('hidden');
+          $('#summary-content').removeClass('hidden');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('대시보드 Summary 로드 오류:', error);
+        // 에러 시에도 스켈레톤 숨기고 기본값 표시
+        $('#summary-skeleton').addClass('hidden');
+        $('#summary-content').removeClass('hidden');
+      }
+    );
+  }
+
+  // 대시보드 Summary 새로고침 함수 (캐시 무효화)
+  function refreshDashboardSummary() {
+    const refreshBtn = $('#refresh-summary-btn');
+    const icon = refreshBtn.find('i');
+
+    // 버튼 비활성화 및 회전 애니메이션
+    refreshBtn.prop('disabled', true);
+    icon.addClass('animate-spin');
+
+    sendFormRequest(
+      '/api/dashboard/summary/refresh',
+      null,
+      function(response) {
+        if (response) {
+          // 방문자 통계
+          $('#stat-total-visitors').text(formatNumber(response.totalUniqueVisitors || 0));
+          $('#stat-today-visitors').text('+' + formatNumber(response.todayUniqueVisitors || 0));
+
+          // 챗봇 통계
+          $('#stat-total-chats').text(formatNumber(response.totalChatSessions || 0));
+          $('#stat-today-chats').text('+' + formatNumber(response.todayChatSessions || 0));
+
+          // 토큰 사용량
+          const totalTokens = (response.totalInputTokens || 0) + (response.totalOutputTokens || 0);
+          const todayTokens = (response.todayInputTokens || 0) + (response.todayOutputTokens || 0);
+          $('#stat-total-tokens').text(formatTokens(totalTokens));
+          $('#stat-today-tokens').text('+' + formatTokens(todayTokens));
+
+          // 콘텐츠 조회
+          const totalViews = (response.totalNoticeViews || 0) + (response.totalStudyViews || 0);
+          $('#stat-total-views').text(formatNumber(totalViews));
+        }
+        // 버튼 복구
+        refreshBtn.prop('disabled', false);
+        icon.removeClass('animate-spin');
+      },
+      function(xhr, status, error) {
+        console.error('대시보드 Summary 새로고침 오류:', error);
+        refreshBtn.prop('disabled', false);
+        icon.removeClass('animate-spin');
+      }
+    );
+  }
 
   // 전역 변수 - 공지사항 데이터 및 페이지네이션 상태
   let noticeData = {

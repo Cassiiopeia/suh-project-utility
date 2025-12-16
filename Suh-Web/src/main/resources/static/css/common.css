@@ -101,6 +101,99 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
+  Text Rotate Animation Styles
+===========================
+*/
+
+/* 텍스트 회전 컨테이너 */
+.text-rotate-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  overflow: hidden;
+}
+
+/* 텍스트 회전 래퍼 */
+.text-rotate {
+  display: inline-block;
+  height: 3rem;
+  line-height: 3rem;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+/* 회전되는 내부 요소 */
+.text-rotate-inner {
+  display: flex;
+  flex-direction: column;
+  animation: textRotate 10s infinite;
+}
+
+/* 각 회전 아이템 */
+.text-rotate-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3rem;
+  line-height: 3rem;
+}
+
+/* 아이콘 스타일 */
+.text-rotate-item i {
+  font-size: 1.25em;
+}
+
+/* 5개 아이템 회전 애니메이션 (각 2초씩 표시) */
+@keyframes textRotate {
+  0%, 16% {
+    transform: translateY(0);
+  }
+  20%, 36% {
+    transform: translateY(-3rem);
+  }
+  40%, 56% {
+    transform: translateY(-6rem);
+  }
+  60%, 76% {
+    transform: translateY(-9rem);
+  }
+  80%, 96% {
+    transform: translateY(-12rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* 다크모드 텍스트 회전 스타일 */
+[data-theme="dark"] .text-rotate-item {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-blue-500 {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-purple-500 {
+  color: #a78bfa !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-teal-500 {
+  color: #2dd4bf !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-orange-500 {
+  color: #fb923c !important;
+}
+
+[data-theme="dark"] .text-rotate-item i.text-yellow-500 {
+  color: #fbbf24 !important;
+}
+
+/*
+===========================
    Table Container Styles
 ===========================
 */
@@ -557,6 +650,257 @@ input:focus, textarea:focus, select:focus {
     box-shadow: none !important;
     border: 1px solid #e5e7eb !important;
   }
+}
+
+/*
+===========================
+   Dark Mode Override Styles
+===========================
+*/
+
+/* 다크모드일 때 navbar 배경색 및 텍스트 색상 */
+[data-theme="dark"] .navbar {
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .navbar a,
+[data-theme="dark"] .navbar span,
+[data-theme="dark"] .navbar .btn-ghost {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .navbar .btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 다크모드 드롭다운 메뉴 */
+[data-theme="dark"] .dropdown-content {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .dropdown-content a {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .dropdown-content a:hover {
+  background-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .dropdown-content .menu-title {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .dropdown-content .divider {
+  background-color: #4b5563 !important;
+}
+
+/* 다크모드 테이블 */
+[data-theme="dark"] .table-container {
+  background: #1f2937 !important;
+}
+
+[data-theme="dark"] .tabulator {
+  background: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .tabulator-header {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .tabulator-header .tabulator-col {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .tabulator-col-title {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .tabulator-cell {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .tabulator-row {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .tabulator-row-odd {
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .tabulator-row-even {
+  background-color: #111827 !important;
+}
+
+[data-theme="dark"] .tabulator-row:hover {
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .tabulator-footer {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .tabulator-page {
+  background-color: #1f2937 !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .tabulator-page:hover:not([disabled]) {
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .tabulator-page.active {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .tabulator-page[disabled] {
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .tabulator-paginator {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .tabulator-col-resize-handle {
+  background-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .tabulator-tableholder {
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .tabulator-placeholder {
+  background-color: #1f2937 !important;
+  color: #9ca3af !important;
+}
+
+/* 다크모드 카드 */
+[data-theme="dark"] .card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* 다크모드 입력 필드 */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* 다크모드 토스트 */
+[data-theme="dark"] .toast {
+  background-color: #374151 !important;
+}
+
+/* 다크모드 body 배경 */
+[data-theme="dark"] body {
+  background: linear-gradient(to bottom right, #111827, #1f2937) !important;
+}
+
+/* 다크모드 Footer */
+[data-theme="dark"] footer.footer {
+  background: linear-gradient(to bottom right, #1f2937, #374151) !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] footer.footer a,
+[data-theme="dark"] footer.footer .link {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] footer.footer a:hover,
+[data-theme="dark"] footer.footer .link:hover {
+  color: #3b82f6 !important;
+}
+
+[data-theme="dark"] footer.footer svg {
+  fill: #9ca3af;
+}
+
+[data-theme="dark"] footer.footer a:hover svg {
+  fill: #3b82f6;
+}
+
+/* 다크모드 텍스트 색상 오버라이드 */
+[data-theme="dark"] .label-text,
+[data-theme="dark"] .text-gray-700,
+[data-theme="dark"] .text-gray-600,
+[data-theme="dark"] .text-gray-500 {
+  color: #e5e7eb !important;
+}
+
+/* 다크모드 badge */
+[data-theme="dark"] .badge {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .badge-soft {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  color: #60a5fa !important;
+}
+
+/* 다크모드 모달 */
+[data-theme="dark"] .modal-box {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .modal-box h3,
+[data-theme="dark"] .modal-box p {
+  color: #e5e7eb !important;
+}
+
+/* 다크모드 버튼 ghost */
+[data-theme="dark"] .btn-ghost {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 다크모드 skeleton */
+[data-theme="dark"] .skeleton {
+  background-color: #374151 !important;
+}
+
+/* 다크모드 divider */
+[data-theme="dark"] .divider {
+  border-color: #4b5563 !important;
+}
+
+/* 다크모드 border 색상 */
+[data-theme="dark"] .border-gray-100,
+[data-theme="dark"] .border-gray-200,
+[data-theme="dark"] .border-gray-300 {
+  border-color: #4b5563 !important;
+}
+
+/* 다크모드 에러 메시지 박스 */
+[data-theme="dark"] .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+[data-theme="dark"] .border-red-300 {
+  border-color: #ef4444 !important;
 }
 
 /*
@@ -1196,4 +1540,502 @@ input:focus, textarea:focus, select:focus {
   .chatbot-messages {
     padding: 16px;
   }
+}
+
+/*
+===========================
+   다크모드 - 대시보드 페이지 스타일
+===========================
+*/
+
+/* 1. 하드코딩된 텍스트 색상 오버라이드 */
+[data-theme="dark"] .text-gray-900 {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+/* 2. 아이콘 배경색 오버라이드 (밝은 배경 → 어두운 투명 배경) */
+[data-theme="dark"] .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-purple-100 {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-gray-100 {
+  background-color: rgba(107, 114, 128, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-orange-100 {
+  background-color: rgba(249, 115, 22, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-teal-100 {
+  background-color: rgba(20, 184, 166, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-violet-100 {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-indigo-100 {
+  background-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-pink-100 {
+  background-color: rgba(236, 72, 153, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-cyan-100 {
+  background-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-yellow-100 {
+  background-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+/* 3. 섹션 배경색 오버라이드 */
+[data-theme="dark"] .bg-white {
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .bg-gray-50 {
+  background-color: #374151 !important;
+}
+
+/* 4. body 그라데이션 배경 오버라이드 */
+[data-theme="dark"] .bg-gradient-to-br.from-slate-50.to-blue-50 {
+  background: linear-gradient(to bottom right, #111827, #1f2937) !important;
+}
+
+/* 5. 다크모드 gray-200 배경 */
+[data-theme="dark"] .bg-gray-200 {
+  background-color: rgba(75, 85, 99, 0.5) !important;
+}
+
+/* 6. 다크모드 추가 텍스트 색상 */
+[data-theme="dark"] .text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* 7. 다크모드 pink-100 배경 (ROM ROM 프로젝트) */
+[data-theme="dark"] .bg-pink-100 {
+  background-color: rgba(236, 72, 153, 0.2) !important;
+}
+
+/* 8. 다크모드 blue-50 배경 (Timeline Current 항목 등) */
+[data-theme="dark"] .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* 9. 다크모드 border 색상들 */
+[data-theme="dark"] .border-blue-200 {
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+[data-theme="dark"] .border-gray-100 {
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .border-gray-200 {
+  border-color: #4b5563 !important;
+}
+
+/* 10. 다크모드 Timeline 텍스트 */
+[data-theme="dark"] .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+/* 11. 다크모드 Timeline box */
+[data-theme="dark"] .timeline-box {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .timeline-box.bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+[data-theme="dark"] .timeline-box .font-bold {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .timeline-box .text-sm {
+  color: #d1d5db !important;
+}
+
+/* 12. 다크모드 sky-100 배경 */
+[data-theme="dark"] .bg-sky-100 {
+  background-color: rgba(14, 165, 233, 0.2) !important;
+}
+
+/* 13. 다크모드 rose-100 배경 */
+[data-theme="dark"] .bg-rose-100 {
+  background-color: rgba(244, 63, 94, 0.2) !important;
+}
+
+/*
+===========================
+   다크모드 - 챗봇 위젯 스타일
+===========================
+*/
+
+/* 챗봇 패널 배경 */
+[data-theme="dark"] .chatbot-panel {
+  background: #1f2937 !important;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 챗봇 메시지 영역 배경 */
+[data-theme="dark"] .chatbot-messages {
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%) !important;
+}
+
+/* 웰컴 메시지 */
+[data-theme="dark"] .chatbot-welcome h3 {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .chatbot-welcome p {
+  color: #9ca3af !important;
+}
+
+/* 웰컴 아바타 */
+[data-theme="dark"] .chatbot-welcome .welcome-avatar {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 100%) !important;
+}
+
+/* 추천 질문 버튼 */
+[data-theme="dark"] .chatbot-welcome .suggestion-btn {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .chatbot-welcome .suggestion-btn:hover {
+  background: #4b5563 !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .chatbot-welcome .suggestion-btn i {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .chatbot-welcome .suggestion-btn:hover i {
+  color: #3b82f6 !important;
+}
+
+/* 어시스턴트 메시지 버블 */
+[data-theme="dark"] .chat-message.assistant .bubble {
+  background: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+/* 타이핑 인디케이터 */
+[data-theme="dark"] .typing-indicator {
+  background: #374151 !important;
+}
+
+[data-theme="dark"] .typing-indicator span {
+  background: #6b7280 !important;
+}
+
+/* 입력 영역 */
+[data-theme="dark"] .chatbot-input-area {
+  background: #1f2937 !important;
+  border-top-color: #374151 !important;
+}
+
+[data-theme="dark"] .chatbot-input-area textarea {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .chatbot-input-area textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .chatbot-input-area textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* 초기화 버튼 */
+[data-theme="dark"] .chatbot-reset-btn {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .chatbot-reset-btn:hover {
+  background: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+/* 닫기 버튼 */
+[data-theme="dark"] .chatbot-close-btn {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .chatbot-close-btn:hover {
+  background: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+/* 모바일 헤더 */
+[data-theme="dark"] .chatbot-header-mobile {
+  background: #1f2937 !important;
+  border-bottom-color: #374151 !important;
+}
+
+/* 참조 문서 */
+[data-theme="dark"] .chat-references {
+  background: #111827 !important;
+}
+
+[data-theme="dark"] .chat-references .ref-title {
+  color: #9ca3af !important;
+}
+
+/* 피드백 버튼 */
+[data-theme="dark"] .chat-feedback button {
+  border-color: #4b5563 !important;
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .chat-feedback button:hover {
+  background: #374151 !important;
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .chat-feedback button.active {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .chat-feedback button.active.btn-not-helpful {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+  color: #f87171 !important;
+}
+
+/* 인라인 코드 */
+[data-theme="dark"] .chat-message .bubble .inline-code {
+  background: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+/* 분석 중 인디케이터 */
+[data-theme="dark"] .analyzing-indicator {
+  color: #9ca3af !important;
+}
+
+/* 에러 메시지 */
+[data-theme="dark"] .error-message {
+  color: #f87171 !important;
+}
+
+/*
+===========================
+   다크모드 - 추가 컴포넌트 스타일
+===========================
+*/
+
+/* 카드 제목 색상 */
+[data-theme="dark"] .card-title {
+  color: #f3f4f6 !important;
+}
+
+/* 카드 본문 내 텍스트 */
+[data-theme="dark"] .card-body h3 {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .card-body p {
+  color: #9ca3af !important;
+}
+
+/* 섹션 헤더 (Internal Tools, External Services 등) */
+[data-theme="dark"] .bg-gray-50 h3 {
+  color: #f3f4f6 !important;
+}
+
+/* AI 서버 상태 박스 */
+[data-theme="dark"] #ai-server-status {
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] #ai-server-status span {
+  color: #e5e7eb !important;
+}
+
+/* 공지사항 아코디언 */
+[data-theme="dark"] .collapse {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .collapse-title {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .collapse-content {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .collapse-content p {
+  color: #9ca3af !important;
+}
+
+/* 모달 내 댓글 영역 */
+[data-theme="dark"] .comment-item {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .comment-item .font-semibold {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .comment-item p {
+  color: #d1d5db !important;
+}
+
+/* 댓글 아바타 배경 */
+[data-theme="dark"] .comment-item .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* 메타 정보 텍스트 */
+[data-theme="dark"] .text-xs.text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* 빈 공지사항 메시지 */
+[data-theme="dark"] .notice-empty {
+  color: #9ca3af !important;
+}
+
+/* 스켈레톤 로더 다크모드 대비 */
+[data-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-loading 1.5s infinite !important;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* 통계 카드 (Summary) - 이미 그라데이션이라 유지 */
+
+/* 버튼 outline 스타일 */
+[data-theme="dark"] .btn-outline {
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .btn-outline:hover {
+  background-color: #374151 !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+/* badge ghost 스타일 */
+[data-theme="dark"] .badge-ghost {
+  background-color: rgba(75, 85, 99, 0.3) !important;
+  color: #9ca3af !important;
+}
+
+/*
+===========================
+   Dashboard Summary Card Dark Mode
+===========================
+*/
+
+/* Summary 헤더 */
+[data-theme="dark"] #summary-section h2.text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+/* Summary 카드 배경 및 테두리 */
+[data-theme="dark"] #summary-content .card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Summary 카드 내 텍스트 색상 */
+[data-theme="dark"] #summary-content .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] #summary-content .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] #summary-content .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Summary 카드 내 초록색 강조 텍스트 */
+[data-theme="dark"] #summary-content .text-green-600 {
+  color: #34d399 !important;
+}
+
+/* Summary 아이콘 배경색 (다크모드용 어두운 톤) */
+[data-theme="dark"] #summary-content .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] #summary-content .bg-purple-100 {
+  background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+[data-theme="dark"] #summary-content .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+[data-theme="dark"] #summary-content .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Summary 새로고침 버튼 */
+[data-theme="dark"] #refresh-summary-btn i {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] #refresh-summary-btn:hover i {
+  color: #60a5fa !important;
 }

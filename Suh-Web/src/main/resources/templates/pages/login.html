@@ -18,7 +18,19 @@
 
       <!-- 로고 영역 -->
       <div class="text-center">
-        <img src="/images/로고_세로.png" alt="새찬 서버 로고" class="w-48 mx-auto">
+        <img src="/images/logo_no_text.png" alt="로고" class="h-50 w-50 mx-auto">
+        <!-- 회전 텍스트 애니메이션 -->
+        <div class="text-rotate-container mb-2">
+          <span class="text-rotate text-2xl sm:text-3xl font-bold">
+            <span class="text-rotate-inner">
+              <span class="text-rotate-item"><i class="fa-solid fa-code text-blue-500"></i> DEVELOP</span>
+              <span class="text-rotate-item"><i class="fa-solid fa-brain text-purple-500"></i> AI</span>
+              <span class="text-rotate-item"><i class="fa-solid fa-rocket text-teal-500"></i> DEPLOY</span>
+              <span class="text-rotate-item"><i class="fa-solid fa-fire text-orange-500"></i> PERSIST</span>
+              <span class="text-rotate-item"><i class="fa-solid fa-lightbulb text-yellow-500"></i> IDEA</span>
+            </span>
+          </span>
+        </div>
       </div>
 
       <!-- 개발자 프로필 배지 + 버전 배지 -->
@@ -43,10 +55,11 @@
             <span class="label-text font-medium">Username</span>
           </label>
           <div class="relative">
-            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="text" name="username" placeholder="Enter your username"
-                   class="input input-bordered w-full pl-5" />
+                   class="input input-bordered w-full pl-10 validator" required />
           </div>
+          <p class="validator-hint text-error text-xs mt-1">Username is required</p>
         </div>
 
         <!-- 비밀번호 입력 -->
@@ -55,13 +68,14 @@
             <span class="label-text font-medium">Password</span>
           </label>
           <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
-                   class="input input-bordered w-full pl-5 pr-10" />
-            <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70">
+                   class="input input-bordered w-full pl-10 pr-12 validator" required />
+            <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70 z-20">
               <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
             </span>
           </div>
+          <p class="validator-hint text-error text-xs mt-1">Password is required</p>
         </div>
 
         <!-- 에러 메시지 (로그인 실패 시 표시) -->

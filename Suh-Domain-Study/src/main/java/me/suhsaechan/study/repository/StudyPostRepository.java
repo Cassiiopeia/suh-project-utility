@@ -46,5 +46,10 @@ public interface StudyPostRepository extends JpaRepository<StudyPost, UUID> {
      * 특정 카테고리에 속한 포스트 수 조회
      */
     long countByCategoryStudyCategoryId(UUID categoryId);
-    
+
+    /**
+     * 총 조회수 합계 (통계용)
+     */
+    @Query("SELECT COALESCE(SUM(p.viewCount), 0) FROM StudyPost p WHERE p.viewCount IS NOT NULL")
+    Long sumTotalViewCount();
 }
