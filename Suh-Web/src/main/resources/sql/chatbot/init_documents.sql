@@ -317,6 +317,267 @@ INSERT INTO chat_document (
 );
 
 -- =====================================================
+-- 6. 대시보드 URL 모음 문서
+-- =====================================================
+INSERT INTO chat_document (
+    chat_document_id,
+    title,
+    category,
+    content,
+    description,
+    is_active,
+    is_processed,
+    chunk_count,
+    order_index,
+    created_date,
+    updated_date
+) VALUES (
+    gen_random_uuid(),
+    '대시보드 URL 모음',
+    'urls',
+    '# 새찬 서버 실험실 URL 모음
+
+이 문서는 새찬 서버 실험실 대시보드에 연결된 모든 URL 정보를 정리한 문서입니다. 챗봇이 URL 관련 질문에 답변할 때 참고하는 문서입니다.
+
+## Dev Tools (개발 도구)
+
+### Internal Tools (내부 도구)
+
+#### 이슈 도우미
+- **경로**: `/issue-helper`
+- **설명**: GitHub 이슈 URL을 입력하면 브랜치명과 커밋 메시지를 자동 생성해주는 도구입니다.
+- **기능**: 커밋, 브랜치 자동 생성
+- **기술**: GitHub API, Automation
+- **GitHub**: https://github.com/Cassiiopeia/suh-project-utility
+
+#### 컨테이너 로그
+- **경로**: `/docker-logs`
+- **설명**: 실시간 Docker 컨테이너 로그를 스트리밍으로 확인할 수 있는 도구입니다.
+- **기능**: 실시간 로그 스트리밍
+- **기술**: Docker, SSE (Server-Sent Events)
+
+#### AI 서버 관리
+- **경로**: `/ai-server`
+- **설명**: Ollama 기반 LLM 서버의 상태를 모니터링하고 관리하는 페이지입니다.
+- **기능**: AI 서버 상태 확인 및 관리
+- **기술**: Ollama, LLM
+- **AI 서버 URL**: https://ai.suhsaechan.kr
+- **GitHub**: https://github.com/Cassiiopeia/suh-project-control
+
+#### AI 번역기
+- **경로**: `/translator`
+- **설명**: 커스텀 AI API를 사용한 다국어 번역 서비스입니다.
+- **기능**: 커스텀 API 번역 서비스
+- **기술**: OpenAI, Translation
+
+#### 스터디 플랜
+- **경로**: `/study-management`
+- **설명**: 마크다운을 지원하는 스터디 노트 관리 시스템입니다.
+- **기능**: 마크다운 지원 스터디 노트
+- **기술**: Markdown, Notes
+
+#### Grass Planter
+- **경로**: `/grass`
+- **설명**: GitHub 기여 그래프를 자동으로 관리하는 커밋 스케줄러입니다.
+- **기능**: GitHub 자동 커밋 관리
+- **기술**: GitHub API, Scheduler
+- **GitHub**: https://github.com/Cassiiopeia/suh-grass-planter
+
+#### 챗봇 문서 관리
+- **경로**: `/chatbot-management`
+- **설명**: RAG 챗봇이 참조할 지식 문서를 관리하는 페이지입니다.
+- **기능**: RAG 챗봇 지식 문서 관리
+- **기술**: Qdrant, Vector DB
+
+#### 버스 자동 예약
+- **설명**: 자동화된 버스 예약 시스템입니다.
+- **기능**: 버스 자동 예약 시스템
+- **기술**: Automation, Reservation
+- **GitHub**: https://github.com/Cassiiopeia/auto-bus-reservation
+
+### External Services (외부 서비스)
+
+#### 원격 크롬 (JJ)
+- **URL**: https://web.suhsaechan.kr/
+- **설명**: 외부 크롬 원격 접속 서비스 (JJ 서버)
+- **기술**: Chrome, Remote Desktop
+
+#### 원격 크롬 (House)
+- **URL**: https://chrome.suhsaechan.kr/
+- **설명**: 외부 크롬 원격 접속 서비스 (House 서버)
+- **기술**: Chrome, Remote Desktop
+
+## AI Assistants (커스텀 GPT)
+
+### PROJECT GPT
+
+#### Swagger 생성기
+- **URL**: https://chatgpt.com/g/g-67a7a4cd31b48191a2396587469393d1-swaggerdocmaster
+- **설명**: Controller, Service, Repository, DTO를 자동으로 생성해주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: Swagger 문서 생성
+- **기술**: Swagger, Documentation
+
+#### TypeScript API 변환기
+- **URL**: https://chatgpt.com/g/g-67da95f653408191ac02737509ae51c7-taibseukeuribteu-api-taib-byeonhwangi
+- **설명**: Spring Boot 코드를 TypeScript API로 변환해주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: Spring > TypeScript 변환
+- **기술**: TypeScript, Spring
+
+#### 변수명 전문가
+- **URL**: https://chatgpt.com/g/g-67ee500ea598819188408e9e78a48c35-byeonsumyeong-co-jeonmunga
+- **설명**: 변수명을 확실하게 알려주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: 변수명 확실하게 알려줌
+- **기술**: Naming, Convention
+
+### SOMANSA GPT
+
+#### CM Tag Creator
+- **URL**: https://chatgpt.com/g/g-67318f071e688190a355c62acf5033de-cm-taegeu-saengseonggi
+- **설명**: 다국어 Tag Coder를 생성해주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: 다국어 Tag Coder
+- **기술**: Tag, i18n
+
+#### CM Branch Creator
+- **URL**: https://chatgpt.com/g/g-6732dd6bcb7481908383eadad53fef7a-cm-beuraencimyeong-saengseonggi
+- **설명**: 일감 Info를 기반으로 브랜치명과 커밋 메시지를 생성해주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: 일감 Info > 브랜치, 커밋
+- **기술**: Branch, Commit
+
+#### Issue PPT Guide
+- **URL**: https://chatgpt.com/g/g-675a4ac37ae081918b3f3239c0432672-somansa-pptgyehoegseo-saengseonggi
+- **설명**: 일감 Info를 기반으로 PPT 템플릿을 생성해주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: 일감 Info > PPT Template
+- **기술**: PPT, Template
+
+#### SpringBooster
+- **URL**: https://chatgpt.com/g/g-67ce2f8e22808191a917c325d33b5e91-springbooster
+- **설명**: PPT를 기반으로 Spring 코드를 개선해주는 ChatGPT 커스텀 GPT입니다.
+- **기능**: Spring Improve By PPT
+- **기술**: Spring, Improvement
+
+## Projects (프로젝트)
+
+### 세종말싸미 (SEJONG-MALSAMI)
+
+세종대학교 관련 커뮤니티 및 학습 플랫폼 프로젝트입니다.
+
+#### 메인 페이지
+- **URL**: https://test.sejong-malsami.co.kr
+- **설명**: 세종말싸미 메인 페이지
+- **타입**: Frontend
+
+#### Swagger Docs
+- **URL**: https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/
+- **설명**: 세종말싸미 API 문서
+- **타입**: Backend API
+
+#### 관리자 페이지
+- **URL**: https://api.sejong-malsami.co.kr
+- **설명**: 세종말싸미 관리자 페이지
+- **타입**: Admin
+
+#### Figma (Test)
+- **URL**: https://www.figma.com/design/g3TWHt8CvADqj2fXcf9uIA/%EC%84%B8%EC%A2%85%EB%B0%9C%EC%8B%B8%EB%AF%B9-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&p=f&t=LubXbhTDNNRuyQK6-0
+- **설명**: 세종말싸미 테스트 디자인
+- **타입**: Design
+
+#### 기술 스택
+- Frontend: React, TypeScript
+- Backend: Spring Boot
+- Database: PostgreSQL
+
+### ROM ROM
+
+중고 물품 거래 모바일 앱 프로젝트입니다.
+
+#### APK 다운로드
+- **URL**: http://suh-project.synology.me/romrom
+- **설명**: ROM ROM APK 다운로드 페이지
+- **타입**: Mobile App
+
+#### HTTPS Swagger
+- **URL**: https://api.romrom.xyz/docs/swagger-ui/index.html
+- **설명**: ROM ROM HTTPS API 문서
+- **타입**: Backend API
+
+#### HTTP Swagger
+- **URL**: http://suh-project.synology.me:8085/docs/swagger-ui/index.html#/
+- **설명**: ROM ROM HTTP API 문서
+- **타입**: Backend API
+
+#### Figma (Test)
+- **URL**: https://www.figma.com/design/qXvwG0b5GYk9xkzgw9fdhb/%EB%A1%AC%EB%A1%AC-%ED%9A%8C%EC%9D%98?node-id=2049-5172&t=TFPO78n7GC2JipNk-0
+- **설명**: 롬롬 테스트 디자인
+- **타입**: Design
+
+#### Figma (Prod)
+- **URL**: https://www.figma.com/design/dq4HUUqmTlVkmWr4cd2RE5/%F0%9F%94%84-romrom?node-id=1344-2435&t=lbULaVU0rbuntb79-0
+- **설명**: 롬롬 프로덕션 디자인
+- **타입**: Design
+
+#### 기술 스택
+- Mobile: Flutter
+- Backend: Spring Boot
+- Database: PostgreSQL
+
+### PLANE ACCIDENT FINDER
+
+비행기 사고 정보 조회 모바일 앱입니다.
+
+#### APK 다운로드
+- **URL**: http://suh-project.synology.me/plane-accident-finder/
+- **설명**: PLANE ACCIDENT FINDER APK 다운로드 페이지
+- **타입**: Mobile App
+
+#### HTTPS Swagger
+- **URL**: https://api.romrom.xyz/docs/swagger-ui/index.html
+- **설명**: PLANE ACCIDENT FINDER HTTPS API 문서
+- **타입**: Backend API
+
+#### HTTP Swagger
+- **URL**: http://suh-project.synology.me:8082/docs/swagger-ui/index.html#/
+- **설명**: PLANE ACCIDENT FINDER HTTP API 문서
+- **타입**: Backend API
+
+#### 기술 스택
+- Mobile: Flutter
+- Backend: Spring Boot
+
+## GitHub 리포지토리
+
+### 주요 프로젝트
+- **suh-project-utility**: https://github.com/Cassiiopeia/suh-project-utility
+  - 새찬 서버 실험실 메인 프로젝트
+- **suh-project-control**: https://github.com/Cassiiopeia/suh-project-control
+  - AI 서버 관리 프로젝트
+- **suh-grass-planter**: https://github.com/Cassiiopeia/suh-grass-planter
+  - GitHub 자동 커밋 스케줄러
+- **auto-bus-reservation**: https://github.com/Cassiiopeia/auto-bus-reservation
+  - 버스 자동 예약 시스템
+
+## 사이트 접속 정보
+
+- **메인 사이트**: https://lab.suhsaechan.kr
+- **AI 서버**: https://ai.suhsaechan.kr
+
+## 사용 예시
+
+사용자가 다음과 같은 질문을 할 수 있습니다:
+- "이슈 도우미 URL 알려줘" → `/issue-helper`
+- "세종말싸미 Swagger 문서 링크 줘" → https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html#/
+- "ROM ROM 프로젝트 링크 알려줘" → 여러 링크 제공
+- "AI 서버 관리 페이지 URL은?" → `/ai-server`
+- "원격 크롬 접속 링크 줘" → https://web.suhsaechan.kr/ 또는 https://chrome.suhsaechan.kr/',
+    '대시보드에 연결된 모든 URL 정보 모음',
+    true,
+    false,
+    0,
+    6,
+    NOW(),
+    NOW()
+);
+
+-- =====================================================
 -- 확인 쿼리
 -- =====================================================
 SELECT
