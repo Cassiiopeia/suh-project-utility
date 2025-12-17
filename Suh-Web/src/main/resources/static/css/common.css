@@ -2039,3 +2039,143 @@ input:focus, textarea:focus, select:focus {
 [data-theme="dark"] #refresh-summary-btn:hover i {
   color: #60a5fa !important;
 }
+
+/*
+===========================
+   Notice Carousel Styles
+===========================
+*/
+
+/* Carousel 컨테이너 스크롤 스타일 */
+#notice-carousel {
+  scroll-behavior: smooth;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE, Edge */
+}
+
+#notice-carousel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Carousel 아이템 */
+.notice-carousel-item {
+  scroll-snap-align: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  min-height: 100px;
+}
+
+/* Hover 효과 - 부드러운 확대 */
+.notice-carousel-item:hover {
+  transform: scale(1.02);
+  opacity: 0.95;
+}
+
+/* 클릭 가능함을 나타내는 커서 */
+.notice-carousel-item {
+  cursor: pointer;
+}
+
+/* 인디케이터 버튼 */
+#notice-indicators button {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#notice-indicators button:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* 네비게이션 버튼 */
+#notice-prev,
+#notice-next {
+  transition: all 0.2s ease;
+}
+
+#notice-prev:hover,
+#notice-next:hover {
+  transform: scale(1.1);
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* 다크모드 대응 */
+[data-theme="dark"] #notice-section {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .notice-carousel-item {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .notice-carousel-item .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] #notice-prev,
+[data-theme="dark"] #notice-next {
+  background-color: rgba(55, 65, 81, 0.5) !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] #notice-prev:hover,
+[data-theme="dark"] #notice-next:hover {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* 로딩 스피너 */
+#notice-loading .loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 페이드 인 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notice-carousel-item {
+  animation: fadeIn 0.5s ease;
+}
+
+/* 반응형 - 모바일 */
+@media (max-width: 640px) {
+  .notice-carousel-item {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .notice-carousel-item h3 {
+    font-size: 0.875rem;
+  }
+
+  .notice-carousel-item .text-sm {
+    font-size: 0.75rem;
+  }
+
+  #notice-indicators button {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  #notice-indicators button.bg-primary {
+    width: 1.25rem;
+  }
+}

@@ -167,30 +167,45 @@
       </div>
     </section>
 
-    <!-- 공지사항 섹션 -->
-    <section class="card bg-white shadow-sm mb-8">
-      <div class="card-body">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <i class="fa-solid fa-bullhorn text-blue-500"></i>
-            공지사항
-          </h2>
-          <span class="badge badge-outline badge-primary">Notice</span>
+    <!-- 공지사항 섹션 (DaisyUI Carousel) -->
+    <section class="card bg-white shadow-sm mb-8" id="notice-section">
+      <div class="card-body p-4">
+        <div class="flex items-center gap-3">
+          <!-- 이전 버튼 -->
+          <button class="btn btn-circle btn-sm btn-ghost" id="notice-prev" title="이전 공지">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+
+          <!-- DaisyUI Carousel -->
+          <div class="carousel carousel-center w-full rounded-box" id="notice-carousel">
+            <!-- 로딩 상태 -->
+            <div id="notice-loading" class="carousel-item w-full justify-center items-center py-6">
+              <span class="loading loading-spinner loading-md text-primary"></span>
+              <span class="ml-3 text-gray-500">공지사항 불러오는 중...</span>
+            </div>
+            <!-- 공지사항 없음 -->
+            <div id="notice-empty" class="carousel-item w-full justify-center items-center py-6 hidden">
+              <i class="fa-solid fa-info-circle text-gray-400 text-xl mr-2"></i>
+              <span class="text-gray-500">등록된 공지사항이 없습니다.</span>
+            </div>
+            <!-- 동적으로 공지사항 아이템 추가됨 -->
+          </div>
+
+          <!-- 다음 버튼 -->
+          <button class="btn btn-circle btn-sm btn-ghost" id="notice-next" title="다음 공지">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <!-- 전체 보기 버튼 -->
+          <a href="/notice-management" class="btn btn-primary btn-sm whitespace-nowrap">
+            <i class="fa-solid fa-list mr-1"></i>
+            전체 보기
+          </a>
         </div>
 
-        <!-- 공지사항 목록 -->
-        <div id="notice-accordion" class="space-y-2">
-          <div class="notice-empty text-gray-500 py-4 text-center">
-            <i class="fa-solid fa-info-circle mr-2"></i>
-            등록된 공지사항이 없습니다.
-          </div>
-        </div>
-
-        <!-- 페이지네이션 -->
-        <div class="notice-pagination hidden flex justify-center mt-4">
-          <div class="join">
-            <!-- 동적으로 생성 -->
-          </div>
+        <!-- 인디케이터 (점) -->
+        <div class="flex w-full justify-center gap-2 py-2 mt-2" id="notice-indicators">
+          <!-- 동적으로 생성 -->
         </div>
       </div>
     </section>
@@ -1179,14 +1194,6 @@
       document.getElementById('real-content').classList.remove('hidden');
     }, 500);
 
-    // 페이지네이션 클릭 이벤트
-    $(document).on('click', '.notice-pagination .join .btn', function(e) {
-      e.preventDefault();
-      if (!$(this).hasClass('btn-active') && !$(this).hasClass('btn-disabled')) {
-        const page = $(this).data('page');
-        loadActiveNoticesByPage(page);
-      }
-    });
   });
 
   // 숫자 포맷 함수 (1000 -> 1K, 1000000 -> 1M)
@@ -1288,156 +1295,191 @@
     );
   }
 
-  // 전역 변수 - 공지사항 데이터 및 페이지네이션 상태
-  let noticeData = {
+  // 전역 변수 - 공지사항 Carousel 상태
+  let noticeCarousel = {
     notices: [],
-    currentPage: 1,
-    totalPages: 1,
-    noticesPerPage: 5
+    currentIndex: 0,
+    autoInterval: null,
+    isPaused: false
   };
 
-  // 활성화된 공지사항 로드 함수
+  // 활성화된 공지사항 로드 함수 (Carousel 버전)
   function loadActiveNotices() {
     sendFormRequest(
       '/api/notice/get/active',
       null,
       function(response) {
         if (response && response.notices && response.notices.length > 0) {
-          noticeData.notices = response.notices;
-          noticeData.notices.sort(function(a, b) {
+          // 중요 공지 우선, 그 다음 최신순 정렬
+          noticeCarousel.notices = response.notices.sort(function(a, b) {
             if (a.isImportant && !b.isImportant) return -1;
             if (!a.isImportant && b.isImportant) return 1;
             return new Date(b.createdDate) - new Date(a.createdDate);
           });
-          noticeData.totalPages = Math.ceil(noticeData.notices.length / noticeData.noticesPerPage);
-          loadActiveNoticesByPage(1);
+
+          initNoticeCarousel();
         } else {
-          $('#notice-accordion').html(`
-            <div class="text-gray-500 py-4 text-center">
-              <i class="fa-solid fa-info-circle mr-2"></i>
-              등록된 공지사항이 없습니다.
-            </div>
-          `);
-          $('.notice-pagination').addClass('hidden');
+          // 공지사항 없음
+          $('#notice-loading').addClass('hidden');
+          $('#notice-empty').removeClass('hidden');
+          $('#notice-prev, #notice-next').prop('disabled', true);
         }
       },
       function(xhr, status, error) {
         console.error('공지사항 로드 오류:', error);
-        $('#notice-accordion').html(`
-          <div class="text-red-500 py-4 text-center">
-            <i class="fa-solid fa-exclamation-triangle mr-2"></i>
-            공지사항을 불러올 수 없습니다.
+        $('#notice-loading').addClass('hidden');
+        $('#notice-carousel').html(`
+          <div class="carousel-item w-full justify-center items-center py-6">
+            <i class="fa-solid fa-exclamation-triangle text-red-500 text-xl mr-2"></i>
+            <span class="text-red-500">공지사항을 불러올 수 없습니다.</span>
           </div>
         `);
-        $('.notice-pagination').addClass('hidden');
+        $('#notice-prev, #notice-next').prop('disabled', true);
       }
     );
   }
 
-  // 페이지별 공지사항 표시 함수
-  function loadActiveNoticesByPage(page) {
-    noticeData.currentPage = page;
-    const startIndex = (page - 1) * noticeData.noticesPerPage;
-    const endIndex = Math.min(startIndex + noticeData.noticesPerPage, noticeData.notices.length);
-    const pageNotices = noticeData.notices.slice(startIndex, endIndex);
+  // Carousel 초기화 함수
+  function initNoticeCarousel() {
+    const carousel = $('#notice-carousel');
+    const indicators = $('#notice-indicators');
 
-    $('#notice-accordion').empty();
+    // 로딩 상태 제거
+    $('#notice-loading').remove();
+    $('#notice-empty').remove();
 
-    if (pageNotices.length > 0) {
-      pageNotices.forEach(function(notice) {
-        const isImportant = notice.isImportant ?
-          '<span class="badge badge-error badge-xs">중요</span> ' : '';
+    // Carousel 아이템 생성
+    noticeCarousel.notices.forEach(function(notice, index) {
+      const isImportant = notice.isImportant ?
+        '<span class="badge badge-error badge-xs mr-2">중요</span>' : '';
 
-        const noticeItem = `
-          <div class="collapse collapse-arrow bg-base-100 border border-gray-100 rounded-lg mb-2" data-id="${notice.noticeId}">
-            <input type="checkbox" class="peer" />
-            <div class="collapse-title font-medium flex items-center gap-2">
-              ${isImportant}
-              <span class="flex-1">${notice.title}</span>
-              <span class="text-xs text-gray-400 hidden sm:inline">
-                <i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}
-                <i class="fa-regular fa-calendar ml-2 mr-1"></i>${timeAgo(notice.createdDate)}
-              </span>
-            </div>
-            <div class="collapse-content">
-              <div class="text-sm text-gray-500 mb-2 sm:hidden">
-                <span><i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}</span>
-                <span class="ml-3"><i class="fa-regular fa-calendar mr-1"></i>${new Date(notice.createdDate).toLocaleDateString()}</span>
-                <span class="ml-3"><i class="fa-regular fa-eye mr-1"></i>${notice.viewCount || 0}</span>
-              </div>
-              <p class="text-gray-600 mb-3">${notice.content.substring(0, 150)}${notice.content.length > 150 ? '...' : ''}</p>
-              <div class="text-right">
-                <button class="btn btn-primary btn-xs view-notice-btn" data-id="${notice.noticeId}">
-                  <i class="fa-solid fa-eye mr-1"></i> 상세보기
-                </button>
-              </div>
-            </div>
+      const item = `
+        <div id="notice-slide-${index}"
+             class="carousel-item w-full flex-col items-start justify-center px-4 py-6 cursor-pointer notice-carousel-item"
+             data-notice-id="${notice.noticeId}">
+          <div class="flex items-center gap-2 mb-2 w-full">
+            ${isImportant}
+            <h3 class="font-semibold text-base flex-1 truncate">${notice.title}</h3>
           </div>
-        `;
-
-        $('#notice-accordion').append(noticeItem);
-      });
-
-      // 상세보기 버튼 이벤트 바인딩
-      $('.view-notice-btn').click(function(e) {
-        e.stopPropagation();
-        const noticeId = $(this).data('id');
-        showNoticeDetail(noticeId);
-      });
-
-      // 페이지네이션 업데이트
-      updatePagination();
-
-      if (noticeData.notices.length > noticeData.noticesPerPage) {
-        $('.notice-pagination').removeClass('hidden');
-      } else {
-        $('.notice-pagination').addClass('hidden');
-      }
-    } else {
-      $('#notice-accordion').html(`
-        <div class="text-gray-500 py-4 text-center">
-          <i class="fa-solid fa-info-circle mr-2"></i>
-          등록된 공지사항이 없습니다.
+          <div class="flex items-center gap-3 text-sm text-gray-500">
+            <span><i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}</span>
+            <span><i class="fa-regular fa-calendar mr-1"></i>${timeAgo(notice.createdDate)}</span>
+            <span><i class="fa-regular fa-eye mr-1"></i>${notice.viewCount || 0}</span>
+          </div>
         </div>
-      `);
-      $('.notice-pagination').addClass('hidden');
+      `;
+      carousel.append(item);
+
+      // 인디케이터 생성
+      const indicator = `
+        <button class="w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-primary w-6' : 'bg-gray-300'}"
+                data-index="${index}"></button>
+      `;
+      indicators.append(indicator);
+    });
+
+    // 클릭 이벤트 - 상세 보기
+    $('.notice-carousel-item').click(function() {
+      const noticeId = $(this).data('notice-id');
+      pauseCarousel();
+      showNoticeDetail(noticeId);
+    });
+
+    // 인디케이터 클릭 이벤트
+    $('#notice-indicators button').click(function() {
+      const index = $(this).data('index');
+      noticeCarousel.currentIndex = index;
+      scrollToNotice(index);
+      resetAutoRotate();
+    });
+
+    // 이전/다음 버튼 이벤트
+    $('#notice-prev').click(function() {
+      navigateNotice(-1);
+    });
+
+    $('#notice-next').click(function() {
+      navigateNotice(1);
+    });
+
+    // 마우스 호버 시 자동 전환 일시정지
+    $('#notice-carousel').hover(
+      function() {
+        pauseCarousel();
+      },
+      function() {
+        resumeCarousel();
+      }
+    );
+
+    // 자동 로테이션 시작
+    startAutoRotate();
+  }
+
+  // Carousel 스크롤 함수 (부드러운 애니메이션)
+  function scrollToNotice(index) {
+    const target = document.getElementById(`notice-slide-${index}`);
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+      updateIndicators(index);
     }
   }
 
-  // 페이지네이션 업데이트 함수
-  function updatePagination() {
-    const paginationContainer = $('.notice-pagination .join');
-    paginationContainer.empty();
-
-    if (noticeData.totalPages <= 1) {
-      $('.notice-pagination').addClass('hidden');
-      return;
-    }
-
-    // 이전 버튼
-    const prevDisabled = noticeData.currentPage === 1 ? 'btn-disabled' : '';
-    paginationContainer.append(`
-      <button class="btn btn-sm join-item ${prevDisabled}" data-page="${noticeData.currentPage - 1}">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-    `);
-
-    // 페이지 번호
-    for (let i = 1; i <= noticeData.totalPages; i++) {
-      const isActive = i === noticeData.currentPage ? 'btn-active btn-primary' : '';
-      paginationContainer.append(`
-        <button class="btn btn-sm join-item ${isActive}" data-page="${i}">${i}</button>
-      `);
-    }
-
-    // 다음 버튼
-    const nextDisabled = noticeData.currentPage === noticeData.totalPages ? 'btn-disabled' : '';
-    paginationContainer.append(`
-      <button class="btn btn-sm join-item ${nextDisabled}" data-page="${noticeData.currentPage + 1}">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-    `);
+  // 인디케이터 업데이트
+  function updateIndicators(activeIndex) {
+    $('#notice-indicators button').each(function(index) {
+      if (index === activeIndex) {
+        $(this).removeClass('bg-gray-300 w-2').addClass('bg-primary w-6');
+      } else {
+        $(this).removeClass('bg-primary w-6').addClass('bg-gray-300 w-2');
+      }
+    });
   }
+
+  // 네비게이션 함수
+  function navigateNotice(direction) {
+    const totalNotices = noticeCarousel.notices.length;
+    noticeCarousel.currentIndex = (noticeCarousel.currentIndex + direction + totalNotices) % totalNotices;
+    scrollToNotice(noticeCarousel.currentIndex);
+    resetAutoRotate();
+  }
+
+  // 자동 로테이션 시작
+  function startAutoRotate() {
+    if (noticeCarousel.notices.length <= 1) return;
+
+    noticeCarousel.autoInterval = setInterval(function() {
+      if (!noticeCarousel.isPaused) {
+        noticeCarousel.currentIndex = (noticeCarousel.currentIndex + 1) % noticeCarousel.notices.length;
+        scrollToNotice(noticeCarousel.currentIndex);
+      }
+    }, 5000); // 5초마다 자동 전환
+  }
+
+  // 자동 로테이션 리셋
+  function resetAutoRotate() {
+    clearInterval(noticeCarousel.autoInterval);
+    startAutoRotate();
+  }
+
+  // Carousel 일시정지
+  function pauseCarousel() {
+    noticeCarousel.isPaused = true;
+  }
+
+  // Carousel 재개
+  function resumeCarousel() {
+    noticeCarousel.isPaused = false;
+  }
+
+  // 페이지 언로드 시 인터벌 정리
+  $(window).on('beforeunload', function() {
+    clearInterval(noticeCarousel.autoInterval);
+  });
 
   // 공지사항 상세 보기 함수
   function showNoticeDetail(noticeId) {
