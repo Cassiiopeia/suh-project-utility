@@ -81,7 +81,7 @@
             <tr th:each="childCat : ${parentCat.children}"
                 class="child-category-row">
           <td>
-            <div style="margin-left: 1.5em;">
+            <div class="ml-6">
               <i th:class="${childCat.icon != null ? childCat.icon : 'file'} + ' icon'"
                  th:style="${childCat.color != null ? 'color:' + childCat.color : ''}"></i>
               <a th:href="@{/study-management/category/{id}(id=${childCat.id})}" th:text="${childCat.name}"></a>

@@ -384,12 +384,34 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 
 ## UI/UX 가이드라인
 
-### CSS 관리
-- **통합 파일**: `src/main/resources/static/css/common.css`에 모든 스타일 통합
+### CSS 관리 및 CSP 보안 규칙 ⚠️ 필수 준수
+- **통합 CSS 파일**: `src/main/resources/static/css/common.css` 단일 파일만 사용
 - **경로 주의**: 빌드 후 `out/production/resources/static/css/common.css`에 위치하지만, 편집은 반드시 src 디렉토리에서 수행
-- **클래스 명명**: `{페이지}-{컴포넌트}` (예: `study-page`, `dashboard-section-header`, `grass-planter-dashboard`)
-- **인라인 스타일 금지**: CSP 준수
+- **인라인 스타일 절대 금지**: CSP(Content Security Policy) 준수를 위해 `style=""` 속성 사용 금지
+- **클래스 기반 스타일링**: 모든 스타일은 CSS 클래스로 정의하고 JavaScript에서 `classList.add()` / `classList.remove()` 사용
+- **Tailwind CSS 우선 사용**: 간단한 스타일은 Tailwind 유틸리티 클래스 활용
+- **커스텀 클래스**: Tailwind로 불가능한 복잡한 스타일만 `common.css`에 정의
+- **클래스 명명 규칙**: `{페이지}-{컴포넌트}` (예: `study-page`, `dashboard-section-header`, `version-badge`)
+- **유틸리티 클래스**:
+  - 숨김: `.hide` (display: none)
+  - JavaScript 사용: `element.classList.add('hide')` / `element.classList.remove('hide')`
 - **새 페이지 스타일 추가 시**: 페이지별 섹션 주석 추가 (예: `/* Grass Planter Styles */`)
+- **다크모드 지원**: `[data-theme="dark"]` 셀렉터로 다크모드 스타일 오버라이드
+
+### Tailwind CSS 사용 규칙 ⚠️ 중요
+- **하드코딩 값 금지**: `mb-[5px]`, `min-h-[70vh]`, `w-[10px]` 등 대괄호를 사용한 하드코딩 값 사용 금지
+- **표준 클래스 사용**: Tailwind에서 제공하는 표준 유틸리티 클래스 사용
+  - 간격: `mb-1` (4px), `mb-2` (8px), `mb-3` (12px), `mb-4` (16px) 등
+  - 크기: `w-4` (16px), `w-8` (32px), `h-12` (48px) 등
+  - 최소/최대 높이: `min-h-screen`, `max-h-full` 등
+- **예외 상황**: 표준 클래스로 불가능한 경우에만 인라인 스타일 또는 common.css에 커스텀 클래스 정의
+- **잘못된 예시**: `<div class="mb-[5px] min-h-[70vh]">` ❌
+- **올바른 예시**: `<div class="mb-1 min-h-screen">` ✅ 또는 `<div style="min-height: 70vh;">` ✅
+
+#### 스타일 적용 우선순위
+1. Tailwind CSS 유틸리티 클래스 (예: `hidden`, `ml-6`, `max-h-12`)
+2. common.css 커스텀 클래스 (예: `.hide`, `.version-badge`)
+3. 동적 스타일은 Thymeleaf `th:style` 속성만 허용 (정적 인라인 style은 금지)
 
 ### 컴포넌트 규칙
 - **카드**: `ui fluid card equal-height-card` 사용
