@@ -565,6 +565,28 @@ file:
 
 이 계획을 사용자에게 먼저 제시하고 피드백을 받은 후 작업을 진행합니다.
 
+## 코드 품질 규칙
+
+### 주석 작성 규칙 ⚠️ 중요
+- **불필요한 설명 주석 금지**: 코드 자체로 의미가 명확한 경우 주석 작성 금지
+- **LLM 스타일 주석 금지**: "(enum의 fromEnglishNameOrCode 메서드 사용)", "(AI 응답 파싱용)" 등 불필요한 설명 금지
+- **HTML 주석**: 구조적으로 필요하지 않은 설명 주석 (예: "<!-- DaisyUI Carousel (두 줄) -->") 금지
+- **JavaDoc**: public API에만 작성하고, 구현 세부사항은 작성하지 않음
+- **허용되는 주석**:
+  - 복잡한 비즈니스 로직 설명
+  - 의도적인 설계 결정 설명 (예: "// 성능 최적화를 위해 캐시 사용")
+  - TODO, FIXME 등 개발 중 표시
+  - 법적 요구사항이나 보안 관련 중요 정보
+
+```java
+// ❌ 잘못된 예시 - 불필요한 설명
+// 응답 변환 (enum의 fromEnglishNameOrCode 메서드 사용)
+TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiResult.getDetectedLanguage());
+
+// ✅ 올바른 예시 - 주석 없이 명확한 코드
+TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiResult.getDetectedLanguage());
+```
+
 ## 주의사항
 1. **파일 생성 최소화**: 기존 파일 수정 우선
 2. **문서 자동 생성 금지**: 요청 시에만 생성
@@ -574,6 +596,8 @@ file:
 6. **Boolean 필드**: 반드시 `is` 접두사 사용
 7. **작업 전 Plan 제시**: 모든 코드 수정 전 구체적인 계획 제시 필수
 8. **@OneToMany/@OneToOne 절대 금지**: JPA 관계는 오직 @ManyToOne만 사용 가능. 이는 절대 규칙이며 예외 없음!!!
+9. **주석 최소화**: 불필요한 LLM 스타일 주석이나 설명 주석 작성 금지
+10. **Tailwind 하드코딩 금지**: `mb-[5px]` 같은 대괄호 값 사용 금지, 표준 클래스 사용
 
 ## 트러블슈팅
 - **Gradle 빌드 오류**: JDK 17 버전 확인

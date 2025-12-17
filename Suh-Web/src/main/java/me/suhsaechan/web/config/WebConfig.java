@@ -17,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final PageVisitInterceptor pageVisitInterceptor;
+    private final PublicEndpointConfig publicEndpointConfig;
 
     /**
      * 정적 리소스 핸들러 설정
@@ -36,11 +37,13 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * 인터셉터 등록
      * 페이지 방문 기록 인터셉터 추가
+     *
+     * PublicEndpointConfig에서 중앙 관리되는 화이트리스트 경로를 자동으로 제외합니다.
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(pageVisitInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/api/**", "/static/**", "/css/**", "/js/**", "/images/**");
+                .excludePathPatterns(publicEndpointConfig.getInterceptorExcludedPaths());
     }
 }
