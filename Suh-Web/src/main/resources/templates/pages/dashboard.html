@@ -38,11 +38,62 @@
 
   <!-- 실제 콘텐츠 -->
   <div id="real-content" class="hidden">
-    <!-- 웰컴 섹션 -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">새찬 서버 실험실</h1>
-      <p class="text-gray-600">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
-    </div>
+    <!-- 웰컴 + 공지사항 통합 섹션 -->
+    <section class="mb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 왼쪽: 헤더 텍스트 (2/3) -->
+        <div class="lg:col-span-2">
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">새찬 서버 실험실</h1>
+          <p class="text-gray-600">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
+        </div>
+
+        <!-- 오른쪽: 공지사항 카드 (1/3) -->
+        <div class="lg:col-span-1">
+          <div class="card bg-white shadow-sm relative" id="notice-section">
+            <!-- 전체 보기 버튼 (우측 상단) -->
+            <a href="/notice-management"
+               class="absolute top-3 right-3 text-xs text-gray-500 hover:text-primary transition-colors z-10">
+              전체 보기 <i class="fa-solid fa-chevron-right ml-1"></i>
+            </a>
+
+            <!-- Carousel -->
+            <div class="card-body p-4 pt-8">
+              <div class="flex items-center gap-2">
+                <!-- 이전 버튼 -->
+                <button class="btn btn-circle btn-xs btn-ghost flex-shrink-0" id="notice-prev" title="이전 공지">
+                  <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+
+                <!-- DaisyUI Carousel -->
+                <div class="carousel carousel-center w-full rounded-box" id="notice-carousel">
+                  <!-- 로딩 상태 -->
+                  <div id="notice-loading" class="carousel-item w-full justify-center items-center py-4">
+                    <span class="loading loading-spinner loading-sm text-primary"></span>
+                    <span class="ml-2 text-gray-500 text-xs">로딩중...</span>
+                  </div>
+                  <!-- 공지사항 없음 -->
+                  <div id="notice-empty" class="carousel-item w-full justify-center items-center py-4 hidden">
+                    <i class="fa-solid fa-info-circle text-gray-400 mr-1"></i>
+                    <span class="text-gray-500 text-xs">등록된 공지사항이 없습니다.</span>
+                  </div>
+                  <!-- 동적으로 공지사항 아이템 추가됨 -->
+                </div>
+
+                <!-- 다음 버튼 -->
+                <button class="btn btn-circle btn-xs btn-ghost flex-shrink-0" id="notice-next" title="다음 공지">
+                  <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+              </div>
+
+              <!-- 인디케이터 (점) -->
+              <div class="flex w-full justify-center gap-1 py-1 mt-2" id="notice-indicators">
+                <!-- 동적으로 생성 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- 서버 통계 Summary 섹션 -->
     <section id="summary-section" class="mb-8">
@@ -167,48 +218,6 @@
       </div>
     </section>
 
-    <!-- 공지사항 섹션 (DaisyUI Carousel) -->
-    <section class="card bg-white shadow-sm mb-8" id="notice-section">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <!-- 이전 버튼 -->
-          <button class="btn btn-circle btn-sm btn-ghost" id="notice-prev" title="이전 공지">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-
-          <!-- DaisyUI Carousel -->
-          <div class="carousel carousel-center w-full rounded-box" id="notice-carousel">
-            <!-- 로딩 상태 -->
-            <div id="notice-loading" class="carousel-item w-full justify-center items-center py-6">
-              <span class="loading loading-spinner loading-md text-primary"></span>
-              <span class="ml-3 text-gray-500">공지사항 불러오는 중...</span>
-            </div>
-            <!-- 공지사항 없음 -->
-            <div id="notice-empty" class="carousel-item w-full justify-center items-center py-6 hidden">
-              <i class="fa-solid fa-info-circle text-gray-400 text-xl mr-2"></i>
-              <span class="text-gray-500">등록된 공지사항이 없습니다.</span>
-            </div>
-            <!-- 동적으로 공지사항 아이템 추가됨 -->
-          </div>
-
-          <!-- 다음 버튼 -->
-          <button class="btn btn-circle btn-sm btn-ghost" id="notice-next" title="다음 공지">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-
-          <!-- 전체 보기 버튼 -->
-          <a href="/notice-management" class="btn btn-primary btn-sm whitespace-nowrap">
-            <i class="fa-solid fa-list mr-1"></i>
-            전체 보기
-          </a>
-        </div>
-
-        <!-- 인디케이터 (점) -->
-        <div class="flex w-full justify-center gap-2 py-2 mt-2" id="notice-indicators">
-          <!-- 동적으로 생성 -->
-        </div>
-      </div>
-    </section>
 
     <!-- Dev Tools 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
