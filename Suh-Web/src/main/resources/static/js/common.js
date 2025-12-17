@@ -611,8 +611,96 @@ function renderCommitLogTable(logs, tableId = 'commitLogTable') {
 //   if ($('#main-content').hasClass('grass-planter-dashboard')) {
 //     $('.ui.dropdown').dropdown();
 //     $('.ui.checkbox').checkbox();
-//     
+//
 //     // 페이지 로드 시 커밋 로그 로드
 //     loadCommitLogs();
 //   }
 // });
+
+// ==========================================
+// 로그인 상태 확인 및 헤더 버튼 제어
+// ==========================================
+
+/**
+ * 로그인 상태 확인 및 헤더 메뉴 업데이트
+ * JSESSIONID 쿠키와 API 호출을 통해 로그인 여부 확인
+ */
+function updateLoginButtons() {
+  const sessionId = getCookieValue('JSESSIONID');
+
+  // JSESSIONID가 없으면 100% 비로그인
+  if (!sessionId) {
+    showGuestButtons();
+    return;
+  }
+
+  // JSESSIONID가 있으면 API로 재확인
+  verifyLoginStatus();
+}
+
+/**
+ * API 호출로 로그인 상태 검증
+ */
+function verifyLoginStatus() {
+  var formData = new FormData();
+  $.ajax({
+    url: '/api/member/client-hash',
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      // API 호출 성공 = 로그인 상태
+      showAuthButtons();
+    },
+    error: function(xhr) {
+      // API 호출 실패 = 비로그인 상태 (401, 403 등)
+      showGuestButtons();
+    }
+  });
+}
+
+/**
+ * 쿠키 값 가져오기
+ * @param {string} name - 쿠키 이름
+ * @returns {string|null} 쿠키 값 또는 null
+ */
+function getCookieValue(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop().split(';').shift();
+  }
+  return null;
+}
+
+/**
+ * 로그인 상태 버튼 표시 (로그아웃 버튼 보이기)
+ */
+function showAuthButtons() {
+  // Desktop
+  $('#login-btn-desktop').hide();
+  $('#logout-btn-desktop').show();
+
+  // Mobile
+  $('#login-btn-mobile').hide();
+  $('#logout-btn-mobile').show();
+}
+
+/**
+ * 비로그인 상태 버튼 표시 (로그인 버튼 보이기)
+ */
+function showGuestButtons() {
+  // Desktop
+  $('#login-btn-desktop').show();
+  $('#logout-btn-desktop').hide();
+
+  // Mobile
+  $('#login-btn-mobile').show();
+  $('#logout-btn-mobile').hide();
+}
+
+// 페이지 로드 시 로그인 상태 확인 (기존 $(function(){}) 블록에 추가)
+$(function() {
+  updateLoginButtons();
+});
