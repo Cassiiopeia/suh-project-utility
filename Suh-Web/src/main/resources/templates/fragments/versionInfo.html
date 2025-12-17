@@ -62,7 +62,7 @@
       </div>
 
           <!-- 메인 버전 정보 아코디언 -->
-      <div id="${contentId}" class="ui styled fluid accordion ${moduleTypeLower}-main-accordion" style="display: none;"></div>
+      <div id="${contentId}" class="ui styled fluid accordion ${moduleTypeLower}-main-accordion hidden"></div>
       `
       ;
 
@@ -394,7 +394,7 @@
 
             item.innerHTML = `
         <div class="content">
-          <div class="header" style="margin-bottom: 5px;">
+          <div class="header mb-1">
             <i class="${iconName} icon"></i>
             ${update.updateTitle}
           </div>

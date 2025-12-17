@@ -383,6 +383,20 @@ html, body, button, input, select, textarea {
   display: none !important;
 }
 
+/* 버전 배지 스타일 (CSP 준수) */
+.version-badge {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+}
+
+/* 다크모드 버전 배지 스타일 */
+[data-theme="dark"] .version-badge {
+  background-color: #0c4a6e !important;
+  color: #7dd3fc !important;
+  border: 1px solid #075985 !important;
+}
+
 /* Figma 로고 스타일 */
 .figma-logo {
   width: 24px;
@@ -2042,187 +2056,88 @@ input:focus, textarea:focus, select:focus {
 
 /*
 ===========================
-   Notice Carousel Styles
+   Notice Section Styles (슬라이드 카드)
 ===========================
 */
 
-/* Carousel 컨테이너 스크롤 스타일 */
-#notice-carousel {
-  scroll-behavior: smooth;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE, Edge */
+/* 공지사항 카드 컨테이너 */
+.notice-cards-container {
+  position: relative;
+  overflow: hidden;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease;
 }
 
-#notice-carousel::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+.notice-cards-container:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Carousel 아이템 */
-.notice-carousel-item {
-  scroll-snap-align: center;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  min-height: 100px;
-}
+/* 슬라이드 카드 */
+.notice-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
 
-/* Hover 효과 - 부드러운 확대 */
-.notice-carousel-item:hover {
-  transform: scale(1.02);
-  opacity: 0.95;
-}
+  /* 초기 위치: 아래 대기 */
+  transform: translateY(100%);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
-/* 클릭 가능함을 나타내는 커서 */
-.notice-carousel-item {
-  cursor: pointer;
-}
-
-/* 인디케이터 버튼 */
-#notice-indicators button {
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#notice-indicators button:hover {
-  transform: scale(1.2);
-  opacity: 0.8;
-}
-
-/* 네비게이션 버튼 */
-#notice-prev,
-#notice-next {
-  transition: all 0.2s ease;
-}
-
-#notice-prev:hover,
-#notice-next:hover {
-  transform: scale(1.1);
-  background-color: rgba(59, 130, 246, 0.1);
-}
-
-/* 다크모드 대응 */
-[data-theme="dark"] #notice-section {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .notice-carousel-item {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .notice-carousel-item .text-gray-500 {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] #notice-prev,
-[data-theme="dark"] #notice-next {
-  background-color: rgba(55, 65, 81, 0.5) !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] #notice-prev:hover,
-[data-theme="dark"] #notice-next:hover {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-/* 로딩 스피너 */
-#notice-loading .loading-spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* 페이드 인 애니메이션 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.notice-carousel-item {
-  animation: fadeIn 0.5s ease;
-}
-
-/* 공지사항 캐러셀 - 두 줄 버전 */
-#notice-carousel {
-  scroll-behavior: smooth;
-  max-height: 3rem; /* 48px - 두 줄 */
-}
-
-.notice-carousel-item {
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 0.875rem; /* 14px */
   color: #374151;
-  min-height: 3rem;
+  cursor: pointer;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.notice-carousel-item:hover {
-  background-color: rgba(59, 130, 246, 0.05);
+/* 활성 카드 (화면에 표시) */
+.notice-card.active {
+  transform: translateY(0);
+  z-index: 2;
 }
 
-.notice-carousel-item:hover > div:first-child {
+/* 종료 카드 (위로 사라짐) */
+.notice-card.exit {
+  transform: translateY(-100%);
+  z-index: 1;
+}
+
+/* 호버 효과 */
+.notice-card:hover {
   color: #3b82f6;
 }
 
-/* 인디케이터 - 최소 크기 */
-#notice-indicators button {
-  width: 0.25rem; /* 4px */
-  height: 0.25rem;
-  border-radius: 50%;
-  background-color: #d1d5db;
-  transition: all 0.2s;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-}
-
-#notice-indicators button.bg-primary {
-  background-color: #3b82f6;
-  width: 0.75rem; /* 12px - 활성 시 */
-  border-radius: 0.125rem;
-}
-
 /* 다크모드 */
-[data-theme="dark"] .notice-carousel-item {
+[data-theme="dark"] .notice-cards-container {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+[data-theme="dark"] .notice-card {
   color: #e5e7eb;
 }
 
-[data-theme="dark"] .notice-carousel-item:hover {
-  background-color: rgba(96, 165, 250, 0.1);
-}
-
-[data-theme="dark"] .notice-carousel-item:hover > div:first-child {
+[data-theme="dark"] .notice-card:hover {
   color: #60a5fa;
-}
-
-[data-theme="dark"] #notice-indicators button {
-  background-color: #4b5563;
-}
-
-[data-theme="dark"] #notice-indicators button.bg-primary {
-  background-color: #60a5fa;
 }
 
 /* 반응형 - 모바일 */
 @media (max-width: 640px) {
-  .notice-carousel-item {
-    padding: 0.25rem;
+  .notice-cards-container {
+    height: 3rem !important; /* 48px */
   }
 
-  .notice-carousel-item > div {
-    font-size: 0.7rem; /* 11px */
+  .notice-card {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem; /* 13px */
   }
 }
 
