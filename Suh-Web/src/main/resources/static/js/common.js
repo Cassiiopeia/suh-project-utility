@@ -618,46 +618,23 @@ function renderCommitLogTable(logs, tableId = 'commitLogTable') {
 // });
 
 // ==========================================
-// 로그인 상태 확인 및 헤더 버튼 제어
+// 로그인 상태 확인 및 헤더 메뉴 제어
 // ==========================================
 
 /**
  * 로그인 상태 확인 및 헤더 메뉴 업데이트
- * JSESSIONID 쿠키와 API 호출을 통해 로그인 여부 확인
+ * JSESSIONID 쿠키로 로그인 여부 판단
  */
-function updateLoginButtons() {
-  const sessionId = getCookieValue('JSESSIONID');
+function updateHeaderMenu() {
+  const sessionId = getCookie('JSESSIONID');
 
-  // JSESSIONID가 없으면 100% 비로그인
-  if (!sessionId) {
-    showGuestButtons();
-    return;
+  if (sessionId) {
+    // 로그인 상태
+    showAuthMenu();
+  } else {
+    // 비로그인 상태
+    showGuestMenu();
   }
-
-  // JSESSIONID가 있으면 API로 재확인
-  verifyLoginStatus();
-}
-
-/**
- * API 호출로 로그인 상태 검증
- */
-function verifyLoginStatus() {
-  var formData = new FormData();
-  $.ajax({
-    url: '/api/member/client-hash',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function(response) {
-      // API 호출 성공 = 로그인 상태
-      showAuthButtons();
-    },
-    error: function(xhr) {
-      // API 호출 실패 = 비로그인 상태 (401, 403 등)
-      showGuestButtons();
-    }
-  });
 }
 
 /**
@@ -665,7 +642,7 @@ function verifyLoginStatus() {
  * @param {string} name - 쿠키 이름
  * @returns {string|null} 쿠키 값 또는 null
  */
-function getCookieValue(name) {
+function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
@@ -675,32 +652,40 @@ function getCookieValue(name) {
 }
 
 /**
- * 로그인 상태 버튼 표시 (로그아웃 버튼 보이기)
+ * 로그인 상태 메뉴 표시
  */
-function showAuthButtons() {
-  // Desktop
-  $('#login-btn-desktop').hide();
-  $('#logout-btn-desktop').show();
+function showAuthMenu() {
+  // Desktop: 대시보드, 더보기 표시
+  $('#dashboard-desktop').show();
+  $('#more-dropdown-desktop').show();
 
-  // Mobile
-  $('#login-btn-mobile').hide();
-  $('#logout-btn-mobile').show();
+  // Desktop 햄버거: 로그아웃 표시, 로그인 숨김
+  $('#logout-item-desktop').show();
+  $('#login-item-desktop').hide();
+
+  // Mobile 햄버거: 로그아웃 표시, 로그인 숨김
+  $('#logout-item-mobile').show();
+  $('#login-item-mobile').hide();
 }
 
 /**
- * 비로그인 상태 버튼 표시 (로그인 버튼 보이기)
+ * 비로그인 상태 메뉴 표시
  */
-function showGuestButtons() {
-  // Desktop
-  $('#login-btn-desktop').show();
-  $('#logout-btn-desktop').hide();
+function showGuestMenu() {
+  // Desktop: 대시보드, 더보기 숨김
+  $('#dashboard-desktop').hide();
+  $('#more-dropdown-desktop').hide();
 
-  // Mobile
-  $('#login-btn-mobile').show();
-  $('#logout-btn-mobile').hide();
+  // Desktop 햄버거: 로그인 표시, 로그아웃 숨김
+  $('#logout-item-desktop').hide();
+  $('#login-item-desktop').show();
+
+  // Mobile 햄버거: 로그인 표시, 로그아웃 숨김
+  $('#logout-item-mobile').hide();
+  $('#login-item-mobile').show();
 }
 
-// 페이지 로드 시 로그인 상태 확인 (기존 $(function(){}) 블록에 추가)
+// 페이지 로드 시 로그인 상태 확인
 $(function() {
-  updateLoginButtons();
+  updateHeaderMenu();
 });
