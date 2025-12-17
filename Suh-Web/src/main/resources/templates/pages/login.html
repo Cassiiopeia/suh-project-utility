@@ -35,12 +35,12 @@
 
       <!-- 개발자 프로필 배지 + 버전 배지 -->
       <div class="text-center flex justify-center gap-2 flex-wrap">
-        <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity">
-          <i class="fa-solid fa-user-circle"></i>
+        <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer">
+          <i class="fa-solid fa-arrow-pointer"></i>
           ABOUT ME
         </a>
-        <button onclick="openChangelogModal()" class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer" style="background-color: #e9d5ff; color: #7c3aed; border: none;">
-          <i class="fa-solid fa-code-branch"></i>
+        <button onclick="openChangelogModal()" class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer" style="background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">
+          <i class="fa-solid fa-tag"></i>
           <span id="version-tag">v1.0.0</span>
         </button>
       </div>
@@ -50,7 +50,7 @@
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 
         <!-- 아이디 입력 -->
-        <div class="form-control">
+        <div class="form-control -mb-2">
           <label class="label">
             <span class="label-text font-medium">Username</span>
           </label>

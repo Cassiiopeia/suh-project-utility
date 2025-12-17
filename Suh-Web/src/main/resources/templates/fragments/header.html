@@ -52,8 +52,19 @@
     <div class="navbar-start">
       <a href="/dashboard" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
         <img src="/images/logo_no_text.png" alt="로고" class="h-8 w-8">
-        <span class="text-lg font-bold text-gray-800">SAECHAN LAB</span>
+        <!-- 데스크탑: SAECHAN LAB -->
+        <span class="hidden lg:inline text-lg font-bold text-gray-800">SAECHAN LAB</span>
+        <!-- 모바일: S-LAB -->
+        <span class="lg:hidden text-lg font-bold text-gray-800">S-LAB</span>
       </a>
+
+      <!-- 버전 태그 (모든 화면 크기에서 표시) -->
+      <button onclick="openChangelogModal()"
+              class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer ml-2"
+              style="background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">
+        <i class="fa-solid fa-tag"></i>
+        <span id="header-version-tag">v1.0.0</span>
+      </button>
     </div>
 
     <div class="navbar-end">
@@ -167,4 +178,157 @@
   </div>
   <!-- 헤더 아래 여백 -->
   <div class="h-16"></div>
+
+  <!-- Changelog 모달 (모든 페이지에서 사용 가능) -->
+  <dialog id="changelog-modal" class="modal">
+    <div class="modal-box max-w-lg bg-base-100">
+      <!-- 모달 헤더 -->
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-tag text-primary text-xl"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-lg">Changelog</h3>
+          <p class="text-sm text-gray-500">SUH Project Utility</p>
+        </div>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- 최신 버전 정보 -->
+      <div id="changelog-content" class="space-y-4">
+        <!-- 로딩 스켈레톤 -->
+        <div id="changelog-loading" class="space-y-3">
+          <div class="skeleton h-6 w-32"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-3/4"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+        </div>
+
+        <!-- 실제 컨텐츠 (JS로 채움) -->
+        <div id="changelog-data" class="hidden">
+          <!-- 버전 헤더 -->
+          <div class="flex items-center gap-2 mb-3">
+            <span id="changelog-version" class="font-bold text-lg">v1.4.6</span>
+            <span class="badge badge-soft badge-success text-xs">Latest</span>
+            <span id="changelog-date" class="text-sm text-gray-500">2025-12-13</span>
+          </div>
+
+          <!-- 변경사항 목록 -->
+          <ul id="changelog-items" class="space-y-2 text-sm text-gray-700">
+            <!-- JS로 채워짐 -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- 모달 푸터 -->
+      <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+        <span id="changelog-updated" class="text-xs text-gray-400">Last updated: -</span>
+        <a href="https://github.com/Cassiiopeia/suh-project-utility/blob/main/CHANGELOG.md"
+           target="_blank"
+           class="text-sm text-primary hover:underline flex items-center gap-1">
+          View on GitHub
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <!-- Changelog 관련 JavaScript -->
+  <script th:inline="javascript">
+    // 헤더 버전 정보 로드 (페이지 로드 시)
+    document.addEventListener('DOMContentLoaded', function() {
+      loadHeaderVersion();
+    });
+
+    function loadHeaderVersion() {
+      fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
+        .then(response => response.json())
+        .then(data => {
+          const versionTag = document.getElementById('header-version-tag');
+          if (versionTag && data.metadata && data.metadata.currentVersion) {
+            versionTag.textContent = 'v' + data.metadata.currentVersion;
+          }
+        })
+        .catch(error => console.error('헤더 버전 정보 로드 실패:', error));
+    }
+
+    // Changelog 모달 열기
+    function openChangelogModal() {
+      const modal = document.getElementById('changelog-modal');
+      if (modal) {
+        modal.showModal();
+        loadChangelog();
+      }
+    }
+
+    // Changelog 데이터 로드
+    function loadChangelog() {
+      const loadingEl = document.getElementById('changelog-loading');
+      const dataEl = document.getElementById('changelog-data');
+
+      // 이미 로드된 경우 스킵
+      if (!dataEl.classList.contains('hidden')) return;
+
+      // GitHub raw URL에서 CHANGELOG.json 가져오기
+      fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
+        .then(response => response.json())
+        .then(data => {
+          renderChangelog(data);
+          loadingEl.classList.add('hidden');
+          dataEl.classList.remove('hidden');
+        })
+        .catch(error => {
+          console.error('Changelog 로드 실패:', error);
+          loadingEl.innerHTML = `
+            <div class="text-center text-gray-500">
+              <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
+              <p>변경 이력을 불러올 수 없습니다.</p>
+            </div>
+          `;
+        });
+    }
+
+    // Changelog 데이터 렌더링
+    function renderChangelog(data) {
+      const latestRelease = data.releases[0];
+      const metadata = data.metadata;
+
+      // 버전 정보
+      document.getElementById('changelog-version').textContent = 'v' + latestRelease.version;
+      document.getElementById('changelog-date').textContent = latestRelease.date;
+
+      // 마지막 업데이트
+      const lastUpdated = new Date(metadata.lastUpdated);
+      document.getElementById('changelog-updated').textContent =
+        'Last updated: ' + lastUpdated.toLocaleDateString('ko-KR');
+
+      // 변경사항 목록
+      const itemsEl = document.getElementById('changelog-items');
+      itemsEl.innerHTML = '';
+
+      // parsed_changes에서 아이템 추출
+      const changes = latestRelease.parsed_changes;
+      for (const category in changes) {
+        const categoryData = changes[category];
+        if (categoryData.items && categoryData.items.length > 0) {
+          categoryData.items.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'flex items-start gap-2';
+            li.innerHTML = `
+              <span class="text-primary mt-1">•</span>
+              <span>${item}</span>
+            `;
+            itemsEl.appendChild(li);
+          });
+        }
+      }
+    }
+  </script>
 </div>

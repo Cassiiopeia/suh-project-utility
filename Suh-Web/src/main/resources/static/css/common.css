@@ -2155,83 +2155,99 @@ input:focus, textarea:focus, select:focus {
   animation: fadeIn 0.5s ease;
 }
 
-/* 공지사항 섹션 카드 높이 조정 */
-#notice-section {
-  min-height: 160px;
+/* 공지사항 캐러셀 - 두 줄 버전 */
+#notice-carousel {
+  scroll-behavior: smooth;
+  max-height: 3rem; /* 48px - 두 줄 */
 }
 
-#notice-section .card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* 공지사항 카드 내 "전체 보기" 버튼 스타일 */
-#notice-section .absolute.top-3.right-3 {
-  font-size: 0.75rem;
-  font-weight: 500;
+.notice-carousel-item {
+  cursor: pointer;
   transition: all 0.2s ease;
-  text-decoration: none;
+  color: #374151;
+  min-height: 3rem;
 }
 
-#notice-section .absolute.top-3.right-3:hover {
-  color: #3b82f6 !important;
-  transform: translateX(2px);
+.notice-carousel-item:hover {
+  background-color: rgba(59, 130, 246, 0.05);
 }
 
-[data-theme="dark"] #notice-section .absolute.top-3.right-3 {
-  color: #9ca3af !important;
+.notice-carousel-item:hover > div:first-child {
+  color: #3b82f6;
 }
 
-[data-theme="dark"] #notice-section .absolute.top-3.right-3:hover {
-  color: #60a5fa !important;
+/* 인디케이터 - 최소 크기 */
+#notice-indicators button {
+  width: 0.25rem; /* 4px */
+  height: 0.25rem;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  transition: all 0.2s;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+#notice-indicators button.bg-primary {
+  background-color: #3b82f6;
+  width: 0.75rem; /* 12px - 활성 시 */
+  border-radius: 0.125rem;
+}
+
+/* 다크모드 */
+[data-theme="dark"] .notice-carousel-item {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .notice-carousel-item:hover {
+  background-color: rgba(96, 165, 250, 0.1);
+}
+
+[data-theme="dark"] .notice-carousel-item:hover > div:first-child {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] #notice-indicators button {
+  background-color: #4b5563;
+}
+
+[data-theme="dark"] #notice-indicators button.bg-primary {
+  background-color: #60a5fa;
 }
 
 /* 반응형 - 모바일 */
 @media (max-width: 640px) {
   .notice-carousel-item {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 0.25rem;
   }
 
-  .notice-carousel-item h3 {
-    font-size: 0.875rem;
-  }
-
-  .notice-carousel-item .text-sm {
-    font-size: 0.75rem;
-  }
-
-  #notice-indicators button {
-    width: 0.5rem;
-    height: 0.5rem;
-  }
-
-  #notice-indicators button.bg-primary {
-    width: 1.25rem;
-  }
-
-  /* 모바일에서 공지사항 카드 높이 조정 */
-  #notice-section {
-    min-height: 140px;
-  }
-
-  /* 모바일에서 "전체 보기" 버튼 크기 유지 */
-  #notice-section .absolute.top-3.right-3 {
-    font-size: 0.7rem;
+  .notice-carousel-item > div {
+    font-size: 0.7rem; /* 11px */
   }
 }
 
-/* 태블릿 및 데스크탑 - 헤더와 공지사항 Grid 레이아웃 */
-@media (min-width: 1024px) {
-  /* 공지사항 카드가 헤더 옆에 위치할 때 높이 조정 */
-  #notice-section {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+/*
+===========================
+   버전 태그 하늘색 스타일
+===========================
+*/
 
-  #notice-section .card-body {
-    flex: 1;
-  }
+/* 하늘색 버전 태그 라이트모드 (인라인 스타일 사용 중이므로 백업용) */
+.badge-sky {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+}
+
+/* 하늘색 버전 태그 다크모드 */
+[data-theme="dark"] button[style*="background-color: #e0f2fe"],
+[data-theme="dark"] .badge-sky {
+  background-color: rgba(14, 165, 233, 0.2) !important;
+  color: #7dd3fc !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+}
+
+/* 헤더 버전 태그 다크모드 호버 */
+[data-theme="dark"] .navbar button[style*="#e0f2fe"]:hover {
+  opacity: 0.8 !important;
 }
