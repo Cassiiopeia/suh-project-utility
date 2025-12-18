@@ -423,19 +423,52 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 - **분기점**: 모바일(~767px), 태블릿(768px~991px), 데스크탑(992px~)
 - **미디어 쿼리**: 화면 크기별 최적화
 
-### 다크모드 지원 ⚠️ 중요
-- **테마 전환**: DaisyUI `data-theme="dark"` 속성 사용
-- **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
-- **초기화**: `common.js`의 `initTheme()` 함수에서 자동 처리
-- **CSS 스타일 추가 시**: `common.css`의 `[data-theme="dark"]` 셀렉터로 오버라이드
+### 다크모드/라이트모드 CSS 관리 ⚠️ 중요
+
+#### common.css 파일 구조
+```
+1-175      : CSS 변수, badge-soft (Light/Dark 함께)
+176-828    : 컴포넌트별 스타일
+829-974    : Light Mode Override Styles
+975-1012   : Validator, Print Styles
+1013-끝    : Dark Mode Override Styles
+```
+
+#### 새 컴포넌트 스타일 추가 시
+1. **컴포넌트 섹션에 기본 스타일 추가** (176-828줄 사이)
+2. **라이트모드 오버라이드 필요시** → "Light Mode Override Styles" 섹션에 추가
+3. **다크모드 오버라이드** → "Dark Mode Override Styles" 섹션에 추가
+
+#### 셀렉터 패턴
 ```css
-/* 다크모드 스타일 추가 예시 */
+/* 라이트모드 (3가지 셀렉터 사용) */
+:root:not([data-theme="dark"]) .my-component,
+html:not([data-theme="dark"]) .my-component,
+[data-theme="light"] .my-component {
+  background-color: #ffffff !important;
+}
+
+/* 다크모드 */
 [data-theme="dark"] .my-component {
   background-color: #1f2937 !important;
-  color: #e5e7eb !important;
 }
 ```
-- **하드코딩 배경색 주의**: `bg-gradient-to-br from-slate-50 to-blue-50` 같은 Tailwind 클래스는 다크모드에서 자동 변환 안 됨 → CSS 오버라이드 필수
+
+#### 충돌 방지 규칙
+- **같은 속성을 여러 곳에 정의하지 말 것** (중복 정의 금지)
+- **badge-soft 등 색상별 스타일**: 파일 상단에 Light/Dark 함께 정의
+- **Tailwind 배경색 (`bg-white`, `bg-gray-50`)**: 다크모드에서 자동 변환 안 됨 → CSS 오버라이드 필수
+
+#### 테마 전환 시스템
+- **속성**: `data-theme="dark"` / `data-theme="light"`
+- **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
+- **초기화**: `common.js`의 `initTheme()` 함수
+
+### DaisyUI 4.x 버튼 스타일 ⚠️ 중요
+- **CDN 버전**: DaisyUI 4.12.14 사용 중
+- **btn-primary 색상 문제**: DaisyUI 4.x에서 CSS 변수 형식 변경으로 `btn-primary`가 투명하게 보일 수 있음
+- **해결책**: `common.css`에 직접 스타일 정의됨 (파란색 #3b82f6)
+- **새 버튼 스타일 추가 시**: `common.css`에 직접 배경색/테두리색 지정 필수
 
 ## 빌드 및 실행
 

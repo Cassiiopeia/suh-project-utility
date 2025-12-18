@@ -2,9 +2,233 @@
 
 /*
 ===========================================
-COMMON.CSS - Tailwind + DaisyUI 호환 스타일
+COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 ===========================================
 */
+
+/*
+===========================
+   DaisyUI 5 Primary 색상 오버라이드 (파란색)
+===========================
+*/
+:root,
+[data-theme="light"] {
+  --color-primary: oklch(59.12% 0.2 255);
+  --color-primary-content: oklch(100% 0 0);
+}
+
+[data-theme="dark"] {
+  --color-primary: oklch(65% 0.2 255);
+  --color-primary-content: oklch(100% 0 0);
+}
+
+/*
+===========================
+   DaisyUI 5 btn-primary 파란색 스타일
+===========================
+*/
+.btn-primary {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .btn-primary {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #60a5fa !important;
+  border-color: #60a5fa !important;
+}
+
+/*
+===========================
+   badge-soft badge-primary 파란색 스타일
+===========================
+*/
+
+/* Light 모드 - badge-soft badge-primary */
+:root:not([data-theme="dark"]) .badge-soft.badge-primary,
+html:not([data-theme="dark"]) .badge-soft.badge-primary,
+[data-theme="light"] .badge-soft.badge-primary {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #2563eb !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-primary */
+[data-theme="dark"] .badge-soft.badge-primary {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  color: #60a5fa !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Light 모드 - badge-soft badge-secondary */
+:root:not([data-theme="dark"]) .badge-soft.badge-secondary,
+html:not([data-theme="dark"]) .badge-soft.badge-secondary,
+[data-theme="light"] .badge-soft.badge-secondary {
+  background-color: rgba(107, 114, 128, 0.15) !important;
+  color: #4b5563 !important;
+  border-color: rgba(107, 114, 128, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-secondary */
+[data-theme="dark"] .badge-soft.badge-secondary {
+  background-color: rgba(156, 163, 175, 0.2) !important;
+  color: #9ca3af !important;
+  border-color: rgba(156, 163, 175, 0.3) !important;
+}
+
+/* Light 모드 - badge-soft badge-accent */
+:root:not([data-theme="dark"]) .badge-soft.badge-accent,
+html:not([data-theme="dark"]) .badge-soft.badge-accent,
+[data-theme="light"] .badge-soft.badge-accent {
+  background-color: rgba(20, 184, 166, 0.15) !important;
+  color: #0d9488 !important;
+  border-color: rgba(20, 184, 166, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-accent */
+[data-theme="dark"] .badge-soft.badge-accent {
+  background-color: rgba(20, 184, 166, 0.2) !important;
+  color: #2dd4bf !important;
+  border-color: rgba(20, 184, 166, 0.3) !important;
+}
+
+/* Light 모드 - badge-soft badge-success */
+:root:not([data-theme="dark"]) .badge-soft.badge-success,
+html:not([data-theme="dark"]) .badge-soft.badge-success,
+[data-theme="light"] .badge-soft.badge-success {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  color: #16a34a !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-success */
+[data-theme="dark"] .badge-soft.badge-success {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+  color: #4ade80 !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Light 모드 - badge-soft badge-info */
+:root:not([data-theme="dark"]) .badge-soft.badge-info,
+html:not([data-theme="dark"]) .badge-soft.badge-info,
+[data-theme="light"] .badge-soft.badge-info {
+  background-color: rgba(6, 182, 212, 0.15) !important;
+  color: #0891b2 !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-info */
+[data-theme="dark"] .badge-soft.badge-info {
+  background-color: rgba(6, 182, 212, 0.2) !important;
+  color: #22d3ee !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Light 모드 - badge-soft badge-warning */
+:root:not([data-theme="dark"]) .badge-soft.badge-warning,
+html:not([data-theme="dark"]) .badge-soft.badge-warning,
+[data-theme="light"] .badge-soft.badge-warning {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #d97706 !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-warning */
+[data-theme="dark"] .badge-soft.badge-warning {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Light 모드 - badge-soft badge-error */
+:root:not([data-theme="dark"]) .badge-soft.badge-error,
+html:not([data-theme="dark"]) .badge-soft.badge-error,
+[data-theme="light"] .badge-soft.badge-error {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #dc2626 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Dark 모드 - badge-soft badge-error */
+[data-theme="dark"] .badge-soft.badge-error {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/*
+===========================
+   Badge 기본 스타일 오버라이드 (DaisyUI 5 호환)
+===========================
+*/
+
+/* badge 기본 패딩 보장 */
+.badge {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  padding-top: 0.125rem !important;
+  padding-bottom: 0.125rem !important;
+  min-height: 1.25rem !important;
+  line-height: 1 !important;
+}
+
+/* badge-xs 크기 보장 */
+.badge-xs {
+  padding-left: 0.375rem !important;
+  padding-right: 0.375rem !important;
+  padding-top: 0.0625rem !important;
+  padding-bottom: 0.0625rem !important;
+  font-size: 0.65rem !important;
+  height: auto !important;
+  min-height: 1rem !important;
+}
+
+/* badge-sm 크기 */
+.badge-sm {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  padding-top: 0.125rem !important;
+  padding-bottom: 0.125rem !important;
+  font-size: 0.75rem !important;
+  min-height: 1.25rem !important;
+}
+
+/* badge-ghost 스타일 (Light 모드) */
+:root:not([data-theme="dark"]) .badge-ghost,
+html:not([data-theme="dark"]) .badge-ghost,
+[data-theme="light"] .badge-ghost {
+  background-color: rgba(107, 114, 128, 0.1) !important;
+  border: 1px solid rgba(107, 114, 128, 0.2) !important;
+  color: #6b7280 !important;
+}
+
+/* badge-ghost 스타일 (Dark 모드) */
+[data-theme="dark"] .badge-ghost {
+  background-color: rgba(156, 163, 175, 0.15) !important;
+  border: 1px solid rgba(156, 163, 175, 0.25) !important;
+  color: #9ca3af !important;
+}
+
+/* badge-outline 스타일 (Light 모드) */
+:root:not([data-theme="dark"]) .badge-outline,
+html:not([data-theme="dark"]) .badge-outline,
+[data-theme="light"] .badge-outline {
+  background-color: transparent !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+}
+
+/* badge-outline 스타일 (Dark 모드) */
+[data-theme="dark"] .badge-outline {
+  background-color: transparent !important;
+  border: 1px solid #6b7280 !important;
+  color: #e5e7eb !important;
+}
 
 /* Pretendard 폰트 적용 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css");
@@ -647,6 +871,193 @@ input:focus, textarea:focus, select:focus {
 
 /*
 ===========================
+   Button Circle Min Size
+===========================
+*/
+
+/* btn-circle btn-xs 최소 크기 보장 */
+.btn-circle.btn-xs {
+  min-width: 1.5rem !important;
+  min-height: 1.5rem !important;
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  padding: 0 !important;
+}
+
+/* btn-circle btn-sm 최소 크기 보장 */
+.btn-circle.btn-sm {
+  min-width: 2rem !important;
+  min-height: 2rem !important;
+  width: 2rem !important;
+  height: 2rem !important;
+  padding: 0 !important;
+}
+
+/*
+===========================
+   Light Mode Override Styles
+===========================
+*/
+
+/* 라이트모드 - navbar 배경색 및 텍스트 색상 */
+:root:not([data-theme="dark"]) .navbar,
+html:not([data-theme="dark"]) .navbar,
+[data-theme="light"] .navbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+:root:not([data-theme="dark"]) .navbar a,
+:root:not([data-theme="dark"]) .navbar span,
+:root:not([data-theme="dark"]) .navbar .btn-ghost,
+html:not([data-theme="dark"]) .navbar a,
+html:not([data-theme="dark"]) .navbar span,
+html:not([data-theme="dark"]) .navbar .btn-ghost,
+[data-theme="light"] .navbar a,
+[data-theme="light"] .navbar span,
+[data-theme="light"] .navbar .btn-ghost {
+  color: #1f2937 !important;
+}
+
+:root:not([data-theme="dark"]) .navbar .btn-ghost:hover,
+html:not([data-theme="dark"]) .navbar .btn-ghost:hover,
+[data-theme="light"] .navbar .btn-ghost:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 라이트모드 - 드롭다운 메뉴 */
+:root:not([data-theme="dark"]) .dropdown-content,
+html:not([data-theme="dark"]) .dropdown-content,
+[data-theme="light"] .dropdown-content {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root:not([data-theme="dark"]) .dropdown-content a,
+html:not([data-theme="dark"]) .dropdown-content a,
+[data-theme="light"] .dropdown-content a {
+  color: #374151 !important;
+}
+
+:root:not([data-theme="dark"]) .dropdown-content a:hover,
+html:not([data-theme="dark"]) .dropdown-content a:hover,
+[data-theme="light"] .dropdown-content a:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* 라이트모드 - 배경색 명시적 스타일 */
+:root:not([data-theme="dark"]) .bg-white,
+html:not([data-theme="dark"]) .bg-white,
+[data-theme="light"] .bg-white {
+  background-color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .bg-base-100,
+html:not([data-theme="dark"]) .bg-base-100,
+[data-theme="light"] .bg-base-100 {
+  background-color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .bg-base-200,
+html:not([data-theme="dark"]) .bg-base-200,
+[data-theme="light"] .bg-base-200 {
+  background-color: #f9fafb !important;
+}
+
+/* 라이트모드 - 카드 스타일 */
+:root:not([data-theme="dark"]) .card,
+html:not([data-theme="dark"]) .card,
+[data-theme="light"] .card {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+:root:not([data-theme="dark"]) .card-body,
+html:not([data-theme="dark"]) .card-body,
+[data-theme="light"] .card-body {
+  color: #1f2937 !important;
+}
+
+/* 라이트모드 - 텍스트 색상 */
+:root:not([data-theme="dark"]) .text-base-content,
+html:not([data-theme="dark"]) .text-base-content,
+[data-theme="light"] .text-base-content {
+  color: #1f2937 !important;
+}
+
+/* 라이트모드 - body 배경 그라데이션 */
+:root:not([data-theme="dark"]) body,
+html:not([data-theme="dark"]) body,
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+}
+
+/* 라이트모드 - 로그인 페이지 그라데이션 유지 */
+:root:not([data-theme="dark"]) body.login-page,
+html:not([data-theme="dark"]) body.login-page,
+[data-theme="light"] body.login-page {
+  background: linear-gradient(to bottom right, #f8fafc, #eff6ff) !important;
+}
+
+/* 라이트모드 - input 스타일 */
+:root:not([data-theme="dark"]) .input,
+:root:not([data-theme="dark"]) .textarea,
+:root:not([data-theme="dark"]) .select,
+html:not([data-theme="dark"]) .input,
+html:not([data-theme="dark"]) .textarea,
+html:not([data-theme="dark"]) .select,
+[data-theme="light"] .input,
+[data-theme="light"] .textarea,
+[data-theme="light"] .select {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1f2937 !important;
+}
+
+:root:not([data-theme="dark"]) .input::placeholder,
+:root:not([data-theme="dark"]) .textarea::placeholder,
+html:not([data-theme="dark"]) .input::placeholder,
+html:not([data-theme="dark"]) .textarea::placeholder,
+[data-theme="light"] .input::placeholder,
+[data-theme="light"] .textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* 라이트모드 - 순수 textarea 요소 스타일 (DaisyUI .textarea 클래스 없이 사용되는 경우) */
+:root:not([data-theme="dark"]) textarea,
+html:not([data-theme="dark"]) textarea,
+[data-theme="light"] textarea {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1f2937 !important;
+}
+
+:root:not([data-theme="dark"]) textarea::placeholder,
+html:not([data-theme="dark"]) textarea::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/*
+===========================
+   Validator Hint Styles
+===========================
+*/
+
+/* validator-hint 기본 숨김 */
+.validator-hint {
+  display: none;
+}
+
+/* 인풋이 invalid일 때만 hint 표시 */
+.validator:invalid ~ .validator-hint,
+.validator:user-invalid ~ .validator-hint {
+  display: block;
+}
+
+/*
+===========================
    Print Styles
 ===========================
 */
@@ -852,23 +1263,15 @@ input:focus, textarea:focus, select:focus {
   fill: #3b82f6;
 }
 
-/* 다크모드 텍스트 색상 오버라이드 */
-[data-theme="dark"] .label-text,
-[data-theme="dark"] .text-gray-700,
-[data-theme="dark"] .text-gray-600,
-[data-theme="dark"] .text-gray-500 {
+/* 다크모드 label-text (text-gray-* 스타일은 파일 끝에 세분화 정의됨) */
+[data-theme="dark"] .label-text {
   color: #e5e7eb !important;
 }
 
-/* 다크모드 badge */
-[data-theme="dark"] .badge {
+/* 다크모드 badge (badge-soft 개별 스타일은 파일 상단에 정의됨) */
+[data-theme="dark"] .badge:not(.badge-soft) {
   background-color: #374151 !important;
   border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .badge-soft {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-  color: #60a5fa !important;
 }
 
 /* 다크모드 모달 */
@@ -898,13 +1301,6 @@ input:focus, textarea:focus, select:focus {
 
 /* 다크모드 divider */
 [data-theme="dark"] .divider {
-  border-color: #4b5563 !important;
-}
-
-/* 다크모드 border 색상 */
-[data-theme="dark"] .border-gray-100,
-[data-theme="dark"] .border-gray-200,
-[data-theme="dark"] .border-gray-300 {
   border-color: #4b5563 !important;
 }
 
@@ -1878,6 +2274,115 @@ input:focus, textarea:focus, select:focus {
 
 /*
 ===========================
+   Light Mode - 명시적 스타일 (DaisyUI 오버라이드)
+===========================
+*/
+
+/* Light 모드 - DaisyUI base 색상 강제 지정 */
+:root:not([data-theme="dark"]) .bg-base-100,
+html:not([data-theme="dark"]) .bg-base-100 {
+  background-color: #ffffff !important;
+}
+
+:root:not([data-theme="dark"]) .bg-base-200,
+html:not([data-theme="dark"]) .bg-base-200 {
+  background-color: #f3f4f6 !important;
+}
+
+:root:not([data-theme="dark"]) .bg-base-300,
+html:not([data-theme="dark"]) .bg-base-300 {
+  background-color: #e5e7eb !important;
+}
+
+/* Light 모드 - card 배경색 명시적 지정 */
+:root:not([data-theme="dark"]) .card,
+html:not([data-theme="dark"]) .card {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+:root:not([data-theme="dark"]) .card.bg-base-100,
+html:not([data-theme="dark"]) .card.bg-base-100 {
+  background-color: #ffffff !important;
+}
+
+/* Light 모드 - 스켈레톤 스타일 */
+:root:not([data-theme="dark"]) .skeleton,
+html:not([data-theme="dark"]) .skeleton {
+  background-color: #e5e7eb !important;
+}
+
+/* Light 모드 - timeline-box 스타일 */
+:root:not([data-theme="dark"]) .timeline-box,
+html:not([data-theme="dark"]) .timeline-box {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+:root:not([data-theme="dark"]) .timeline-box.bg-blue-50,
+html:not([data-theme="dark"]) .timeline-box.bg-blue-50 {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+}
+
+:root:not([data-theme="dark"]) .timeline-box .font-bold,
+html:not([data-theme="dark"]) .timeline-box .font-bold {
+  color: #111827 !important;
+}
+
+:root:not([data-theme="dark"]) .timeline-box .text-sm,
+html:not([data-theme="dark"]) .timeline-box .text-sm {
+  color: #4b5563 !important;
+}
+
+:root:not([data-theme="dark"]) .timeline-box time,
+html:not([data-theme="dark"]) .timeline-box time {
+  color: #6b7280 !important;
+}
+
+/* Light 모드 - input/textarea/select */
+:root:not([data-theme="dark"]) .input,
+:root:not([data-theme="dark"]) .textarea,
+:root:not([data-theme="dark"]) .select,
+html:not([data-theme="dark"]) .input,
+html:not([data-theme="dark"]) .textarea,
+html:not([data-theme="dark"]) .select {
+  background-color: #ffffff !important;
+  border-color: #d1d5db !important;
+  color: #1f2937 !important;
+}
+
+/* Light 모드 - modal */
+:root:not([data-theme="dark"]) .modal-box,
+html:not([data-theme="dark"]) .modal-box {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Light 모드 - dropdown */
+:root:not([data-theme="dark"]) .dropdown-content,
+html:not([data-theme="dark"]) .dropdown-content {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Light 모드 - menu */
+:root:not([data-theme="dark"]) .menu,
+html:not([data-theme="dark"]) .menu {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/* Light 모드 - collapse/accordion */
+:root:not([data-theme="dark"]) .collapse,
+html:not([data-theme="dark"]) .collapse {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+}
+
+/*
+===========================
    다크모드 - 추가 컴포넌트 스타일
 ===========================
 */
@@ -1987,11 +2492,6 @@ input:focus, textarea:focus, select:focus {
   color: #3b82f6 !important;
 }
 
-/* badge ghost 스타일 */
-[data-theme="dark"] .badge-ghost {
-  background-color: rgba(75, 85, 99, 0.3) !important;
-  color: #9ca3af !important;
-}
 
 /*
 ===========================
@@ -2085,9 +2585,10 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   align-items: center;
 
-  /* 초기 위치: 아래 대기 */
+  /* 초기 위치: 아래 대기 + 숨김 */
   transform: translateY(100%);
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  visibility: hidden;
 
   font-size: 0.875rem; /* 14px */
   color: #374151;
@@ -2101,12 +2602,14 @@ input:focus, textarea:focus, select:focus {
 /* 활성 카드 (화면에 표시) */
 .notice-card.active {
   transform: translateY(0);
+  visibility: visible;
   z-index: 2;
 }
 
 /* 종료 카드 (위로 사라짐) */
 .notice-card.exit {
   transform: translateY(-100%);
+  visibility: visible;
   z-index: 1;
 }
 
@@ -2165,4 +2668,158 @@ input:focus, textarea:focus, select:focus {
 /* 헤더 버전 태그 다크모드 호버 */
 [data-theme="dark"] .navbar button[style*="#e0f2fe"]:hover {
   opacity: 0.8 !important;
+}
+
+/*
+===========================
+   bg-white 다크모드 오버라이드
+===========================
+*/
+
+/* bg-white 클래스 다크모드 변환 */
+[data-theme="dark"] .bg-white {
+  background-color: #1f2937 !important;
+}
+
+/* card.bg-white 다크모드 */
+[data-theme="dark"] .card.bg-white {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/* navbar 다크모드 */
+[data-theme="dark"] .navbar.bg-white {
+  background-color: #1f2937 !important;
+  border-bottom-color: #374151 !important;
+}
+
+/* dropdown-content.bg-white 다크모드 */
+[data-theme="dark"] .dropdown-content.bg-white {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+/*
+===========================
+   페이지 배경 다크모드
+===========================
+*/
+
+/* 그라데이션 배경 다크모드 (body 기본 배경은 1138줄에 정의됨) */
+[data-theme="dark"] .bg-gradient-to-br.from-slate-50.to-blue-50,
+[data-theme="dark"] body.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, #111827, #1e293b) !important;
+}
+
+/* login-page 다크모드 배경 */
+[data-theme="dark"] .login-page {
+  background: linear-gradient(to bottom right, #111827, #1e293b) !important;
+}
+
+/*
+===========================
+   텍스트 색상 다크모드 오버라이드
+===========================
+*/
+
+/* 기본 텍스트 색상 */
+[data-theme="dark"] .text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+[data-theme="dark"] .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+[data-theme="dark"] .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+[data-theme="dark"] .text-gray-400 {
+  color: #4b5563 !important;
+}
+
+/*
+===========================
+   테두리 색상 다크모드
+===========================
+*/
+
+[data-theme="dark"] .border-gray-100 {
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .border-gray-300 {
+  border-color: #4b5563 !important;
+}
+
+/*
+===========================
+   ring 색상 다크모드
+===========================
+*/
+
+[data-theme="dark"] .ring-gray-300 {
+  --tw-ring-color: #4b5563 !important;
+}
+
+/*
+===========================
+   호버 배경색 다크모드
+===========================
+*/
+
+[data-theme="dark"] .hover\:bg-gray-100:hover {
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .hover\:bg-blue-50:hover {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .hover\:bg-pink-50:hover {
+  background-color: rgba(236, 72, 153, 0.2) !important;
+}
+
+[data-theme="dark"] .hover\:bg-red-50:hover {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+/*
+===========================
+   섹션 배경색 다크모드
+===========================
+*/
+
+[data-theme="dark"] .bg-gray-50 {
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+/*
+===========================
+   shadow 다크모드
+===========================
+*/
+
+[data-theme="dark"] .shadow-sm,
+[data-theme="dark"] .shadow-md,
+[data-theme="dark"] .shadow-lg,
+[data-theme="dark"] .shadow-xl {
+  --tw-shadow-color: rgba(0, 0, 0, 0.3) !important;
 }

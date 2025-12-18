@@ -1,6 +1,6 @@
 <!-- src/main/resources/templates/pages/dashboard.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='대시보드-SAECHAN-LAB')}"></head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
@@ -1140,10 +1140,10 @@
     <!-- 댓글 작성 폼 -->
     <div class="bg-gray-50 rounded-lg p-4">
       <div class="form-control mb-3">
-        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-bordered input-sm w-full">
+        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-sm w-full">
       </div>
       <div class="form-control mb-3">
-        <textarea id="comment-content" class="textarea textarea-bordered" rows="3" placeholder="댓글을 입력하세요"></textarea>
+        <textarea id="comment-content" class="textarea" rows="3" placeholder="댓글을 입력하세요"></textarea>
       </div>
       <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-pen mr-1"></i> 댓글 작성

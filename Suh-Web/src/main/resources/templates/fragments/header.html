@@ -5,9 +5,27 @@
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title th:text="${title}">Default Title</title>
 
-  <!-- DaisyUI + Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css"/>
+  <!-- 테마 즉시 적용 (FOUC 방지) -->
+  <script>
+    (function() {
+      var theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS + DaisyUI 5 -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/daisyui.css" rel="stylesheet" type="text/css"/>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      corePlugins: { preflight: false }
+    }
+  </script>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
@@ -31,22 +49,21 @@
   <script th:src="@{/js/common.js}"></script>
 </head>
 
-<header th:fragment="header">
+<header th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <div class="navbar bg-white shadow-md sticky top-0 z-50">
     <div class="navbar-start">
       <a href="/" class="flex items-center gap-2 ml-2">
         <!-- 로고 이미지 -->
-        <img th:src="@{/images/logo.png}" alt="Logo" class="w-8 h-8"/>
-        <!-- 텍스트 로고 -->
-        <div class="flex flex-col">
-          <span class="text-xl font-bold text-gray-800">SUH</span>
-          <span class="text-xs text-gray-500 -mt-1">Project Utility</span>
-        </div>
+        <img th:src="@{/images/logo_no_text.png}" alt="Logo" class="w-8 h-8"/>
+        <!-- 텍스트 로고 - 모바일 -->
+        <span class="lg:hidden text-xl font-bold text-gray-800">S.LAB</span>
+        <!-- 텍스트 로고 - 데스크탑 -->
+        <span class="hidden lg:inline text-xl font-bold text-gray-800">SUHSAECHAN LAB</span>
       </a>
 
       <!-- 버전 태그 (모바일: 아이콘만, 데스크탑: 아이콘 + 버전) -->
       <button onclick="openChangelogModal()"
-              class="badge gap-0.5 px-1.5 py-0.5 lg:px-2 lg:py-1 lg:gap-1 hover:opacity-80 transition-opacity cursor-pointer ml-1 version-badge text-[0.65rem]"
+              class="badge gap-0.5 ml-3 px-1.5 py-0.5 lg:px-2 lg:py-1 lg:gap-1 hover:opacity-80 transition-opacity cursor-pointer ml-1 version-badge text-[0.65rem]"
               title="버전 정보">
         <i class="fa-solid fa-tag text-[0.7rem]"></i>
         <!-- 데스크탑에서만 버전 숫자 표시 -->
@@ -76,18 +93,18 @@
           About Me
         </a>
 
-        <!-- 대시보드 (로그인 시에만 표시) -->
-        <a href="/dashboard" id="dashboard-desktop" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 hide">
+        <a href="/dashboard" sec:authorize="isAuthenticated()" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           <i class="fa-solid fa-clipboard-list"></i>
           대시보드
         </a>
 
-        <!-- Menu (로그인 시에만 표시) -->
-        <div id="more-dropdown-desktop" class="dropdown dropdown-end hide">
+        <!-- Menu (항상 표시) -->
+        <div id="more-dropdown-desktop" class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle text-gray-700 hover:bg-blue-50 hover:text-blue-600">
             <i class="fa-solid fa-bars text-xl"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
+            <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
             <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈</a></li>
             <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>번역기</a></li>
             <li class="divider my-1"></li>
@@ -97,8 +114,8 @@
             <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
             <li><a href="/ai-server" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
             <li><a href="/chatbot-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
-            <li class="divider my-1"></li>
-            <li id="logout-item-desktop">
+            <li sec:authorize="isAuthenticated()" class="divider my-1"></li>
+            <li sec:authorize="isAuthenticated()">
               <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
                   <i class="fa-solid fa-right-from-bracket w-5"></i>
@@ -146,8 +163,7 @@
             <li><a href="/chatbot-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
             <li class="divider my-1"></li>
 
-            <!-- 로그아웃 (로그인 시에만 표시) -->
-            <li id="logout-item-mobile" class="hide">
+            <li sec:authorize="isAuthenticated()">
               <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
                   <i class="fa-solid fa-right-from-bracket w-5"></i>
@@ -156,8 +172,7 @@
               </form>
             </li>
 
-            <!-- 로그인 (비로그인 시에만 표시) -->
-            <li id="login-item-mobile" class="hide">
+            <li sec:authorize="!isAuthenticated()">
               <a href="/login" class="hover:bg-blue-50 hover:text-blue-600">
                 <i class="fa-solid fa-right-to-bracket w-5"></i>
                 로그인

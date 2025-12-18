@@ -21,8 +21,8 @@
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <!-- 검색 영역 -->
         <div class="join w-full lg:w-auto">
-          <input type="text" id="search-keyword" class="input input-bordered join-item w-full lg:w-64" placeholder="검색어를 입력하세요...">
-          <select class="select select-bordered join-item" id="search-type">
+          <input type="text" id="search-keyword" class="input join-item w-full lg:w-64" placeholder="검색어를 입력하세요...">
+          <select class="select join-item" id="search-type">
             <option value="title">제목</option>
             <option value="content">내용</option>
           </select>
@@ -78,26 +78,26 @@
           <label class="label">
             <span class="label-text font-medium">제목</span>
           </label>
-          <input type="text" id="notice-title" class="input input-bordered w-full" placeholder="제목을 입력하세요">
+          <input type="text" id="notice-title" class="input w-full" placeholder="제목을 입력하세요">
         </div>
         <div class="form-control">
           <label class="label">
             <span class="label-text font-medium">내용</span>
           </label>
-          <textarea id="notice-content" class="textarea textarea-bordered h-40" placeholder="내용을 입력하세요"></textarea>
+          <textarea id="notice-content" class="textarea h-40" placeholder="내용을 입력하세요"></textarea>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control">
             <label class="label">
               <span class="label-text font-medium">게시 시작일</span>
             </label>
-            <input type="datetime-local" id="notice-start-date" class="input input-bordered w-full">
+            <input type="datetime-local" id="notice-start-date" class="input w-full">
           </div>
           <div class="form-control">
             <label class="label">
               <span class="label-text font-medium">게시 종료일</span>
             </label>
-            <input type="datetime-local" id="notice-end-date" class="input input-bordered w-full">
+            <input type="datetime-local" id="notice-end-date" class="input w-full">
           </div>
         </div>
         <div class="flex flex-wrap gap-6">
@@ -114,7 +114,7 @@
           <label class="label">
             <span class="label-text font-medium">작성자</span>
           </label>
-          <input type="text" id="notice-author" class="input input-bordered w-full" placeholder="작성자를 입력하세요">
+          <input type="text" id="notice-author" class="input w-full" placeholder="작성자를 입력하세요">
         </div>
       </form>
       <div class="modal-action">
@@ -199,10 +199,10 @@
       <!-- 댓글 작성 폼 -->
       <div class="bg-gray-50 rounded-lg p-4">
         <div class="form-control mb-3">
-          <input type="text" id="comment-author" class="input input-bordered input-sm w-full max-w-xs" placeholder="이름을 입력하세요">
+          <input type="text" id="comment-author" class="input input-sm w-full max-w-xs" placeholder="이름을 입력하세요">
         </div>
         <div class="form-control mb-3">
-          <textarea id="comment-content" class="textarea textarea-bordered" placeholder="댓글을 입력하세요"></textarea>
+          <textarea id="comment-content" class="textarea" placeholder="댓글을 입력하세요"></textarea>
         </div>
         <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
           <i class="fa-solid fa-pen"></i>
