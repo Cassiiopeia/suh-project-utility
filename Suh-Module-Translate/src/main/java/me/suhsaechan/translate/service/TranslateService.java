@@ -1,8 +1,11 @@
 package me.suhsaechan.translate.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.suhsaechan.ai.model.JsonSchema;
+import kr.suhsaechan.ai.model.SuhAiderRequest;
+import kr.suhsaechan.ai.model.SuhAiderResponse;
 import kr.suhsaechan.ai.service.SuhAiderEngine;
-import kr.suhsaechan.ai.util.JsonSchema;
+import kr.suhsaechan.ai.util.JsonSchemaClassParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.CommonStatus;
@@ -50,14 +53,18 @@ public class TranslateService {
             );
 
             // 3. AI 호출 (Structured Output)
-            String jsonSchema = JsonSchema.fromClass(TranslationDto.class);
-            log.debug("생성된 JSON Schema: {}", jsonSchema);
+            JsonSchema schema = JsonSchemaClassParser.parse(TranslationDto.class);
+            log.debug("생성된 JSON Schema: {}", schema);
 
-            String aiResponse = suhAiderEngine.generateStructured(
-                translationModel,
-                prompt,
-                jsonSchema
-            );
+            SuhAiderRequest suhAiderRequest = SuhAiderRequest.builder()
+                .model(translationModel)
+                .prompt(prompt)
+                .stream(false)
+                .responseSchema(schema)  // Structured Output 활성화
+                .build();
+
+            SuhAiderResponse suhAiderResponse = suhAiderEngine.generate(suhAiderRequest);
+            String aiResponse = suhAiderResponse.getResponse();
 
             log.debug("AI 응답: {}", aiResponse);
 
