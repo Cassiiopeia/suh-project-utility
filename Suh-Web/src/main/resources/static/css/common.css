@@ -2596,13 +2596,30 @@ html:not([data-theme="dark"]) .collapse {
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   visibility: hidden;
 
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem;
   color: #374151;
   cursor: pointer;
+}
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* 제목 영역 */
+.notice-card .notice-title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 메타 정보 영역 (날짜, 조회수) */
+.notice-card .notice-meta {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  margin-left: 0.75rem;
+}
+
+.notice-card .notice-dot {
+  margin: 0 0.5rem;
+  color: #d1d5db;
 }
 
 /* 활성 카드 (화면에 표시) */
@@ -2638,15 +2655,27 @@ html:not([data-theme="dark"]) .collapse {
   color: #60a5fa;
 }
 
+[data-theme="dark"] .notice-card .notice-meta {
+  color: #6b7280;
+}
+
+[data-theme="dark"] .notice-card .notice-dot {
+  color: #4b5563;
+}
+
 /* 반응형 - 모바일 */
 @media (max-width: 640px) {
   .notice-cards-container {
-    height: 3rem !important; /* 48px */
+    height: 3rem !important;
   }
 
   .notice-card {
     padding: 0.75rem 1rem;
-    font-size: 0.8rem; /* 13px */
+    font-size: 0.8rem;
+  }
+
+  .notice-card .notice-meta {
+    display: none;
   }
 }
 

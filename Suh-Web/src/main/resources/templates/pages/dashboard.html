@@ -48,7 +48,7 @@
     <!-- 공지사항 섹션 -->
     <section id="notice-section" class="mb-8">
       <!-- 고정 헤더 (레이블 + 전체보기) -->
-      <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-700">공지사항</h2>
         <a href="/notice" class="text-sm text-gray-500 hover:text-primary transition-colors">
           전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
@@ -1315,13 +1315,24 @@
 
     // 모든 카드 생성
     noticeData.forEach(function(notice, index) {
-      const isImportant = notice.isImportant
-        ? '<span class="text-red-500 font-semibold mr-2">[중요]</span>'
+      const importantBadge = notice.isImportant
+        ? '<span class="badge badge-soft badge-error badge-xs mr-2">중요</span>'
         : '';
+
+      const dateFormatted = formatNoticeDate(notice.createdDate);
+      const viewCount = notice.viewCount || 0;
 
       const card = $(`
         <div class="notice-card ${index === 0 ? 'active' : ''}" data-notice-id="${notice.noticeId}">
-          ${isImportant}<span class="truncate">${notice.title}</span>
+          ${importantBadge}
+          <i class="fa-solid fa-bullhorn text-blue-500 mr-2"></i>
+          <span class="notice-title truncate">${notice.title}</span>
+          <span class="notice-meta">
+            <span class="notice-dot">·</span>
+            <span>${dateFormatted}</span>
+            <span class="notice-dot">·</span>
+            <span>조회 ${formatNumber(viewCount)}</span>
+          </span>
         </div>
       `);
 
@@ -1338,6 +1349,16 @@
     if (noticeData.length > 1) {
       startNoticeSlide();
     }
+  }
+
+  // 공지사항 날짜 포맷 함수
+  function formatNoticeDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      month: 'short',
+      day: 'numeric'
+    });
   }
 
   // 슬라이드 시작
