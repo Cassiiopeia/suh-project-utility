@@ -652,37 +652,29 @@ function getCookie(name) {
 }
 
 /**
- * 로그인 상태 메뉴 표시
+ * 로그인 상태 메뉴 표시 (CSP 준수: classList API 사용)
  */
 function showAuthMenu() {
-  // Desktop: 대시보드, 더보기 표시
-  $('#dashboard-desktop').show();
-  $('#more-dropdown-desktop').show();
+  // Desktop: 대시보드, Menu 드롭다운 표시
+  document.getElementById('dashboard-desktop')?.classList.remove('hide');
+  document.getElementById('more-dropdown-desktop')?.classList.remove('hide');
 
-  // Desktop 햄버거: 로그아웃 표시, 로그인 숨김
-  $('#logout-item-desktop').show();
-  $('#login-item-desktop').hide();
-
-  // Mobile 햄버거: 로그아웃 표시, 로그인 숨김
-  $('#logout-item-mobile').show();
-  $('#login-item-mobile').hide();
+  // Mobile: 로그아웃 표시, 로그인 숨김
+  document.getElementById('logout-item-mobile')?.classList.remove('hide');
+  document.getElementById('login-item-mobile')?.classList.add('hide');
 }
 
 /**
- * 비로그인 상태 메뉴 표시
+ * 비로그인 상태 메뉴 표시 (CSP 준수: classList API 사용)
  */
 function showGuestMenu() {
-  // Desktop: 대시보드, 더보기 숨김
-  $('#dashboard-desktop').hide();
-  $('#more-dropdown-desktop').hide();
+  // Desktop: 대시보드, Menu 드롭다운 숨김
+  document.getElementById('dashboard-desktop')?.classList.add('hide');
+  document.getElementById('more-dropdown-desktop')?.classList.add('hide');
 
-  // Desktop 햄버거: 로그인 표시, 로그아웃 숨김
-  $('#logout-item-desktop').hide();
-  $('#login-item-desktop').show();
-
-  // Mobile 햄버거: 로그인 표시, 로그아웃 숨김
-  $('#logout-item-mobile').hide();
-  $('#login-item-mobile').show();
+  // Mobile: 로그인 표시, 로그아웃 숨김
+  document.getElementById('logout-item-mobile')?.classList.add('hide');
+  document.getElementById('login-item-mobile')?.classList.remove('hide');
 }
 
 // 페이지 로드 시 로그인 상태 확인

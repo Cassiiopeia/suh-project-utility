@@ -70,24 +70,22 @@
           </svg>
         </label>
 
-        <!-- 프로필 (항상 표시) -->
+        <!-- About Me (항상 표시) -->
         <a href="/profile" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           <i class="fa-solid fa-user"></i>
-          프로필
+          About Me
         </a>
 
         <!-- 대시보드 (로그인 시에만 표시) -->
-        <a href="/dashboard" id="dashboard-desktop" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600" style="display: none;">
+        <a href="/dashboard" id="dashboard-desktop" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 hide">
           <i class="fa-solid fa-clipboard-list"></i>
           대시보드
         </a>
 
-        <!-- 더보기 드롭다운 (로그인 시에만 표시) -->
-        <div id="more-dropdown-desktop" class="dropdown dropdown-end" style="display: none;">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-            <i class="fa-solid fa-ellipsis"></i>
-            더보기
-            <i class="fa-solid fa-chevron-down text-xs"></i>
+        <!-- Menu (로그인 시에만 표시) -->
+        <div id="more-dropdown-desktop" class="dropdown dropdown-end hide">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+            <i class="fa-solid fa-bars text-xl"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
             <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈</a></li>
@@ -99,30 +97,14 @@
             <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
             <li><a href="/ai-server" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
             <li><a href="/chatbot-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
-          </ul>
-        </div>
-
-        <!-- 햄버거 메뉴 (항상 표시) -->
-        <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-            <i class="fa-solid fa-bars text-xl text-gray-700"></i>
-          </div>
-          <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-48 p-2 mt-2 border border-gray-100">
-            <!-- 로그아웃 (로그인 시에만 표시) -->
-            <li id="logout-item-desktop" style="display: none;">
-              <form th:action="@{/logout}" method="post" style="margin: 0;">
+            <li class="divider my-1"></li>
+            <li id="logout-item-desktop">
+              <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
                   <i class="fa-solid fa-right-from-bracket w-5"></i>
                   로그아웃
                 </button>
               </form>
-            </li>
-            <!-- 로그인 (비로그인 시에만 표시) -->
-            <li id="login-item-desktop" style="display: none;">
-              <a href="/login" class="hover:bg-blue-50 hover:text-blue-600">
-                <i class="fa-solid fa-right-to-bracket w-5"></i>
-                로그인
-              </a>
             </li>
           </ul>
         </div>
@@ -165,8 +147,8 @@
             <li class="divider my-1"></li>
 
             <!-- 로그아웃 (로그인 시에만 표시) -->
-            <li id="logout-item-mobile" style="display: none;">
-              <form th:action="@{/logout}" method="post" style="margin: 0;">
+            <li id="logout-item-mobile" class="hide">
+              <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
                   <i class="fa-solid fa-right-from-bracket w-5"></i>
                   로그아웃
@@ -175,7 +157,7 @@
             </li>
 
             <!-- 로그인 (비로그인 시에만 표시) -->
-            <li id="login-item-mobile" style="display: none;">
+            <li id="login-item-mobile" class="hide">
               <a href="/login" class="hover:bg-blue-50 hover:text-blue-600">
                 <i class="fa-solid fa-right-to-bracket w-5"></i>
                 로그인
