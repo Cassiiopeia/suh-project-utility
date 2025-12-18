@@ -1263,6 +1263,12 @@ html:not([data-theme="dark"]) textarea::placeholder,
   fill: #3b82f6;
 }
 
+/* Footer 파란색 텍스트 */
+.footer-blue {
+  color: #4183c4;
+  text-decoration: none;
+}
+
 /* 다크모드 label-text (text-gray-* 스타일은 파일 끝에 세분화 정의됨) */
 [data-theme="dark"] .label-text {
   color: #e5e7eb !important;
