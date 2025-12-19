@@ -39,6 +39,9 @@ $(function(){
 
   // 다크모드 테마 초기화
   initTheme();
+
+  // 버전 배지 자동 업데이트
+  loadVersionFromChangelog();
 });
 
 /**
@@ -81,6 +84,139 @@ function initTheme() {
       });
     });
   });
+}
+
+/**
+ * 버전 태그 업데이트 (changelog.json에서)
+ * 모든 버전 배지 요소를 자동으로 찾아 업데이트
+ */
+function loadVersionFromChangelog() {
+  fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
+    .then(response => response.json())
+    .then(data => {
+      if (data.metadata && data.metadata.currentVersion) {
+        const versionText = 'v' + data.metadata.currentVersion;
+        
+        // 클래스 기반으로 모든 버전 배지 텍스트 업데이트 (충돌 방지)
+        const versionTagElements = document.querySelectorAll('.version-tag-text');
+        versionTagElements.forEach(function(element) {
+          element.textContent = versionText;
+        });
+        
+        // ID 기반 업데이트 (하위 호환성)
+        const versionTagById = document.getElementById('version-tag');
+        if (versionTagById) {
+          versionTagById.textContent = versionText;
+        }
+        
+        const headerVersionTag = document.getElementById('header-version-tag');
+        if (headerVersionTag) {
+          headerVersionTag.textContent = versionText;
+        }
+      }
+    })
+    .catch(error => {
+      console.error('버전 정보 로드 실패:', error);
+      // 실패 시 기본값 유지
+    });
+}
+
+/**
+ * Changelog 모달 열기
+ */
+function openChangelogModal() {
+  const modal = document.getElementById('changelog-modal');
+  if (modal) {
+    modal.showModal();
+    loadChangelog();
+  } else {
+    console.warn('Changelog 모달을 찾을 수 없습니다. (id="changelog-modal")');
+  }
+}
+
+/**
+ * Changelog 데이터 로드
+ */
+function loadChangelog() {
+  const loadingEl = document.getElementById('changelog-loading');
+  const dataEl = document.getElementById('changelog-data');
+
+  if (!loadingEl || !dataEl) {
+    console.warn('Changelog 요소를 찾을 수 없습니다.');
+    return;
+  }
+
+  // 이미 로드된 경우 스킵
+  if (!dataEl.classList.contains('hidden')) return;
+
+  // GitHub raw URL에서 CHANGELOG.json 가져오기
+  fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
+    .then(response => response.json())
+    .then(data => {
+      renderChangelog(data);
+      loadingEl.classList.add('hidden');
+      dataEl.classList.remove('hidden');
+    })
+    .catch(error => {
+      console.error('Changelog 로드 실패:', error);
+      if (loadingEl) {
+        loadingEl.innerHTML = `
+          <div class="text-center text-gray-500">
+            <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
+            <p>변경 이력을 불러올 수 없습니다.</p>
+          </div>
+        `;
+      }
+    });
+}
+
+/**
+ * Changelog 데이터 렌더링
+ */
+function renderChangelog(data) {
+  const latestRelease = data.releases[0];
+  const metadata = data.metadata;
+
+  // 버전 정보
+  const versionEl = document.getElementById('changelog-version');
+  const dateEl = document.getElementById('changelog-date');
+  const updatedEl = document.getElementById('changelog-updated');
+  
+  if (versionEl) {
+    versionEl.textContent = 'v' + latestRelease.version;
+  }
+  if (dateEl) {
+    dateEl.textContent = latestRelease.date;
+  }
+
+  // 마지막 업데이트
+  if (updatedEl && metadata.lastUpdated) {
+    const lastUpdated = new Date(metadata.lastUpdated);
+    updatedEl.textContent = 'Last updated: ' + lastUpdated.toLocaleDateString('ko-KR');
+  }
+
+  // 변경사항 목록
+  const itemsEl = document.getElementById('changelog-items');
+  if (!itemsEl) return;
+  
+  itemsEl.innerHTML = '';
+
+  // parsed_changes에서 아이템 추출
+  const changes = latestRelease.parsed_changes;
+  for (const category in changes) {
+    const categoryData = changes[category];
+    if (categoryData.items && categoryData.items.length > 0) {
+      categoryData.items.forEach(function(item) {
+        const li = document.createElement('li');
+        li.className = 'flex items-start gap-2';
+        li.innerHTML = `
+          <span class="text-primary mt-1">•</span>
+          <span>${escapeHtml(item)}</span>
+        `;
+        itemsEl.appendChild(li);
+      });
+    }
+  }
 }
 
 /**

@@ -5,25 +5,26 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui middle aligned center aligned grid" style="min-height: 70vh;">
-  <div class="column">
-    <div class="ui center aligned segment">
-      <h1 class="ui icon header">
-        <i class="exclamation triangle icon red"></i>
-        <div class="content">
-          서버 오류가 발생했습니다
-          <div class="sub header">잠시 후 다시 시도해주세요.</div>
+<div class="flex items-center justify-center min-h-[70vh]">
+  <div class="w-full max-w-md">
+    <div class="card bg-base-100 shadow-lg text-center">
+      <div class="card-body">
+        <div class="flex flex-col items-center gap-4">
+          <i class="fa-solid fa-triangle-exclamation text-6xl text-red-500"></i>
+          <h1 class="text-3xl font-bold">서버 오류가 발생했습니다</h1>
+          <p class="text-gray-500">잠시 후 다시 시도해주세요.</p>
+          <div class="flex gap-2 mt-4">
+            <a href="/" class="btn btn-primary">
+              <i class="fa-solid fa-house"></i>
+              홈으로 돌아가기
+            </a>
+            <a href="mailto:chan4760@gmail.com" class="btn btn-ghost">
+              <i class="fa-solid fa-envelope"></i>
+              관리자에게 문의하기
+            </a>
+          </div>
         </div>
-      </h1>
-      <div class="ui hidden divider"></div>
-      <a href="/" class="ui primary button">
-        <i class="home icon"></i>
-        홈으로 돌아가기
-      </a>
-      <a href="mailto:chan4760@gmail.com" class="ui button">
-        <i class="mail icon"></i>
-        관리자에게 문의하기
-      </a>
+      </div>
     </div>
   </div>
 </div>

@@ -14,142 +14,153 @@
 <body class="study-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
+<div class="container mx-auto px-4 py-6" id="main-content">
   <!-- 스터디 관리 메인 헤더 -->
-  <div class="ui segment">
-    <h2 class="ui header">스터디 플랜</h2>
-    <p class="study-description">지식 공유와 학습을 위한 마크다운 기반 스터디 노트 시스템입니다.</p>
+  <div class="card bg-base-100 shadow mb-6">
+    <div class="card-body">
+      <h2 class="text-2xl font-bold mb-2">스터디 플랜</h2>
+      <p class="text-gray-500 mb-4">지식 공유와 학습을 위한 마크다운 기반 스터디 노트 시스템입니다.</p>
 
-    <!-- 주요 기능 버튼 모음 -->
-    <div class="ui buttons">
-      <a href="/study-management/post/create" class="ui primary button">
-        <i class="plus icon"></i> 새 포스트 작성
-      </a>
-      <a href="/study-management/category-management" class="ui button">
-        <i class="folder icon"></i> 카테고리 관리
-      </a>
+      <!-- 주요 기능 버튼 모음 -->
+      <div class="flex gap-2">
+        <a href="/study-management/post/create" class="btn btn-primary">
+          <i class="fa-solid fa-plus"></i> 새 포스트 작성
+        </a>
+        <a href="/study-management/category-management" class="btn btn-ghost">
+          <i class="fa-solid fa-folder"></i> 카테고리 관리
+        </a>
+      </div>
     </div>
   </div>
 
   <!-- 메인 콘텐츠 영역 -->
-  <div class="ui stackable grid">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
     <!-- 좌측 사이드바: 카테고리 트리 -->
-    <div class="four wide column">
-      <div class="ui segment">
-        <h3 class="ui header">카테고리</h3>
-        <div class="ui vertical menu fluid category-tree">
+    <div class="lg:col-span-1">
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h3 class="text-lg font-bold mb-4">카테고리</h3>
+          <div class="menu menu-vertical w-full category-tree">
           <!-- 카테고리가 없는 경우 -->
-          <div th:if="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}" class="item">
-            <p>등록된 카테고리가 없습니다.</p>
-          </div>
+          <li th:if="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}">
+            <p class="text-gray-500">등록된 카테고리가 없습니다.</p>
+          </li>
           
           <!-- 카테고리 목록 -->
-          <div th:unless="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}">
-            <div th:each="category : ${categoriesResponse.categories}" class="item parent-category">
-              <div class="header">
-                <i th:class="${category.icon != null ? category.icon : 'folder'} + ' icon'" 
+          <th:block th:unless="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}">
+            <li th:each="category : ${categoriesResponse.categories}" class="parent-category">
+              <div class="flex items-center gap-2 cursor-pointer" onclick="$(this).siblings('.child-categories').toggle()">
+                <i th:class="'fa-solid fa-' + (${category.icon != null ? category.icon.replace(' icon', '').replace(' ', '-') : 'folder'})" 
                    th:style="${category.color != null ? 'color:' + category.color : ''}"></i>
-                <a th:href="@{/study-management/category/{id}(id=${category.id})}" th:text="${category.name}"></a>
-                <span class="ui mini circular label" th:text="${category.postCount}"></span>
+                <a th:href="@{/study-management/category/{id}(id=${category.id})}" th:text="${category.name}" class="flex-1"></a>
+                <span class="badge badge-sm" th:text="${category.postCount}"></span>
               </div>
               
               <!-- 하위 카테고리 -->
-              <div class="menu child-categories" th:if="${!category.children.isEmpty()}">
-                <div th:each="child : ${category.children}" class="item">
-                  <i th:class="${child.icon != null ? child.icon : 'file'} + ' icon'"
+              <ul class="menu child-categories ml-4 hidden" th:if="${!category.children.isEmpty()}">
+                <li th:each="child : ${category.children}">
+                  <i th:class="'fa-solid fa-' + (${child.icon != null ? child.icon.replace(' icon', '').replace(' ', '-') : 'file'})"
                      th:style="${child.color != null ? 'color:' + child.color : ''}"></i>
                   <a th:href="@{/study-management/category/{id}(id=${child.id})}" th:text="${child.name}"></a>
-                  <span class="ui mini circular label" th:text="${child.postCount}"></span>
-                </div>
-              </div>
-            </div>
-          </div>
+                  <span class="badge badge-sm" th:text="${child.postCount}"></span>
+                </li>
+              </ul>
+            </li>
+          </th:block>
+        </div>
         </div>
       </div>
     </div>
     
     <!-- 우측 메인 영역 -->
-    <div class="twelve wide column">
+    <div class="lg:col-span-3">
       <!-- 최근 작성된 포스트 -->
-      <div class="ui segment">
-        <h3 class="ui header">
-          <i class="clock outline icon"></i>
-          최근 작성된 포스트
-        </h3>
-        <div class="ui divided items">
+      <div class="card bg-base-100 shadow mb-6">
+        <div class="card-body">
+          <h3 class="text-lg font-bold mb-4">
+            <i class="fa-solid fa-clock"></i>
+            최근 작성된 포스트
+          </h3>
+          <div class="space-y-4">
           <!-- 포스트가 없는 경우 -->
-          <div th:if="${recentPosts == null || recentPosts.isEmpty()}" class="item">
+          <div th:if="${recentPosts == null || recentPosts.isEmpty()}" class="text-gray-500">
             <p>최근 작성된 포스트가 없습니다.</p>
           </div>
           
           <!-- 포스트 목록 -->
           <div th:unless="${recentPosts == null || recentPosts.isEmpty()}" 
-               th:each="post : ${recentPosts}" class="item">
-            <div class="content">
-              <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="header" th:text="${post.title}"></a>
-              <div class="meta">
-                <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
-                <span class="category-label" th:text="${post.categoryName}"></span>
-              </div>
-              <div class="description" th:text="${post.summary != null ? post.summary : (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content)}"></div>
-              <div class="extra">
-                <i class="eye icon"></i> <span th:text="${post.viewCount}"></span> 조회
-                <div class="ui right floated">
-                  <span th:if="${post.tagList != null && !post.tagList.isEmpty()}" 
-                        th:each="tag : ${post.tagList}" class="ui tiny label" th:text="${tag}"></span>
-                </div>
+               th:each="post : ${recentPosts}" class="border-b border-gray-200 pb-4 last:border-0">
+            <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="text-lg font-semibold hover:text-primary" th:text="${post.title}"></a>
+            <div class="text-sm text-gray-500 mt-1">
+              <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+              <span class="badge badge-sm ml-2" th:text="${post.categoryName}"></span>
+            </div>
+            <div class="text-gray-600 mt-2" th:text="${post.summary != null ? post.summary : (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content)}"></div>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-sm text-gray-500">
+                <i class="fa-solid fa-eye"></i> <span th:text="${post.viewCount}"></span> 조회
+              </span>
+              <div class="flex gap-1">
+                <span th:if="${post.tagList != null && !post.tagList.isEmpty()}" 
+                      th:each="tag : ${post.tagList}" class="badge badge-sm" th:text="${tag}"></span>
               </div>
             </div>
           </div>
         </div>
+        </div>
       </div>
       
       <!-- 인기 포스트 -->
-      <div class="ui segment">
-        <h3 class="ui header">
-          <i class="star outline icon"></i>
-          인기 포스트
-        </h3>
-        <div class="ui divided items">
+      <div class="card bg-base-100 shadow mb-6">
+        <div class="card-body">
+          <h3 class="text-lg font-bold mb-4">
+            <i class="fa-solid fa-star"></i>
+            인기 포스트
+          </h3>
+          <div class="space-y-4">
           <!-- 포스트가 없는 경우 -->
-          <div th:if="${popularPosts == null || popularPosts.isEmpty()}" class="item">
+          <div th:if="${popularPosts == null || popularPosts.isEmpty()}" class="text-gray-500">
             <p>인기 포스트가 없습니다.</p>
           </div>
           
           <!-- 포스트 목록 -->
           <div th:unless="${popularPosts == null || popularPosts.isEmpty()}" 
-               th:each="post : ${popularPosts}" class="item">
-            <div class="content">
-              <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="header" th:text="${post.title}"></a>
-              <div class="meta">
-                <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
-                <span class="category-label" th:text="${post.categoryName}"></span>
-              </div>
-              <div class="description" th:text="${post.summary != null ? post.summary : (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content)}"></div>
-              <div class="extra">
-                <i class="eye icon"></i> <span th:text="${post.viewCount}"></span> 조회
-                <div class="ui right floated">
-                  <span th:if="${post.tagList != null && !post.tagList.isEmpty()}" 
-                        th:each="tag : ${post.tagList}" class="ui tiny label" th:text="${tag}"></span>
-                </div>
+               th:each="post : ${popularPosts}" class="border-b border-gray-200 pb-4 last:border-0">
+            <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="text-lg font-semibold hover:text-primary" th:text="${post.title}"></a>
+            <div class="text-sm text-gray-500 mt-1">
+              <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+              <span class="badge badge-sm ml-2" th:text="${post.categoryName}"></span>
+            </div>
+            <div class="text-gray-600 mt-2" th:text="${post.summary != null ? post.summary : (post.content.length() > 150 ? post.content.substring(0, 150) + '...' : post.content)}"></div>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-sm text-gray-500">
+                <i class="fa-solid fa-eye"></i> <span th:text="${post.viewCount}"></span> 조회
+              </span>
+              <div class="flex gap-1">
+                <span th:if="${post.tagList != null && !post.tagList.isEmpty()}" 
+                      th:each="tag : ${post.tagList}" class="badge badge-sm" th:text="${tag}"></span>
               </div>
             </div>
           </div>
         </div>
+        </div>
       </div>
       
       <!-- 검색 폼 -->
-      <div class="ui segment">
-        <h3 class="ui header">포스트 검색</h3>
-        <form class="ui form" method="GET" action="/study-management/search">
-          <div class="field">
-            <div class="ui icon input">
-              <input type="text" name="keyword" placeholder="검색어를 입력하세요..." required>
-              <i class="search icon"></i>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h3 class="text-lg font-bold mb-4">포스트 검색</h3>
+          <form method="GET" action="/study-management/search" class="flex gap-2">
+            <div class="form-control flex-1">
+              <div class="input-group">
+                <input type="text" name="keyword" placeholder="검색어를 입력하세요..." class="input input-bordered w-full" required>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa-solid fa-search"></i>
+                </button>
+              </div>
             </div>
-          </div>
-          <button type="submit" class="ui blue button">검색</button>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   </div>

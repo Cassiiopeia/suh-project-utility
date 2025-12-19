@@ -4,97 +4,103 @@
 <body class="study-page category-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
-  <div class="ui segment">
-    <!-- 카테고리 헤더 -->
-    <div class="category-header">
-      <h2 class="ui header">
-        <i th:class="${category.icon != null ? category.icon : 'folder'} + ' icon'"
-           th:style="${category.color != null ? 'color:' + category.color : ''}"></i>
-        <div class="content" th:text="${category.name}">
-          <div class="sub header" th:text="${category.description}"></div>
+<div class="container mx-auto px-4 py-6" id="main-content">
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <!-- 카테고리 헤더 -->
+      <div class="category-header mb-6">
+        <h2 class="text-2xl font-bold mb-2">
+          <i th:class="'fa-solid fa-' + (${category.icon != null ? category.icon.replace(' icon', '').replace(' ', '-') : 'folder'})"
+             th:style="${category.color != null ? 'color:' + category.color : ''}"></i>
+          <span th:text="${category.name}"></span>
+        </h2>
+        <p class="text-gray-500" th:text="${category.description}"></p>
+        
+        <!-- 상위 카테고리 표시 (있는 경우) -->
+        <div class="category-breadcrumb mt-2" th:if="${category.parentId != null}">
+          <div class="breadcrumbs text-sm">
+            <ul>
+              <li><a href="/study-management">홈</a></li>
+              <li><a th:href="@{/study-management/category/{id}(id=${category.parentId})}" 
+                     th:text="${category.parentName}"></a></li>
+              <li th:text="${category.name}"></li>
+            </ul>
+          </div>
         </div>
-      </h2>
-      
-      <!-- 상위 카테고리 표시 (있는 경우) -->
-      <div class="category-breadcrumb" th:if="${category.parentId != null}">
-        <div class="ui breadcrumb">
-          <a class="section" href="/study-management">홈</a>
-          <i class="right angle icon divider"></i>
-          <a class="section" th:href="@{/study-management/category/{id}(id=${category.parentId})}" 
-             th:text="${category.parentName}"></a>
-          <i class="right angle icon divider"></i>
-          <div class="active section" th:text="${category.name}"></div>
+        
+        <!-- 작업 버튼 -->
+        <div class="category-actions mt-4">
+          <a th:href="@{/study-management/post/create(categoryId=${category.id})}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> 새 포스트 작성
+          </a>
         </div>
       </div>
       
-      <!-- 작업 버튼 -->
-      <div class="category-actions">
-        <a th:href="@{/study-management/post/create(categoryId=${category.id})}" class="ui blue button">
-          <i class="plus icon"></i> 새 포스트 작성
-        </a>
-      </div>
-    </div>
-    
-    <!-- 하위 카테고리 목록 -->
-    <div class="subcategories-section" th:if="${!category.children.isEmpty()}">
-      <div class="ui divider"></div>
-      <h3 class="ui header">하위 카테고리</h3>
-      
-      <div class="ui cards">
-        <div class="card" th:each="subCategory : ${category.children}">
-          <div class="content">
-            <div class="header">
-              <i th:class="${subCategory.icon != null ? subCategory.icon : 'folder'} + ' icon'"
-                 th:style="${subCategory.color != null ? 'color:' + subCategory.color : ''}"></i>
-              <a th:href="@{/study-management/category/{id}(id=${subCategory.id})}" th:text="${subCategory.name}"></a>
+      <!-- 하위 카테고리 목록 -->
+      <div class="subcategories-section mb-6" th:if="${!category.children.isEmpty()}">
+        <div class="divider"></div>
+        <h3 class="text-xl font-bold mb-4">하위 카테고리</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="card bg-base-100 shadow" th:each="subCategory : ${category.children}">
+            <div class="card-body">
+              <h4 class="card-title">
+                <i th:class="'fa-solid fa-' + (${subCategory.icon != null ? subCategory.icon.replace(' icon', '').replace(' ', '-') : 'folder'})"
+                   th:style="${subCategory.color != null ? 'color:' + subCategory.color : ''}"></i>
+                <a th:href="@{/study-management/category/{id}(id=${subCategory.id})}" th:text="${subCategory.name}" class="link"></a>
+              </h4>
+              <p class="text-sm text-gray-500" th:text="${#temporals.format(subCategory.createdDate, 'yyyy-MM-dd')}"></p>
+              <p class="text-gray-600" th:text="${subCategory.description != null ? subCategory.description : '설명 없음'}"></p>
+              <div class="card-actions justify-end mt-2">
+                <span class="text-sm text-gray-500">
+                  <i class="fa-solid fa-file"></i>
+                  포스트 <span th:text="${subCategory.postCount != null ? subCategory.postCount : 0}"></span>개
+                </span>
+              </div>
             </div>
-            <div class="meta" th:text="${#temporals.format(subCategory.createdDate, 'yyyy-MM-dd')}"></div>
-            <div class="description" th:text="${subCategory.description != null ? subCategory.description : '설명 없음'}"></div>
-          </div>
-          <div class="extra content">
-            <span>
-              <i class="file icon"></i>
-              포스트 <span th:text="${subCategory.postCount != null ? subCategory.postCount : 0}"></span>개
-            </span>
           </div>
         </div>
       </div>
-    </div>
     
     <!-- 포스트 목록 -->
     <div class="posts-section">
-      <div class="ui divider"></div>
-      <h3 class="ui header">포스트 목록</h3>
+      <div class="divider"></div>
+      <h3 class="text-xl font-bold mb-4">포스트 목록</h3>
       
       <!-- 포스트가 없는 경우 -->
-      <div class="ui info message" th:if="${posts == null || posts.isEmpty()}">
-        <p>이 카테고리에는 아직 포스트가 없습니다.</p>
-        <a th:href="@{/study-management/post/create(categoryId=${category.id})}" class="ui small blue button">
-          <i class="plus icon"></i> 첫 포스트 작성하기
-        </a>
+      <div class="alert alert-info" th:if="${posts == null || posts.isEmpty()}">
+        <i class="fa-solid fa-info-circle"></i>
+        <div>
+          <p>이 카테고리에는 아직 포스트가 없습니다.</p>
+          <a th:href="@{/study-management/post/create(categoryId=${category.id})}" class="btn btn-sm btn-primary mt-2">
+            <i class="fa-solid fa-plus"></i> 첫 포스트 작성하기
+          </a>
+        </div>
       </div>
       
       <!-- 포스트 목록 -->
-      <div class="ui divided items" th:unless="${posts == null || posts.isEmpty()}">
-        <div class="item" th:each="post : ${posts}">
-          <!-- 썸네일 이미지 (이미지 첨부 파일이 있는 경우) -->
-          <div class="image" th:if="${post.attachments != null && !post.attachments.isEmpty() && post.attachments[0].isImage}">
-            <img th:src="${post.attachments[0].fileUrl}" alt="썸네일">
-          </div>
-          
-          <div class="content">
-            <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="header" th:text="${post.title}"></a>
-            <div class="meta">
-              <span th:text="${post.author != null ? post.author : '익명'}"></span>
-              <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
-              <span th:text="${'조회 ' + post.viewCount}"></span>
-            </div>
-            <div class="description" th:text="${post.summary != null ? post.summary : (post.content.length() > 200 ? post.content.substring(0, 200) + '...' : post.content)}"></div>
-            <div class="extra">
-              <!-- 태그 표시 -->
-              <div class="ui right floated" th:if="${post.tagList != null && !post.tagList.isEmpty()}">
-                <span th:each="tag : ${post.tagList}" class="ui tiny label" th:text="${tag}"></span>
+      <div class="space-y-4" th:unless="${posts == null || posts.isEmpty()}">
+        <div class="card bg-base-100 shadow" th:each="post : ${posts}">
+          <div class="card-body">
+            <div class="flex gap-4">
+              <!-- 썸네일 이미지 (이미지 첨부 파일이 있는 경우) -->
+              <div class="flex-shrink-0" th:if="${post.attachments != null && !post.attachments.isEmpty() && post.attachments[0].isImage}">
+                <img th:src="${post.attachments[0].fileUrl}" alt="썸네일" class="w-24 h-24 object-cover rounded-lg">
+              </div>
+              
+              <div class="flex-1">
+                <a th:href="@{/study-management/post/{id}(id=${post.id})}" class="text-lg font-semibold hover:text-primary" th:text="${post.title}"></a>
+                <div class="text-sm text-gray-500 mt-1">
+                  <span th:text="${post.author != null ? post.author : '익명'}"></span>
+                  <span class="mx-2">•</span>
+                  <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+                  <span class="mx-2">•</span>
+                  <span th:text="${'조회 ' + post.viewCount}"></span>
+                </div>
+                <div class="text-gray-600 mt-2" th:text="${post.summary != null ? post.summary : (post.content.length() > 200 ? post.content.substring(0, 200) + '...' : post.content)}"></div>
+                <div class="flex justify-end gap-1 mt-2" th:if="${post.tagList != null && !post.tagList.isEmpty()}">
+                  <span th:each="tag : ${post.tagList}" class="badge badge-sm" th:text="${tag}"></span>
+                </div>
               </div>
             </div>
           </div>
@@ -102,27 +108,28 @@
       </div>
       
       <!-- 페이지네이션 -->
-      <div class="ui center aligned container" th:if="${totalPages > 1}">
-        <div class="ui pagination menu">
+      <div class="flex justify-center mt-6" th:if="${totalPages > 1}">
+        <div class="join">
           <!-- 이전 페이지 -->
-          <a class="item" th:classappend="${currentPage == 0 ? 'disabled' : ''}"
+          <a class="join-item btn" th:classappend="${currentPage == 0 ? 'btn-disabled' : ''}"
              th:href="@{/study-management/category/{id}(id=${category.id},page=${currentPage - 1})}">
-            <i class="angle left icon"></i>
+            <i class="fa-solid fa-angle-left"></i>
           </a>
           
           <!-- 페이지 번호 -->
-          <a class="item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-             th:classappend="${i == currentPage ? 'active' : ''}"
+          <a class="join-item btn" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+             th:classappend="${i == currentPage ? 'btn-active' : ''}"
              th:href="@{/study-management/category/{id}(id=${category.id},page=${i})}"
              th:text="${i + 1}"></a>
           
           <!-- 다음 페이지 -->
-          <a class="item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}"
+          <a class="join-item btn" th:classappend="${currentPage == totalPages - 1 ? 'btn-disabled' : ''}"
              th:href="@{/study-management/category/{id}(id=${category.id},page=${currentPage + 1})}">
-            <i class="angle right icon"></i>
+            <i class="fa-solid fa-angle-right"></i>
           </a>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

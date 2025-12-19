@@ -6,8 +6,8 @@
 <!-- 버전 정보 컴포넌트 -->
 <!-- 사용법: <div th:replace="~{fragments/versionInfo :: versionInfo(moduleType='TRANSLATOR')}"></div> -->
 
-<div th:fragment="versionInfo(moduleType)" class="ui basic segment version-info-segment">
-  <div class="ui styled fluid accordion version-accordion"
+<div th:fragment="versionInfo(moduleType)" class="version-info-segment">
+  <div class="collapse collapse-arrow bg-base-200 version-accordion"
        th:id="${moduleType.toLowerCase() + 'VersionAccordion'}"></div>
 
   <script th:inline="javascript">
@@ -36,33 +36,23 @@
       const moduleTypeLower = moduleType.toLowerCase();
 
       versionAccordion.innerHTML = `
-        <div id="${placeholderId}" class="ui fluid placeholder">
+        <div id="${placeholderId}" class="space-y-4">
           <!-- 최신 버전 섹션 플레이스홀더 -->
-      <div class="header">
-      <div class="line"></div>
-      <div class="line"></div>
-      </div>
-      <div class="paragraph">
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
-      </div>
+          <div class="skeleton h-8 w-3/4"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+          <div class="skeleton h-4 w-4/5"></div>
 
           <!-- 전체 버전 기록 플레이스홀더 -->
-      <div class="header">
-      <div class="line"></div>
-      <div class="line"></div>
-      </div>
-      <div class="paragraph">
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
-      <div class="line"></div>
-      </div>
-      </div>
+          <div class="skeleton h-8 w-3/4"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+          <div class="skeleton h-4 w-4/5"></div>
+          <div class="skeleton h-4 w-3/4"></div>
+        </div>
 
           <!-- 메인 버전 정보 아코디언 -->
-      <div id="${contentId}" class="ui styled fluid accordion ${moduleTypeLower}-main-accordion hidden"></div>
+      <div id="${contentId}" class="collapse collapse-arrow bg-base-200 ${moduleTypeLower}-main-accordion hidden"></div>
       `
       ;
 
@@ -100,9 +90,12 @@
             console.error('Unexpected response structure:', response);
             versionAccordion.innerHTML =
                 `
-      <div class="ui warning message">
-      <div class="header">버전 정보를 불러올 수 없습니다</div>
-      <p>서버에서 올바른 형식의 데이터를 받지 못했습니다.</p>
+      <div class="alert alert-warning">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div>
+        <h3 class="font-bold">버전 정보를 불러올 수 없습니다</h3>
+        <p>서버에서 올바른 형식의 데이터를 받지 못했습니다.</p>
+      </div>
       </div>
       `
             ;
@@ -116,9 +109,12 @@
 
           versionAccordion.innerHTML =
               `
-      <div class="ui negative message">
-      <div class="header">버전 정보를 불러올 수 없습니다</div>
-      <p>서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.</p>
+      <div class="alert alert-error">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <div>
+        <h3 class="font-bold">버전 정보를 불러올 수 없습니다</h3>
+        <p>서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.</p>
+      </div>
       </div>
       `
           ;
@@ -138,38 +134,10 @@
       function initializeAccordions(contentId, moduleType) {
         const moduleTypeLower = moduleType.toLowerCase();
 
-        // 메인 아코디언 초기화
-        $(
-            `#${contentId}`
-        ).accordion({
-          exclusive: false,
-          animateChildren: false
-        });
-
-        // 중첩 아코디언 초기화
-        $(
-            `.${moduleTypeLower}-nested-accordion`
-        ).accordion({
-          exclusive: false,
-          animateChildren: false
-        });
-
-        // 내부 아코디언의 클릭 이벤트 처리 (이벤트 전파 중지)
-        $(
-            `.${moduleTypeLower}-version-title`
-        ).on('click', function (e) {
-          // 이벤트 전파 중지하여 상위 아코디언에 영향을 주지 않음
-          e.stopPropagation();
-
-          // 해당 버전 타이틀에 연결된 콘텐츠 토글
-          const $this = $(this);
-          $this.toggleClass('active');
-          $this.next('.content').toggleClass('active');
-        });
-
+        // DaisyUI collapse는 기본적으로 작동하므로 추가 초기화 불필요
         // 각 요소마다 클릭 가능 표시
         $(
-            `.${moduleTypeLower}-main-accordion .title, .${moduleTypeLower}-nested-accordion .title`
+            `.${moduleTypeLower}-main-title-label, .${moduleTypeLower}-version-title-label`
         ).css('cursor', 'pointer');
       }
 
@@ -192,9 +160,12 @@
           console.warn("No versions to render or versions is not an array");
           accordion.innerHTML =
               `
-      <div class="ui info message">
-      <div class="header">버전 정보가 없습니다</div>
-      <p>이 모듈에 대한 버전 정보가 아직 등록되지 않았습니다.</p>
+      <div class="alert alert-info">
+      <i class="fa-solid fa-info-circle"></i>
+      <div>
+        <h3 class="font-bold">버전 정보가 없습니다</h3>
+        <p>이 모듈에 대한 버전 정보가 아직 등록되지 않았습니다.</p>
+      </div>
       </div>
       `
           ;
@@ -223,21 +194,23 @@
         const moduleTypeLower = moduleType.toLowerCase();
 
         // 최신 버전 제목 (항상 활성화)
-        const titleDiv = document.createElement('div');
-        titleDiv.className =
-            `active title ${moduleTypeLower}-main-title`
-        ;
+        const titleDiv = document.createElement('input');
+        titleDiv.type = 'checkbox';
+        titleDiv.checked = true;
+        titleDiv.className = `${moduleTypeLower}-main-title`;
+        titleDiv.setAttribute('aria-label', '최신 버전');
 
-        titleDiv.innerHTML =
+        const titleLabel = document.createElement('div');
+        titleLabel.className = `collapse-title text-lg font-medium ${moduleTypeLower}-main-title-label`;
+        titleLabel.innerHTML =
             `
-      <div class="version-row">
-      <div class="version-label">
-      <i class="dropdown icon"></i>
-      <i class="code branch icon"></i>
-      최신 버전 <span class="version-tag">${latestVersion.versionNumber}</span>
-      <div class="ui green mini label">최신</div>
+      <div class="version-row flex items-center justify-between">
+      <div class="version-label flex items-center gap-2">
+      <i class="fa-solid fa-code-branch"></i>
+      최신 버전 <span class="version-tag font-mono">${latestVersion.versionNumber}</span>
+      <span class="badge badge-sm badge-success">최신</span>
       </div>
-      <span class="version-date">${formatDate(latestVersion.releaseDate)}</span>
+      <span class="version-date text-sm text-gray-500">${formatDate(latestVersion.releaseDate)}</span>
       </div>
       `
         ;
@@ -245,7 +218,7 @@
         // 최신 버전 콘텐츠 (항상 활성화)
         const contentDiv = document.createElement('div');
         contentDiv.className =
-            `active content ${moduleTypeLower}-main-content`
+            `collapse-content ${moduleTypeLower}-main-content`
         ;
 
         // 업데이트 목록
@@ -253,8 +226,12 @@
         contentDiv.appendChild(updateList);
 
         // 컨테이너에 추가
-        container.appendChild(titleDiv);
-        container.appendChild(contentDiv);
+        const collapseDiv = document.createElement('div');
+        collapseDiv.className = 'collapse collapse-arrow bg-base-200';
+        collapseDiv.appendChild(titleDiv);
+        collapseDiv.appendChild(titleLabel);
+        collapseDiv.appendChild(contentDiv);
+        container.appendChild(collapseDiv);
       }
 
       /**
@@ -268,19 +245,18 @@
         const moduleTypeLower = moduleType.toLowerCase();
 
         // 모든 버전 섹션 타이틀
-        const allVersionsTitleDiv = document.createElement('div');
-        allVersionsTitleDiv.className =
-            `title ${moduleTypeLower}-main-title`
-        ;
+        const allVersionsTitleInput = document.createElement('input');
+        allVersionsTitleInput.type = 'checkbox';
+        allVersionsTitleInput.className = `${moduleTypeLower}-main-title`;
+        allVersionsTitleInput.setAttribute('aria-label', '전체 버전 기록');
 
-        allVersionsTitleDiv.innerHTML =
+        const allVersionsTitleLabel = document.createElement('div');
+        allVersionsTitleLabel.className = `collapse-title text-lg font-medium ${moduleTypeLower}-main-title-label`;
+        allVersionsTitleLabel.innerHTML =
             `
-      <div class="version-row">
-      <div class="version-label">
-      <i class="dropdown icon"></i>
-      <i class="history icon"></i>
+      <div class="version-row flex items-center gap-2">
+      <i class="fa-solid fa-history"></i>
       전체 버전 기록
-      </div>
       </div>
       `
         ;
@@ -288,41 +264,45 @@
         // 모든 버전 섹션 콘텐츠
         const allVersionsContentDiv = document.createElement('div');
         allVersionsContentDiv.className =
-            `content ${moduleTypeLower}-main-content`
+            `collapse-content ${moduleTypeLower}-main-content`
         ;
 
         // 중첩 아코디언 생성 (모듈 타입으로 클래스 구분)
         const nestedAccordion = document.createElement('div');
         nestedAccordion.className =
-            `ui styled fluid accordion ${moduleTypeLower}-nested-accordion`
+            `space-y-2 ${moduleTypeLower}-nested-accordion`
         ;
         nestedAccordion.setAttribute('data-module', moduleTypeLower);
 
         // 모든 버전 정보 추가
         versions.forEach((version, index) => {
-          const versionTitleDiv = document.createElement('div');
-          versionTitleDiv.className =
-              `title ${moduleTypeLower}-version-title`
-          ;
-          versionTitleDiv.setAttribute('data-version-index', index);
+          const versionCollapse = document.createElement('div');
+          versionCollapse.className = 'collapse collapse-arrow bg-base-100';
+          
+          const versionTitleInput = document.createElement('input');
+          versionTitleInput.type = 'checkbox';
+          versionTitleInput.className = `${moduleTypeLower}-version-title`;
+          versionTitleInput.setAttribute('data-version-index', index);
+          versionTitleInput.setAttribute('aria-label', `버전 ${version.versionNumber}`);
 
-          versionTitleDiv.innerHTML =
+          const versionTitleLabel = document.createElement('div');
+          versionTitleLabel.className = `collapse-title ${moduleTypeLower}-version-title-label`;
+          versionTitleLabel.innerHTML =
               `
-      <div class="version-row">
-      <div class="version-label">
-      <i class="dropdown icon"></i>
-      <i class="code branch icon"></i>
-      버전 <span class="version-tag">${version.versionNumber}</span>
-          ${version.isLatest ? '<div class="ui green mini label">최신</div>' : ''}
+      <div class="version-row flex items-center justify-between">
+      <div class="version-label flex items-center gap-2">
+      <i class="fa-solid fa-code-branch"></i>
+      버전 <span class="version-tag font-mono">${version.versionNumber}</span>
+          ${version.isLatest ? '<span class="badge badge-sm badge-success">최신</span>' : ''}
       </div>
-      <span class="version-date">${formatDate(version.releaseDate)}</span>
+      <span class="version-date text-sm text-gray-500">${formatDate(version.releaseDate)}</span>
       </div>
       `
           ;
 
           const versionContentDiv = document.createElement('div');
           versionContentDiv.className =
-              `content ${moduleTypeLower}-version-content`
+              `collapse-content ${moduleTypeLower}-version-content`
           ;
           versionContentDiv.setAttribute('data-version-index', index);
 
@@ -331,16 +311,22 @@
           versionContentDiv.appendChild(updateList);
 
           // 중첩 아코디언에 추가
-          nestedAccordion.appendChild(versionTitleDiv);
-          nestedAccordion.appendChild(versionContentDiv);
+          versionCollapse.appendChild(versionTitleInput);
+          versionCollapse.appendChild(versionTitleLabel);
+          versionCollapse.appendChild(versionContentDiv);
+          nestedAccordion.appendChild(versionCollapse);
         });
 
         // 중첩 아코디언을 콘텐츠에 추가
         allVersionsContentDiv.appendChild(nestedAccordion);
 
         // 전체 버전 섹션을 컨테이너에 추가
-        container.appendChild(allVersionsTitleDiv);
-        container.appendChild(allVersionsContentDiv);
+        const allVersionsCollapse = document.createElement('div');
+        allVersionsCollapse.className = 'collapse collapse-arrow bg-base-200';
+        allVersionsCollapse.appendChild(allVersionsTitleInput);
+        allVersionsCollapse.appendChild(allVersionsTitleLabel);
+        allVersionsCollapse.appendChild(allVersionsContentDiv);
+        container.appendChild(allVersionsCollapse);
       }
 
       /**
@@ -349,16 +335,16 @@
        * @returns {HTMLElement} 업데이트 목록 요소
        */
       function createUpdatesList(updates) {
-        const updateList = document.createElement('div');
-        updateList.className = 'ui relaxed divided list';
+        const updateList = document.createElement('ul');
+        updateList.className = 'space-y-2';
 
         if (updates && Array.isArray(updates) && updates.length > 0) {
           updates.forEach(update => {
-            const item = document.createElement('div');
-            item.className = 'item';
+            const item = document.createElement('li');
+            item.className = 'flex items-start gap-2';
 
             // moduleUpdateType에 따른 아이콘 매핑
-            let iconName = "info circle";
+            let iconName = "info-circle";
 
             // moduleUpdateType에 따라 아이콘 선택
             if (update.moduleUpdateType) {
@@ -370,7 +356,7 @@
                   iconName = "microchip";
                   break;
                 case "PERFORMANCE":
-                  iconName = "lightning";
+                  iconName = "bolt";
                   break;
                 case "BUGFIX":
                   iconName = "bug";
@@ -382,34 +368,32 @@
                   iconName = "shield";
                   break;
                 case "DESIGN":
-                  iconName = "paint brush";
+                  iconName = "paintbrush";
                   break;
                 case "DOCUMENTATION":
                   iconName = "book";
                   break;
                 default:
-                  iconName = "info circle";
+                  iconName = "info-circle";
               }
             }
 
             item.innerHTML = `
-        <div class="content">
-          <div class="header mb-1">
-            <i class="${iconName} icon"></i>
+        <div class="flex-1">
+          <div class="font-semibold mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-${iconName}"></i>
             ${update.updateTitle}
           </div>
-          <div class="description">${update.updateDescription || ''}</div>
+          <div class="text-sm text-gray-600">${update.updateDescription || ''}</div>
         </div>
       `;
             updateList.appendChild(item);
           });
         } else {
           updateList.innerHTML = `
-      <div class="item">
-        <div class="content">
-          <div class="header">업데이트 정보가 없습니다</div>
-        </div>
-      </div>
+      <li class="text-gray-500">
+        업데이트 정보가 없습니다
+      </li>
     `;
         }
 

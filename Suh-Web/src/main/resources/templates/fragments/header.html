@@ -22,8 +22,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/daisyui.css" rel="stylesheet" type="text/css"/>
   <script>
     tailwind.config = {
-      darkMode: ['class', '[data-theme="dark"]'],
-      corePlugins: { preflight: false }
+      darkMode: ['class', '[data-theme="dark"]']
     }
   </script>
 
@@ -32,10 +31,6 @@
 
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-  <!-- Semantic UI (일부 페이지에서 사용) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script>
 
   <!-- CryptoJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
@@ -67,7 +62,7 @@
               title="버전 정보">
         <i class="fa-solid fa-tag text-[0.7rem]"></i>
         <!-- 데스크탑에서만 버전 숫자 표시 -->
-        <span id="header-version-tag" class="hidden lg:inline">v1.0.0</span>
+        <span id="header-version-tag" class="version-tag-text hidden lg:inline">v1.0.0</span>
       </button>
     </div>
 
@@ -185,4 +180,65 @@
   </div>
   <!-- 헤더 아래 여백 -->
   <div class="h-2"></div>
+  
+  <!-- Changelog 모달 -->
+  <dialog id="changelog-modal" class="modal">
+    <div class="modal-box max-w-lg bg-base-100">
+      <!-- 모달 헤더 -->
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-code-branch text-primary text-xl"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-lg">Changelog</h3>
+          <p class="text-sm text-gray-500">SUH Project Utility</p>
+        </div>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- 최신 버전 정보 -->
+      <div id="changelog-content" class="space-y-4">
+        <!-- 로딩 스켈레톤 -->
+        <div id="changelog-loading" class="space-y-3">
+          <div class="skeleton h-6 w-32"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-3/4"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+        </div>
+
+        <!-- 실제 컨텐츠 (JS로 채움) -->
+        <div id="changelog-data" class="hidden">
+          <!-- 버전 헤더 -->
+          <div class="flex items-center gap-2 mb-3">
+            <span id="changelog-version" class="font-bold text-lg">v1.4.6</span>
+            <span class="badge badge-soft badge-success text-xs">Latest</span>
+            <span id="changelog-date" class="text-sm text-gray-500">2025-12-13</span>
+          </div>
+
+          <!-- 변경사항 목록 -->
+          <ul id="changelog-items" class="space-y-2 text-sm text-gray-700">
+            <!-- JS로 채워짐 -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- 모달 푸터 -->
+      <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+        <span id="changelog-updated" class="text-xs text-gray-400">Last updated: -</span>
+        <a href="https://github.com/Cassiiopeia/suh-project-utility/blob/main/CHANGELOG.md"
+           target="_blank"
+           class="text-sm text-primary hover:underline flex items-center gap-1">
+          View on GitHub
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </header>
