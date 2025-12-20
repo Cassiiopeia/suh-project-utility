@@ -26,8 +26,6 @@ suh-project-utility/
 
 ## 개발 환경 설정
 - **Profile**: `dev` (개발), `prod` (운영)
-- **Local DB**: PostgreSQL (localhost:5432), Redis (localhost:6379)
-- **Production DB**: PostgreSQL (suh-project.synology.me:5430)
 
 ## 코딩 컨벤션
 
@@ -303,6 +301,19 @@ try {
 - **Bean 설정**: `Suh-Web/src/main/java/me/suhsaechan/web/config/` 하위에 위치
 - **예시**: `WebConfig`, `DatabaseConfig`, `RedisConfig`, `WebSecurityConfig`
 - **모든 Configuration 클래스는 Web 모듈에 집중**
+
+### 의존성 관리 규칙 ⚠️ 필수 준수
+- **외부 라이브러리**: 무조건 `Suh-Common/build.gradle`에만 선언 (`api`로 제공)
+- **도메인 모듈 간 의존성**: 허용 (예: `implementation project(':Suh-Domain-Github')`)
+- **도메인 모듈**: 외부 라이브러리 직접 선언 금지, Common 또는 다른 도메인 모듈만 의존 가능
+- **Web 모듈**: 핵심 Spring Boot 의존성만 유지 (`spring-boot-starter`, `spring-boot-starter-web`, `spring-boot-starter-validation`)
+- **중복 선언 금지**: Common에 있는 외부 라이브러리를 다른 모듈에서 다시 선언하지 않음
+
+### 테스트 의존성 규칙 ⚠️ 필수 준수
+- **통합 테스트**: 도메인 모듈에서 `@SpringBootTest` 사용 시 메인 애플리케이션 클래스 필요
+- **테스트 의존성**: `testImplementation project(':{메인이 존재하는 모듈}')` 추가 필수
+- **목적**: `@SpringBootTest(classes = {메인애플리케이션클래스}.class)` 사용을 위해 메인 모듈 의존성 필요
+- **제외**: 메인 모듈 자체는 테스트 의존성 추가 불필요
 
 ### 의존성 주입
 - **생성자 주입**: `@RequiredArgsConstructor` + `final` 필드
