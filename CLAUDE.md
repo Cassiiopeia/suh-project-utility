@@ -384,12 +384,34 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 
 ## UI/UX 가이드라인
 
-### CSS 관리
-- **통합 파일**: `src/main/resources/static/css/common.css`에 모든 스타일 통합
+### CSS 관리 및 CSP 보안 규칙 ⚠️ 필수 준수
+- **통합 CSS 파일**: `src/main/resources/static/css/common.css` 단일 파일만 사용
 - **경로 주의**: 빌드 후 `out/production/resources/static/css/common.css`에 위치하지만, 편집은 반드시 src 디렉토리에서 수행
-- **클래스 명명**: `{페이지}-{컴포넌트}` (예: `study-page`, `dashboard-section-header`, `grass-planter-dashboard`)
-- **인라인 스타일 금지**: CSP 준수
+- **인라인 스타일 절대 금지**: CSP(Content Security Policy) 준수를 위해 `style=""` 속성 사용 금지
+- **클래스 기반 스타일링**: 모든 스타일은 CSS 클래스로 정의하고 JavaScript에서 `classList.add()` / `classList.remove()` 사용
+- **Tailwind CSS 우선 사용**: 간단한 스타일은 Tailwind 유틸리티 클래스 활용
+- **커스텀 클래스**: Tailwind로 불가능한 복잡한 스타일만 `common.css`에 정의
+- **클래스 명명 규칙**: `{페이지}-{컴포넌트}` (예: `study-page`, `dashboard-section-header`, `version-badge`)
+- **유틸리티 클래스**:
+  - 숨김: `.hide` (display: none)
+  - JavaScript 사용: `element.classList.add('hide')` / `element.classList.remove('hide')`
 - **새 페이지 스타일 추가 시**: 페이지별 섹션 주석 추가 (예: `/* Grass Planter Styles */`)
+- **다크모드 지원**: `[data-theme="dark"]` 셀렉터로 다크모드 스타일 오버라이드
+
+### Tailwind CSS 사용 규칙 ⚠️ 중요
+- **하드코딩 값 금지**: `mb-[5px]`, `min-h-[70vh]`, `w-[10px]` 등 대괄호를 사용한 하드코딩 값 사용 금지
+- **표준 클래스 사용**: Tailwind에서 제공하는 표준 유틸리티 클래스 사용
+  - 간격: `mb-1` (4px), `mb-2` (8px), `mb-3` (12px), `mb-4` (16px) 등
+  - 크기: `w-4` (16px), `w-8` (32px), `h-12` (48px) 등
+  - 최소/최대 높이: `min-h-screen`, `max-h-full` 등
+- **예외 상황**: 표준 클래스로 불가능한 경우에만 인라인 스타일 또는 common.css에 커스텀 클래스 정의
+- **잘못된 예시**: `<div class="mb-[5px] min-h-[70vh]">` ❌
+- **올바른 예시**: `<div class="mb-1 min-h-screen">` ✅ 또는 `<div style="min-height: 70vh;">` ✅
+
+#### 스타일 적용 우선순위
+1. Tailwind CSS 유틸리티 클래스 (예: `hidden`, `ml-6`, `max-h-12`)
+2. common.css 커스텀 클래스 (예: `.hide`, `.version-badge`)
+3. 동적 스타일은 Thymeleaf `th:style` 속성만 허용 (정적 인라인 style은 금지)
 
 ### 컴포넌트 규칙
 - **카드**: `ui fluid card equal-height-card` 사용
@@ -401,19 +423,52 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 - **분기점**: 모바일(~767px), 태블릿(768px~991px), 데스크탑(992px~)
 - **미디어 쿼리**: 화면 크기별 최적화
 
-### 다크모드 지원 ⚠️ 중요
-- **테마 전환**: DaisyUI `data-theme="dark"` 속성 사용
-- **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
-- **초기화**: `common.js`의 `initTheme()` 함수에서 자동 처리
-- **CSS 스타일 추가 시**: `common.css`의 `[data-theme="dark"]` 셀렉터로 오버라이드
+### 다크모드/라이트모드 CSS 관리 ⚠️ 중요
+
+#### common.css 파일 구조
+```
+1-175      : CSS 변수, badge-soft (Light/Dark 함께)
+176-828    : 컴포넌트별 스타일
+829-974    : Light Mode Override Styles
+975-1012   : Validator, Print Styles
+1013-끝    : Dark Mode Override Styles
+```
+
+#### 새 컴포넌트 스타일 추가 시
+1. **컴포넌트 섹션에 기본 스타일 추가** (176-828줄 사이)
+2. **라이트모드 오버라이드 필요시** → "Light Mode Override Styles" 섹션에 추가
+3. **다크모드 오버라이드** → "Dark Mode Override Styles" 섹션에 추가
+
+#### 셀렉터 패턴
 ```css
-/* 다크모드 스타일 추가 예시 */
+/* 라이트모드 (3가지 셀렉터 사용) */
+:root:not([data-theme="dark"]) .my-component,
+html:not([data-theme="dark"]) .my-component,
+[data-theme="light"] .my-component {
+  background-color: #ffffff !important;
+}
+
+/* 다크모드 */
 [data-theme="dark"] .my-component {
   background-color: #1f2937 !important;
-  color: #e5e7eb !important;
 }
 ```
-- **하드코딩 배경색 주의**: `bg-gradient-to-br from-slate-50 to-blue-50` 같은 Tailwind 클래스는 다크모드에서 자동 변환 안 됨 → CSS 오버라이드 필수
+
+#### 충돌 방지 규칙
+- **같은 속성을 여러 곳에 정의하지 말 것** (중복 정의 금지)
+- **badge-soft 등 색상별 스타일**: 파일 상단에 Light/Dark 함께 정의
+- **Tailwind 배경색 (`bg-white`, `bg-gray-50`)**: 다크모드에서 자동 변환 안 됨 → CSS 오버라이드 필수
+
+#### 테마 전환 시스템
+- **속성**: `data-theme="dark"` / `data-theme="light"`
+- **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
+- **초기화**: `common.js`의 `initTheme()` 함수
+
+### DaisyUI 4.x 버튼 스타일 ⚠️ 중요
+- **CDN 버전**: DaisyUI 4.12.14 사용 중
+- **btn-primary 색상 문제**: DaisyUI 4.x에서 CSS 변수 형식 변경으로 `btn-primary`가 투명하게 보일 수 있음
+- **해결책**: `common.css`에 직접 스타일 정의됨 (파란색 #3b82f6)
+- **새 버튼 스타일 추가 시**: `common.css`에 직접 배경색/테두리색 지정 필수
 
 ## 빌드 및 실행
 
@@ -543,6 +598,28 @@ file:
 
 이 계획을 사용자에게 먼저 제시하고 피드백을 받은 후 작업을 진행합니다.
 
+## 코드 품질 규칙
+
+### 주석 작성 규칙 ⚠️ 중요
+- **불필요한 설명 주석 금지**: 코드 자체로 의미가 명확한 경우 주석 작성 금지
+- **LLM 스타일 주석 금지**: "(enum의 fromEnglishNameOrCode 메서드 사용)", "(AI 응답 파싱용)" 등 불필요한 설명 금지
+- **HTML 주석**: 구조적으로 필요하지 않은 설명 주석 (예: "<!-- DaisyUI Carousel (두 줄) -->") 금지
+- **JavaDoc**: public API에만 작성하고, 구현 세부사항은 작성하지 않음
+- **허용되는 주석**:
+  - 복잡한 비즈니스 로직 설명
+  - 의도적인 설계 결정 설명 (예: "// 성능 최적화를 위해 캐시 사용")
+  - TODO, FIXME 등 개발 중 표시
+  - 법적 요구사항이나 보안 관련 중요 정보
+
+```java
+// ❌ 잘못된 예시 - 불필요한 설명
+// 응답 변환 (enum의 fromEnglishNameOrCode 메서드 사용)
+TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiResult.getDetectedLanguage());
+
+// ✅ 올바른 예시 - 주석 없이 명확한 코드
+TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiResult.getDetectedLanguage());
+```
+
 ## 주의사항
 1. **파일 생성 최소화**: 기존 파일 수정 우선
 2. **문서 자동 생성 금지**: 요청 시에만 생성
@@ -552,6 +629,8 @@ file:
 6. **Boolean 필드**: 반드시 `is` 접두사 사용
 7. **작업 전 Plan 제시**: 모든 코드 수정 전 구체적인 계획 제시 필수
 8. **@OneToMany/@OneToOne 절대 금지**: JPA 관계는 오직 @ManyToOne만 사용 가능. 이는 절대 규칙이며 예외 없음!!!
+9. **주석 최소화**: 불필요한 LLM 스타일 주석이나 설명 주석 작성 금지
+10. **Tailwind 하드코딩 금지**: `mb-[5px]` 같은 대괄호 값 사용 금지, 표준 클래스 사용
 
 ## 트러블슈팅
 - **Gradle 빌드 오류**: JDK 17 버전 확인

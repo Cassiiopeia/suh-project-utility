@@ -1,65 +1,75 @@
-<!-- fragments/header.html -->
 <head th:fragment="head(title)">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="_csrf" th:content="${_csrf.token}" />
-  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-  <title th:text="${title}">S.LAB</title>
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title th:text="${title}">Default Title</title>
 
-  <!-- Tailwind CSS + DaisyUI -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <!-- 테마 즉시 적용 (FOUC 방지) -->
+  <script>
+    (function() {
+      var theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
 
-  <!-- Font Awesome Icons (브랜드 아이콘 포함) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Tailwind CSS + DaisyUI 5 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/daisyui.css" rel="stylesheet" type="text/css"/>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]']
+    }
+  </script>
 
-  <!-- Pretendard 폰트 -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
-  <!-- 커스텀 CSS -->
-  <link rel="stylesheet" href="/css/common.css">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <!-- 스터디 모듈 관련 CSS (마크다운 에디터 등) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown-light.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+  <!-- CryptoJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
-  <!-- 전역 변수 추가 -->
-  <th:block th:replace="~{fragments/conf :: conf}"> </th:block>
+  <!-- Marked.js -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-  <!-- 스크립트 파일 포함 -->
-  <script th:src="@{/js/jquery.min.js}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <!-- Common CSS & JS -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}"/>
+  <th:block th:replace="~{fragments/conf :: conf}"></th:block>
   <script th:src="@{/js/common.js}"></script>
-
-  <style>
-    /* Tailwind와 함께 사용할 기본 스타일 */
-    html, body, button, input, select, textarea {
-      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;
-    }
-
-    /* DaisyUI Primary 색상 커스텀 */
-    [data-theme="light"], :root {
-      --color-primary: oklch(0.61 0.24 252.55 / 1);
-      --color-primary-content: oklch(1 0 0 / 1);
-    }
-  </style>
 </head>
 
-<div th:fragment="header">
-  <!-- DaisyUI Navbar - 파란색 테마 -->
-  <div class="navbar bg-white shadow-md fixed top-0 left-0 right-0 z-50 px-4 lg:px-8">
+<header th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <div class="navbar bg-white shadow-md sticky top-0 z-50">
     <div class="navbar-start">
-      <a href="/dashboard" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-        <img src="/images/logo_no_text.png" alt="로고" class="h-8 w-8">
-        <span class="text-lg font-bold text-gray-800">SAECHAN LAB</span>
+      <a href="/" class="flex items-center gap-2 ml-2">
+        <!-- 로고 이미지 -->
+        <img th:src="@{/images/logo_no_text.png}" alt="Logo" class="w-8 h-8"/>
+        <!-- 텍스트 로고 - 모바일 -->
+        <span class="lg:hidden text-xl font-bold text-gray-800">S.LAB</span>
+        <!-- 텍스트 로고 - 데스크탑 -->
+        <span class="hidden lg:inline text-xl font-bold text-gray-800">SUHSAECHAN LAB</span>
       </a>
+
+      <!-- 버전 태그 (모바일: 아이콘만, 데스크탑: 아이콘 + 버전) -->
+      <button onclick="openChangelogModal()"
+              class="badge gap-0.5 ml-3 px-1.5 py-0.5 lg:px-2 lg:py-1 lg:gap-1 hover:opacity-80 transition-opacity cursor-pointer ml-1 version-badge text-[0.65rem]"
+              title="버전 정보">
+        <i class="fa-solid fa-tag text-[0.7rem]"></i>
+        <!-- 데스크탑에서만 버전 숫자 표시 -->
+        <span id="header-version-tag" class="version-tag-text hidden lg:inline">v1.0.0</span>
+      </button>
     </div>
 
     <div class="navbar-end">
       <!-- Desktop Menu -->
       <div class="hidden lg:flex items-center gap-1">
-        <!-- 다크모드 토글 -->
+        <!-- 다크모드 토글 (항상 표시) -->
         <label class="swap swap-rotate cursor-pointer p-2">
           <input type="checkbox" class="theme-controller" value="dark" id="theme-toggle-desktop" />
           <!-- 해 아이콘 (라이트 모드일 때 표시) -->
@@ -71,21 +81,25 @@
             <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
           </svg>
         </label>
+
+        <!-- About Me (항상 표시) -->
         <a href="/profile" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           <i class="fa-solid fa-user"></i>
-          프로필
+          About Me
         </a>
-        <a href="/dashboard" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+
+        <a href="/dashboard" sec:authorize="isAuthenticated()" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           <i class="fa-solid fa-clipboard-list"></i>
           대시보드
         </a>
-        <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-            <i class="fa-solid fa-ellipsis"></i>
-            더보기
-            <i class="fa-solid fa-chevron-down text-xs"></i>
+
+        <!-- Menu (항상 표시) -->
+        <div id="more-dropdown-desktop" class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+            <i class="fa-solid fa-bars text-xl"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
+            <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
             <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈</a></li>
             <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>번역기</a></li>
             <li class="divider my-1"></li>
@@ -95,15 +109,22 @@
             <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
             <li><a href="/ai-server" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
             <li><a href="/chatbot-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
-            <li class="divider my-1"></li>
-            <li><a href="/logout" class="text-red-500 hover:bg-red-50"><i class="fa-solid fa-right-from-bracket w-5"></i>로그아웃</a></li>
+            <li sec:authorize="isAuthenticated()" class="divider my-1"></li>
+            <li sec:authorize="isAuthenticated()">
+              <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
+                  <i class="fa-solid fa-right-from-bracket w-5"></i>
+                  로그아웃
+                </button>
+              </form>
+            </li>
           </ul>
         </div>
       </div>
 
       <!-- Mobile Menu -->
       <div class="lg:hidden flex items-center gap-1">
-        <!-- 모바일 다크모드 토글 (dropdown 외부) -->
+        <!-- 모바일 다크모드 토글 (항상 표시) -->
         <label class="swap swap-rotate cursor-pointer p-2">
           <input type="checkbox" class="theme-controller" value="dark" id="theme-toggle-mobile" />
           <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -113,15 +134,19 @@
             <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"/>
           </svg>
         </label>
-        <!-- 햄버거 메뉴 dropdown -->
+
+        <!-- 프로필 (항상 표시) -->
+        <a href="/profile" class="btn btn-ghost btn-circle">
+          <i class="fa-solid fa-user text-gray-700"></i>
+        </a>
+
+        <!-- 햄버거 메뉴 (항상 표시) -->
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
             <i class="fa-solid fa-bars text-xl text-gray-700"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-64 p-2 mt-3 border border-gray-100">
             <li class="menu-title text-gray-500 text-xs font-semibold px-4 py-2">메뉴</li>
-            <li><a href="/profile" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-user w-5"></i>프로필</a></li>
-            <li class="divider my-1"></li>
             <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
             <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈 도우미</a></li>
             <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>커스텀 AI 번역기</a></li>
@@ -132,12 +157,88 @@
             <li><a href="/ai-server" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
             <li><a href="/chatbot-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
             <li class="divider my-1"></li>
-            <li><a href="/logout" class="text-red-500 hover:bg-red-50"><i class="fa-solid fa-right-from-bracket w-5"></i>로그아웃</a></li>
+
+            <li sec:authorize="isAuthenticated()">
+              <form th:action="@{/logout}" method="post" class="m-0">
+                <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
+                  <i class="fa-solid fa-right-from-bracket w-5"></i>
+                  로그아웃
+                </button>
+              </form>
+            </li>
+
+            <li sec:authorize="!isAuthenticated()">
+              <a href="/login" class="hover:bg-blue-50 hover:text-blue-600">
+                <i class="fa-solid fa-right-to-bracket w-5"></i>
+                로그인
+              </a>
+            </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
   <!-- 헤더 아래 여백 -->
-  <div class="h-16"></div>
-</div>
+  <div class="h-2"></div>
+  
+  <!-- Changelog 모달 -->
+  <dialog id="changelog-modal" class="modal">
+    <div class="modal-box max-w-lg bg-base-100">
+      <!-- 모달 헤더 -->
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-code-branch text-primary text-xl"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-bold text-lg">Changelog</h3>
+          <p class="text-sm text-gray-500">SUH Project Utility</p>
+        </div>
+        <form method="dialog">
+          <button class="btn btn-sm btn-circle btn-ghost">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- 최신 버전 정보 -->
+      <div id="changelog-content" class="space-y-4">
+        <!-- 로딩 스켈레톤 -->
+        <div id="changelog-loading" class="space-y-3">
+          <div class="skeleton h-6 w-32"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-3/4"></div>
+          <div class="skeleton h-4 w-5/6"></div>
+        </div>
+
+        <!-- 실제 컨텐츠 (JS로 채움) -->
+        <div id="changelog-data" class="hidden">
+          <!-- 버전 헤더 -->
+          <div class="flex items-center gap-2 mb-3">
+            <span id="changelog-version" class="font-bold text-lg">v1.4.6</span>
+            <span class="badge badge-soft badge-success text-xs">Latest</span>
+            <span id="changelog-date" class="text-sm text-gray-500">2025-12-13</span>
+          </div>
+
+          <!-- 변경사항 목록 -->
+          <ul id="changelog-items" class="space-y-2 text-sm text-gray-700">
+            <!-- JS로 채워짐 -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- 모달 푸터 -->
+      <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+        <span id="changelog-updated" class="text-xs text-gray-400">Last updated: -</span>
+        <a href="https://github.com/Cassiiopeia/suh-project-utility/blob/main/CHANGELOG.md"
+           target="_blank"
+           class="text-sm text-primary hover:underline flex items-center gap-1">
+          View on GitHub
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+</header>

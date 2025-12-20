@@ -5,21 +5,22 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui middle aligned center aligned grid" style="min-height: 70vh;">
-  <div class="column">
-    <div class="ui center aligned segment">
-      <h1 class="ui icon header">
-        <i class="search icon"></i>
-        <div class="content">
-          페이지를 찾을 수 없습니다
-          <div class="sub header">요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.</div>
-        </div>
-      </h1>
-      <div class="ui hidden divider"></div>
-      <a href="/" class="ui primary button">
-        <i class="home icon"></i>
-        홈으로 돌아가기
-      </a>
+<div class="min-h-screen flex items-center justify-center bg-base-200 p-4">
+  <div class="card bg-base-100 shadow-xl text-center p-8 max-w-lg mx-auto">
+    <div class="card-body items-center text-center">
+      <i class="fa-solid fa-magnifying-glass text-warning text-6xl mb-4"></i>
+      <h1 class="card-title text-4xl font-bold text-warning mb-2">페이지를 찾을 수 없습니다</h1>
+      <p class="text-lg text-base-content mb-6">요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.</p>
+      <div class="flex flex-col sm:flex-row gap-4 mt-6">
+        <a href="/" class="btn btn-primary">
+          <i class="fa-solid fa-home"></i>
+          홈으로 돌아가기
+        </a>
+        <button onclick="history.back()" class="btn btn-outline">
+          <i class="fa-solid fa-arrow-left"></i>
+          이전 페이지로
+        </button>
+      </div>
     </div>
   </div>
 </div>

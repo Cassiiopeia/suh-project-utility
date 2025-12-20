@@ -9,76 +9,69 @@
 <body class="study-page post-view-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
+<div class="container mx-auto px-4 py-6" id="main-content">
   <!-- 포스트 내용 -->
-  <div class="ui segment">
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
     <!-- 포스트 헤더 -->
-    <div class="post-header">
-      <h1 class="ui header" th:text="${post.title}"></h1>
-      <div class="post-meta">
-        <div class="ui horizontal list">
-          <div class="item">
-            <i class="user circle icon"></i>
-            <div class="content" th:text="${post.author != null ? post.author : '익명'}"></div>
-          </div>
-          <div class="item">
-            <i class="calendar icon"></i>
-            <div class="content" th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></div>
-          </div>
-          <div class="item">
-            <i class="eye icon"></i>
-            <div class="content" th:text="${post.viewCount + ' 조회'}"></div>
-          </div>
-          <div class="item">
-            <i class="folder icon"></i>
-            <div class="content">
-              <a th:href="@{/study-management/category/{id}(id=${post.categoryId})}" 
-                 th:text="${post.categoryName}"></a>
-            </div>
-          </div>
+    <div class="post-header mb-6">
+      <h1 class="text-3xl font-bold mb-4" th:text="${post.title}"></h1>
+      <div class="post-meta flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+        <div class="flex items-center gap-1">
+          <i class="fa-solid fa-user-circle"></i>
+          <span th:text="${post.author != null ? post.author : '익명'}"></span>
+        </div>
+        <div class="flex items-center gap-1">
+          <i class="fa-solid fa-calendar"></i>
+          <span th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></span>
+        </div>
+        <div class="flex items-center gap-1">
+          <i class="fa-solid fa-eye"></i>
+          <span th:text="${post.viewCount + ' 조회'}"></span>
+        </div>
+        <div class="flex items-center gap-1">
+          <i class="fa-solid fa-folder"></i>
+          <a th:href="@{/study-management/category/{id}(id=${post.categoryId})}" 
+             th:text="${post.categoryName}" class="link"></a>
         </div>
       </div>
       
       <!-- 태그 목록 -->
-      <div class="post-tags" th:if="${post.tagList != null && !post.tagList.isEmpty()}">
-        <div class="ui horizontal list">
-          <div class="item" th:each="tag : ${post.tagList}">
-            <a th:href="@{/study-management/search(tag=${tag})}" class="ui tiny label" th:text="${tag}"></a>
-          </div>
-        </div>
+      <div class="post-tags flex flex-wrap gap-2 mb-4" th:if="${post.tagList != null && !post.tagList.isEmpty()}">
+        <a th:each="tag : ${post.tagList}" th:href="@{/study-management/search(tag=${tag})}" class="badge badge-sm" th:text="${tag}"></a>
       </div>
       
       <!-- 작업 버튼 -->
-      <div class="post-actions">
-        <a th:href="@{/study-management/post/{id}/edit(id=${post.id})}" class="ui blue button">
-          <i class="edit icon"></i> 수정
+      <div class="post-actions flex gap-2">
+        <a th:href="@{/study-management/post/{id}/edit(id=${post.id})}" class="btn btn-primary">
+          <i class="fa-solid fa-edit"></i> 수정
         </a>
-        <button class="ui red button" id="delete-post-btn">
-          <i class="trash icon"></i> 삭제
+        <button class="btn btn-error" id="delete-post-btn">
+          <i class="fa-solid fa-trash"></i> 삭제
         </button>
-        <a th:href="@{/study-management/category/{id}(id=${post.categoryId})}" class="ui button">
-          <i class="arrow left icon"></i> 목록으로
+        <a th:href="@{/study-management/category/{id}(id=${post.categoryId})}" class="btn btn-ghost">
+          <i class="fa-solid fa-arrow-left"></i> 목록으로
         </a>
       </div>
     </div>
     
-    <div class="ui divider"></div>
+    <div class="divider"></div>
     
     <!-- 포스트 내용 (마크다운 렌더링) -->
     <div class="post-content markdown-body" id="post-content" th:data-content="${post.content}"></div>
     
     <!-- 첨부 파일 목록 -->
-    <div class="post-attachments" th:if="${post.attachments != null && !post.attachments.isEmpty()}">
-      <div class="ui divider"></div>
-      <h3 class="ui header">첨부 파일</h3>
+    <div class="post-attachments mt-6" th:if="${post.attachments != null && !post.attachments.isEmpty()}">
+      <div class="divider"></div>
+      <h3 class="text-xl font-bold mb-4">첨부 파일</h3>
       
       <!-- 이미지 첨부 파일 갤러리 -->
-      <div class="image-attachments" th:if="${post.attachments.?[isImage == true].size() > 0}">
-        <h4 class="ui header">이미지</h4>
-        <div class="ui small images">
+      <div class="image-attachments mb-6" th:if="${post.attachments.?[isImage == true].size() > 0}">
+        <h4 class="text-lg font-semibold mb-2">이미지</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div th:each="attachment : ${post.attachments}" th:if="${attachment.isImage}">
             <a th:href="${attachment.fileUrl}" target="_blank">
-              <img th:src="${attachment.fileUrl}" th:alt="${attachment.originalFilename}">
+              <img th:src="${attachment.fileUrl}" th:alt="${attachment.originalFilename}" class="rounded-lg w-full h-auto">
             </a>
           </div>
         </div>
@@ -86,34 +79,36 @@
       
       <!-- 비이미지 첨부 파일 목록 -->
       <div class="file-attachments" th:if="${post.attachments.?[isImage != true].size() > 0}">
-        <h4 class="ui header">파일</h4>
-        <div class="ui list">
-          <div class="item" th:each="attachment : ${post.attachments}" th:unless="${attachment.isImage}">
-            <i th:class="${attachment.isVideo ? 'video' : 'file'} + ' icon'"></i>
-            <div class="content">
-              <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}"></a>
-              <div class="description">
-                <span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <h4 class="text-lg font-semibold mb-2">파일</h4>
+        <ul class="list-disc list-inside">
+          <li th:each="attachment : ${post.attachments}" th:unless="${attachment.isImage}" class="flex items-center gap-2">
+            <i th:class="'fa-solid fa-' + (${attachment.isVideo ? 'video' : 'file'})"></i>
+            <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}" class="link"></a>
+            <span class="text-gray-500 text-sm">
+              (<span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>)
+            </span>
+          </li>
+        </ul>
       </div>
+    </div>
     </div>
   </div>
 </div>
 
 <!-- 삭제 확인 모달 -->
-<div class="ui small modal" id="delete-confirm-modal">
-  <div class="header">포스트 삭제</div>
-  <div class="content">
-    <p>정말로 이 포스트를 삭제하시겠습니까? 삭제된 포스트는 복구할 수 없습니다.</p>
+<dialog id="delete-confirm-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">포스트 삭제</h3>
+    <p class="mb-4">정말로 이 포스트를 삭제하시겠습니까? 삭제된 포스트는 복구할 수 없습니다.</p>
+    <div class="modal-action">
+      <button type="button" class="btn btn-error" id="confirm-delete-btn">삭제</button>
+      <button type="button" class="btn btn-ghost" id="cancel-delete-btn">취소</button>
+    </div>
   </div>
-  <div class="actions">
-    <button class="ui negative button" id="confirm-delete-btn">삭제</button>
-    <button class="ui button" id="cancel-delete-btn">취소</button>
-  </div>
-</div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
@@ -135,12 +130,12 @@
     
     // 삭제 버튼 클릭 시 모달 표시
     $('#delete-post-btn').on('click', function() {
-      $('#delete-confirm-modal').modal('show');
+      document.getElementById('delete-confirm-modal').showModal();
     });
     
     // 삭제 취소
     $('#cancel-delete-btn').on('click', function() {
-      $('#delete-confirm-modal').modal('hide');
+      document.getElementById('delete-confirm-modal').close();
     });
     
     // 삭제 확인

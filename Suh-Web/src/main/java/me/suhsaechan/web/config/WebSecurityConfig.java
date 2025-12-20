@@ -1,6 +1,5 @@
 package me.suhsaechan.web.config;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +32,8 @@ public class WebSecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     log.info("설정 - SecurityFilterChain 초기화");
 
-    // 공개 API , 리소스 경로
-    List<String> publicApiEndpoints = publicEndpointConfig.getPublicApiEndpoints();
-    List<String> publicResourceEndpoints = publicEndpointConfig.getPublicResourceEndpoints();
-
-    List<String> allPublicEndpoints = new ArrayList<>();
-    allPublicEndpoints.addAll(publicResourceEndpoints);
-    allPublicEndpoints.addAll(publicApiEndpoints);
+    // PublicEndpointConfig에서 중앙 관리되는 공개 경로 가져오기
+    List<String> allPublicEndpoints = publicEndpointConfig.getAllPublicEndpoints();
 
     // CSRF 설정 : _csrf 필드 필요
     http

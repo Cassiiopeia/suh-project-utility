@@ -1,6 +1,6 @@
 <!-- src/main/resources/templates/pages/dashboard.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='대시보드-SAECHAN-LAB')}"></head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
@@ -38,11 +38,34 @@
 
   <!-- 실제 콘텐츠 -->
   <div id="real-content" class="hidden">
-    <!-- 웰컴 섹션 -->
-    <div class="mb-8">
+    <!-- 웰컴 + 공지사항 통합 섹션 -->
+    <!-- 헤더 섹션 -->
+    <section id="header-section" class="mb-6">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">새찬 서버 실험실</h1>
-      <p class="text-gray-600">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
-    </div>
+      <p class="text-sm text-gray-600">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
+    </section>
+
+    <!-- 공지사항 섹션 -->
+    <section id="notice-section" class="mb-8">
+      <!-- 고정 헤더 (레이블 + 전체보기) -->
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-700">공지사항</h2>
+        <a href="/notice" class="text-sm text-gray-500 hover:text-primary transition-colors">
+          전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
+      </div>
+
+      <!-- 슬라이드 카드 컨테이너 -->
+      <div class="notice-cards-container relative overflow-hidden bg-white rounded-lg shadow-md" style="height: 4rem;">
+        <div id="notice-cards" class="relative w-full h-full">
+          <!-- 로딩 상태 -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="loading loading-spinner loading-sm text-primary mr-2"></span>
+            <span class="text-gray-400 text-sm">로딩중...</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- 서버 통계 Summary 섹션 -->
     <section id="summary-section" class="mb-8">
@@ -167,33 +190,6 @@
       </div>
     </section>
 
-    <!-- 공지사항 섹션 -->
-    <section class="card bg-white shadow-sm mb-8">
-      <div class="card-body">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-            <i class="fa-solid fa-bullhorn text-blue-500"></i>
-            공지사항
-          </h2>
-          <span class="badge badge-outline badge-primary">Notice</span>
-        </div>
-
-        <!-- 공지사항 목록 -->
-        <div id="notice-accordion" class="space-y-2">
-          <div class="notice-empty text-gray-500 py-4 text-center">
-            <i class="fa-solid fa-info-circle mr-2"></i>
-            등록된 공지사항이 없습니다.
-          </div>
-        </div>
-
-        <!-- 페이지네이션 -->
-        <div class="notice-pagination hidden flex justify-center mt-4">
-          <div class="join">
-            <!-- 동적으로 생성 -->
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Dev Tools 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
@@ -1144,10 +1140,10 @@
     <!-- 댓글 작성 폼 -->
     <div class="bg-gray-50 rounded-lg p-4">
       <div class="form-control mb-3">
-        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-bordered input-sm w-full">
+        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-sm w-full">
       </div>
       <div class="form-control mb-3">
-        <textarea id="comment-content" class="textarea textarea-bordered" rows="3" placeholder="댓글을 입력하세요"></textarea>
+        <textarea id="comment-content" class="textarea" rows="3" placeholder="댓글을 입력하세요"></textarea>
       </div>
       <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-pen mr-1"></i> 댓글 작성
@@ -1179,14 +1175,6 @@
       document.getElementById('real-content').classList.remove('hidden');
     }, 500);
 
-    // 페이지네이션 클릭 이벤트
-    $(document).on('click', '.notice-pagination .join .btn', function(e) {
-      e.preventDefault();
-      if (!$(this).hasClass('btn-active') && !$(this).hasClass('btn-disabled')) {
-        const page = $(this).data('page');
-        loadActiveNoticesByPage(page);
-      }
-    });
   });
 
   // 숫자 포맷 함수 (1000 -> 1K, 1000000 -> 1M)
@@ -1288,13 +1276,10 @@
     );
   }
 
-  // 전역 변수 - 공지사항 데이터 및 페이지네이션 상태
-  let noticeData = {
-    notices: [],
-    currentPage: 1,
-    totalPages: 1,
-    noticesPerPage: 5
-  };
+  // 전역 변수 - 공지사항 슬라이드 상태
+  let noticeData = [];
+  let currentNoticeIndex = 0;
+  let noticeInterval = null;
 
   // 활성화된 공지사항 로드 함수
   function loadActiveNotices() {
@@ -1303,141 +1288,134 @@
       null,
       function(response) {
         if (response && response.notices && response.notices.length > 0) {
-          noticeData.notices = response.notices;
-          noticeData.notices.sort(function(a, b) {
+          // 중요 공지 우선, 그 다음 최신순 정렬
+          noticeData = response.notices.sort(function(a, b) {
             if (a.isImportant && !b.isImportant) return -1;
             if (!a.isImportant && b.isImportant) return 1;
             return new Date(b.createdDate) - new Date(a.createdDate);
           });
-          noticeData.totalPages = Math.ceil(noticeData.notices.length / noticeData.noticesPerPage);
-          loadActiveNoticesByPage(1);
+
+          initNoticeCards();
         } else {
-          $('#notice-accordion').html(`
-            <div class="text-gray-500 py-4 text-center">
-              <i class="fa-solid fa-info-circle mr-2"></i>
-              등록된 공지사항이 없습니다.
-            </div>
-          `);
-          $('.notice-pagination').addClass('hidden');
+          // 공지사항 없음
+          $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-gray-400 text-sm">공지사항 없음</span></div>');
         }
       },
       function(xhr, status, error) {
         console.error('공지사항 로드 오류:', error);
-        $('#notice-accordion').html(`
-          <div class="text-red-500 py-4 text-center">
-            <i class="fa-solid fa-exclamation-triangle mr-2"></i>
-            공지사항을 불러올 수 없습니다.
-          </div>
-        `);
-        $('.notice-pagination').addClass('hidden');
+        $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-red-500 text-sm">로드 실패</span></div>');
       }
     );
   }
 
-  // 페이지별 공지사항 표시 함수
-  function loadActiveNoticesByPage(page) {
-    noticeData.currentPage = page;
-    const startIndex = (page - 1) * noticeData.noticesPerPage;
-    const endIndex = Math.min(startIndex + noticeData.noticesPerPage, noticeData.notices.length);
-    const pageNotices = noticeData.notices.slice(startIndex, endIndex);
+  // 카드 초기화
+  function initNoticeCards() {
+    const container = $('#notice-cards');
+    container.empty();
 
-    $('#notice-accordion').empty();
+    // 모든 카드 생성
+    noticeData.forEach(function(notice, index) {
+      const importantBadge = notice.isImportant
+        ? '<span class="badge badge-soft badge-error badge-xs mr-2">중요</span>'
+        : '';
 
-    if (pageNotices.length > 0) {
-      pageNotices.forEach(function(notice) {
-        const isImportant = notice.isImportant ?
-          '<span class="badge badge-error badge-xs">중요</span> ' : '';
+      const dateFormatted = formatNoticeDate(notice.createdDate);
+      const viewCount = notice.viewCount || 0;
 
-        const noticeItem = `
-          <div class="collapse collapse-arrow bg-base-100 border border-gray-100 rounded-lg mb-2" data-id="${notice.noticeId}">
-            <input type="checkbox" class="peer" />
-            <div class="collapse-title font-medium flex items-center gap-2">
-              ${isImportant}
-              <span class="flex-1">${notice.title}</span>
-              <span class="text-xs text-gray-400 hidden sm:inline">
-                <i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}
-                <i class="fa-regular fa-calendar ml-2 mr-1"></i>${timeAgo(notice.createdDate)}
-              </span>
-            </div>
-            <div class="collapse-content">
-              <div class="text-sm text-gray-500 mb-2 sm:hidden">
-                <span><i class="fa-regular fa-user mr-1"></i>${notice.author || '관리자'}</span>
-                <span class="ml-3"><i class="fa-regular fa-calendar mr-1"></i>${new Date(notice.createdDate).toLocaleDateString()}</span>
-                <span class="ml-3"><i class="fa-regular fa-eye mr-1"></i>${notice.viewCount || 0}</span>
-              </div>
-              <p class="text-gray-600 mb-3">${notice.content.substring(0, 150)}${notice.content.length > 150 ? '...' : ''}</p>
-              <div class="text-right">
-                <button class="btn btn-primary btn-xs view-notice-btn" data-id="${notice.noticeId}">
-                  <i class="fa-solid fa-eye mr-1"></i> 상세보기
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-
-        $('#notice-accordion').append(noticeItem);
-      });
-
-      // 상세보기 버튼 이벤트 바인딩
-      $('.view-notice-btn').click(function(e) {
-        e.stopPropagation();
-        const noticeId = $(this).data('id');
-        showNoticeDetail(noticeId);
-      });
-
-      // 페이지네이션 업데이트
-      updatePagination();
-
-      if (noticeData.notices.length > noticeData.noticesPerPage) {
-        $('.notice-pagination').removeClass('hidden');
-      } else {
-        $('.notice-pagination').addClass('hidden');
-      }
-    } else {
-      $('#notice-accordion').html(`
-        <div class="text-gray-500 py-4 text-center">
-          <i class="fa-solid fa-info-circle mr-2"></i>
-          등록된 공지사항이 없습니다.
+      const card = $(`
+        <div class="notice-card ${index === 0 ? 'active' : ''}" data-notice-id="${notice.noticeId}">
+          <i class="fa-solid fa-bullhorn text-blue-500 mr-2"></i>
+          ${importantBadge}
+          <span class="notice-title truncate">${notice.title}</span>
+          <span class="notice-meta">
+            <span class="notice-dot">·</span>
+            <span>${dateFormatted}</span>
+            <span class="notice-dot">·</span>
+            <span>조회 ${formatNumber(viewCount)}</span>
+          </span>
         </div>
       `);
-      $('.notice-pagination').addClass('hidden');
+
+      // 클릭 시 모달 열기
+      card.click(function() {
+        pauseNoticeSlide();
+        showNoticeDetail(notice.noticeId);
+      });
+
+      container.append(card);
+    });
+
+    // 2개 이상일 때만 자동 슬라이드
+    if (noticeData.length > 1) {
+      startNoticeSlide();
     }
   }
 
-  // 페이지네이션 업데이트 함수
-  function updatePagination() {
-    const paginationContainer = $('.notice-pagination .join');
-    paginationContainer.empty();
-
-    if (noticeData.totalPages <= 1) {
-      $('.notice-pagination').addClass('hidden');
-      return;
-    }
-
-    // 이전 버튼
-    const prevDisabled = noticeData.currentPage === 1 ? 'btn-disabled' : '';
-    paginationContainer.append(`
-      <button class="btn btn-sm join-item ${prevDisabled}" data-page="${noticeData.currentPage - 1}">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-    `);
-
-    // 페이지 번호
-    for (let i = 1; i <= noticeData.totalPages; i++) {
-      const isActive = i === noticeData.currentPage ? 'btn-active btn-primary' : '';
-      paginationContainer.append(`
-        <button class="btn btn-sm join-item ${isActive}" data-page="${i}">${i}</button>
-      `);
-    }
-
-    // 다음 버튼
-    const nextDisabled = noticeData.currentPage === noticeData.totalPages ? 'btn-disabled' : '';
-    paginationContainer.append(`
-      <button class="btn btn-sm join-item ${nextDisabled}" data-page="${noticeData.currentPage + 1}">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-    `);
+  // 공지사항 날짜 포맷 함수
+  function formatNoticeDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      month: 'short',
+      day: 'numeric'
+    });
   }
+
+  // 슬라이드 시작
+  function startNoticeSlide() {
+    noticeInterval = setInterval(function() {
+      slideToNext();
+    }, 5000); // 5초
+  }
+
+  // 다음 카드로 슬라이드
+  function slideToNext() {
+    const cards = $('.notice-card');
+    const currentCard = cards.eq(currentNoticeIndex);
+
+    // 다음 인덱스 계산 (순환)
+    currentNoticeIndex = (currentNoticeIndex + 1) % noticeData.length;
+    const nextCard = cards.eq(currentNoticeIndex);
+
+    // 1. 현재 카드 → 위로 사라짐
+    currentCard.removeClass('active').addClass('exit');
+
+    // 2. 다음 카드 → 아래에서 올라옴
+    nextCard.removeClass('exit').addClass('active');
+
+    // 3. 600ms 후 exit 클래스 제거 (순환 준비)
+    setTimeout(function() {
+      currentCard.removeClass('exit');
+    }, 600);
+  }
+
+  // 슬라이드 일시정지
+  function pauseNoticeSlide() {
+    if (noticeInterval) {
+      clearInterval(noticeInterval);
+      noticeInterval = null;
+    }
+  }
+
+  // 슬라이드 재개
+  function resumeNoticeSlide() {
+    if (!noticeInterval && noticeData.length > 1) {
+      startNoticeSlide();
+    }
+  }
+
+  // 호버 시 일시정지
+  $('#notice-section').hover(
+    function() { pauseNoticeSlide(); },
+    function() { resumeNoticeSlide(); }
+  );
+
+  // 페이지 언로드 시 인터벌 정리
+  $(window).on('beforeunload', function() {
+    if (noticeInterval) {
+      clearInterval(noticeInterval);
+    }
+  });
 
   // 공지사항 상세 보기 함수
   function showNoticeDetail(noticeId) {

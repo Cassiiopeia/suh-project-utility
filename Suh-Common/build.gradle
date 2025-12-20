@@ -72,6 +72,7 @@ dependencies {
 
     // Thymeleaf - API로 제공
     api 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    api 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
     // Database - API로 제공
     api 'org.postgresql:postgresql'

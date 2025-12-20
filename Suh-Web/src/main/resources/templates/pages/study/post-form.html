@@ -10,25 +10,30 @@
 <body class="study-page post-form-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
-  <div class="ui segment">
-    <h2 class="ui header" th:text="${isEdit != null && isEdit ? '포스트 수정' : '새 포스트 작성'}"></h2>
-    
-    <form id="post-form" class="ui form">
+<div class="container mx-auto px-4 py-6" id="main-content">
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="text-2xl font-bold mb-4" th:text="${isEdit != null && isEdit ? '포스트 수정' : '새 포스트 작성'}"></h2>
+      
+      <form id="post-form">
       <!-- 포스트 ID (수정 시에만 사용) -->
       <input type="hidden" id="post-id" name="id" th:if="${post != null}" th:value="${post.id}">
       
       <!-- 제목 필드 -->
-      <div class="field">
-        <label>제목</label>
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">제목</span>
+        </label>
         <input type="text" id="post-title" name="postTitle" placeholder="포스트 제목을 입력하세요" 
-               required th:value="${post != null ? post.title : ''}">
+               class="input input-bordered w-full" required th:value="${post != null ? post.title : ''}">
       </div>
       
       <!-- 카테고리 선택 -->
-      <div class="field">
-        <label>카테고리</label>
-        <select class="ui dropdown" id="post-category" name="categoryId" required>
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">카테고리</span>
+        </label>
+        <select class="select select-bordered w-full" id="post-category" name="categoryId" required>
           <option value="">카테고리 선택</option>
           <!-- 최상위 카테고리 -->
           <option th:each="category : ${categoriesResponse.categories}"
@@ -45,33 +50,44 @@
         </select>
       </div>
       
-      <div class="two fields">
+      <div class="grid grid-cols-2 gap-4 mb-4">
         <!-- 작성자 필드 -->
-        <div class="field">
-          <label>작성자</label>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">작성자</span>
+          </label>
           <input type="text" id="post-author" name="postAuthor" placeholder="작성자명"
+                 class="input input-bordered w-full"
                  th:value="${post != null ? post.author : ''}">
         </div>
         
         <!-- 태그 필드 -->
-        <div class="field">
-          <label>태그 (쉼표로 구분)</label>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">태그 (쉼표로 구분)</span>
+          </label>
           <input type="text" id="post-tags" name="postTags" placeholder="태그1, 태그2, 태그3"
+                 class="input input-bordered w-full"
                  th:value="${post != null ? post.tags : ''}">
         </div>
       </div>
       
       <!-- 요약 필드 -->
-      <div class="field">
-        <label>요약 (선택사항)</label>
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">요약 (선택사항)</span>
+        </label>
         <textarea id="post-summary" name="postSummary" rows="2" 
+                  class="textarea textarea-bordered"
                   placeholder="포스트 내용 요약 (150자 이내)"
                   th:text="${post != null ? post.summary : ''}"></textarea>
       </div>
       
       <!-- 마크다운 에디터 -->
-      <div class="field">
-        <label>내용</label>
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">내용</span>
+        </label>
         <div class="markdown-editor-container">
           <textarea id="markdown-editor" name="postContent"
                     th:text="${post != null ? post.content : ''}"></textarea>
@@ -79,57 +95,60 @@
       </div>
       
       <!-- 첨부 파일 업로드 -->
-      <div class="field">
-        <label>첨부 파일</label>
-        <div id="dropzone" class="ui placeholder segment">
-          <div class="ui icon header">
-            <i class="cloud upload icon"></i>
-            파일을 여기에 드래그하거나 클릭하여 업로드
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">첨부 파일</span>
+        </label>
+        <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors">
+          <div class="flex flex-col items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-400"></i>
+            <p class="text-gray-500">파일을 여기에 드래그하거나 클릭하여 업로드</p>
           </div>
           <input type="file" id="file-input" name="files" multiple hidden>
         </div>
       </div>
       
       <!-- 업로드된 파일 목록 -->
-      <div class="field" id="uploaded-files-container" style="display: none;">
-        <label>업로드된 파일</label>
-        <div class="ui list" id="uploaded-files-list"></div>
+      <div class="form-control mb-4 hidden" id="uploaded-files-container">
+        <label class="label">
+          <span class="label-text">업로드된 파일</span>
+        </label>
+        <ul class="list-disc list-inside" id="uploaded-files-list"></ul>
       </div>
       
       <!-- 기존 첨부 파일 목록 (수정 시에만 표시) -->
-      <div class="field" th:if="${post != null && post.attachments != null && !post.attachments.isEmpty()}">
-        <label>기존 첨부 파일</label>
-        <div class="ui list" id="existing-files-list">
-          <div class="item" th:each="attachment : ${post.attachments}">
-            <div class="ui checkbox">
-              <input type="checkbox" th:data-id="${attachment.id}" class="existing-file-checkbox">
-              <label>
-                <i th:class="${attachment.isImage ? 'image' : (attachment.isVideo ? 'video' : 'file')} + ' icon'"></i>
-                <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}"></a>
-                (<span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>)
-              </label>
-            </div>
-          </div>
-        </div>
-        <button type="button" id="delete-selected-files" class="ui small red button">선택 파일 삭제</button>
+      <div class="form-control mb-4" th:if="${post != null && post.attachments != null && !post.attachments.isEmpty()}">
+        <label class="label">
+          <span class="label-text">기존 첨부 파일</span>
+        </label>
+        <ul class="list-disc list-inside mb-2" id="existing-files-list">
+          <li th:each="attachment : ${post.attachments}" class="flex items-center gap-2">
+            <input type="checkbox" th:data-id="${attachment.id}" class="checkbox existing-file-checkbox">
+            <i th:class="'fa-solid fa-' + (${attachment.isImage ? 'image' : (attachment.isVideo ? 'video' : 'file')})"></i>
+            <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}" class="link"></a>
+            (<span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>)
+          </li>
+        </ul>
+        <button type="button" id="delete-selected-files" class="btn btn-sm btn-error">선택 파일 삭제</button>
       </div>
       
       <!-- 공개 여부 -->
-      <div class="field">
-        <div class="ui checkbox">
-          <input type="checkbox" id="is-public" name="isPublic" 
+      <div class="form-control mb-4">
+        <label class="label cursor-pointer">
+          <span class="label-text">공개글로 설정</span>
+          <input type="checkbox" id="is-public" name="isPublic" class="checkbox checkbox-primary"
                  th:checked="${post == null || post.isPublic == null || post.isPublic}">
-          <label>공개글로 설정</label>
-        </div>
+        </label>
       </div>
       
       <!-- 버튼 영역 -->
-      <div class="ui divider"></div>
-      <div class="ui buttons">
-        <button type="submit" class="ui primary button">저장</button>
-        <button type="button" id="cancel-btn" class="ui button">취소</button>
+      <div class="divider"></div>
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary">저장</button>
+        <button type="button" id="cancel-btn" class="btn btn-ghost">취소</button>
       </div>
     </form>
+    </div>
   </div>
 </div>
 
@@ -142,9 +161,6 @@
 
 <script>
   $(document).ready(function() {
-    // 드롭다운 초기화
-    $('.ui.dropdown').dropdown();
-    
     // EasyMDE 마크다운 에디터 초기화
     const easyMDE = new EasyMDE({
       element: document.getElementById('markdown-editor'),
@@ -292,16 +308,14 @@
       const isVideo = file.type.startsWith('video/');
       
       const fileItem = `
-        <div class="item">
-          <i class="${isImage ? 'image' : (isVideo ? 'video' : 'file')} icon"></i>
-          <div class="content">
-            <a href="${fileUrl}" target="_blank">${file.name}</a>
-            <div class="description">${fileSize}</div>
-          </div>
-        </div>
+        <li class="flex items-center gap-2">
+          <i class="fa-solid fa-${isImage ? 'image' : (isVideo ? 'video' : 'file')}"></i>
+          <a href="${fileUrl}" target="_blank" class="link">${file.name}</a>
+          <span class="text-gray-500">(${fileSize})</span>
+        </li>
       `;
       
-      $('#uploaded-files-container').show();
+      $('#uploaded-files-container').removeClass('hidden');
       $('#uploaded-files-list').append(fileItem);
     }
     

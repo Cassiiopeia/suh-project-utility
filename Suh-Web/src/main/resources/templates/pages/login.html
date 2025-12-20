@@ -1,6 +1,6 @@
 <!-- src/main/resources/templates/pages/login.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='Login - SAECHAN LAB')}"></head>
 <body class="login-page min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
 <!-- 헤더 영역 -->
@@ -18,7 +18,7 @@
 
       <!-- 로고 영역 -->
       <div class="text-center">
-        <img src="/images/logo_no_text.png" alt="로고" class="h-50 w-50 mx-auto">
+        <img src="/images/logo_no_text.png" alt="로고" class="h-32 w-32 mx-auto">
         <!-- 회전 텍스트 애니메이션 -->
         <div class="text-rotate-container mb-2">
           <span class="text-rotate text-2xl sm:text-3xl font-bold">
@@ -34,14 +34,14 @@
       </div>
 
       <!-- 개발자 프로필 배지 + 버전 배지 -->
-      <div class="text-center flex justify-center gap-2 flex-wrap">
-        <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity">
-          <i class="fa-solid fa-user-circle"></i>
+      <div class="text-center flex justify-center gap-2 flex-wrap mt-3">
+        <a href="/profile" class="badge badge-soft badge-primary gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer">
+          <i class="fa-solid fa-arrow-pointer"></i>
           ABOUT ME
         </a>
-        <button onclick="openChangelogModal()" class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer" style="background-color: #e9d5ff; color: #7c3aed; border: none;">
-          <i class="fa-solid fa-code-branch"></i>
-          <span id="version-tag">v1.0.0</span>
+        <button onclick="openChangelogModal()" class="badge gap-1 px-3 py-1 text-xs hover:opacity-80 transition-opacity cursor-pointer version-badge">
+          <i class="fa-solid fa-tag"></i>
+          <span id="version-tag" class="version-tag-text">v1.0.0</span>
         </button>
       </div>
 
@@ -50,14 +50,14 @@
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 
         <!-- 아이디 입력 -->
-        <div class="form-control">
+        <div class="form-control -mb-2">
           <label class="label">
             <span class="label-text font-medium">Username</span>
           </label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="text" name="username" placeholder="Enter your username"
-                   class="input input-bordered w-full pl-10 validator" required />
+                   class="input w-full pl-10 validator" required />
           </div>
           <p class="validator-hint text-error text-xs mt-1">Username is required</p>
         </div>
@@ -70,7 +70,7 @@
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
-                   class="input input-bordered w-full pl-10 pr-12 validator" required />
+                   class="input w-full pl-10 pr-12 validator" required />
             <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70 z-20">
               <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
             </span>
@@ -102,66 +102,6 @@
   </div>
 </div>
 
-<!-- Changelog 모달 -->
-<dialog id="changelog-modal" class="modal">
-  <div class="modal-box max-w-lg bg-base-100">
-    <!-- 모달 헤더 -->
-    <div class="flex items-start gap-4 mb-4">
-      <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-        <i class="fa-solid fa-code-branch text-primary text-xl"></i>
-      </div>
-      <div class="flex-1">
-        <h3 class="font-bold text-lg">Changelog</h3>
-        <p class="text-sm text-gray-500">SUH Project Utility</p>
-      </div>
-      <form method="dialog">
-        <button class="btn btn-sm btn-circle btn-ghost">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </form>
-    </div>
-
-    <!-- 최신 버전 정보 -->
-    <div id="changelog-content" class="space-y-4">
-      <!-- 로딩 스켈레톤 -->
-      <div id="changelog-loading" class="space-y-3">
-        <div class="skeleton h-6 w-32"></div>
-        <div class="skeleton h-4 w-full"></div>
-        <div class="skeleton h-4 w-3/4"></div>
-        <div class="skeleton h-4 w-5/6"></div>
-      </div>
-
-      <!-- 실제 컨텐츠 (JS로 채움) -->
-      <div id="changelog-data" class="hidden">
-        <!-- 버전 헤더 -->
-        <div class="flex items-center gap-2 mb-3">
-          <span id="changelog-version" class="font-bold text-lg">v1.4.6</span>
-          <span class="badge badge-soft badge-success text-xs">Latest</span>
-          <span id="changelog-date" class="text-sm text-gray-500">2025-12-13</span>
-        </div>
-
-        <!-- 변경사항 목록 -->
-        <ul id="changelog-items" class="space-y-2 text-sm text-gray-700">
-          <!-- JS로 채워짐 -->
-        </ul>
-      </div>
-    </div>
-
-    <!-- 모달 푸터 -->
-    <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-      <span id="changelog-updated" class="text-xs text-gray-400">Last updated: -</span>
-      <a href="https://github.com/Cassiiopeia/suh-project-utility/blob/main/CHANGELOG.md"
-         target="_blank"
-         class="text-sm text-primary hover:underline flex items-center gap-1">
-        View on GitHub
-        <i class="fa-solid fa-arrow-right text-xs"></i>
-      </a>
-    </div>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
 
 <!-- footer fragment -->
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -179,7 +119,6 @@
     setupLoginForm();
     setupPasswordToggle();
     startTypingEffect();
-    loadVersionFromChangelog();
 
     // IP 정보 처리 (이미 요청 시작)
     getClientIPPromise
@@ -237,91 +176,6 @@
     typeNextChar();
   }
 
-  // 버전 태그 업데이트 (changelog.json에서)
-  function loadVersionFromChangelog() {
-    fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
-      .then(response => response.json())
-      .then(data => {
-        const versionTag = document.getElementById('version-tag');
-        if (versionTag && data.metadata && data.metadata.currentVersion) {
-          versionTag.textContent = 'v' + data.metadata.currentVersion;
-        }
-      })
-      .catch(error => {
-        console.error('버전 정보 로드 실패:', error);
-        // 실패 시 기본값 유지
-      });
-  }
-
-  // Changelog 모달 열기
-  function openChangelogModal() {
-    const modal = document.getElementById('changelog-modal');
-    modal.showModal();
-    loadChangelog();
-  }
-
-  // Changelog 데이터 로드
-  function loadChangelog() {
-    const loadingEl = document.getElementById('changelog-loading');
-    const dataEl = document.getElementById('changelog-data');
-
-    // 이미 로드된 경우 스킵
-    if (!dataEl.classList.contains('hidden')) return;
-
-    // GitHub raw URL에서 CHANGELOG.json 가져오기
-    fetch('https://raw.githubusercontent.com/Cassiiopeia/suh-project-utility/main/CHANGELOG.json')
-      .then(response => response.json())
-      .then(data => {
-        renderChangelog(data);
-        loadingEl.classList.add('hidden');
-        dataEl.classList.remove('hidden');
-      })
-      .catch(error => {
-        console.error('Changelog 로드 실패:', error);
-        loadingEl.innerHTML = `
-          <div class="text-center text-gray-500">
-            <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
-            <p>변경 이력을 불러올 수 없습니다.</p>
-          </div>
-        `;
-      });
-  }
-
-  // Changelog 데이터 렌더링
-  function renderChangelog(data) {
-    const latestRelease = data.releases[0];
-    const metadata = data.metadata;
-
-    // 버전 정보
-    document.getElementById('changelog-version').textContent = 'v' + latestRelease.version;
-    document.getElementById('changelog-date').textContent = latestRelease.date;
-
-    // 마지막 업데이트
-    const lastUpdated = new Date(metadata.lastUpdated);
-    document.getElementById('changelog-updated').textContent =
-      'Last updated: ' + lastUpdated.toLocaleDateString('ko-KR');
-
-    // 변경사항 목록
-    const itemsEl = document.getElementById('changelog-items');
-    itemsEl.innerHTML = '';
-
-    // parsed_changes에서 아이템 추출
-    const changes = latestRelease.parsed_changes;
-    for (const category in changes) {
-      const categoryData = changes[category];
-      if (categoryData.items && categoryData.items.length > 0) {
-        categoryData.items.forEach(item => {
-          const li = document.createElement('li');
-          li.className = 'flex items-start gap-2';
-          li.innerHTML = `
-            <span class="text-primary mt-1">•</span>
-            <span>${item}</span>
-          `;
-          itemsEl.appendChild(li);
-        });
-      }
-    }
-  }
 
   function processClientIP(clientIP) {
     console.log("실제 클라이언트 IP:", clientIP);

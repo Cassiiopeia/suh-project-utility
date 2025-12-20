@@ -31,7 +31,7 @@
         <label class="label">
           <span class="label-text font-medium">서버 URL</span>
         </label>
-        <input type="text" class="input input-bordered w-full max-w-md" value="https://ai.suhsaechan.kr" readonly>
+        <input type="text" class="input w-full max-w-md" value="https://ai.suhsaechan.kr" readonly>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
           <span class="label-text font-medium">새 모델 다운로드</span>
         </label>
         <div class="join w-full max-w-lg">
-          <input type="text" id="modelNameInput" class="input input-bordered join-item flex-1" placeholder="예: llama3.2:3b, qwen2.5:3b">
+          <input type="text" id="modelNameInput" class="input join-item flex-1" placeholder="예: llama3.2:3b, qwen2.5:3b">
           <button class="btn btn-primary join-item" id="downloadModelBtn">
             <i class="fa-solid fa-download"></i>
             다운로드
@@ -128,7 +128,7 @@
             <label class="label">
               <span class="label-text font-medium">모델 선택</span>
             </label>
-            <select class="select select-bordered w-full" id="modelSelect">
+            <select class="select w-full" id="modelSelect">
               <option value="" disabled selected>모델을 선택하세요</option>
             </select>
           </div>
@@ -162,7 +162,7 @@
             <label class="label">
               <span class="label-text font-medium" id="inputTextLabel">입력 텍스트</span>
             </label>
-            <textarea id="inputText" class="textarea textarea-bordered h-32" placeholder="프롬프트를 여기에 입력하세요"></textarea>
+            <textarea id="inputText" class="textarea h-32" placeholder="프롬프트를 여기에 입력하세요"></textarea>
           </div>
           <button class="btn btn-primary w-full" id="runApiTestBtn">
             <i class="fa-solid fa-play"></i>

@@ -10,25 +10,27 @@
 <body class="study-page category-management-page">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="ui container" id="main-content">
-  <div class="ui segment">
-    <h2 class="ui header">카테고리 관리</h2>
-    <p class="study-description">스터디 노트의 카테고리를 관리합니다.</p>
+<div class="container mx-auto px-4 py-6" id="main-content">
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="text-2xl font-bold mb-2">카테고리 관리</h2>
+      <p class="text-gray-500 mb-4">스터디 노트의 카테고리를 관리합니다.</p>
 
-    <!-- 작업 버튼 -->
-    <div class="ui buttons">
-      <button id="create-category-btn" class="ui primary button">
-        <i class="plus icon"></i> 새 카테고리 생성
-      </button>
-      <a href="/study-management" class="ui button">
-        <i class="arrow left icon"></i> 스터디 홈으로
-      </a>
-    </div>
-    
-    <div class="ui divider"></div>
-    
-    <!-- 카테고리 목록 테이블 -->
-    <table class="ui celled table">
+      <!-- 작업 버튼 -->
+      <div class="flex gap-2 mb-4">
+        <button id="create-category-btn" class="btn btn-primary">
+          <i class="fa-solid fa-plus"></i> 새 카테고리 생성
+        </button>
+        <a href="/study-management" class="btn btn-ghost">
+          <i class="fa-solid fa-arrow-left"></i> 스터디 홈으로
+        </a>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <!-- 카테고리 목록 테이블 -->
+      <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
       <thead>
         <tr>
           <th>이름</th>
@@ -42,36 +44,38 @@
       <tbody>
         <!-- 카테고리가 없는 경우 -->
         <tr th:if="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}">
-          <td colspan="6" class="center aligned">등록된 카테고리가 없습니다.</td>
+          <td colspan="6" class="text-center">등록된 카테고리가 없습니다.</td>
         </tr>
         
         <!-- 최상위 카테고리 목록 -->
         <tr th:unless="${categoriesResponse == null || categoriesResponse.categories == null || categoriesResponse.categories.isEmpty()}"
             th:each="category : ${categoriesResponse.categories}">
           <td>
-            <i th:class="${category.icon != null ? category.icon : 'folder'} + ' icon'"
+            <i th:class="'fa-solid fa-' + (${category.icon != null ? category.icon.replace(' icon', '').replace(' ', '-') : 'folder'})"
                th:style="${category.color != null ? 'color:' + category.color : ''}"></i>
-            <a th:href="@{/study-management/category/{id}(id=${category.id})}" th:text="${category.name}"></a>
+            <a th:href="@{/study-management/category/{id}(id=${category.id})}" th:text="${category.name}" class="ml-2"></a>
           </td>
           <td th:text="${category.description != null ? category.description : '-'}"></td>
           <td th:text="${category.postCount != null ? category.postCount : 0}"></td>
           <td th:text="${#temporals.format(category.createdDate, 'yyyy-MM-dd')}"></td>
           <td th:text="${category.displayOrder != null ? category.displayOrder : '-'}"></td>
           <td>
-            <button class="ui mini blue icon button edit-category-btn"
-                    th:data-id="${category.id}"
-                    th:data-name="${category.name}"
-                    th:data-description="${category.description}"
-                    th:data-icon="${category.icon}"
-                    th:data-color="${category.color}"
-                    th:data-order="${category.displayOrder}">
-              <i class="edit icon"></i>
-            </button>
-            <button class="ui mini red icon button delete-category-btn"
-                    th:data-id="${category.id}"
-                    th:data-name="${category.name}">
-              <i class="trash icon"></i>
-            </button>
+            <div class="flex gap-2">
+              <button class="btn btn-sm btn-primary edit-category-btn"
+                      th:data-id="${category.id}"
+                      th:data-name="${category.name}"
+                      th:data-description="${category.description}"
+                      th:data-icon="${category.icon}"
+                      th:data-color="${category.color}"
+                      th:data-order="${category.displayOrder}">
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-error delete-category-btn"
+                      th:data-id="${category.id}"
+                      th:data-name="${category.name}">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
         
@@ -81,11 +85,11 @@
             <tr th:each="childCat : ${parentCat.children}"
                 class="child-category-row">
           <td>
-            <div style="margin-left: 1.5em;">
-              <i th:class="${childCat.icon != null ? childCat.icon : 'file'} + ' icon'"
+            <div class="ml-6">
+              <i th:class="'fa-solid fa-' + (${childCat.icon != null ? childCat.icon.replace(' icon', '').replace(' ', '-') : 'file'})"
                  th:style="${childCat.color != null ? 'color:' + childCat.color : ''}"></i>
-              <a th:href="@{/study-management/category/{id}(id=${childCat.id})}" th:text="${childCat.name}"></a>
-              <div class="ui tiny label" th:text="${parentCat.name}"></div>
+              <a th:href="@{/study-management/category/{id}(id=${childCat.id})}" th:text="${childCat.name}" class="ml-2"></a>
+              <span class="badge badge-sm ml-2" th:text="${parentCat.name}"></span>
             </div>
           </td>
           <td th:text="${childCat.description != null ? childCat.description : '-'}"></td>
@@ -93,68 +97,84 @@
           <td th:text="${#temporals.format(childCat.createdDate, 'yyyy-MM-dd')}"></td>
           <td th:text="${childCat.displayOrder != null ? childCat.displayOrder : '-'}"></td>
           <td>
-            <button class="ui mini blue icon button edit-category-btn"
-                    th:data-id="${childCat.id}"
-                    th:data-name="${childCat.name}"
-                    th:data-description="${childCat.description}"
-                    th:data-icon="${childCat.icon}"
-                    th:data-color="${childCat.color}"
-                    th:data-order="${childCat.displayOrder}"
-                    th:data-parent-id="${parentCat.id}">
-              <i class="edit icon"></i>
-            </button>
-            <button class="ui mini red icon button delete-category-btn"
-                    th:data-id="${childCat.id}"
-                    th:data-name="${childCat.name}">
-              <i class="trash icon"></i>
-            </button>
+            <div class="flex gap-2">
+              <button class="btn btn-sm btn-primary edit-category-btn"
+                      th:data-id="${childCat.id}"
+                      th:data-name="${childCat.name}"
+                      th:data-description="${childCat.description}"
+                      th:data-icon="${childCat.icon}"
+                      th:data-color="${childCat.color}"
+                      th:data-order="${childCat.displayOrder}"
+                      th:data-parent-id="${parentCat.id}">
+                <i class="fa-solid fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-error delete-category-btn"
+                      th:data-id="${childCat.id}"
+                      th:data-name="${childCat.name}">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
             </th:block>
           </th:block>
       </tbody>
-    </table>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- 카테고리 생성/수정 모달 -->
-<div class="ui small modal" id="category-modal">
-  <div class="header" id="modal-title">카테고리 생성</div>
-  <div class="content">
-    <form class="ui form" id="category-form">
+<dialog id="category-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4" id="modal-title">카테고리 생성</h3>
+    <form id="category-form">
       <input type="hidden" id="category-id" name="id">
       
-      <div class="field">
-        <label>카테고리 이름</label>
-        <input type="text" id="category-name" name="categoryName" placeholder="카테고리 이름" required>
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">카테고리 이름</span>
+        </label>
+        <input type="text" id="category-name" name="categoryName" placeholder="카테고리 이름" class="input input-bordered w-full" required>
       </div>
       
-      <div class="field">
-        <label>설명</label>
-        <textarea id="category-description" name="categoryDescription" rows="2" placeholder="카테고리 설명"></textarea>
+      <div class="form-control mb-4">
+        <label class="label">
+          <span class="label-text">설명</span>
+        </label>
+        <textarea id="category-description" name="categoryDescription" rows="2" placeholder="카테고리 설명" class="textarea textarea-bordered"></textarea>
       </div>
       
-      <div class="two fields">
-        <div class="field">
-          <label>아이콘 (Font Awesome 클래스)</label>
-          <input type="text" id="category-icon" name="categoryIcon" placeholder="예: folder icon">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">아이콘 (Font Awesome 클래스)</span>
+          </label>
+          <input type="text" id="category-icon" name="categoryIcon" placeholder="예: folder icon" class="input input-bordered w-full">
         </div>
         
-        <div class="field">
-          <label>색상 (CSS 컬러값)</label>
-          <input type="text" id="category-color" name="categoryColor" placeholder="예: #3B82F6">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">색상 (CSS 컬러값)</span>
+          </label>
+          <input type="text" id="category-color" name="categoryColor" placeholder="예: #3B82F6" class="input input-bordered w-full">
         </div>
       </div>
       
-      <div class="two fields">
-        <div class="field">
-          <label>표시 순서</label>
-          <input type="number" id="category-order" name="categoryDisplayOrder" placeholder="숫자가 작을수록 먼저 표시됩니다">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">표시 순서</span>
+          </label>
+          <input type="number" id="category-order" name="categoryDisplayOrder" placeholder="숫자가 작을수록 먼저 표시됩니다" class="input input-bordered w-full">
         </div>
         
-        <div class="field">
-          <label>상위 카테고리</label>
-          <select id="category-parent" name="parentCategoryId" class="ui dropdown">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">상위 카테고리</span>
+          </label>
+          <select id="category-parent" name="parentCategoryId" class="select select-bordered w-full">
             <option value="">없음 (최상위 카테고리)</option>
             <option th:each="category : ${categoriesResponse.categories}"
                     th:value="${category.id}"
@@ -162,34 +182,41 @@
           </select>
         </div>
       </div>
+      
+      <div class="modal-action">
+        <button type="button" class="btn btn-ghost" id="cancel-btn">취소</button>
+        <button type="button" class="btn btn-primary" id="save-btn">저장</button>
+      </div>
     </form>
   </div>
-  <div class="actions">
-    <button class="ui negative button" id="cancel-btn">취소</button>
-    <button class="ui positive button" id="save-btn">저장</button>
-  </div>
-</div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <!-- 카테고리 삭제 확인 모달 -->
-<div class="ui small modal" id="delete-confirm-modal">
-  <div class="header">카테고리 삭제</div>
-  <div class="content">
-    <p>정말로 카테고리 "<span id="delete-category-name"></span>"을(를) 삭제하시겠습니까?</p>
-    <p class="ui negative message">주의: 하위 카테고리나 포스트가 있는 카테고리는 삭제할 수 없습니다.</p>
+<dialog id="delete-confirm-modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">카테고리 삭제</h3>
+    <p class="mb-4">정말로 카테고리 "<span id="delete-category-name" class="font-bold"></span>"을(를) 삭제하시겠습니까?</p>
+    <div class="alert alert-error">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>주의: 하위 카테고리나 포스트가 있는 카테고리는 삭제할 수 없습니다.</span>
+    </div>
+    <div class="modal-action">
+      <button type="button" class="btn btn-error" id="confirm-delete-btn">삭제</button>
+      <button type="button" class="btn btn-ghost" id="cancel-delete-btn">취소</button>
+    </div>
   </div>
-  <div class="actions">
-    <button class="ui negative button" id="confirm-delete-btn">삭제</button>
-    <button class="ui button" id="cancel-delete-btn">취소</button>
-  </div>
-</div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
   $(document).ready(function() {
-    // 드롭다운 초기화
-    $('.ui.dropdown').dropdown();
-    
     // 카테고리 생성 버튼 클릭
     $('#create-category-btn').on('click', function() {
       // 모달 폼 초기화
@@ -198,7 +225,7 @@
       $('#modal-title').text('카테고리 생성');
       
       // 모달 표시
-      $('#category-modal').modal('show');
+      document.getElementById('category-modal').showModal();
     });
     
     // 카테고리 수정 버튼 클릭
@@ -210,13 +237,13 @@
       $('#category-icon').val($(this).data('icon'));
       $('#category-color').val($(this).data('color'));
       $('#category-order').val($(this).data('order'));
-      $('#category-parent').dropdown('set selected', $(this).data('parent-id'));
+      $('#category-parent').val($(this).data('parent-id') || '');
       
       // 모달 타이틀 설정
       $('#modal-title').text('카테고리 수정');
       
       // 모달 표시
-      $('#category-modal').modal('show');
+      document.getElementById('category-modal').showModal();
     });
     
     // 카테고리 삭제 버튼 클릭
@@ -231,7 +258,7 @@
       $('#confirm-delete-btn').data('id', categoryId);
       
       // 삭제 확인 모달 표시
-      $('#delete-confirm-modal').modal('show');
+      document.getElementById('delete-confirm-modal').showModal();
     });
     
     // 카테고리 저장 버튼 클릭
@@ -287,8 +314,12 @@
     });
     
     // 모달 취소 버튼
-    $('#cancel-btn, #cancel-delete-btn').on('click', function() {
-      $('.ui.modal').modal('hide');
+    $('#cancel-btn').on('click', function() {
+      document.getElementById('category-modal').close();
+    });
+    
+    $('#cancel-delete-btn').on('click', function() {
+      document.getElementById('delete-confirm-modal').close();
     });
   });
 </script>
