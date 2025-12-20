@@ -23,7 +23,7 @@
           </h3>
           <p class="text-gray-500 text-sm">등록된 버스 예약 사용자 관리</p>
         </div>
-        <button class="btn btn-primary" onclick="showAddUserModal()">
+        <button class="btn btn-primary w-auto" onclick="showAddUserModal()">
           <i class="fa-solid fa-plus"></i>
           사용자 추가
         </button>
@@ -103,8 +103,8 @@
           <tbody id="routeTable">
             <tr th:each="route : ${routes}">
               <td>
-                <span th:if="${route.caralias == '출근'}" class="badge badge-info badge-sm">출근</span>
-                <span th:if="${route.caralias == '퇴근'}" class="badge badge-warning badge-sm">퇴근</span>
+                <span th:if="${route.caralias == '출근'}" class="badge badge-soft badge-info badge-sm">출근</span>
+                <span th:if="${route.caralias == '퇴근'}" class="badge badge-soft badge-warning badge-sm">퇴근</span>
               </td>
               <td th:text="${route.departureTime}">06:55</td>
               <td th:text="${route.station}">당산역</td>
