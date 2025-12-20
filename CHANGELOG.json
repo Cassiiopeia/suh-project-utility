@@ -1,11 +1,37 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-16T17:07:52Z",
-    "currentVersion": "2.1.6",
+    "lastUpdated": "2025-12-20T08:35:06Z",
+    "currentVersion": "2.1.16",
     "projectType": "spring",
-    "totalReleases": 30
+    "totalReleases": 31
   },
   "releases": [
+    {
+      "version": "2.1.16",
+      "project_type": "spring",
+      "date": "2025-12-20",
+      "pr_number": 131,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **New Features**\n  * AI 기반 번역 서비스 추가 (언어 감지 및 신뢰도 점수 포함)\n  * 버전 정보 및 변경 로그 모달 추가\n  * 공지사항 자동 슬라이딩 카드 UI 도입\n\n* **UI/UX Improvements**\n  * 모던 DaisyUI 디자인으로 전체 인터페이스 개선\n  * 밝은/어두운 모드 지원 강화\n  * 오류 페이지 반응형 디자인 개선",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "AI 기반 번역 서비스 추가 (언어 감지 및 신뢰도 점수 포함)",
+            "버전 정보 및 변경 로그 모달 추가",
+            "공지사항 자동 슬라이딩 카드 UI 도입"
+          ]
+        },
+        "ui_ux_improvements": {
+          "title": "UI/UX Improvements",
+          "items": [
+            "모던 DaisyUI 디자인으로 전체 인터페이스 개선",
+            "밝은/어두운 모드 지원 강화",
+            "오류 페이지 반응형 디자인 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.1.6",
       "project_type": "spring",
