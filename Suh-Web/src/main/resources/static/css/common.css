@@ -1263,6 +1263,10 @@ html:not([data-theme="dark"]) textarea::placeholder,
   fill: #3b82f6;
 }
 
+[data-theme="dark"] footer.footer p {
+  color: #9ca3af !important;
+}
+
 /* 다크모드 label-text (text-gray-* 스타일은 파일 끝에 세분화 정의됨) */
 [data-theme="dark"] .label-text {
   color: #e5e7eb !important;
