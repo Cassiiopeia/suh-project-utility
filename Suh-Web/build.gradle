@@ -5,6 +5,11 @@ plugins {
 }
 
 dependencies {
+    // Spring Boot 핵심 의존성
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
     // 공통 모듈
     implementation project(':Suh-Common')
     
@@ -22,6 +27,11 @@ dependencies {
     implementation project(':Suh-Domain-GrassPlanter')
     implementation project(':Suh-Domain-Chatbot')
     implementation project(':Suh-Domain-Statistics')
+    implementation project(':Suh-Domain-Somansa-Bus')
+
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 // Boot JAR 고정 > Dockerfile 재사용

@@ -26,4 +26,7 @@ dependencies {
     implementation project(':Suh-Domain-AiServer')
     implementation project(':Suh-Domain-Statistics')
     implementation project(':Suh-Module-Translate')
+
+    // 테스트
+    testImplementation project(':Suh-Web')
 } 

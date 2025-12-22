@@ -77,7 +77,17 @@ public enum ErrorCode {
   AI_SERVER_MODEL_PULL_ALREADY_IN_PROGRESS(HttpStatus.CONFLICT, "모델이 이미 다운로드 중입니다."),
   AI_SERVER_MODEL_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "모델 삭제에 실패했습니다."),
   AI_SERVER_MODEL_NOT_FOUND(HttpStatus.NOT_FOUND, "모델을 찾을 수 없습니다."),
-  AI_SERVER_STREAM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 스트리밍 중 오류가 발생했습니다.");
+  AI_SERVER_STREAM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 스트리밍 중 오류가 발생했습니다."),
+
+  // SOMANSA BUS
+  SOMANSA_BUS_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "버스 예약 사용자를 찾을 수 없습니다."),
+  SOMANSA_BUS_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 사용자입니다."),
+  SOMANSA_BUS_NOT_SOMANSA_EMPLOYEE(HttpStatus.UNAUTHORIZED, "소만사 직원이 아닙니다."),
+  SOMANSA_BUS_ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "버스 노선을 찾을 수 없습니다."),
+  SOMANSA_BUS_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "예약 스케줄을 찾을 수 없습니다."),
+  SOMANSA_BUS_RESERVATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "버스 예약에 실패했습니다."),
+  SOMANSA_BUS_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "버스 예약 시스템 로그인에 실패했습니다."),
+  SOMANSA_BUS_SESSION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "버스 예약 세션 생성에 실패했습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;
