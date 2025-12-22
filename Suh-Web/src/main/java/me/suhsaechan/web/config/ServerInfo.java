@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 @ToString
 public class ServerInfo {
   @Value("${aes.secret-key}")
-  public String secretKey;
+  private String secretKey;
 
   @Value("${aes.iv}")
-  public String iv;
+  private String iv;
 
-  public SystemType systemType = FileUtil.getCurrentSystem();
+  private SystemType systemType = FileUtil.getCurrentSystem();
 
   // 세션 사용 clientHash 키 상수
   public static final String CLIENT_HASH_SESSION_KEY = "clientHash";

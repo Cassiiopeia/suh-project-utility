@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @Slf4j
-public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
+public class CustomErrorController implements ErrorController {
 
 	@RequestMapping("/error")
 	public String handleError(HttpServletRequest request, Model model) {

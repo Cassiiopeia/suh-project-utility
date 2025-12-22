@@ -1263,21 +1263,6 @@ html:not([data-theme="dark"]) textarea::placeholder,
   fill: #3b82f6;
 }
 
-/* Footer Copyright 텍스트 */
-/* 라이트 모드 - footer copyright 텍스트 */
-:root:not([data-theme="dark"]) .footer-copyright,
-html:not([data-theme="dark"]) .footer-copyright,
-[data-theme="light"] .footer-copyright {
-  color: #4183c4 !important;
-  text-decoration: none;
-}
-
-/* 다크 모드 - footer copyright 텍스트 (링크와 동일한 색상) */
-[data-theme="dark"] .footer-copyright {
-  color: #9ca3af !important;
-  text-decoration: none;
-}
-
 /* 다크모드 label-text (text-gray-* 스타일은 파일 끝에 세분화 정의됨) */
 [data-theme="dark"] .label-text {
   color: #e5e7eb !important;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import kr.suhsaechan.ai.service.StreamCallback;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
@@ -212,7 +213,7 @@ public class ChatbotController {
   /**
    * 피드백 요청 DTO (내부 클래스)
    */
-  @lombok.Data
+  @Data
   public static class FeedbackRequest {
     private UUID messageId;
     private Boolean isHelpful;
