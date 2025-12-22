@@ -45,6 +45,20 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 
 /*
 ===========================
+   테마 토글 버튼 (swap) 배경 투명
+===========================
+*/
+.swap,
+.swap:hover,
+.swap:focus,
+label.swap {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/*
+===========================
    badge-soft badge-primary 파란색 스타일
 ===========================
 */
