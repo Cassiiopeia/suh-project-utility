@@ -340,10 +340,6 @@ const ChatbotWidget = {
       <div class="chat-message assistant" id="${messageId}">
         <div class="thinking-panel">
           <div class="thinking-content">
-            <div class="thinking-line active">
-              <i class="fa-solid fa-spinner fa-spin thinking-spinner"></i>
-              <span class="thinking-text">생각하고 있어요...</span>
-            </div>
           </div>
         </div>
         <div class="bubble hide"></div>
@@ -356,7 +352,7 @@ const ChatbotWidget = {
   },
 
   /**
-   * Thinking 이벤트 처리 (줄글 형태)
+   * Thinking 이벤트 처리 (누적 표시)
    */
   handleThinkingEvent: function(messageId, event) {
     const contentElement = $(`#${messageId} .thinking-content`);
@@ -367,13 +363,28 @@ const ChatbotWidget = {
     const statusClass = this.getThinkingStatusClass(event.status);
 
     const lineHtml = `
-      <div class="thinking-line ${statusClass}">
+      <div class="thinking-line ${statusClass}" data-step="${event.step}">
         ${icon}
         <span class="thinking-text">${this.escapeHtml(friendlyMessage)}</span>
       </div>
     `;
 
-    contentElement.html(lineHtml);
+    const existingLine = contentElement.find(`.thinking-line[data-step="${event.step}"]`);
+
+    if (event.status === 'in_progress' || event.status === 'retrying') {
+      if (existingLine.length) {
+        existingLine.replaceWith(lineHtml);
+      } else {
+        contentElement.append(lineHtml);
+      }
+    } else {
+      if (existingLine.length) {
+        existingLine.replaceWith(lineHtml);
+      } else {
+        contentElement.append(lineHtml);
+      }
+    }
+
     this.scrollToBottom();
   },
 
