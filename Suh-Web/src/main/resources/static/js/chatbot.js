@@ -212,8 +212,23 @@ const ChatbotWidget = {
       }
     });
 
+    // Thinking 이벤트 (Agent 단계 진행 상황)
+    eventSource.addEventListener('thinking', function(e) {
+      try {
+        const event = JSON.parse(e.data);
+        console.log('💭 Thinking 이벤트:', event);
+        self.handleThinkingEvent(aiMessageId, event);
+      } catch (parseError) {
+        console.error('Thinking 이벤트 파싱 오류:', parseError);
+      }
+    });
+
     // 메시지 수신
     eventSource.addEventListener('message', function(e) {
+      // 첫 메시지 수신 시 thinking 패널 숨기기
+      if (!self.hasReceivedData) {
+        self.hideThinkingPanel(aiMessageId);
+      }
       self.hasReceivedData = true;
       try {
         // JSON 형식으로 감싸진 데이터 파싱 (공백 보존을 위해)
@@ -323,12 +338,27 @@ const ChatbotWidget = {
 
     const html = `
       <div class="chat-message assistant" id="${messageId}">
-        <div class="bubble">
-          <span class="analyzing-indicator">
-            <span class="analyzing-text">분석 중</span>
-            <span class="analyzing-dots"><span>.</span><span>.</span><span>.</span></span>
-          </span>
+        <div class="thinking-panel">
+          <div class="thinking-steps">
+            <div class="thinking-step" data-step="1">
+              <span class="step-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
+              <span class="step-text">질문 분석</span>
+              <span class="step-status"></span>
+            </div>
+            <div class="thinking-step" data-step="2">
+              <span class="step-icon"><i class="fa-solid fa-book-open"></i></span>
+              <span class="step-text">문서 검색</span>
+              <span class="step-status"></span>
+            </div>
+            <div class="thinking-step" data-step="3">
+              <span class="step-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+              <span class="step-text">응답 생성</span>
+              <span class="step-status"></span>
+            </div>
+          </div>
+          <div class="thinking-detail"></div>
         </div>
+        <div class="bubble hide"></div>
         <div class="time">${time}</div>
       </div>
     `;
@@ -338,11 +368,101 @@ const ChatbotWidget = {
   },
 
   /**
+   * Thinking 이벤트 처리
+   */
+  handleThinkingEvent: function(messageId, event) {
+    const stepElement = $(`#${messageId} .thinking-step[data-step="${event.step}"]`);
+    const detailElement = $(`#${messageId} .thinking-detail`);
+
+    if (!stepElement.length) return;
+
+    // 이전 단계들 완료 처리
+    $(`#${messageId} .thinking-step`).each(function() {
+      const currentStep = parseInt($(this).data('step'));
+      if (currentStep < event.step) {
+        $(this).removeClass('active retrying').addClass('completed');
+      }
+    });
+
+    // 현재 단계 상태 업데이트
+    stepElement.removeClass('active completed retrying skipped');
+
+    switch (event.status) {
+      case 'in_progress':
+        stepElement.addClass('active');
+        break;
+      case 'completed':
+        stepElement.addClass('completed');
+        break;
+      case 'retrying':
+        stepElement.addClass('retrying');
+        break;
+      case 'skipped':
+        stepElement.addClass('skipped');
+        break;
+    }
+
+    // 상태 아이콘 업데이트
+    const statusIcon = this.getStatusIcon(event.status);
+    stepElement.find('.step-status').html(statusIcon);
+
+    // 상세 정보 표시
+    let detailHtml = '';
+    if (event.title) {
+      detailHtml += `<span class="detail-title">${this.escapeHtml(event.title)}</span>`;
+    }
+    if (event.detail) {
+      detailHtml += `<span class="detail-info">${this.escapeHtml(event.detail)}</span>`;
+    }
+    if (event.searchQuery && event.step === 2) {
+      detailHtml += `<span class="detail-query"><i class="fa-solid fa-search"></i> ${this.escapeHtml(event.searchQuery)}</span>`;
+    }
+    detailElement.html(detailHtml);
+
+    this.scrollToBottom();
+  },
+
+  /**
+   * 상태별 아이콘 반환
+   */
+  getStatusIcon: function(status) {
+    switch (status) {
+      case 'in_progress':
+        return '<i class="fa-solid fa-spinner fa-spin"></i>';
+      case 'completed':
+        return '<i class="fa-solid fa-check"></i>';
+      case 'retrying':
+        return '<i class="fa-solid fa-rotate"></i>';
+      case 'skipped':
+        return '<i class="fa-solid fa-forward"></i>';
+      default:
+        return '';
+    }
+  },
+
+  /**
+   * Thinking 패널 숨기기 및 버블 표시
+   */
+  hideThinkingPanel: function(messageId) {
+    const thinkingPanel = $(`#${messageId} .thinking-panel`);
+    const bubble = $(`#${messageId} .bubble`);
+
+    thinkingPanel.addClass('fade-out');
+    setTimeout(() => {
+      thinkingPanel.addClass('hide');
+      bubble.removeClass('hide');
+    }, 300);
+  },
+
+  /**
    * 스트리밍 메시지에 텍스트 추가
    */
   appendToStreamingMessage: function(messageId, chunk) {
     const bubble = document.querySelector('#' + messageId + ' .bubble');
     if (bubble) {
+      // hide 클래스가 있으면 제거 (thinking 패널 → 버블 전환)
+      bubble.classList.remove('hide');
+
       // 분석 중 인디케이터 제거
       const analyzingIndicator = bubble.querySelector('.analyzing-indicator');
       if (analyzingIndicator) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.suhsaechan.ai.service.StreamCallback;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,12 @@ import me.suhsaechan.chatbot.dto.ChatbotConfigRequest;
 import me.suhsaechan.chatbot.dto.DocumentDto;
 import me.suhsaechan.chatbot.dto.DocumentRequest;
 import me.suhsaechan.chatbot.dto.DocumentResponse;
+import me.suhsaechan.chatbot.dto.ThinkingEventDto;
 import me.suhsaechan.chatbot.entity.ChatDocument;
 import me.suhsaechan.chatbot.service.ChatbotConfigService;
 import me.suhsaechan.chatbot.service.ChatbotService;
 import me.suhsaechan.chatbot.service.DocumentService;
+import me.suhsaechan.chatbot.service.ThinkingCallback;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,6 +48,7 @@ public class ChatbotController {
 
   private final ChatbotService chatbotService;
   private final DocumentService documentService;
+  private final ObjectMapper objectMapper;
 
   /**
    * 채팅 메시지 전송 (비스트리밍)
@@ -85,7 +89,7 @@ public class ChatbotController {
     emitter.onTimeout(() -> log.warn("SSE 타임아웃"));
     emitter.onError(e -> log.error("SSE 오류: {}", e.getMessage()));
 
-    // 스트리밍 응답 시작 (세션 토큰 콜백 포함)
+    // 스트리밍 응답 시작 (세션 토큰 콜백 + thinking 콜백 포함)
     chatbotService.chatStream(sessionToken, message, topK, minScore, userIp, userAgent,
         new StreamCallback() {
           @Override
@@ -139,6 +143,19 @@ public class ChatbotController {
                 .data("{\"sessionToken\":\"" + newSessionToken + "\"}"));
           } catch (IOException e) {
             log.error("세션 토큰 SSE 전송 실패: {}", e.getMessage());
+          }
+        },
+        // Thinking 콜백 - Agent 단계 진행 상황 전달
+        (thinkingEvent) -> {
+          try {
+            String jsonData = objectMapper.writeValueAsString(thinkingEvent);
+            log.debug("SSE thinking 이벤트 전송: step={}, status={}",
+                thinkingEvent.getStep(), thinkingEvent.getStatus());
+            emitter.send(SseEmitter.event()
+                .name("thinking")
+                .data(jsonData));
+          } catch (IOException e) {
+            log.error("SSE thinking 전송 실패: {}", e.getMessage());
           }
         });
 

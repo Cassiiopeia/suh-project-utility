@@ -29,7 +29,10 @@ import lombok.NoArgsConstructor;
     description = "사용자 질문을 분석하여 질문 유형을 분류하고, RAG 벡터 검색의 필요 여부를 판단한 결과입니다. " +
                   "이 분석은 불필요한 벡터 검색을 방지하고 응답 속도를 개선하는 Agent-LLM의 첫 번째 단계입니다.",
     example = "{\"intentType\":\"KNOWLEDGE_QUERY\",\"needsRagSearch\":true,\"confidence\":0.95," +
-              "\"reason\":\"Docker 로그 조회 방법을 묻는 구체적인 기능 질문이므로 문서 검색이 필요합니다.\",\"summary\":\"Docker 로그 조회 방법 문의\"}"
+              "\"reason\":\"Docker 로그 조회 방법을 묻는 구체적인 기능 질문이므로 문서 검색이 필요합니다.\"," +
+              "\"summary\":\"Docker 로그 조회 방법 문의\"," +
+              "\"searchQuery\":\"SUH Project Utility Docker 컨테이너 로그 조회 모니터링 웹 UI\"," +
+              "\"responseFormat\":\"GUIDE\"}"
 )
 public class IntentClassificationDto {
 
@@ -106,4 +109,38 @@ public class IntentClassificationDto {
         example = "Docker 로그 조회 방법 문의"
     )
     private String summary;
+
+    /**
+     * RAG 검색에 최적화된 쿼리
+     */
+    @AiSchema(
+        description = "RAG 벡터 검색에 최적화된 검색 쿼리입니다. " +
+                      "사용자 질문을 문서 검색에 적합한 키워드 중심 형태로 변환합니다.\n" +
+                      "규칙:\n" +
+                      "- 반드시 'SUH Project Utility' 키워드 포함\n" +
+                      "- 관련 기능명, 모듈명 포함 (Docker, GitHub, 스터디, 번역 등)\n" +
+                      "- 핵심 동작 키워드 포함 (조회, 생성, 설정, 사용법 등)\n" +
+                      "예시:\n" +
+                      "- 사용자: '이 사이트 기능 뭐 있어?' → 'SUH Project Utility 주요 기능 모듈 Docker GitHub 스터디 번역 소개'\n" +
+                      "- 사용자: '개발자 누구야?' → 'SUH Project Utility 서새찬 suhsaechan 개발자 프로필 소개'",
+        required = false,
+        maxLength = 200,
+        example = "SUH Project Utility Docker 컨테이너 로그 조회 모니터링 웹 UI"
+    )
+    private String searchQuery;
+
+    /**
+     * 권장 응답 형식
+     */
+    @AiSchema(
+        description = "이 질문에 대한 권장 응답 형식입니다.\n" +
+                      "- LIST: 목록 형태 (기능 나열, 항목별 설명) - 예: '어떤 기능이 있어?'\n" +
+                      "- GUIDE: 단계별 가이드 (사용법, 튜토리얼) - 예: '어떻게 사용해?'\n" +
+                      "- INFO: 정보 제공 (개발자 소개, 설명) - 예: '개발자가 누구야?'\n" +
+                      "- SIMPLE: 간단한 답변 (인사, 잡담) - 예: '안녕'",
+        required = false,
+        allowableValues = {"LIST", "GUIDE", "INFO", "SIMPLE"},
+        example = "GUIDE"
+    )
+    private String responseFormat;
 }
