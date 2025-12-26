@@ -1970,9 +1970,9 @@ html:not([data-theme="dark"]) textarea::placeholder,
   }
 }
 
-/* Thinking 패널 스타일 */
+/* Thinking 패널 스타일 (줄글 형태) */
 .thinking-panel {
-  padding: 14px 16px;
+  padding: 12px 16px;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   border-radius: 18px;
   border-bottom-left-radius: 6px;
@@ -1988,141 +1988,78 @@ html:not([data-theme="dark"]) textarea::placeholder,
   display: none;
 }
 
-.thinking-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.thinking-content {
+  min-height: 20px;
 }
 
-.thinking-step {
+.thinking-line {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.6);
-  font-size: 13px;
-  color: #6b7280;
-  transition: all 0.3s ease;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  animation: fadeInUp 0.3s ease;
 }
 
-.thinking-step .step-icon {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #9ca3af;
-  background: #f3f4f6;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.thinking-step .step-text {
+.thinking-line .thinking-spinner {
+  color: #3b82f6;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.thinking-line .thinking-icon {
+  color: #3b82f6;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.thinking-line .thinking-text {
   flex: 1;
+  word-break: keep-all;
 }
 
-.thinking-step .step-status {
-  width: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
+.thinking-line.active {
+  color: #1d4ed8;
 }
 
-.thinking-step.active {
-  background: rgba(59, 130, 246, 0.1);
-  color: #2563eb;
-}
-
-.thinking-step.active .step-icon {
-  background: #3b82f6;
-  color: white;
-}
-
-.thinking-step.active .step-status {
+.thinking-line.active .thinking-spinner {
   color: #3b82f6;
 }
 
-.thinking-step.completed {
-  background: rgba(34, 197, 94, 0.1);
-  color: #16a34a;
+.thinking-line.completed {
+  color: #15803d;
 }
 
-.thinking-step.completed .step-icon {
-  background: #22c55e;
-  color: white;
-}
-
-.thinking-step.completed .step-status {
+.thinking-line.completed .thinking-icon {
   color: #22c55e;
 }
 
-.thinking-step.retrying {
-  background: rgba(251, 191, 36, 0.1);
-  color: #d97706;
+.thinking-line.retrying {
+  color: #b45309;
 }
 
-.thinking-step.retrying .step-icon {
-  background: #fbbf24;
-  color: white;
+.thinking-line.retrying .thinking-spinner {
+  color: #f59e0b;
 }
 
-.thinking-step.retrying .step-status {
-  color: #fbbf24;
+.thinking-line.skipped {
+  color: #0891b2;
 }
 
-.thinking-step.skipped {
-  background: rgba(156, 163, 175, 0.1);
-  color: #9ca3af;
-}
-
-.thinking-step.skipped .step-icon {
-  background: #d1d5db;
-  color: #6b7280;
-}
-
-.thinking-step.skipped .step-text {
-  text-decoration: line-through;
-}
-
-.thinking-detail {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  font-size: 12px;
-  min-height: 24px;
-}
-
-.thinking-detail:empty {
-  display: none;
-}
-
-.thinking-detail .detail-title {
-  display: block;
-  color: #374151;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.thinking-detail .detail-info {
-  display: block;
-  color: #3b82f6;
-  font-size: 11px;
-}
-
-.thinking-detail .detail-query {
-  display: block;
-  color: #6b7280;
-  font-size: 11px;
-  margin-top: 4px;
-  font-style: italic;
-}
-
-.thinking-detail .detail-query i {
-  margin-right: 4px;
+.thinking-line.skipped .thinking-icon {
+  color: #06b6d4;
 }
 
 /* 다크모드 - Thinking 패널 */
@@ -2130,51 +2067,40 @@ html:not([data-theme="dark"]) textarea::placeholder,
   background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
 }
 
-[data-theme="dark"] .thinking-step {
-  background: rgba(30, 41, 59, 0.8);
-  color: #9ca3af;
+[data-theme="dark"] .thinking-line {
+  color: #e5e7eb;
 }
 
-[data-theme="dark"] .thinking-step .step-icon {
-  background: #374151;
-  color: #9ca3af;
-}
-
-[data-theme="dark"] .thinking-step.active {
-  background: rgba(59, 130, 246, 0.2);
+[data-theme="dark"] .thinking-line .thinking-spinner {
   color: #60a5fa;
 }
 
-[data-theme="dark"] .thinking-step.active .step-icon {
-  background: #3b82f6;
-  color: white;
+[data-theme="dark"] .thinking-line .thinking-icon {
+  color: #60a5fa;
 }
 
-[data-theme="dark"] .thinking-step.completed {
-  background: rgba(34, 197, 94, 0.2);
+[data-theme="dark"] .thinking-line.active {
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .thinking-line.completed {
+  color: #86efac;
+}
+
+[data-theme="dark"] .thinking-line.completed .thinking-icon {
   color: #4ade80;
 }
 
-[data-theme="dark"] .thinking-step.completed .step-icon {
-  background: #22c55e;
+[data-theme="dark"] .thinking-line.retrying {
+  color: #fcd34d;
 }
 
-[data-theme="dark"] .thinking-step.retrying {
-  background: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
+[data-theme="dark"] .thinking-line.skipped {
+  color: #67e8f9;
 }
 
-[data-theme="dark"] .thinking-step.skipped {
-  background: rgba(107, 114, 128, 0.2);
-  color: #6b7280;
-}
-
-[data-theme="dark"] .thinking-detail {
-  background: rgba(30, 41, 59, 0.8);
-}
-
-[data-theme="dark"] .thinking-detail .detail-title {
-  color: #e5e7eb;
+[data-theme="dark"] .thinking-line.skipped .thinking-icon {
+  color: #22d3ee;
 }
 
 [data-theme="dark"] .thinking-detail .detail-info {

@@ -339,24 +339,12 @@ const ChatbotWidget = {
     const html = `
       <div class="chat-message assistant" id="${messageId}">
         <div class="thinking-panel">
-          <div class="thinking-steps">
-            <div class="thinking-step" data-step="1">
-              <span class="step-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></span>
-              <span class="step-text">질문 분석</span>
-              <span class="step-status"></span>
-            </div>
-            <div class="thinking-step" data-step="2">
-              <span class="step-icon"><i class="fa-solid fa-book-open"></i></span>
-              <span class="step-text">문서 검색</span>
-              <span class="step-status"></span>
-            </div>
-            <div class="thinking-step" data-step="3">
-              <span class="step-icon"><i class="fa-solid fa-pen-to-square"></i></span>
-              <span class="step-text">응답 생성</span>
-              <span class="step-status"></span>
+          <div class="thinking-content">
+            <div class="thinking-line active">
+              <i class="fa-solid fa-spinner fa-spin thinking-spinner"></i>
+              <span class="thinking-text">생각하고 있어요...</span>
             </div>
           </div>
-          <div class="thinking-detail"></div>
         </div>
         <div class="bubble hide"></div>
         <div class="time">${time}</div>
@@ -368,76 +356,107 @@ const ChatbotWidget = {
   },
 
   /**
-   * Thinking 이벤트 처리
+   * Thinking 이벤트 처리 (줄글 형태)
    */
   handleThinkingEvent: function(messageId, event) {
-    const stepElement = $(`#${messageId} .thinking-step[data-step="${event.step}"]`);
-    const detailElement = $(`#${messageId} .thinking-detail`);
+    const contentElement = $(`#${messageId} .thinking-content`);
+    if (!contentElement.length) return;
 
-    if (!stepElement.length) return;
+    const friendlyMessage = this.buildThinkingMessage(event);
+    const icon = this.getThinkingIcon(event.step, event.status);
+    const statusClass = this.getThinkingStatusClass(event.status);
 
-    // 이전 단계들 완료 처리 (네트워크 지연으로 completed 이벤트 누락 시 대비)
-    if (event.status === 'in_progress') {
-      $(`#${messageId} .thinking-step`).each(function() {
-        const currentStep = parseInt($(this).data('step'));
-        if (currentStep < event.step && !$(this).hasClass('completed') && !$(this).hasClass('skipped')) {
-          $(this).removeClass('active retrying').addClass('completed');
-          $(this).find('.step-status').html('<i class="fa-solid fa-check"></i>');
-        }
-      });
-    }
+    const lineHtml = `
+      <div class="thinking-line ${statusClass}">
+        ${icon}
+        <span class="thinking-text">${this.escapeHtml(friendlyMessage)}</span>
+      </div>
+    `;
 
-    // 현재 단계 상태 업데이트
-    stepElement.removeClass('active completed retrying skipped');
-
-    switch (event.status) {
-      case 'in_progress':
-        stepElement.addClass('active');
-        break;
-      case 'completed':
-        stepElement.addClass('completed');
-        break;
-      case 'retrying':
-        stepElement.addClass('retrying');
-        break;
-      case 'skipped':
-        stepElement.addClass('skipped');
-        break;
-    }
-
-    // 상태 아이콘 업데이트
-    const statusIcon = this.getStatusIcon(event.status);
-    stepElement.find('.step-status').html(statusIcon);
-
-    // 상세 정보 표시
-    let detailHtml = '';
-    if (event.title) {
-      detailHtml += `<span class="detail-title">${this.escapeHtml(event.title)}</span>`;
-    }
-    if (event.detail) {
-      detailHtml += `<span class="detail-info">${this.escapeHtml(event.detail)}</span>`;
-    }
-    if (event.searchQuery && event.step === 2) {
-      detailHtml += `<span class="detail-query"><i class="fa-solid fa-search"></i> ${this.escapeHtml(event.searchQuery)}</span>`;
-    }
-    detailElement.html(detailHtml);
-
+    contentElement.html(lineHtml);
     this.scrollToBottom();
   },
 
   /**
-   * 상태별 아이콘 반환
+   * 사용자 친화적 thinking 메시지 생성
    */
-  getStatusIcon: function(status) {
+  buildThinkingMessage: function(event) {
+    const step = event.step;
+    const status = event.status;
+    const detail = event.detail;
+    const searchQuery = event.searchQuery;
+
+    if (step === 1) {
+      if (status === 'in_progress') {
+        return '질문을 분석하고 있어요...';
+      } else if (status === 'retrying') {
+        return '다시 한번 분석해볼게요...';
+      } else if (status === 'completed' && detail) {
+        return `${detail} 질문이네요!`;
+      }
+      return '질문 분석 완료!';
+    }
+
+    if (step === 2) {
+      if (status === 'skipped') {
+        return '이건 바로 답변할 수 있어요!';
+      } else if (status === 'in_progress') {
+        if (searchQuery) {
+          return `"${searchQuery}" 관련 문서를 찾고 있어요...`;
+        }
+        return '관련 문서를 검색하고 있어요...';
+      } else if (status === 'completed' && detail) {
+        return `${detail}에서 정보를 찾았어요!`;
+      }
+      return '문서 검색 완료!';
+    }
+
+    if (step === 3) {
+      if (status === 'in_progress') {
+        return '답변을 작성하고 있어요...';
+      } else if (status === 'completed') {
+        return '답변 준비 완료!';
+      }
+    }
+
+    return event.title || '처리 중...';
+  },
+
+  /**
+   * 단계별 아이콘 반환
+   */
+  getThinkingIcon: function(step, status) {
+    if (status === 'in_progress' || status === 'retrying') {
+      return '<i class="fa-solid fa-spinner fa-spin thinking-spinner"></i>';
+    }
+
+    if (step === 1) {
+      return '<i class="fa-solid fa-lightbulb thinking-icon"></i>';
+    } else if (step === 2) {
+      if (status === 'skipped') {
+        return '<i class="fa-solid fa-bolt thinking-icon"></i>';
+      }
+      return '<i class="fa-solid fa-book-open thinking-icon"></i>';
+    } else if (step === 3) {
+      return '<i class="fa-solid fa-pen thinking-icon"></i>';
+    }
+
+    return '<i class="fa-solid fa-circle-notch thinking-icon"></i>';
+  },
+
+  /**
+   * 상태별 CSS 클래스 반환
+   */
+  getThinkingStatusClass: function(status) {
     switch (status) {
       case 'in_progress':
-        return '<i class="fa-solid fa-spinner fa-spin"></i>';
+        return 'active';
       case 'completed':
-        return '<i class="fa-solid fa-check"></i>';
+        return 'completed';
       case 'retrying':
-        return '<i class="fa-solid fa-rotate"></i>';
+        return 'retrying';
       case 'skipped':
-        return '<i class="fa-solid fa-forward"></i>';
+        return 'skipped';
       default:
         return '';
     }

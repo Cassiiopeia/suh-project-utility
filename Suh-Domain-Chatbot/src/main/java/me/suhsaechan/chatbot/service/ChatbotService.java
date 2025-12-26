@@ -212,9 +212,7 @@ public class ChatbotService {
 
             IntentClassificationDto intent = classifyUserIntentWithRetry(message, recentHistory, thinkingCallback);
 
-            String intentDetail = String.format("%s (%d%%)",
-                getIntentTypeDisplayName(intent.getIntentType()),
-                Math.round(intent.getConfidence() * 100));
+            String intentDetail = getIntentTypeDisplayName(intent.getIntentType());
             sendThinkingEvent(thinkingCallback, 1, 3, "completed", "질문 분석 완료", intentDetail, null);
             log.info("[Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, searchQuery: {}",
                 intent.getIntentType(), intent.getNeedsRagSearch(), intent.getConfidence(), intent.getSearchQuery());
@@ -235,7 +233,7 @@ public class ChatbotService {
 
                 String searchDetail = searchResults.isEmpty()
                     ? "관련 문서 없음"
-                    : String.format("%d개 문서 검색됨", searchResults.size());
+                    : String.format("%d개 문서", searchResults.size());
                 sendThinkingEvent(thinkingCallback, 2, 3, "completed", "문서 검색 완료", searchDetail, searchQuery);
                 log.info("[Agent Step 2/3] RAG 검색 완료 - 결과 수: {}", searchResults.size());
             } else {
