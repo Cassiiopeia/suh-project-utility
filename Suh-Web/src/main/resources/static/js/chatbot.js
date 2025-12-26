@@ -376,13 +376,16 @@ const ChatbotWidget = {
 
     if (!stepElement.length) return;
 
-    // 이전 단계들 완료 처리
-    $(`#${messageId} .thinking-step`).each(function() {
-      const currentStep = parseInt($(this).data('step'));
-      if (currentStep < event.step) {
-        $(this).removeClass('active retrying').addClass('completed');
-      }
-    });
+    // 이전 단계들 완료 처리 (네트워크 지연으로 completed 이벤트 누락 시 대비)
+    if (event.status === 'in_progress') {
+      $(`#${messageId} .thinking-step`).each(function() {
+        const currentStep = parseInt($(this).data('step'));
+        if (currentStep < event.step && !$(this).hasClass('completed') && !$(this).hasClass('skipped')) {
+          $(this).removeClass('active retrying').addClass('completed');
+          $(this).find('.step-status').html('<i class="fa-solid fa-check"></i>');
+        }
+      });
+    }
 
     // 현재 단계 상태 업데이트
     stepElement.removeClass('active completed retrying skipped');
@@ -447,10 +450,14 @@ const ChatbotWidget = {
     const thinkingPanel = $(`#${messageId} .thinking-panel`);
     const bubble = $(`#${messageId} .bubble`);
 
+    if (!thinkingPanel.length) return;
+
     thinkingPanel.addClass('fade-out');
     setTimeout(() => {
-      thinkingPanel.addClass('hide');
-      bubble.removeClass('hide');
+      const panel = $(`#${messageId} .thinking-panel`);
+      const bbl = $(`#${messageId} .bubble`);
+      if (panel.length) panel.addClass('hide');
+      if (bbl.length) bbl.removeClass('hide');
     }, 300);
   },
 

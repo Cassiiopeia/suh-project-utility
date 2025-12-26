@@ -66,6 +66,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ChatbotService {
 
+    private static final float CONFIDENCE_THRESHOLD = 0.7f;
+
     private final ChatSessionRepository sessionRepository;
     private final ChatMessageRepository messageRepository;
     private final ChatDocumentChunkRepository chunkRepository;
@@ -388,7 +390,7 @@ public class ChatbotService {
         IntentClassificationDto intent = classifyUserIntentInternal(userMessage, recentHistory, false);
 
         // 신뢰도 충분하면 바로 반환
-        if (intent.getConfidence() >= 0.7f) {
+        if (intent.getConfidence() >= CONFIDENCE_THRESHOLD) {
             return intent;
         }
 
