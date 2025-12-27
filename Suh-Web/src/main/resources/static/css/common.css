@@ -1990,6 +1990,9 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 .thinking-content {
   min-height: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .thinking-line {
@@ -2000,6 +2003,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
   color: #374151;
   line-height: 1.5;
   animation: fadeInUp 0.3s ease;
+  padding: 4px 0;
 }
 
 @keyframes fadeInUp {
@@ -2040,6 +2044,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 .thinking-line.completed {
   color: #15803d;
+  opacity: 0.85;
 }
 
 .thinking-line.completed .thinking-icon {
@@ -2056,6 +2061,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 .thinking-line.skipped {
   color: #0891b2;
+  opacity: 0.85;
 }
 
 .thinking-line.skipped .thinking-icon {
