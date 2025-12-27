@@ -8,39 +8,52 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 
 /*
 ===========================
-   DaisyUI 5 Primary 색상 오버라이드 (파란색)
+   DaisyUI 5 Primary 색상 오버라이드 (파란색 #3b82f6)
 ===========================
 */
 :root,
-[data-theme="light"] {
-  --color-primary: oklch(59.12% 0.2 255);
-  --color-primary-content: oklch(100% 0 0);
-}
-
+[data-theme="light"],
 [data-theme="dark"] {
-  --color-primary: oklch(65% 0.2 255);
-  --color-primary-content: oklch(100% 0 0);
+  --p: 217.2 91.2% 59.8%;
+  --pc: 0 0% 100%;
+  --pf: 217.2 91.2% 52.8%;
 }
 
-/*
-===========================
-   DaisyUI 5 btn-primary 파란색 스타일
-===========================
-*/
 .btn-primary {
-  background-color: #3b82f6 !important;
-  border-color: #3b82f6 !important;
-  color: white !important;
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  border-radius: 0.3rem;
+  padding: 10px;
 }
 
-[data-theme="dark"] .btn-primary {
-  background-color: #3b82f6 !important;
-  border-color: #3b82f6 !important;
+.btn-primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 
 [data-theme="dark"] .btn-primary:hover {
-  background-color: #60a5fa !important;
-  border-color: #60a5fa !important;
+  background-color: #60a5fa;
+  border-color: #60a5fa;
+}
+
+/* btn-error 색상 */
+.btn-error {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  border-radius: 0.3rem;
+  padding: 10px;
+}
+
+.btn-error:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+
+[data-theme="dark"] .btn-error:hover {
+  background-color: #f87171;
+  border-color: #f87171;
 }
 
 /*
@@ -228,6 +241,72 @@ html:not([data-theme="dark"]) .badge-ghost,
   color: #9ca3af !important;
 }
 
+/*
+===========================
+   파스텔 톤 배지 색상 오버라이드
+===========================
+*/
+
+/* badge-success - 밝은 파스텔 그린 */
+:root:not([data-theme="dark"]) .badge-success,
+html:not([data-theme="dark"]) .badge-success,
+[data-theme="light"] .badge-success {
+  background-color: rgba(134, 239, 172, 0.35) !important;
+  color: #16a34a !important;
+  border: 1px solid rgba(134, 239, 172, 0.6) !important;
+}
+
+[data-theme="dark"] .badge-success {
+  background-color: rgba(134, 239, 172, 0.2) !important;
+  color: #86efac !important;
+  border: 1px solid rgba(134, 239, 172, 0.35) !important;
+}
+
+/* badge-info - 밝은 파스텔 블루 */
+:root:not([data-theme="dark"]) .badge-info,
+html:not([data-theme="dark"]) .badge-info,
+[data-theme="light"] .badge-info {
+  background-color: rgba(147, 197, 253, 0.35) !important;
+  color: #2563eb !important;
+  border: 1px solid rgba(147, 197, 253, 0.6) !important;
+}
+
+[data-theme="dark"] .badge-info {
+  background-color: rgba(147, 197, 253, 0.2) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(147, 197, 253, 0.35) !important;
+}
+
+/* badge-warning - 밝은 파스텔 옐로우 */
+:root:not([data-theme="dark"]) .badge-warning,
+html:not([data-theme="dark"]) .badge-warning,
+[data-theme="light"] .badge-warning {
+  background-color: rgba(253, 224, 71, 0.35) !important;
+  color: #ca8a04 !important;
+  border: 1px solid rgba(253, 224, 71, 0.6) !important;
+}
+
+[data-theme="dark"] .badge-warning {
+  background-color: rgba(253, 224, 71, 0.2) !important;
+  color: #fde047 !important;
+  border: 1px solid rgba(253, 224, 71, 0.35) !important;
+}
+
+/* badge-error - 밝은 파스텔 레드 */
+:root:not([data-theme="dark"]) .badge-error,
+html:not([data-theme="dark"]) .badge-error,
+[data-theme="light"] .badge-error {
+  background-color: rgba(252, 165, 165, 0.35) !important;
+  color: #dc2626 !important;
+  border: 1px solid rgba(252, 165, 165, 0.6) !important;
+}
+
+[data-theme="dark"] .badge-error {
+  background-color: rgba(252, 165, 165, 0.2) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(252, 165, 165, 0.35) !important;
+}
+
 /* badge-outline 스타일 (Light 모드) */
 :root:not([data-theme="dark"]) .badge-outline,
 html:not([data-theme="dark"]) .badge-outline,
@@ -256,39 +335,111 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
-  Toast Styles
+  Toast Styles - 파스텔톤 스타일
 ===========================
 */
 
-/* Toast container 중앙정렬: 상단 중앙 */
-#toast-container {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  pointer-events: none;
+/* Light 모드 - Toast Success (밝은 파스텔톤 녹색 #C8F2C8) */
+:root:not([data-theme="dark"]) .toast .alert-success,
+html:not([data-theme="dark"]) .toast .alert-success,
+[data-theme="light"] .toast .alert-success {
+  background-color: #C8F2C8 !important;
+  color: #15803d !important;
+  border-color: #86efac !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
 }
 
-/* Toast 개별 아이템 스타일 */
-.toast {
-  background-color: #1f2937;
-  color: #fff;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  font-size: 0.95rem;
-  opacity: 0;
-  animation: fadeInOut 3s forwards;
+/* Dark 모드 - Toast Success */
+[data-theme="dark"] .toast .alert-success {
+  background-color: #86efac !important;
+  color: #14532d !important;
+  border-color: #4ade80 !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
 }
 
-/* 등장 + 유지 + 사라짐 애니메이션 */
-@keyframes fadeInOut {
-  0%   { opacity: 0; transform: translateY(-10px); }
-  20%  { opacity: 1; transform: translateY(0); }
-  80%  { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-10px); }
+/* Light 모드 - Toast Error (밝은 파스텔톤 빨강) */
+:root:not([data-theme="dark"]) .toast .alert-error,
+html:not([data-theme="dark"]) .toast .alert-error,
+[data-theme="light"] .toast .alert-error {
+  background-color: #FFE5E5 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Dark 모드 - Toast Error */
+[data-theme="dark"] .toast .alert-error {
+  background-color: #fca5a5 !important;
+  color: #7f1d1d !important;
+  border-color: #f87171 !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Light 모드 - Toast Warning (밝은 파스텔톤 노랑) */
+:root:not([data-theme="dark"]) .toast .alert-warning,
+html:not([data-theme="dark"]) .toast .alert-warning,
+[data-theme="light"] .toast .alert-warning {
+  background-color: #FFF4E5 !important;
+  color: #c2410c !important;
+  border-color: #fcd34d !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Dark 모드 - Toast Warning */
+[data-theme="dark"] .toast .alert-warning {
+  background-color: #fcd34d !important;
+  color: #78350f !important;
+  border-color: #fbbf24 !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Light 모드 - Toast Info (밝은 파스텔톤 파랑) */
+:root:not([data-theme="dark"]) .toast .alert-info,
+html:not([data-theme="dark"]) .toast .alert-info,
+[data-theme="light"] .toast .alert-info {
+  background-color: #E5F3FF !important;
+  color: #0c4a6e !important;
+  border-color: #93c5fd !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Dark 모드 - Toast Info */
+[data-theme="dark"] .toast .alert-info {
+  background-color: #93c5fd !important;
+  color: #082f49 !important;
+  border-color: #60a5fa !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Toast 닫기 버튼 스타일 (파스텔톤과 조화) */
+.toast .alert .btn-ghost {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.toast .alert .btn-ghost:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .toast .alert .btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 /*
@@ -851,12 +1002,6 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Button hover 효과 */
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
 /*
 ===========================
    Scrollbar Styles
@@ -1243,10 +1388,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
   color: #9ca3af !important;
 }
 
-/* 다크모드 토스트 */
-[data-theme="dark"] .toast {
-  background-color: #374151 !important;
-}
+/* 다크모드 토스트 (DaisyUI 5 기본 스타일 사용) */
 
 /* 다크모드 body 배경 */
 [data-theme="dark"] body {

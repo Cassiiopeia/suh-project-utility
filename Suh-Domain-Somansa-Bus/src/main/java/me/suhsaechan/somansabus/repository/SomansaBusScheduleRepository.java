@@ -1,7 +1,7 @@
 package me.suhsaechan.somansabus.repository;
 
+import me.suhsaechan.somansabus.entity.SomansaBusMember;
 import me.suhsaechan.somansabus.entity.SomansaBusSchedule;
-import me.suhsaechan.somansabus.entity.SomansaBusUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,13 +11,13 @@ import java.util.UUID;
 @Repository
 public interface SomansaBusScheduleRepository extends JpaRepository<SomansaBusSchedule, UUID> {
 
-  List<SomansaBusSchedule> findBySomansaBusUser(SomansaBusUser user);
+  List<SomansaBusSchedule> findBySomansaBusMember(SomansaBusMember member);
 
-  List<SomansaBusSchedule> findBySomansaBusUserSomansaBusUserId(UUID userId);
+  List<SomansaBusSchedule> findBySomansaBusMemberSomansaBusMemberId(UUID memberId);
 
   List<SomansaBusSchedule> findByIsActiveTrue();
 
-  List<SomansaBusSchedule> findBySomansaBusUserAndIsActiveTrue(SomansaBusUser user);
+  List<SomansaBusSchedule> findBySomansaBusMemberAndIsActiveTrue(SomansaBusMember member);
 
-  List<SomansaBusSchedule> findBySomansaBusUserSomansaBusUserIdAndIsActiveTrue(UUID userId);
+  List<SomansaBusSchedule> findBySomansaBusMemberSomansaBusMemberIdAndIsActiveTrue(UUID memberId);
 }

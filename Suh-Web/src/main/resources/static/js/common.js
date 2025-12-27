@@ -1,28 +1,75 @@
 // src/main/resources/static/js/common.js
 /**
- * showToast(message, duration)
+ * showToast(message, typeOrDuration, duration)
+ * DaisyUI 5 방식의 Toast 메시지 표시
  * @param {string} message   - 표시할 메시지
+ * @param {string|number} typeOrDuration - 메시지 타입 ('positive', 'negative', 'warning', 'info') 또는 duration (밀리초)
  * @param {number} duration  - 표시 후 사라질 때까지의 밀리초 (기본 3000)
  */
-function showToast(message, duration = 3000) {
-  const container = document.getElementById('toast-container');
-  if (!container) {
-    console.warn('Toast container element not found! (id="toast-container")');
-    return;
+function showToast(message, typeOrDuration, duration) {
+  // 파라미터 타입에 따라 type과 duration 결정
+  let type = 'info';
+  let finalDuration = 3000;
+  
+  if (typeof typeOrDuration === 'string') {
+    // 두 번째 파라미터가 문자열이면 타입으로 인식
+    type = typeOrDuration;
+    finalDuration = duration || 3000;
+  } else if (typeof typeOrDuration === 'number') {
+    // 두 번째 파라미터가 숫자면 duration으로 인식 (기존 호환성)
+    finalDuration = typeOrDuration;
+  } else if (duration !== undefined) {
+    finalDuration = duration;
   }
 
-  // 1) Toast DOM 생성
-  const toast = document.createElement('div');
-  toast.classList.add('toast'); // 위에서 정의한 .toast CSS 사용
-  toast.textContent = message;
+  // Toast 컨테이너 찾기 또는 생성 (DaisyUI 5 방식)
+  let container = document.querySelector('.toast.toast-top.toast-end');
+  
+  if (!container) {
+    // 컨테이너가 없으면 생성
+    container = document.createElement('div');
+    container.className = 'toast toast-top toast-end';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+  }
 
-  // 2) 컨테이너에 추가
+  // 타입별 alert 클래스 매핑
+  const typeMap = {
+    'positive': 'alert-success',
+    'negative': 'alert-error',
+    'warning': 'alert-warning',
+    'info': 'alert-info'
+  };
+  
+  const alertClass = typeMap[type] || 'alert-info';
+
+  // Toast 아이템 생성 (DaisyUI 5 alert 컴포넌트 사용)
+  const toast = document.createElement('div');
+  toast.className = `alert ${alertClass} shadow-lg mb-2`;
+  toast.setAttribute('role', 'alert');
+  
+  // 메시지 텍스트 (XSS 방지)
+  const messageText = document.createTextNode(message);
+  toast.appendChild(messageText);
+
+  // 닫기 버튼 추가 (선택사항)
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'btn btn-sm btn-circle btn-ghost';
+  closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+  closeBtn.onclick = function() {
+    toast.remove();
+  };
+  toast.appendChild(closeBtn);
+
+  // 컨테이너에 추가
   container.appendChild(toast);
 
-  // 3) 애니메이션 종료 후 제거
-  toast.addEventListener('animationend', () => {
-    container.removeChild(toast);
-  });
+  // duration 후 자동 제거
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.remove();
+    }
+  }, finalDuration);
 }
 
 

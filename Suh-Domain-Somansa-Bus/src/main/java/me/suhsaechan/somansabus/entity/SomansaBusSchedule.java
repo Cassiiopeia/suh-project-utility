@@ -32,7 +32,7 @@ public class SomansaBusSchedule extends BasePostgresEntity {
   private UUID somansaBusScheduleId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  private SomansaBusUser somansaBusUser;
+  private SomansaBusMember somansaBusMember;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private SomansaBusRoute somansaBusRoute;
