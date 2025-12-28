@@ -33,11 +33,11 @@
 # - project_type은 최초 설정 후 변경하지 마세요
 # - 버전은 항상 높은 버전으로 자동 동기화됩니다
 # ===================================================================
-version: "2.2.3"
-version_code: 50 # app build number
+version: "2.2.4"
+version_code: 51 # app build number
 project_type: "spring" # spring, flutter, next, react, react-native, react-native-expo, node, python, basic
 metadata:
-  last_updated: "2025-12-28 16:30:55"
+  last_updated: "2025-12-28 17:17:32"
   last_updated_by: "Cassiiopeia"
   default_branch: "main"
   integrated_from: "SUH-DEVOPS-TEMPLATE"
