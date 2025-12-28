@@ -35,6 +35,9 @@ public class StatisticsService {
         Pattern.CASE_INSENSITIVE
     );
 
+    // 페이지 경로 상수
+    private static final String PROFILE_PAGE_PATH = "/profile";
+
     /**
      * 페이지 방문 기록 저장 (비동기)
      */
@@ -127,6 +130,14 @@ public class StatisticsService {
     public long getTodayUniqueVisitors() {
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         return pageVisitLogRepository.countDistinctClientHashAfter(todayStart);
+    }
+
+    /**
+     * 프로필 페이지 총 조회수 조회
+     */
+    @Transactional(readOnly = true)
+    public long getTotalProfileViews() {
+        return pageVisitLogRepository.countByPagePathAndIsBotFalse(PROFILE_PAGE_PATH);
     }
 
     /**

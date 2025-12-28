@@ -65,6 +65,9 @@ public class DashboardService {
             Long totalNoticeViews = noticeRepository.sumTotalViewCount();
             Long totalStudyViews = studyPostRepository.sumTotalViewCount();
 
+            // 페이지 조회수
+            Long totalProfileViews = statisticsService.getTotalProfileViews();
+
             DashboardSummaryDto summary = DashboardSummaryDto.builder()
                 .totalUniqueVisitors(totalUniqueVisitors)
                 .todayUniqueVisitors(todayUniqueVisitors)
@@ -80,6 +83,7 @@ public class DashboardService {
                 .todayOutputTokens(todayOutputTokens)
                 .totalNoticeViews(totalNoticeViews)
                 .totalStudyViews(totalStudyViews)
+                .totalProfileViews(totalProfileViews)
                 .featureUsageCounts(statisticsService.getFeatureUsageCounts())
                 .build();
 
@@ -106,6 +110,7 @@ public class DashboardService {
                 .todayOutputTokens(0L)
                 .totalNoticeViews(0L)
                 .totalStudyViews(0L)
+                .totalProfileViews(0L)
                 .build();
         }
     }
