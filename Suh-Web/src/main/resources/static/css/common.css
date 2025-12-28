@@ -56,6 +56,112 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
   border-color: #f87171;
 }
 
+/* btn-info 색상 */
+.btn-info {
+  background-color: #06b6d4;
+  border-color: #06b6d4;
+  color: #ffffff;
+  border-radius: 0.3rem;
+  padding: 10px;
+}
+
+.btn-info:hover {
+  background-color: #0891b2;
+  border-color: #0891b2;
+}
+
+[data-theme="dark"] .btn-info:hover {
+  background-color: #22d3ee;
+  border-color: #22d3ee;
+}
+
+/* btn-success 색상 */
+.btn-success {
+  background-color: #22c55e;
+  border-color: #22c55e;
+  color: #ffffff;
+  border-radius: 0.3rem;
+  padding: 10px;
+}
+
+.btn-success:hover {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+
+[data-theme="dark"] .btn-success:hover {
+  background-color: #4ade80;
+  border-color: #4ade80;
+}
+
+/* Light 모드 - btn-outline */
+:root:not([data-theme="dark"]) .btn-outline,
+html:not([data-theme="dark"]) .btn-outline,
+[data-theme="light"] .btn-outline {
+  background-color: transparent;
+  border-color: #9ca3af;
+  color: #374151;
+  border-radius: 0.3rem;
+  padding: 10px;
+}
+
+:root:not([data-theme="dark"]) .btn-outline:hover,
+html:not([data-theme="dark"]) .btn-outline:hover,
+[data-theme="light"] .btn-outline:hover {
+  background-color: #f3f4f6;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+/* Light 모드 - btn-outline btn-secondary */
+:root:not([data-theme="dark"]) .btn-outline.btn-secondary,
+html:not([data-theme="dark"]) .btn-outline.btn-secondary,
+[data-theme="light"] .btn-outline.btn-secondary {
+  background-color: transparent;
+  border-color: #4b5563;
+  color: #4b5563;
+  border-radius: 0.3rem;
+  padding: 10px;
+}
+
+:root:not([data-theme="dark"]) .btn-outline.btn-secondary:hover,
+html:not([data-theme="dark"]) .btn-outline.btn-secondary:hover,
+[data-theme="light"] .btn-outline.btn-secondary:hover {
+  background-color: #f3f4f6;
+  border-color: #4b5563;
+  color: #4b5563;
+}
+
+/* Dark 모드 - btn-outline btn-secondary */
+[data-theme="dark"] .btn-outline.btn-secondary {
+  border-color: #6b7280;
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .btn-outline.btn-secondary:hover {
+  background-color: #374151;
+  border-color: #9ca3af;
+  color: #e5e7eb;
+}
+
+/* Light 모드 - btn-ghost (일반) */
+:root:not([data-theme="dark"]) .btn-ghost,
+html:not([data-theme="dark"]) .btn-ghost,
+[data-theme="light"] .btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: #374151;
+  border-radius: 0.3rem;
+  padding: 10px;
+}
+
+:root:not([data-theme="dark"]) .btn-ghost:hover,
+html:not([data-theme="dark"]) .btn-ghost:hover,
+[data-theme="light"] .btn-ghost:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #1f2937;
+}
+
 /*
 ===========================
    테마 토글 버튼 (swap) 배경 투명
@@ -1448,6 +1554,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 /* 다크모드 버튼 ghost */
 [data-theme="dark"] .btn-ghost {
   color: #e5e7eb !important;
+  padding: 10px;
 }
 
 [data-theme="dark"] .btn-ghost:hover {
@@ -2791,6 +2898,7 @@ html:not([data-theme="dark"]) .collapse {
 [data-theme="dark"] .btn-outline {
   border-color: #4b5563 !important;
   color: #e5e7eb !important;
+  padding: 10px;
 }
 
 [data-theme="dark"] .btn-outline:hover {

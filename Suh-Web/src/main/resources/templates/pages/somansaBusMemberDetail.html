@@ -306,6 +306,7 @@ function loadMemberSchedules() {
       displaySchedules(response.schedules || []);
     },
     function(xhr) {
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
       $('#scheduleTable').html('<tr><td colspan="4" class="text-center py-8 text-gray-500">스케줄 로드 실패</td></tr>');
     }
   );
@@ -420,6 +421,7 @@ function loadMemberHistory() {
       displayHistory(response.histories || []);
     },
     function(xhr) {
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
       $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">기록 로드 실패</td></tr>');
     }
   );

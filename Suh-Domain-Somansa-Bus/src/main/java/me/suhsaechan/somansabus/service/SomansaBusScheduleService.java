@@ -63,7 +63,7 @@ public class SomansaBusScheduleService {
   @Transactional(readOnly = true)
   public SomansaBusResponse getSchedulesByMember(UUID memberId) {
     log.info("멤버별 스케줄 조회: {}", memberId);
-    List<SomansaBusSchedule> schedules = scheduleRepository.findBySomansaBusMemberSomansaBusMemberId(memberId);
+    List<SomansaBusSchedule> schedules = scheduleRepository.findByMemberIdWithDetails(memberId);
     return SomansaBusResponse.builder()
         .schedules(schedules)
         .totalCount((long) schedules.size())

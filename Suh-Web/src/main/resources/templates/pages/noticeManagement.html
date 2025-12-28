@@ -49,7 +49,6 @@
   <!-- 공지사항 목록 테이블 -->
   <div class="card bg-base-100 shadow-sm border border-gray-100">
     <div class="card-body p-4">
-      <div id="notice-table" class="modal-table-container"></div>
       <div id="loading-indicator" class="flex justify-center py-8">
         <span class="loading loading-spinner loading-lg text-primary"></span>
       </div>
@@ -59,6 +58,35 @@
           <h3 class="font-bold">데이터 로드 실패</h3>
           <span>공지사항을 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
         </div>
+      </div>
+      <div id="empty-message" class="alert alert-info hidden">
+        <i class="fa-solid fa-info-circle"></i>
+        <div>
+          <h3 class="font-bold">공지사항이 없습니다</h3>
+          <span>새 공지사항을 추가해주세요.</span>
+        </div>
+      </div>
+      <div id="table-container" class="hidden">
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>제목</th>
+                <th>중요</th>
+                <th>활성화</th>
+                <th>작성자</th>
+                <th>게시 시작일</th>
+                <th>게시 종료일</th>
+                <th>조회수</th>
+                <th>작성일</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="notice-table-body">
+            </tbody>
+          </table>
+        </div>
+        <div id="notice-pagination" class="flex justify-center mt-4"></div>
       </div>
     </div>
   </div>
@@ -236,68 +264,13 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- Tabulator 라이브러리 -->
-<link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
-
 <script>
   $(document).ready(function() {
-    // Tabulator 테이블 초기화
-    const noticeTable = new Tabulator("#notice-table", {
-      height: "400px",
-      layout: "fitColumns",
-      pagination: true,
-      paginationSize: 10,
-      columns: [
-        {title: "제목", field: "title", width: 250, formatter: function(cell) {
-          const value = cell.getValue();
-          const isImportant = cell.getRow().getData().isImportant;
-          return isImportant ?
-            `<i class="fa-solid fa-bell text-red-500 mr-1"></i> ${value}` :
-            value;
-        }},
-        {title: "중요", field: "isImportant", formatter: "tickCross", width: 80},
-        {title: "활성화", field: "isActive", formatter: "tickCross", width: 80},
-        {title: "작성자", field: "author", width: 120},
-        {title: "게시 시작일", field: "startDate", formatter: function(cell) {
-          const value = cell.getValue();
-          return value ? new Date(value).toLocaleString() : '-';
-        }, width: 150},
-        {title: "게시 종료일", field: "endDate", formatter: function(cell) {
-          const value = cell.getValue();
-          return value ? new Date(value).toLocaleString() : '무기한';
-        }, width: 150},
-        {title: "조회수", field: "viewCount", width: 80},
-        {title: "작성일", field: "createdDate", formatter: function(cell) {
-          return new Date(cell.getValue()).toLocaleString();
-        }, width: 150},
-        {title: "관리", formatter: function() {
-          return `<div class="flex gap-1">
-            <button class="btn btn-xs btn-info view-btn"><i class="fa-solid fa-eye"></i></button>
-            <button class="btn btn-xs btn-success edit-row-btn"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn btn-xs btn-error delete-row-btn"><i class="fa-solid fa-trash"></i></button>
-          </div>`;
-        }, width: 130, headerSort: false, hozAlign: "center", cellClick: function(e, cell) {
-          const rowData = cell.getRow().getData();
-          const element = e.target;
-
-          if ($(element).hasClass('view-btn') || $(element).parent().hasClass('view-btn')) {
-            showNoticeDetail(rowData);
-          } else if ($(element).hasClass('edit-row-btn') || $(element).parent().hasClass('edit-row-btn')) {
-            editNotice(rowData.noticeId);
-          } else if ($(element).hasClass('delete-row-btn') || $(element).parent().hasClass('delete-row-btn')) {
-            if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
-              deleteNotice(rowData.noticeId);
-            }
-          }
-
-          e.stopPropagation();
-        }}
-      ],
-      rowClick: function(e, row) {
-        showNoticeDetail(row.getData());
-      }
-    });
+    // 전역 변수
+    let allNotices = [];
+    let filteredNotices = [];
+    let currentPage = 1;
+    const pageSize = 10;
 
     // 공지사항 목록 로드
     loadNotices();
@@ -358,18 +331,72 @@
       toggleNoticeActive(noticeId);
     });
 
+    // 테이블 row 클릭 이벤트 (이벤트 위임)
+    $(document).on('click', '#notice-table-body tr', function(e) {
+      // 액션 버튼 클릭 시는 무시
+      if ($(e.target).closest('button, a').length > 0) {
+        return;
+      }
+      const noticeId = $(this).data('notice-id');
+      if (noticeId) {
+        const notice = allNotices.find(n => n.noticeId === noticeId);
+        if (notice) {
+          showNoticeDetail(notice);
+        }
+      }
+    });
+
+    // 액션 버튼 클릭 이벤트 (이벤트 위임)
+    $(document).on('click', '.view-btn', function(e) {
+      e.stopPropagation();
+      const noticeId = $(this).closest('tr').data('notice-id');
+      const notice = allNotices.find(n => n.noticeId === noticeId);
+      if (notice) {
+        showNoticeDetail(notice);
+      }
+    });
+
+    $(document).on('click', '.edit-row-btn', function(e) {
+      e.stopPropagation();
+      const noticeId = $(this).closest('tr').data('notice-id');
+      editNotice(noticeId);
+    });
+
+    $(document).on('click', '.delete-row-btn', function(e) {
+      e.stopPropagation();
+      const noticeId = $(this).closest('tr').data('notice-id');
+      if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+        deleteNotice(noticeId);
+      }
+    });
+
+    // 페이지네이션 클릭 이벤트
+    $(document).on('click', '.pagination-btn', function(e) {
+      e.preventDefault();
+      const page = parseInt($(this).data('page'));
+      if (page >= 1 && page !== currentPage) {
+        currentPage = page;
+        renderTable(filteredNotices.length > 0 ? filteredNotices : allNotices);
+      }
+    });
+
     // 공지사항 목록 로드 함수
     function loadNotices() {
       $('#loading-indicator').show();
       $('#error-message').addClass('hidden');
+      $('#empty-message').addClass('hidden');
+      $('#table-container').addClass('hidden');
 
       sendFormRequest(
         '/api/notice/get/all',
         null,
         function(response) {
           $('#loading-indicator').hide();
-          if (response) {
-            noticeTable.setData(response.notices);
+          if (response && response.notices) {
+            allNotices = response.notices;
+            filteredNotices = [];
+            currentPage = 1;
+            renderTable(allNotices);
           } else {
             $('#error-message').removeClass('hidden');
             console.error('공지사항 로드 실패:', response);
@@ -387,6 +414,8 @@
     function searchNotices(keyword, type) {
       $('#loading-indicator').show();
       $('#error-message').addClass('hidden');
+      $('#empty-message').addClass('hidden');
+      $('#table-container').addClass('hidden');
 
       sendFormRequest(
         '/api/notice/search',
@@ -396,8 +425,10 @@
         },
         function(response) {
           $('#loading-indicator').hide();
-          if (response) {
-            noticeTable.setData(response.notices);
+          if (response && response.notices) {
+            filteredNotices = response.notices;
+            currentPage = 1;
+            renderTable(filteredNotices);
           } else {
             $('#error-message').removeClass('hidden');
             console.error('검색 실패:', response);
@@ -409,6 +440,123 @@
           console.error('검색 오류:', error);
         }
       );
+    }
+
+    // 테이블 렌더링 함수
+    function renderTable(notices) {
+      if (!notices || notices.length === 0) {
+        $('#table-container').addClass('hidden');
+        $('#empty-message').removeClass('hidden');
+        return;
+      }
+
+      $('#empty-message').addClass('hidden');
+      $('#table-container').removeClass('hidden');
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = notices.slice(startIndex, endIndex);
+
+      let html = '';
+      pageData.forEach(function(notice) {
+        const titleHtml = notice.isImportant 
+          ? `<i class="fa-solid fa-bell text-red-500 mr-1"></i> ${escapeHtml(notice.title)}`
+          : escapeHtml(notice.title);
+        
+        const importantIcon = notice.isImportant 
+          ? '<i class="fa-solid fa-check text-green-500"></i>' 
+          : '<i class="fa-solid fa-times text-red-500"></i>';
+        
+        const activeIcon = notice.isActive 
+          ? '<i class="fa-solid fa-check text-green-500"></i>' 
+          : '<i class="fa-solid fa-times text-red-500"></i>';
+
+        const startDate = notice.startDate ? formatDateTime(notice.startDate) : '-';
+        const endDate = notice.endDate ? formatDateTime(notice.endDate) : '무기한';
+        const createdDate = formatDateTime(notice.createdDate);
+
+        html += `
+          <tr class="hover:bg-base-300 cursor-pointer" data-notice-id="${notice.noticeId}">
+            <td>${titleHtml}</td>
+            <td class="text-center">${importantIcon}</td>
+            <td class="text-center">${activeIcon}</td>
+            <td>${escapeHtml(notice.author || '익명')}</td>
+            <td>${startDate}</td>
+            <td>${endDate}</td>
+            <td class="text-center">${notice.viewCount || 0}</td>
+            <td>${createdDate}</td>
+            <td>
+              <div class="flex gap-1">
+                <button class="btn btn-xs btn-info view-btn" title="상세보기">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <button class="btn btn-xs btn-success edit-row-btn" title="수정">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn btn-xs btn-error delete-row-btn" title="삭제">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#notice-table-body').html(html);
+      renderPagination(notices.length);
+    }
+
+    // 페이지네이션 렌더링 함수
+    function renderPagination(totalItems) {
+      const totalPages = Math.ceil(totalItems / pageSize);
+      
+      if (totalPages <= 1) {
+        $('#notice-pagination').empty();
+        return;
+      }
+
+      let html = '<div class="join">';
+      
+      // 이전 페이지 버튼
+      html += `<button class="join-item btn btn-sm ${currentPage === 1 ? 'btn-disabled' : ''}" 
+               data-page="${currentPage - 1}" 
+               ${currentPage === 1 ? 'disabled' : ''}>
+               <i class="fa-solid fa-angle-left"></i>
+               </button>`;
+      
+      // 페이지 번호 버튼
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="join-item btn btn-sm pagination-btn ${i === currentPage ? 'btn-active' : ''}" 
+                   data-page="${i}">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += '<span class="join-item btn btn-sm btn-disabled">...</span>';
+        }
+      }
+      
+      // 다음 페이지 버튼
+      html += `<button class="join-item btn btn-sm ${currentPage === totalPages ? 'btn-disabled' : ''}" 
+               data-page="${currentPage + 1}" 
+               ${currentPage === totalPages ? 'disabled' : ''}>
+               <i class="fa-solid fa-angle-right"></i>
+               </button>`;
+      
+      html += '</div>';
+      $('#notice-pagination').html(html);
+    }
+
+    // 날짜 포맷 함수
+    function formatDateTime(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleString('ko-KR');
+    }
+
+    // HTML 이스케이프 함수
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     // 공지사항 저장 함수
@@ -423,7 +571,9 @@
       const author = $('#notice-author').val();
 
       if (!title || !content) {
-        alert('제목과 내용을 입력해주세요.');
+        if (typeof showToast === 'function') {
+          showToast('제목과 내용을 입력해주세요.', 'warning');
+        }
         return;
       }
 
@@ -441,15 +591,19 @@
         },
         function(response) {
           if (response) {
-            alert(response.message);
+            if (typeof showToast === 'function') {
+              showToast(response.message || '공지사항이 저장되었습니다.', 'positive');
+            }
             document.getElementById('notice-modal').close();
             loadNotices();
           } else {
-            alert('저장 실패: ' + (response ? response.message : '알 수 없는 오류'));
+            if (typeof showToast === 'function') {
+              showToast('저장 실패: 알 수 없는 오류', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('저장 오류: ' + error);
+          console.error('공지사항 저장 오류:', error);
         }
       );
     }
@@ -459,10 +613,10 @@
       $('#detail-title').text(notice.title).data('id', notice.noticeId);
       $('#detail-author').text(notice.author || '익명');
       $('#detail-view-count').text(notice.viewCount || 0);
-      $('#detail-created-date').text(new Date(notice.createdDate).toLocaleString());
+      $('#detail-created-date').text(formatDateTime(notice.createdDate));
 
-      const startDate = notice.startDate ? new Date(notice.startDate).toLocaleString() : '-';
-      const endDate = notice.endDate ? new Date(notice.endDate).toLocaleString() : '무기한';
+      const startDate = notice.startDate ? formatDateTime(notice.startDate) : '-';
+      const endDate = notice.endDate ? formatDateTime(notice.endDate) : '무기한';
       $('#detail-period').text(startDate + ' ~ ' + endDate);
 
       const statusClass = notice.isActive ? 'badge-success' : 'badge-error';
@@ -517,11 +671,13 @@
             document.getElementById('notice-detail-modal').close();
             document.getElementById('notice-modal').showModal();
           } else {
-            alert('공지사항 정보를 불러올 수 없습니다.');
+            if (typeof showToast === 'function') {
+              showToast('공지사항 정보를 불러올 수 없습니다.', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('공지사항 정보 로드 오류: ' + error);
+          console.error('공지사항 정보 로드 오류:', error);
         }
       );
     }
@@ -533,15 +689,19 @@
         { noticeId: noticeId },
         function(response) {
           if (response) {
-            alert(response.message);
+            if (typeof showToast === 'function') {
+              showToast(response.message || '공지사항이 삭제되었습니다.', 'positive');
+            }
             document.getElementById('notice-detail-modal').close();
             loadNotices();
           } else {
-            alert('삭제 실패: ' + (response ? response.message : '알 수 없는 오류'));
+            if (typeof showToast === 'function') {
+              showToast('삭제 실패: 알 수 없는 오류', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('삭제 오류: ' + error);
+          console.error('공지사항 삭제 오류:', error);
         }
       );
     }
@@ -553,15 +713,19 @@
         { noticeId: noticeId },
         function(response) {
           if (response) {
-            alert(response.message);
+            if (typeof showToast === 'function') {
+              showToast(response.message || '상태가 변경되었습니다.', 'positive');
+            }
             document.getElementById('notice-detail-modal').close();
             loadNotices();
           } else {
-            alert('상태 변경 실패: ' + (response ? response.message : '알 수 없는 오류'));
+            if (typeof showToast === 'function') {
+              showToast('상태 변경 실패: 알 수 없는 오류', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('상태 변경 오류: ' + error);
+          console.error('공지사항 상태 변경 오류:', error);
         }
       );
     }
@@ -623,7 +787,7 @@
 
     // 댓글 HTML 생성 함수
     function createCommentHtml(comment) {
-      const date = new Date(comment.createdDate).toLocaleString();
+      const date = formatDateTime(comment.createdDate);
       return `
         <div class="comment-item bg-white border border-gray-200 rounded-lg p-4">
           <div class="flex items-start gap-3">
@@ -632,11 +796,11 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
-                <span class="font-semibold text-gray-800">${comment.author}</span>
-                ${comment.anonymizedIp ? `<span class="text-xs text-gray-400">(${comment.anonymizedIp})</span>` : ''}
+                <span class="font-semibold text-gray-800">${escapeHtml(comment.author)}</span>
+                ${comment.anonymizedIp ? `<span class="text-xs text-gray-400">(${escapeHtml(comment.anonymizedIp)})</span>` : ''}
                 <span class="text-xs text-gray-400">${date}</span>
               </div>
-              <p class="text-gray-700">${comment.content}</p>
+              <p class="text-gray-700">${escapeHtml(comment.content)}</p>
               <div class="mt-2">
                 <button class="btn btn-xs btn-error delete-comment-btn" data-id="${comment.noticeCommentId}">
                   <i class="fa-solid fa-trash"></i>
@@ -656,7 +820,9 @@
       const content = $('#comment-content').val();
 
       if (!content) {
-        alert('댓글 내용을 입력해주세요.');
+        if (typeof showToast === 'function') {
+          showToast('댓글 내용을 입력해주세요.', 'warning');
+        }
         return;
       }
 
@@ -672,11 +838,13 @@
             $('#comment-content').val('');
             loadComments(noticeId);
           } else {
-            alert('댓글 등록 실패');
+            if (typeof showToast === 'function') {
+              showToast('댓글 등록 실패', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('댓글 등록 오류: ' + error);
+          console.error('댓글 등록 오류:', error);
         }
       );
     });
@@ -692,11 +860,13 @@
           if (response) {
             loadComments(noticeId);
           } else {
-            alert('댓글 삭제 실패');
+            if (typeof showToast === 'function') {
+              showToast('댓글 삭제 실패', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('댓글 삭제 오류: ' + error);
+          console.error('댓글 삭제 오류:', error);
         }
       );
     }

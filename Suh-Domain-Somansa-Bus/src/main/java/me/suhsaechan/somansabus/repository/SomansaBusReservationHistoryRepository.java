@@ -20,6 +20,21 @@ public interface SomansaBusReservationHistoryRepository extends JpaRepository<So
 
   List<SomansaBusReservationHistory> findBySomansaBusMemberSomansaBusMemberIdOrderByExecutedAtDesc(UUID memberId);
 
+  @Query("SELECT h FROM SomansaBusReservationHistory h " +
+      "JOIN FETCH h.somansaBusMember " +
+      "JOIN FETCH h.somansaBusRoute " +
+      "WHERE h.somansaBusMember.somansaBusMemberId = :memberId " +
+      "ORDER BY h.executedAt DESC")
+  List<SomansaBusReservationHistory> findByMemberIdWithDetails(@Param("memberId") UUID memberId);
+
+  @Query("SELECT h FROM SomansaBusReservationHistory h " +
+      "JOIN FETCH h.somansaBusMember " +
+      "JOIN FETCH h.somansaBusRoute " +
+      "WHERE h.somansaBusMember.somansaBusMemberId = :memberId " +
+      "ORDER BY h.executedAt DESC " +
+      "LIMIT 10")
+  List<SomansaBusReservationHistory> findTop10ByMemberIdWithDetails(@Param("memberId") UUID memberId);
+
   List<SomansaBusReservationHistory> findByReservationDate(LocalDate reservationDate);
 
   List<SomansaBusReservationHistory> findByIsSuccessTrue();

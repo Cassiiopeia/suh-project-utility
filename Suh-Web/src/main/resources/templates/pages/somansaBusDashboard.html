@@ -302,6 +302,7 @@ function loadStats() {
     },
     function(xhr) {
       console.error('통계 로드 실패');
+      // 전역 핸들러가 toast를 표시하므로 여기서는 추가 처리만
     }
   );
 }
@@ -313,6 +314,7 @@ function loadMembers() {
     },
     function(xhr) {
       console.error('멤버 목록 로드 실패');
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
       $('#memberTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">멤버 목록을 불러오는데 실패했습니다.</td></tr>');
     }
   );
@@ -476,6 +478,7 @@ function loadReservationHistory() {
       displayReservationHistory(response.histories || []);
     },
     function(xhr) {
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
       $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">기록 로드 실패</td></tr>');
     }
   );

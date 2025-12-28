@@ -475,11 +475,33 @@ html:not([data-theme="dark"]) .my-component,
 - **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
 - **초기화**: `common.js`의 `initTheme()` 함수
 
-### DaisyUI 4.x 버튼 스타일 ⚠️ 중요
-- **CDN 버전**: DaisyUI 4.12.14 사용 중
-- **btn-primary 색상 문제**: DaisyUI 4.x에서 CSS 변수 형식 변경으로 `btn-primary`가 투명하게 보일 수 있음
-- **해결책**: `common.css`에 직접 스타일 정의됨 (파란색 #3b82f6)
-- **새 버튼 스타일 추가 시**: `common.css`에 직접 배경색/테두리색 지정 필수
+### DaisyUI 5 버튼 스타일 오버라이드 ⚠️ 중요
+
+#### 배경
+- **CDN 버전**: DaisyUI 5 사용 중
+- **문제**: DaisyUI 5 기본 스타일만으로는 색상이 제대로 표시되지 않음
+- **해결**: `common.css`에서 주요 버튼 스타일을 직접 오버라이드
+
+#### 오버라이드된 버튼 클래스
+```css
+.btn-primary   /* 파란색 #3b82f6 */
+.btn-error     /* 빨간색 #ef4444 */
+.btn-info      /* 청록색 #06b6d4 */
+.btn-success   /* 녹색 #22c55e */
+.btn-outline   /* 투명 배경 + 회색 테두리 #9ca3af */
+.btn-ghost     /* 투명 (호버 시에만 배경) */
+```
+
+#### 공통 스타일 패턴
+- **패딩**: `10px` 통일
+- **border-radius**: `0.3rem` 통일
+- **다크모드**: 모든 버튼에 hover 스타일 정의
+- **위치**: `common.css` 22-145줄
+
+#### 새 버튼 추가 시
+1. `common.css`에 직접 배경색/테두리색 정의 필수
+2. 기존 패턴 따라 hover 및 다크모드 스타일 추가
+3. 패딩 `10px`, border-radius `0.3rem` 유지
 
 ## 빌드 및 실행
 

@@ -132,7 +132,7 @@ public class SomansaBusReservationService {
   public SomansaBusResponse getHistoryByMember(UUID memberId) {
     log.info("멤버별 예약 이력 조회: {}", memberId);
     List<SomansaBusReservationHistory> histories =
-        historyRepository.findBySomansaBusMemberSomansaBusMemberIdOrderByExecutedAtDesc(memberId);
+        historyRepository.findByMemberIdWithDetails(memberId);
     return SomansaBusResponse.builder()
         .histories(histories)
         .totalCount((long) histories.size())
@@ -143,7 +143,7 @@ public class SomansaBusReservationService {
   public SomansaBusResponse getRecentHistoryByMember(UUID memberId) {
     log.info("멤버별 최근 예약 이력 조회: {}", memberId);
     List<SomansaBusReservationHistory> histories =
-        historyRepository.findTop10BySomansaBusMemberSomansaBusMemberIdOrderByExecutedAtDesc(memberId);
+        historyRepository.findTop10ByMemberIdWithDetails(memberId);
     return SomansaBusResponse.builder()
         .histories(histories)
         .totalCount((long) histories.size())

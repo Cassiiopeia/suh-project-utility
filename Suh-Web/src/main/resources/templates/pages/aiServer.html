@@ -318,6 +318,7 @@ function checkServerHealth() {
     },
     error: function(xhr, status, error) {
       console.error('Health Check 실패:', xhr, status, error);
+      // 전역 핸들러에서 제외된 URL이므로 여기서는 상태 표시만
       $('#serverStatus').html('<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-600 font-medium">연결 실패</span></div>');
     }
   });
@@ -356,6 +357,7 @@ function loadModelsList() {
     },
     error: function(xhr, status, error) {
       console.error('모델 목록 로드 실패:', xhr, status, error);
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
       tbody.html('<tr><td colspan="4" class="text-center py-8 text-red-500">모델 목록 로드 실패</td></tr>');
     }
   });
@@ -449,6 +451,7 @@ function restoreActiveDownloads() {
     },
     error: function(xhr, status, error) {
       console.error('다운로드 상태 조회 실패:', error);
+      // 전역 핸들러가 toast를 표시함
     }
   });
 }
@@ -551,7 +554,14 @@ function downloadModel() {
     },
     error: function(xhr, status, error) {
       console.error('[다운로드] 시작 실패:', error);
-      alert(`다운로드 시작 실패: ${error}`);
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 정리만
+      let errorMessage = '다운로드 시작 실패';
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage = xhr.responseJSON.message;
+      }
+      if (typeof showToast === 'function') {
+        showToast(errorMessage, 'negative');
+      }
       $(`#${progressId}`).remove();
     }
   });
@@ -621,12 +631,14 @@ function deleteModel(modelName) {
     processData: false,
     contentType: false,
     success: function(response) {
-      alert('모델이 삭제되었습니다');
+      if (typeof showToast === 'function') {
+        showToast('모델이 삭제되었습니다', 'positive');
+      }
       loadModelsList();
     },
     error: function(xhr, status, error) {
-      const message = xhr.responseJSON?.message || '삭제 실패';
-      alert('삭제 오류: ' + message);
+      // 전역 핸들러가 toast를 표시함
+      console.error('모델 삭제 실패:', error);
     }
   });
 }
@@ -685,6 +697,7 @@ function runGenerateTest(model, prompt, startTime, testBtn) {
       } catch (e) {
         errorResponse = { error: error, status: xhr.status };
       }
+      // 전역 핸들러가 toast를 표시하지만, 여기서는 API 응답 UI 표시도 필요
       showApiResponse(errorResponse, xhr.status, responseTime, 'generate');
     },
     complete: function() {

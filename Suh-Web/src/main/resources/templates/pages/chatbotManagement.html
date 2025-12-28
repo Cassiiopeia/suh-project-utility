@@ -89,10 +89,13 @@
             <i class="fa-solid fa-plus"></i>
             새 문서
           </button>
-          <button class="btn btn-outline btn-secondary" id="init-collection-btn">
-            <i class="fa-solid fa-database"></i>
-            컬렉션 초기화
-          </button>
+          <div class="tooltip tooltip-bottom" data-tip="벡터 컬렉션을 초기화합니다. 기존 문서 데이터는 유지됩니다.">
+            <button class="btn btn-outline btn-secondary" id="init-collection-btn">
+              <i class="fa-solid fa-database"></i>
+              컬렉션 초기화
+              <i class="fa-solid fa-circle-question ml-1 text-xs opacity-70"></i>
+            </button>
+          </div>
           <button class="btn btn-outline" id="refresh-btn">
             <i class="fa-solid fa-rotate"></i>
             새로고침
@@ -105,7 +108,6 @@
   <!-- 문서 목록 테이블 -->
   <div class="card bg-base-100 shadow-sm border border-gray-100">
     <div class="card-body p-4">
-      <div id="document-table" class="modal-table-container"></div>
       <div id="loading-indicator" class="flex justify-center py-8">
         <span class="loading loading-spinner loading-lg text-primary"></span>
       </div>
@@ -122,6 +124,27 @@
           <h3 class="font-bold">문서가 없습니다</h3>
           <span>새 문서를 추가하여 챗봇이 참조할 지식을 등록하세요.</span>
         </div>
+      </div>
+      <div id="table-container" class="hidden">
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>제목</th>
+                <th>카테고리</th>
+                <th>설명</th>
+                <th>청크</th>
+                <th>처리</th>
+                <th>활성</th>
+                <th>생성일</th>
+                <th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="document-table-body">
+            </tbody>
+          </table>
+        </div>
+        <div id="document-pagination" class="flex justify-center mt-4"></div>
       </div>
     </div>
   </div>
@@ -279,79 +302,23 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- Tabulator 라이브러리 -->
-<link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
-
 <script>
   $(document).ready(function() {
     // 전역 변수
     let allDocuments = [];
+    let filteredDocuments = [];
+    let currentPage = 1;
+    const pageSize = 10;
 
-    // Tabulator 테이블 초기화
-    const documentTable = new Tabulator("#document-table", {
-      height: "400px",
-      layout: "fitColumns",
-      pagination: true,
-      paginationSize: 10,
-      columns: [
-        {title: "제목", field: "title", width: 250, formatter: function(cell) {
-          const value = cell.getValue();
-          const isActive = cell.getRow().getData().isActive;
-          const icon = isActive ?
-            '<i class="fa-solid fa-file-lines text-blue-500 mr-2"></i>' :
-            '<i class="fa-solid fa-file-lines text-gray-400 mr-2"></i>';
-          return icon + value;
-        }},
-        {title: "카테고리", field: "category", width: 120, formatter: function(cell) {
-          const value = cell.getValue();
-          const categoryMap = {
-            'site-info': '사이트 정보',
-            'features': '기능 안내',
-            'faq': 'FAQ',
-            'guide': '사용 가이드',
-            'project': '프로젝트',
-            'other': '기타'
-          };
-          return `<span class="badge badge-outline badge-sm">${categoryMap[value] || value}</span>`;
-        }},
-        {title: "설명", field: "description", width: 200, formatter: function(cell) {
-          const value = cell.getValue();
-          return value ? (value.length > 30 ? value.substring(0, 30) + '...' : value) : '-';
-        }},
-        {title: "청크", field: "chunkCount", width: 80, hozAlign: "center"},
-        {title: "처리", field: "isProcessed", formatter: "tickCross", width: 70, hozAlign: "center"},
-        {title: "활성", field: "isActive", formatter: "tickCross", width: 70, hozAlign: "center"},
-        {title: "생성일", field: "createdDate", formatter: function(cell) {
-          return cell.getValue() ? new Date(cell.getValue()).toLocaleDateString() : '-';
-        }, width: 100},
-        {title: "관리", formatter: function() {
-          return `<div class="flex gap-1">
-            <button class="btn btn-xs btn-info view-btn" title="상세보기"><i class="fa-solid fa-eye"></i></button>
-            <button class="btn btn-xs btn-success edit-row-btn" title="수정"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn btn-xs btn-error delete-row-btn" title="삭제"><i class="fa-solid fa-trash"></i></button>
-          </div>`;
-        }, width: 120, headerSort: false, hozAlign: "center", cellClick: function(e, cell) {
-          const rowData = cell.getRow().getData();
-          const element = e.target;
-
-          if ($(element).hasClass('view-btn') || $(element).parent().hasClass('view-btn')) {
-            showDocumentDetail(rowData);
-          } else if ($(element).hasClass('edit-row-btn') || $(element).parent().hasClass('edit-row-btn')) {
-            editDocument(rowData.documentId);
-          } else if ($(element).hasClass('delete-row-btn') || $(element).parent().hasClass('delete-row-btn')) {
-            if (confirm('정말로 이 문서를 삭제하시겠습니까? 벡터DB에서도 삭제됩니다.')) {
-              deleteDocument(rowData.documentId);
-            }
-          }
-
-          e.stopPropagation();
-        }}
-      ],
-      rowClick: function(e, row) {
-        showDocumentDetail(row.getData());
-      }
-    });
+    // 카테고리 맵
+    const categoryMap = {
+      'site-info': '사이트 정보',
+      'features': '기능 안내',
+      'faq': 'FAQ',
+      'guide': '사용 가이드',
+      'project': '프로젝트',
+      'other': '기타'
+    };
 
     // 문서 목록 로드
     loadDocuments();
@@ -365,14 +332,17 @@
     $('#search-btn').click(function() {
       const keyword = $('#search-keyword').val().toLowerCase();
       if (keyword) {
-        const filtered = allDocuments.filter(doc =>
+        filteredDocuments = allDocuments.filter(doc =>
           doc.title.toLowerCase().includes(keyword) ||
           doc.category.toLowerCase().includes(keyword) ||
           (doc.description && doc.description.toLowerCase().includes(keyword))
         );
-        documentTable.setData(filtered);
+        currentPage = 1;
+        renderTable(filteredDocuments);
       } else {
-        documentTable.setData(allDocuments);
+        filteredDocuments = [];
+        currentPage = 1;
+        renderTable(allDocuments);
       }
     });
 
@@ -430,11 +400,61 @@
       toggleDocumentActive(documentId);
     });
 
+    // 테이블 row 클릭 이벤트 (이벤트 위임)
+    $(document).on('click', '#document-table-body tr', function(e) {
+      // 액션 버튼 클릭 시는 무시
+      if ($(e.target).closest('button, a').length > 0) {
+        return;
+      }
+      const documentId = $(this).data('document-id');
+      if (documentId) {
+        const doc = allDocuments.find(d => d.documentId === documentId);
+        if (doc) {
+          showDocumentDetail(doc);
+        }
+      }
+    });
+
+    // 액션 버튼 클릭 이벤트 (이벤트 위임)
+    $(document).on('click', '.view-btn', function(e) {
+      e.stopPropagation();
+      const documentId = $(this).closest('tr').data('document-id');
+      const doc = allDocuments.find(d => d.documentId === documentId);
+      if (doc) {
+        showDocumentDetail(doc);
+      }
+    });
+
+    $(document).on('click', '.edit-row-btn', function(e) {
+      e.stopPropagation();
+      const documentId = $(this).closest('tr').data('document-id');
+      editDocument(documentId);
+    });
+
+    $(document).on('click', '.delete-row-btn', function(e) {
+      e.stopPropagation();
+      const documentId = $(this).closest('tr').data('document-id');
+      if (confirm('정말로 이 문서를 삭제하시겠습니까? 벡터DB에서도 삭제됩니다.')) {
+        deleteDocument(documentId);
+      }
+    });
+
+    // 페이지네이션 클릭 이벤트
+    $(document).on('click', '.pagination-btn', function(e) {
+      e.preventDefault();
+      const page = parseInt($(this).data('page'));
+      if (page >= 1 && page !== currentPage) {
+        currentPage = page;
+        renderTable(filteredDocuments.length > 0 ? filteredDocuments : allDocuments);
+      }
+    });
+
     // 문서 목록 로드 함수
     function loadDocuments() {
       $('#loading-indicator').show();
       $('#error-message').addClass('hidden');
       $('#empty-message').addClass('hidden');
+      $('#table-container').addClass('hidden');
 
       sendFormRequest(
         '/api/chatbot/document/list',
@@ -443,7 +463,9 @@
           $('#loading-indicator').hide();
           if (response && response.documents) {
             allDocuments = response.documents;
-            documentTable.setData(allDocuments);
+            filteredDocuments = [];
+            currentPage = 1;
+            renderTable(allDocuments);
             updateStatistics(allDocuments);
 
             if (allDocuments.length === 0) {
@@ -475,6 +497,132 @@
       $('#stat-categories').text(categories);
     }
 
+    // 테이블 렌더링 함수
+    function renderTable(documents) {
+      if (!documents || documents.length === 0) {
+        $('#table-container').addClass('hidden');
+        $('#empty-message').removeClass('hidden');
+        return;
+      }
+
+      $('#empty-message').addClass('hidden');
+      $('#table-container').removeClass('hidden');
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = documents.slice(startIndex, endIndex);
+
+      let html = '';
+      pageData.forEach(function(doc) {
+        const icon = doc.isActive
+          ? '<i class="fa-solid fa-file-lines text-blue-500 mr-2"></i>'
+          : '<i class="fa-solid fa-file-lines text-gray-400 mr-2"></i>';
+        
+        const titleHtml = icon + escapeHtml(doc.title);
+        const categoryBadge = `<span class="badge badge-outline badge-sm">${categoryMap[doc.category] || doc.category}</span>`;
+        
+        const description = doc.description 
+          ? (doc.description.length > 30 ? doc.description.substring(0, 30) + '...' : doc.description)
+          : '-';
+        
+        const processedIcon = doc.isProcessed
+          ? '<i class="fa-solid fa-check text-green-500"></i>'
+          : '<i class="fa-solid fa-times text-red-500"></i>';
+        
+        const activeIcon = doc.isActive
+          ? '<i class="fa-solid fa-check text-green-500"></i>'
+          : '<i class="fa-solid fa-times text-red-500"></i>';
+
+        const createdDate = doc.createdDate ? formatDate(doc.createdDate) : '-';
+
+        html += `
+          <tr class="hover:bg-base-300 cursor-pointer" data-document-id="${doc.documentId}">
+            <td>${titleHtml}</td>
+            <td>${categoryBadge}</td>
+            <td>${escapeHtml(description)}</td>
+            <td class="text-center">${doc.chunkCount || 0}</td>
+            <td class="text-center">${processedIcon}</td>
+            <td class="text-center">${activeIcon}</td>
+            <td>${createdDate}</td>
+            <td>
+              <div class="flex gap-1">
+                <button class="btn btn-xs btn-info view-btn" title="상세보기">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <button class="btn btn-xs btn-success edit-row-btn" title="수정">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn btn-xs btn-error delete-row-btn" title="삭제">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#document-table-body').html(html);
+      renderPagination(documents.length);
+    }
+
+    // 페이지네이션 렌더링 함수
+    function renderPagination(totalItems) {
+      const totalPages = Math.ceil(totalItems / pageSize);
+      
+      if (totalPages <= 1) {
+        $('#document-pagination').empty();
+        return;
+      }
+
+      let html = '<div class="join">';
+      
+      // 이전 페이지 버튼
+      html += `<button class="join-item btn btn-sm ${currentPage === 1 ? 'btn-disabled' : ''}" 
+               data-page="${currentPage - 1}" 
+               ${currentPage === 1 ? 'disabled' : ''}>
+               <i class="fa-solid fa-angle-left"></i>
+               </button>`;
+      
+      // 페이지 번호 버튼
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="join-item btn btn-sm pagination-btn ${i === currentPage ? 'btn-active' : ''}" 
+                   data-page="${i}">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += '<span class="join-item btn btn-sm btn-disabled">...</span>';
+        }
+      }
+      
+      // 다음 페이지 버튼
+      html += `<button class="join-item btn btn-sm ${currentPage === totalPages ? 'btn-disabled' : ''}" 
+               data-page="${currentPage + 1}" 
+               ${currentPage === totalPages ? 'disabled' : ''}>
+               <i class="fa-solid fa-angle-right"></i>
+               </button>`;
+      
+      html += '</div>';
+      $('#document-pagination').html(html);
+    }
+
+    // 날짜 포맷 함수
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleDateString('ko-KR');
+    }
+
+    function formatDateTime(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleString('ko-KR');
+    }
+
+    // HTML 이스케이프 함수
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     // 문서 저장 함수
     function saveDocument() {
       const documentId = $('#document-id').val();
@@ -484,7 +632,9 @@
       const description = $('#document-description').val();
 
       if (!title || !content) {
-        alert('제목과 내용을 입력해주세요.');
+        if (typeof showToast === 'function') {
+          showToast('제목과 내용을 입력해주세요.', 'warning');
+        }
         return;
       }
 
@@ -501,15 +651,19 @@
         },
         function(response) {
           if (response) {
-            alert('문서가 저장되었습니다. 청크 분할 및 벡터화가 완료되었습니다.');
+            if (typeof showToast === 'function') {
+              showToast('문서가 저장되었습니다. 청크 분할 및 벡터화가 완료되었습니다.', 'positive');
+            }
             document.getElementById('document-modal').close();
             loadDocuments();
           } else {
-            alert('저장 실패: 알 수 없는 오류');
+            if (typeof showToast === 'function') {
+              showToast('저장 실패: 알 수 없는 오류', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('저장 오류: ' + error);
+          console.error('문서 저장 오류:', error);
         }
       );
     }
@@ -517,18 +671,9 @@
     // 문서 상세 정보 표시 함수
     function showDocumentDetail(doc) {
       $('#detail-title').text(doc.title).data('id', doc.documentId);
-
-      const categoryMap = {
-        'site-info': '사이트 정보',
-        'features': '기능 안내',
-        'faq': 'FAQ',
-        'guide': '사용 가이드',
-        'project': '프로젝트',
-        'other': '기타'
-      };
       $('#detail-category').text(categoryMap[doc.category] || doc.category);
-      $('#detail-created-date').text(doc.createdDate ? new Date(doc.createdDate).toLocaleString() : '-');
-      $('#detail-updated-date').text(doc.updatedDate ? new Date(doc.updatedDate).toLocaleString() : '-');
+      $('#detail-created-date').text(formatDateTime(doc.createdDate));
+      $('#detail-updated-date').text(doc.updatedDate ? formatDateTime(doc.updatedDate) : '-');
       $('#detail-chunk-count').text(doc.chunkCount || 0);
 
       const processedClass = doc.isProcessed ? 'badge-success' : 'badge-warning';
@@ -555,13 +700,6 @@
       document.getElementById('document-detail-modal').showModal();
     }
 
-    // HTML 이스케이프 함수
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
     // 문서 수정 함수
     function editDocument(documentId) {
       sendFormRequest(
@@ -579,11 +717,13 @@
             document.getElementById('document-detail-modal').close();
             document.getElementById('document-modal').showModal();
           } else {
-            alert('문서 정보를 불러올 수 없습니다.');
+            if (typeof showToast === 'function') {
+              showToast('문서 정보를 불러올 수 없습니다.', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('문서 정보 로드 오류: ' + error);
+          console.error('문서 정보 로드 오류:', error);
         }
       );
     }
@@ -594,12 +734,14 @@
         '/api/chatbot/document/delete',
         { documentId: documentId },
         function(response) {
-          alert('문서가 삭제되었습니다.');
+          if (typeof showToast === 'function') {
+            showToast('문서가 삭제되었습니다.', 'positive');
+          }
           document.getElementById('document-detail-modal').close();
           loadDocuments();
         },
         function(xhr, status, error) {
-          alert('삭제 오류: ' + error);
+          console.error('문서 삭제 오류:', error);
         }
       );
     }
@@ -611,15 +753,19 @@
         { documentId: documentId },
         function(response) {
           if (response) {
-            alert('문서가 재처리되었습니다. 청크 수: ' + response.chunkCount);
+            if (typeof showToast === 'function') {
+              showToast('문서가 재처리되었습니다. 청크 수: ' + response.chunkCount, 'positive');
+            }
             document.getElementById('document-detail-modal').close();
             loadDocuments();
           } else {
-            alert('재처리 실패');
+            if (typeof showToast === 'function') {
+              showToast('재처리 실패', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('재처리 오류: ' + error);
+          console.error('문서 재처리 오류:', error);
         }
       );
     }
@@ -630,12 +776,14 @@
         '/api/chatbot/document/toggle-active',
         { documentId: documentId },
         function(response) {
-          alert('문서 상태가 변경되었습니다.');
+          if (typeof showToast === 'function') {
+            showToast('문서 상태가 변경되었습니다.', 'positive');
+          }
           document.getElementById('document-detail-modal').close();
           loadDocuments();
         },
         function(xhr, status, error) {
-          alert('상태 변경 오류: ' + error);
+          console.error('문서 상태 변경 오류:', error);
         }
       );
     }
@@ -646,10 +794,12 @@
         '/api/chatbot/admin/init-collection',
         null,
         function(response) {
-          alert('벡터 컬렉션이 초기화되었습니다.');
+          if (typeof showToast === 'function') {
+            showToast('벡터 컬렉션이 초기화되었습니다.', 'positive');
+          }
         },
         function(xhr, status, error) {
-          alert('초기화 오류: ' + error);
+          console.error('컬렉션 초기화 오류:', error);
         }
       );
     }

@@ -328,6 +328,7 @@ const ChatbotWidget = {
         $('#chatbot-send-btn').prop('disabled', false);
 
         self.appendMessage('assistant', '죄송합니다. 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        // 전역 핸들러가 toast를 표시하므로 여기서는 추가 처리만
         console.error('Chatbot API error:', error);
       }
     );
@@ -767,6 +768,7 @@ const ChatbotWidget = {
         console.log('Feedback submitted:', messageId, isHelpful);
       },
       function(xhr, status, error) {
+        // 전역 핸들러가 toast를 표시함
         console.error('Feedback error:', error);
       }
     );

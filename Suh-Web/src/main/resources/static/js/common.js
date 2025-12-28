@@ -81,6 +81,55 @@ $(function(){
     xhr.setRequestHeader(header, token);
   });
 
+  // 전역 AJAX 오류 핸들러 - 모든 AJAX 오류를 Toast로 표시
+  $(document).ajaxError(function(event, xhr, settings, thrownError) {
+    // 특정 URL은 자동 toast 제외 (예: health check, polling 등)
+    const skipAutoToastUrls = [
+      '/api/ai-server/suh-aider/health',
+      '/api/docker-log/poll',
+      '/api/member/client-hash'
+    ];
+    
+    // 제외 목록에 있는 URL은 자동 toast 표시 안 함
+    if (skipAutoToastUrls.some(url => settings.url && settings.url.includes(url))) {
+      return;
+    }
+    
+    // 서버 응답에서 에러 메시지 추출
+    let errorMessage = '요청 처리 중 오류가 발생했습니다.';
+    
+    if (xhr.responseJSON && xhr.responseJSON.message) {
+      errorMessage = xhr.responseJSON.message;
+    } else if (xhr.responseText) {
+      try {
+        const parsed = JSON.parse(xhr.responseText);
+        if (parsed.message) {
+          errorMessage = parsed.message;
+        }
+      } catch (e) {
+        // JSON 파싱 실패 시 기본 메시지 사용
+      }
+    }
+    
+    // HTTP 상태 코드별 메시지 개선
+    if (xhr.status === 0) {
+      errorMessage = '네트워크 연결을 확인해주세요.';
+    } else if (xhr.status === 401) {
+      errorMessage = '인증이 필요합니다. 다시 로그인해주세요.';
+    } else if (xhr.status === 403) {
+      errorMessage = '접근 권한이 없습니다.';
+    } else if (xhr.status === 404) {
+      errorMessage = '요청한 리소스를 찾을 수 없습니다.';
+    } else if (xhr.status === 500) {
+      errorMessage = errorMessage || '서버 오류가 발생했습니다.';
+    }
+    
+    // Toast 표시
+    if (typeof showToast === 'function') {
+      showToast(errorMessage, 'negative', 5000);
+    }
+  });
+
   // 세션에서 clientHash 가져와 저장
   fetchAndStoreClientHash();
 
@@ -296,7 +345,7 @@ function fetchAndStoreClientHash() {
  * @param {string} url - 요청 URL
  * @param {Object} params - 요청 파라미터 (key-value 객체)
  * @param {function} successCallback - 성공 시 콜백 함수
- * @param {function} errorCallback - 에러 시 콜백 함수
+ * @param {function} errorCallback - 에러 시 콜백 함수 (전역 핸들러가 toast를 표시하므로, 필요시 추가 처리만 수행)
  */
 function sendFormRequest(url, params, successCallback, errorCallback) {
   // FormData 객체 생성
@@ -325,16 +374,11 @@ function sendFormRequest(url, params, successCallback, errorCallback) {
     },
     error: function(xhr, status, error) {
       console.error('AJAX 요청 실패:', url, status, error);
+      // errorCallback 실행 (전역 핸들러가 toast를 표시하므로, 여기서는 추가 처리만)
       if (errorCallback) {
         errorCallback(xhr, status, error);
-      } else {
-        // 기본 에러 처리
-        if (typeof showToast === 'function') {
-          showToast('요청 처리 중 오류가 발생했습니다: ' + error);
-        } else {
-          console.error('요청 처리 중 오류가 발생했습니다:', error);
-        }
       }
+      // 전역 ajaxError 핸들러가 toast를 표시하므로 여기서는 로깅만 수행
     }
   });
 }
