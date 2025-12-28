@@ -130,6 +130,19 @@ public class AiServerController {
     }
 
     /**
+     * 모델 다운로드를 취소합니다.
+     */
+    @PostMapping(value = "/models/pull/cancel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> cancelModelDownload(AiServerRequest request) {
+        log.info("AI 모델 다운로드 취소 요청 - 모델: {}", request.getModelName());
+        boolean cancelled = aiServerService.cancelModelDownload(request.getModelName());
+        return ResponseEntity.ok(AiServerResponse.builder()
+                .isActive(cancelled)
+                .model(request.getModelName())
+                .build());
+    }
+
+    /**
      * SuhAiderEngine을 사용하여 Health Check를 수행합니다.
      */
     @PostMapping(value = "/suh-aider/health", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

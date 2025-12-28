@@ -15,8 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import kr.suhsaechan.ai.model.ModelInfo;
 import kr.suhsaechan.ai.model.ModelListResponse;
+import kr.suhsaechan.ai.model.PullProgress;
+import kr.suhsaechan.ai.model.PullResult;
 import kr.suhsaechan.ai.model.SuhAiderRequest;
 import kr.suhsaechan.ai.model.SuhAiderResponse;
+import kr.suhsaechan.ai.service.PullCallback;
+import kr.suhsaechan.ai.service.PullHandle;
 import kr.suhsaechan.ai.service.SuhAiderEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +66,8 @@ public class AiServerService {
     // 다운로드 진행 상황 추적을 위한 맵 (모델명 -> 진행상황)
     private final Map<String, DownloadProgressDto> downloadProgressMap = new ConcurrentHashMap<>();
 
+    // 다운로드 핸들 추적을 위한 맵 (모델명 -> PullHandle) - 취소 기능 지원
+    private final Map<String, PullHandle> pullHandleMap = new ConcurrentHashMap<>();
 
     // OkHttp 클라이언트 (readTimeout 60초 - 스트림 블로킹 감지)
     private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -370,11 +376,13 @@ public class AiServerService {
 
     /**
      * AI 서버 모델 다운로드를 SSE로 스트리밍합니다.
+     * SuhAiderEngine의 pullModelStream API를 사용합니다.
      * @param modelName 다운로드할 모델 이름
      * @return SSE Emitter
      */
     public SseEmitter pullModelStream(String modelName) {
         log.info("모델 다운로드 스트리밍 시작 - 모델: {}", modelName);
+        checkSuhAiderEngine();
 
         if (modelName == null || modelName.trim().isEmpty()) {
             throw new CustomException(ErrorCode.INVALID_PARAMETER);
@@ -388,9 +396,10 @@ public class AiServerService {
         }
 
         // SSE Emitter 생성 (30분 타임아웃)
-        SseEmitter emitter = new SseEmitter(30 * 60 * 1000L); // 30분
+        SseEmitter emitter = new SseEmitter(30 * 60 * 1000L);
 
         // 초기 진행 상황 생성
+        long currentTime = System.currentTimeMillis();
         DownloadProgressDto progress = DownloadProgressDto.builder()
                 .modelName(modelName)
                 .status("downloading")
@@ -398,79 +407,128 @@ public class AiServerService {
                 .total(0L)
                 .percentage(0)
                 .message("다운로드 시작 중...")
-                .startTime(System.currentTimeMillis())
+                .startTime(currentTime)
+                .lastUpdateTime(currentTime)
                 .build();
         downloadProgressMap.put(modelName, progress);
 
         // 초기 이벤트 전송
         try {
             String initialProgressJson = objectMapper.writeValueAsString(progress);
-            log.info("[SSE] === 초기 이벤트 전송 시도 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+            log.info("[SSE] === 초기 이벤트 전송 === 모델: {}", modelName);
             emitter.send(SseEmitter.event()
                     .name("progress")
                     .data(initialProgressJson));
-            log.info("[SSE] === 초기 이벤트 전송 완료 === 모델: {}", modelName);
         } catch (Exception e) {
-            log.error("[SSE] === 초기 이벤트 전송 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, e.getMessage(), e);
+            log.error("[SSE] === 초기 이벤트 전송 실패 === 모델: {}, 에러: {}", modelName, e.getMessage(), e);
             downloadProgressMap.remove(modelName);
             try {
                 emitter.completeWithError(e);
             } catch (Exception ignored) {
-                // 최종 실패 시 무시
             }
             throw new CustomException(ErrorCode.AI_SERVER_STREAM_ERROR);
         }
 
-        // 다운로드 스트리밍 시작 (간단한 스레드 사용)
-        Thread downloadThread = new Thread(() -> {
-            try {
-                log.info("[SSE] === 다운로드 스트리밍 스레드 시작 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
-                streamModelDownload(modelName, emitter);
-                log.info("[SSE] === 다운로드 스트리밍 스레드 완료 === 모델: {}", modelName);
-            } catch (Exception e) {
-                log.error("[SSE] === 다운로드 스트리밍 스레드 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, e.getMessage(), e);
-                updateProgressError(modelName, e.getMessage());
+        // SuhAiderEngine의 pullModelStream API 사용
+        PullHandle pullHandle = suhAiderEngine.pullModelStream(modelName, new PullCallback() {
+            @Override
+            public void onProgress(PullProgress pullProgress) {
+                DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
+                if (currentProgress != null) {
+                    currentProgress.setStatus("downloading");
+                    currentProgress.setCompleted(pullProgress.getCompleted());
+                    currentProgress.setTotal(pullProgress.getTotal());
+                    currentProgress.setPercentage((int) Math.round(pullProgress.getPercent()));
+                    currentProgress.setMessage(pullProgress.getStatus());
+                    currentProgress.setLastUpdateTime(System.currentTimeMillis());
+                }
+
                 try {
-                    String errorJson = objectMapper.writeValueAsString(
-                        Map.of("error", "다운로드 중 오류가 발생했습니다: " + e.getMessage(),
-                               "modelName", modelName)
-                    );
-                    log.info("[SSE] === 에러 이벤트 전송 시도 === 모델: {}", modelName);
-                    emitter.send(SseEmitter.event().name("error").data(errorJson));
-                    emitter.completeWithError(e);
-                    log.info("[SSE] === 에러 이벤트 전송 완료 === 모델: {}", modelName);
-                } catch (Exception ex) {
-                    log.error("[SSE] === 에러 이벤트 전송 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, ex.getMessage(), ex);
-                    try {
-                        emitter.completeWithError(ex);
-                    } catch (Exception ignored) {
-                        // 최종 실패 시 무시
-                    }
+                    String progressJson = objectMapper.writeValueAsString(currentProgress);
+                    emitter.send(SseEmitter.event()
+                            .name("progress")
+                            .data(progressJson));
+                    log.debug("[SSE] 진행 상황 전송 - 모델: {}, {:.1f}%", modelName, pullProgress.getPercent());
+                } catch (Exception e) {
+                    log.warn("[SSE] 진행 상황 전송 실패 - 모델: {}, 에러: {}", modelName, e.getMessage());
                 }
             }
-        });
-        downloadThread.setDaemon(true);
-        downloadThread.setName("DownloadThread-" + modelName);
-        downloadThread.start();
-        log.info("[SSE] === 다운로드 스트리밍 스레드 시작됨 === 모델: {}, 스레드 ID: {}", modelName, downloadThread.getId());
 
-        // SSE Emitter 완료/타임아웃/에러 핸들러
+            @Override
+            public void onComplete(PullResult pullResult) {
+                log.info("[SSE] 다운로드 완료 - 모델: {}, 성공: {}", modelName, pullResult.isSuccess());
+
+                DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
+                if (currentProgress != null) {
+                    if (pullResult.isSuccess()) {
+                        currentProgress.setStatus("completed");
+                        currentProgress.setPercentage(100);
+                        currentProgress.setMessage("다운로드 완료");
+                    } else {
+                        currentProgress.setStatus("failed");
+                        currentProgress.setMessage("오류: " + pullResult.getErrorMessage());
+                    }
+                    currentProgress.setEndTime(System.currentTimeMillis());
+                }
+
+                try {
+                    String completeJson = objectMapper.writeValueAsString(currentProgress);
+                    emitter.send(SseEmitter.event()
+                            .name("complete")
+                            .data(completeJson));
+                    emitter.complete();
+                } catch (Exception e) {
+                    log.warn("[SSE] 완료 이벤트 전송 실패 - 모델: {}", modelName);
+                }
+                pullHandleMap.remove(modelName);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                log.error("[SSE] 다운로드 오류 - 모델: {}, 에러: {}", modelName, throwable.getMessage(), throwable);
+                updateProgressError(modelName, throwable.getMessage());
+
+                try {
+                    String errorJson = objectMapper.writeValueAsString(
+                            Map.of("error", throwable.getMessage(), "modelName", modelName));
+                    emitter.send(SseEmitter.event().name("error").data(errorJson));
+                    emitter.completeWithError(throwable);
+                } catch (Exception e) {
+                    log.warn("[SSE] 에러 이벤트 전송 실패 - 모델: {}", modelName);
+                }
+                pullHandleMap.remove(modelName);
+            }
+        });
+
+        // PullHandle 저장 (취소 기능 지원)
+        pullHandleMap.put(modelName, pullHandle);
+
+        // SSE Emitter 핸들러
         emitter.onCompletion(() -> {
-            log.info("[SSE] === Emitter 완료 콜백 호출 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
-            downloadProgressMap.remove(modelName); // 완료 시 맵에서 제거
+            log.info("[SSE] Emitter 완료 - 모델: {}", modelName);
+            downloadProgressMap.remove(modelName);
         });
 
         emitter.onTimeout(() -> {
-            log.warn("[SSE] === Emitter 타임아웃 콜백 호출 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
+            log.warn("[SSE] Emitter 타임아웃 - 모델: {}", modelName);
+            PullHandle handle = pullHandleMap.get(modelName);
+            if (handle != null && !handle.isDone()) {
+                handle.cancel();
+            }
             updateProgressError(modelName, "타임아웃");
-            downloadProgressMap.remove(modelName); // 타임아웃 시 맵에서 제거
+            downloadProgressMap.remove(modelName);
+            pullHandleMap.remove(modelName);
         });
 
         emitter.onError(e -> {
-            log.error("[SSE] === Emitter 에러 콜백 호출 === 모델: {}, 에러: {}, 스택: {}, 스레드: {}", 
-                     modelName, e.getMessage(), e.getClass().getName(), e, Thread.currentThread().getName());
+            log.error("[SSE] Emitter 에러 - 모델: {}, 에러: {}", modelName, e.getMessage());
+            PullHandle handle = pullHandleMap.get(modelName);
+            if (handle != null && !handle.isDone()) {
+                handle.cancel();
+            }
             updateProgressError(modelName, e.getMessage());
-            downloadProgressMap.remove(modelName); // 에러 시 맵에서 제거
+            downloadProgressMap.remove(modelName);
+            pullHandleMap.remove(modelName);
         });
 
         return emitter;
@@ -478,10 +536,12 @@ public class AiServerService {
 
     /**
      * 모델 다운로드를 비동기로 시작합니다 (폴링용).
+     * SuhAiderEngine의 pullModelStream API를 사용합니다.
      * @param modelName 다운로드할 모델 이름
      */
     public void startModelDownload(String modelName) {
         log.info("모델 다운로드 시작 요청 - 모델: {}", modelName);
+        checkSuhAiderEngine();
 
         if (modelName == null || modelName.trim().isEmpty()) {
             throw new CustomException(ErrorCode.INVALID_PARAMETER);
@@ -508,21 +568,55 @@ public class AiServerService {
                 .build();
         downloadProgressMap.put(modelName, progress);
 
-        // 다운로드 스트리밍 시작 (간단한 스레드 사용)
-        Thread downloadThread = new Thread(() -> {
-            try {
-                log.info("[다운로드] === 다운로드 스트리밍 스레드 시작 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
-                streamModelDownloadWithRetry(modelName);
-                log.info("[다운로드] === 다운로드 스트리밍 스레드 완료 === 모델: {}", modelName);
-            } catch (Exception e) {
-                log.error("[다운로드] === 다운로드 스트리밍 스레드 실패 === 모델: {}, 에러: {}", modelName, e.getMessage(), e);
-                updateProgressError(modelName, e.getMessage());
+        // SuhAiderEngine의 pullModelStream API 사용
+        PullHandle pullHandle = suhAiderEngine.pullModelStream(modelName, new PullCallback() {
+            @Override
+            public void onProgress(PullProgress pullProgress) {
+                DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
+                if (currentProgress != null) {
+                    currentProgress.setStatus("downloading");
+                    currentProgress.setCompleted(pullProgress.getCompleted());
+                    currentProgress.setTotal(pullProgress.getTotal());
+                    currentProgress.setPercentage((int) Math.round(pullProgress.getPercent()));
+                    currentProgress.setMessage(pullProgress.getStatus());
+                    currentProgress.setLastUpdateTime(System.currentTimeMillis());
+                    log.debug("[다운로드] 진행 상황 업데이트 - 모델: {}, {:.1f}% ({}/{})",
+                            modelName, pullProgress.getPercent(),
+                            pullProgress.getCompleted(), pullProgress.getTotal());
+                }
+            }
+
+            @Override
+            public void onComplete(PullResult pullResult) {
+                log.info("[다운로드] 다운로드 완료 - 모델: {}, 성공: {}, 메시지: {}, 다운로드 시간: {}ms",
+                        modelName, pullResult.isSuccess(), pullResult.getErrorMessage(), pullResult.getTotalDurationMs());
+
+                DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
+                if (currentProgress != null) {
+                    if (pullResult.isSuccess()) {
+                        currentProgress.setStatus("completed");
+                        currentProgress.setPercentage(100);
+                        currentProgress.setMessage("다운로드 완료");
+                    } else {
+                        currentProgress.setStatus("failed");
+                        currentProgress.setMessage("오류: " + pullResult.getErrorMessage());
+                    }
+                    currentProgress.setEndTime(System.currentTimeMillis());
+                }
+                pullHandleMap.remove(modelName);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                log.error("[다운로드] 다운로드 오류 - 모델: {}, 에러: {}", modelName, throwable.getMessage(), throwable);
+                updateProgressError(modelName, throwable.getMessage());
+                pullHandleMap.remove(modelName);
             }
         });
-        downloadThread.setDaemon(true);
-        downloadThread.setName("DownloadThread-" + modelName);
-        downloadThread.start();
-        log.info("[다운로드] === 다운로드 스트리밍 스레드 시작됨 === 모델: {}, 스레드 ID: {}", modelName, downloadThread.getId());
+
+        // PullHandle 저장 (취소 기능 지원)
+        pullHandleMap.put(modelName, pullHandle);
+        log.info("[다운로드] === 다운로드 시작됨 === 모델: {}", modelName);
     }
 
     /**
@@ -965,6 +1059,44 @@ public class AiServerService {
      */
     public DownloadProgressDto getModelDownloadStatus(String modelName) {
         return downloadProgressMap.get(modelName);
+    }
+
+    /**
+     * 모델 다운로드를 취소합니다.
+     * @param modelName 취소할 모델 이름
+     * @return 취소 성공 여부
+     */
+    public boolean cancelModelDownload(String modelName) {
+        log.info("모델 다운로드 취소 요청 - 모델: {}", modelName);
+
+        if (modelName == null || modelName.trim().isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+
+        PullHandle pullHandle = pullHandleMap.get(modelName);
+        if (pullHandle == null) {
+            log.warn("취소할 다운로드가 없습니다 - 모델: {}", modelName);
+            return false;
+        }
+
+        if (pullHandle.isDone()) {
+            log.info("다운로드가 이미 완료되었습니다 - 모델: {}", modelName);
+            pullHandleMap.remove(modelName);
+            return false;
+        }
+
+        pullHandle.cancel();
+        log.info("모델 다운로드 취소됨 - 모델: {}", modelName);
+
+        DownloadProgressDto progress = downloadProgressMap.get(modelName);
+        if (progress != null) {
+            progress.setStatus("cancelled");
+            progress.setMessage("사용자에 의해 취소됨");
+            progress.setEndTime(System.currentTimeMillis());
+        }
+
+        pullHandleMap.remove(modelName);
+        return true;
     }
 
     // ============================================================================
