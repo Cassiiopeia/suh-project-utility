@@ -59,7 +59,7 @@ public class ServerOptionService {
   @Transactional
   public ServerOption setOptionValue(ServerOptionKey key, String value) {
     ServerOption option = serverOptionRepository.findByOptionKey(key)
-        .orElse(ServerOption.builder()
+        .orElseGet(() -> ServerOption.builder()
             .optionKey(key)
             .build());
 
