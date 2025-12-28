@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.config.ChatbotProperties;
 import me.suhsaechan.chatbot.config.QdrantProperties;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
+import me.suhsaechan.common.constant.ServerOptionKey;
+import me.suhsaechan.common.service.ServerOptionService;
 import me.suhsaechan.chatbot.dto.ChatbotRequest;
 import me.suhsaechan.chatbot.dto.ChatbotResponse;
 import me.suhsaechan.chatbot.dto.ChatbotResponse.ReferencedDocument;
@@ -76,6 +78,7 @@ public class ChatbotService {
     private final QdrantProperties qdrantProperties;
     private final SuhAiderEngine suhAiderEngine;
     private final ChatbotProperties chatbotProperties;
+    private final ServerOptionService serverOptionService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -274,7 +277,7 @@ public class ChatbotService {
                 .distinct()
                 .collect(Collectors.toList());
 
-            String model = chatbotProperties.getModels().getResponseGenerator();
+            String model = serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RESPONSE_GENERATOR_MODEL);
             suhAiderEngine.generateStreamAsync(model, fullPrompt, new StreamCallback() {
                 @Override
                 public void onNext(String chunk) {
@@ -562,7 +565,7 @@ public class ChatbotService {
             JsonSchema schema = JsonSchemaClassParser.parse(IntentClassificationDto.class);
 
             SuhAiderRequest request = SuhAiderRequest.builder()
-                    .model(chatbotProperties.getModels().getIntentClassifier())
+                    .model(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_INTENT_CLASSIFIER_MODEL))
                     .prompt(prompt.toString())
                     .stream(false)
                     .responseSchema(schema)
@@ -613,7 +616,7 @@ public class ChatbotService {
         String fullPrompt = buildFullPrompt(userMessage, searchResults, recentHistory, intent);
 
         try {
-            String model = chatbotProperties.getModels().getResponseGenerator();
+            String model = serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RESPONSE_GENERATOR_MODEL);
             log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", model, fullPrompt.length());
 
             String response = suhAiderEngine.generate(model, fullPrompt);

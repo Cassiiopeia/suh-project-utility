@@ -97,7 +97,9 @@
             </tr>
           </thead>
           <tbody id="memberTable">
-            <tr th:each="member : ${members}">
+            <tr th:each="member : ${members}"
+                th:data-member-id="${member.somansaBusMemberId}"
+                class="hover:bg-base-300 cursor-pointer">
               <td>
                 <div class="flex items-center gap-2">
                   <div class="avatar placeholder">
@@ -122,29 +124,22 @@
               </td>
               <td>
                 <div class="flex gap-1">
-                  <a th:href="@{/somansa/bus/member/{id}(id=${member.somansaBusMemberId})}"
-                     class="btn btn-circle btn-sm btn-info" title="상세보기">
-                    <i class="fa-solid fa-eye text-xs"></i>
-                  </a>
                   <button th:if="${member.isActive}"
-                          class="btn btn-sm btn-error"
+                          class="btn btn-sm btn-error toggle-member-active-btn"
                           th:data-member-id="${member.somansaBusMemberId}"
-                          onclick="toggleMemberActive(this.getAttribute('data-member-id'))"
                           title="멤버 비활성화">
                     <i class="fa-solid fa-toggle-off text-xs"></i>
                     <span class="hidden sm:inline">비활성화</span>
                   </button>
                   <button th:unless="${member.isActive}"
-                          class="btn btn-sm btn-success"
+                          class="btn btn-sm btn-success toggle-member-active-btn"
                           th:data-member-id="${member.somansaBusMemberId}"
-                          onclick="toggleMemberActive(this.getAttribute('data-member-id'))"
                           title="멤버 활성화">
                     <i class="fa-solid fa-toggle-on text-xs"></i>
                     <span class="hidden sm:inline">활성화</span>
                   </button>
-                  <button class="btn btn-circle btn-sm btn-error"
+                  <button class="btn btn-circle btn-sm btn-error delete-member-btn"
                           th:data-member-id="${member.somansaBusMemberId}"
-                          onclick="deleteMember(this.getAttribute('data-member-id'))"
                           title="멤버 삭제">
                     <i class="fa-solid fa-trash text-xs"></i>
                   </button>
@@ -290,6 +285,31 @@ $(document).ready(function() {
   loadStats();
   loadMembers();
   loadReservationHistory();
+
+  // 테이블 row 클릭 이벤트 (이벤트 위임)
+  $(document).on('click', '#memberTable tr', function(e) {
+    // 액션 버튼 클릭 시는 무시
+    if ($(e.target).closest('button, a').length > 0) {
+      return;
+    }
+    const memberId = $(this).data('member-id');
+    if (memberId) {
+      window.location.href = '/somansa/bus/member/' + memberId;
+    }
+  });
+
+  // 액션 버튼 클릭 이벤트 (이벤트 위임)
+  $(document).on('click', '.toggle-member-active-btn', function(e) {
+    e.stopPropagation();
+    const memberId = $(this).data('member-id');
+    toggleMemberActive(memberId);
+  });
+
+  $(document).on('click', '.delete-member-btn', function(e) {
+    e.stopPropagation();
+    const memberId = $(this).data('member-id');
+    deleteMember(memberId);
+  });
 });
 
 function loadStats() {
@@ -330,7 +350,9 @@ function displayMembers(members) {
   }
 
   members.forEach(function(member) {
-    const row = $('<tr>');
+    const row = $('<tr>')
+      .attr('data-member-id', member.somansaBusMemberId)
+      .addClass('hover:bg-base-300 cursor-pointer');
 
     // 이름 컬럼
     const nameCell = $('<td>');
@@ -376,34 +398,28 @@ function displayMembers(members) {
     const actionCell = $('<td>');
     const actionDiv = $('<div>').addClass('flex gap-1');
 
-    const detailBtn = $('<a>')
-      .attr('href', '/somansa/bus/member/' + member.somansaBusMemberId)
-      .addClass('btn btn-circle btn-sm btn-info')
-      .attr('title', '상세보기')
-      .html('<i class="fa-solid fa-eye text-xs"></i>');
-
     let toggleBtn;
     if (member.isActive) {
       toggleBtn = $('<button>')
-        .addClass('btn btn-sm btn-error')
+        .addClass('btn btn-sm btn-error toggle-member-active-btn')
+        .attr('data-member-id', member.somansaBusMemberId)
         .attr('title', '멤버 비활성화')
-        .attr('onclick', 'toggleMemberActive("' + member.somansaBusMemberId + '")')
         .html('<i class="fa-solid fa-toggle-off text-xs"></i> <span class="hidden sm:inline">비활성화</span>');
     } else {
       toggleBtn = $('<button>')
-        .addClass('btn btn-sm btn-success')
+        .addClass('btn btn-sm btn-success toggle-member-active-btn')
+        .attr('data-member-id', member.somansaBusMemberId)
         .attr('title', '멤버 활성화')
-        .attr('onclick', 'toggleMemberActive("' + member.somansaBusMemberId + '")')
         .html('<i class="fa-solid fa-toggle-on text-xs"></i> <span class="hidden sm:inline">활성화</span>');
     }
 
     const deleteBtn = $('<button>')
-      .addClass('btn btn-circle btn-sm btn-error')
+      .addClass('btn btn-circle btn-sm btn-error delete-member-btn')
+      .attr('data-member-id', member.somansaBusMemberId)
       .attr('title', '멤버 삭제')
-      .attr('onclick', 'deleteMember("' + member.somansaBusMemberId + '")')
       .html('<i class="fa-solid fa-trash text-xs"></i>');
 
-    actionDiv.append(detailBtn, toggleBtn, deleteBtn);
+    actionDiv.append(toggleBtn, deleteBtn);
     actionCell.append(actionDiv);
     row.append(actionCell);
 

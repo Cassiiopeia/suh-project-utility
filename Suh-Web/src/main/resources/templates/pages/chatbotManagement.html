@@ -1,7 +1,7 @@
 <!-- src/main/resources/templates/pages/chatbotManagement.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head(title='챗봇 문서 관리-SAECHAN-LAB')}"></head>
+<head th:replace="~{fragments/header :: head(title='챗봇 관리-SAECHAN-LAB')}"></head>
 <body class="chatbot-management-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
@@ -9,154 +9,150 @@
   <!-- 페이지 헤더 -->
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fa-solid fa-database text-purple-500"></i>
-      챗봇 문서 관리
+      <i class="fa-solid fa-robot text-purple-500"></i>
+      챗봇 관리
     </h2>
-    <p class="text-gray-500 mt-1">RAG 챗봇이 참조할 문서를 관리합니다. (Qdrant 벡터DB 연동)</p>
+    <p class="text-gray-500 mt-1">챗봇 문서 및 모델 설정을 관리합니다.</p>
   </div>
 
-  <!-- 통계 카드 -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-            <i class="fa-solid fa-file-lines text-blue-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">총 문서 수</p>
-            <p class="text-2xl font-bold" id="stat-total-docs">0</p>
-          </div>
-        </div>
+  <!-- 2단 레이아웃 컨테이너 -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <!-- 문서 관리 섹션 (좌측 2/3) -->
+    <div id="documents-section" class="xl:col-span-2">
+      <!-- 섹션 헤더 -->
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-file-lines text-blue-500 text-lg"></i>
+        <h3 class="text-lg font-semibold">문서 관리</h3>
       </div>
-    </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-            <i class="fa-solid fa-check-circle text-green-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">활성 문서</p>
-            <p class="text-2xl font-bold" id="stat-active-docs">0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
-            <i class="fa-solid fa-puzzle-piece text-purple-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">총 청크 수</p>
-            <p class="text-2xl font-bold" id="stat-total-chunks">0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
-            <i class="fa-solid fa-tags text-amber-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">카테고리</p>
-            <p class="text-2xl font-bold" id="stat-categories">0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 문서 관리 툴바 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
-    <div class="card-body p-4">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <!-- 검색 영역 -->
-        <div class="join w-full lg:w-auto">
-          <input type="text" id="search-keyword" class="input join-item w-full lg:w-64" placeholder="제목 또는 카테고리 검색...">
-          <button class="btn btn-primary join-item" id="search-btn">
-            <i class="fa-solid fa-search"></i>
-            검색
-          </button>
+      <!-- 통계 카드 -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <i class="fa-solid fa-file-lines text-blue-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">총 문서</p>
+                <p class="text-xl font-bold" id="stat-total-docs">0</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- 버튼 영역 -->
-        <div class="flex gap-2 flex-wrap">
-          <button class="btn btn-primary" id="create-btn">
-            <i class="fa-solid fa-plus"></i>
-            새 문서
-          </button>
-          <div class="tooltip tooltip-bottom" data-tip="벡터 컬렉션을 초기화합니다. 기존 문서 데이터는 유지됩니다.">
-            <button class="btn btn-outline btn-secondary" id="init-collection-btn">
-              <i class="fa-solid fa-database"></i>
-              컬렉션 초기화
-            </button>
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                <i class="fa-solid fa-check-circle text-green-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">활성</p>
+                <p class="text-xl font-bold" id="stat-active-docs">0</p>
+              </div>
+            </div>
           </div>
-          <div class="tooltip tooltip-bottom" data-tip="모든 문서를 현재 설정으로 다시 처리합니다. 시간이 오래 걸릴 수 있습니다.">
-            <button class="btn btn-outline btn-warning" id="reprocess-all-btn">
-              <i class="fa-solid fa-arrows-rotate"></i>
-              전체 재처리
-            </button>
+        </div>
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                <i class="fa-solid fa-puzzle-piece text-purple-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">청크</p>
+                <p class="text-xl font-bold" id="stat-total-chunks">0</p>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-outline btn-accent" id="settings-btn">
-            <i class="fa-solid fa-gear"></i>
-            설정
-          </button>
-          <button class="btn btn-outline" id="refresh-btn">
-            <i class="fa-solid fa-rotate"></i>
-            새로고침
-          </button>
+        </div>
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                <i class="fa-solid fa-tags text-amber-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">카테고리</p>
+                <p class="text-xl font-bold" id="stat-categories">0</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 문서 목록 테이블 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
-    <div class="card-body p-4">
-      <div id="loading-indicator" class="flex justify-center py-8">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-      <div id="error-message" class="alert alert-error hidden">
-        <i class="fa-solid fa-circle-exclamation"></i>
-        <div>
-          <h3 class="font-bold">데이터 로드 실패</h3>
-          <span>문서를 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
+      <!-- 문서 관리 툴바 -->
+      <div class="card bg-base-100 shadow-sm border border-gray-100 mb-4">
+        <div class="card-body p-3">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <!-- 검색 영역 -->
+            <div class="join w-full lg:w-auto">
+              <input type="text" id="search-keyword" class="input input-sm join-item w-full lg:w-48" placeholder="검색...">
+              <button class="btn btn-primary btn-sm join-item" id="search-btn">
+                <i class="fa-solid fa-search"></i>
+              </button>
+            </div>
+            <!-- 버튼 영역 -->
+            <div class="flex gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm" id="create-btn">
+                <i class="fa-solid fa-plus"></i>
+                새 문서
+              </button>
+              <button class="btn btn-outline btn-secondary btn-sm" id="init-collection-btn" title="벡터 컬렉션 초기화">
+                <i class="fa-solid fa-database"></i>
+              </button>
+              <button class="btn btn-outline btn-warning btn-sm" id="reprocess-all-btn" title="전체 재처리">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
+              <button class="btn btn-outline btn-sm" id="refresh-btn" title="새로고침">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="empty-message" class="alert alert-info hidden">
-        <i class="fa-solid fa-info-circle"></i>
-        <div>
-          <h3 class="font-bold">문서가 없습니다</h3>
-          <span>새 문서를 추가하여 챗봇이 참조할 지식을 등록하세요.</span>
+
+      <!-- 문서 목록 테이블 -->
+      <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card-body p-4">
+          <div id="loading-indicator" class="flex justify-center py-8">
+            <span class="loading loading-spinner loading-lg text-primary"></span>
+          </div>
+          <div id="error-message" class="alert alert-error hidden">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <div>
+              <h3 class="font-bold">데이터 로드 실패</h3>
+              <span>문서를 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
+            </div>
+          </div>
+          <div id="empty-message" class="alert alert-info hidden">
+            <i class="fa-solid fa-info-circle"></i>
+            <div>
+              <h3 class="font-bold">문서가 없습니다</h3>
+              <span>새 문서를 추가하여 챗봇이 참조할 지식을 등록하세요.</span>
+            </div>
+          </div>
+          <div id="table-container" class="hidden">
+            <div class="overflow-x-auto">
+              <table class="table table-zebra table-sm">
+                <thead>
+                  <tr>
+                    <th>제목</th>
+                    <th>카테고리</th>
+                    <th>청크</th>
+                    <th>활성</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="document-table-body">
+                </tbody>
+              </table>
+            </div>
+            <div id="document-pagination" class="flex justify-center mt-4"></div>
+          </div>
         </div>
-      </div>
-      <div id="table-container" class="hidden">
-        <div class="overflow-x-auto">
-          <table class="table table-zebra">
-            <thead>
-              <tr>
-                <th>제목</th>
-                <th>카테고리</th>
-                <th>설명</th>
-                <th>청크</th>
-                <th>처리</th>
-                <th>활성</th>
-                <th>생성일</th>
-                <th>관리</th>
-              </tr>
-            </thead>
-            <tbody id="document-table-body">
-            </tbody>
-          </table>
-        </div>
-        <div id="document-pagination" class="flex justify-center mt-4"></div>
       </div>
     </div>
-  </div>
 
   <!-- 문서 등록/수정 모달 -->
   <dialog class="modal" id="document-modal">
@@ -308,66 +304,102 @@
     </form>
   </dialog>
 
-  <!-- 설정 모달 -->
-  <dialog id="settings-modal" class="modal">
-    <div class="modal-box max-w-2xl">
-      <h3 class="font-bold text-lg mb-4">
-        <i class="fa-solid fa-gear text-blue-500"></i>
-        챗봇 설정
-      </h3>
+    <!-- 모델 관리 섹션 (우측 1/3) -->
+    <div id="models-section" class="xl:col-span-1">
+      <!-- 섹션 헤더 -->
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-brain text-purple-500 text-lg"></i>
+        <h3 class="text-lg font-semibold">모델 관리</h3>
+      </div>
 
-      <div class="space-y-4">
-        <!-- 청크 크기 설정 -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-semibold">청크 크기 (토큰 수)</span>
-            <span class="label-text-alt text-gray-500">기본값: 3000</span>
-          </label>
-          <input type="number" id="chunk-size-input" class="input input-bordered" 
-                 min="500" max="10000" step="100" placeholder="3000">
-          <label class="label">
-            <span class="label-text-alt text-gray-500">
-              문서를 분할하는 청크의 크기입니다. 값이 클수록 더 많은 컨텍스트를 포함합니다.
-            </span>
-          </label>
-        </div>
+      <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card-body p-4">
+          <p class="text-gray-500 text-sm mb-4">챗봇의 각 단계에서 사용할 AI 모델을 선택합니다.</p>
 
-        <!-- 청크 중첩 설정 -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-semibold">청크 중첩 크기 (토큰 수)</span>
-            <span class="label-text-alt text-gray-500">기본값: 300</span>
-          </label>
-          <input type="number" id="chunk-overlap-input" class="input input-bordered" 
-                 min="0" max="1000" step="50" placeholder="300">
-          <label class="label">
-            <span class="label-text-alt text-gray-500">
-              인접한 청크 간 중첩되는 부분의 크기입니다. 문맥 연속성을 유지합니다.
-            </span>
-          </label>
-        </div>
+          <div class="space-y-4">
+            <!-- Step 1: 의도 분류 모델 -->
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text font-semibold text-sm">의도 분류 모델</span>
+              </label>
+              <select id="intent-classifier-model" class="select select-bordered select-sm w-full">
+                <option value="">로딩 중...</option>
+              </select>
+              <label class="label py-1">
+                <span class="label-text-alt text-gray-500 text-xs">경량 모델 권장 (예: gemma3:1b)</span>
+              </label>
+            </div>
 
-        <!-- 안내 메시지 -->
-        <div class="alert alert-info">
-          <i class="fa-solid fa-info-circle"></i>
-          <span>설정을 변경한 후 <strong>'전체 재처리'</strong>를 실행해야 새 설정이 적용됩니다.</span>
+            <!-- Step 3: 응답 생성 모델 -->
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text font-semibold text-sm">응답 생성 모델</span>
+              </label>
+              <select id="response-generator-model" class="select select-bordered select-sm w-full">
+                <option value="">로딩 중...</option>
+              </select>
+              <label class="label py-1">
+                <span class="label-text-alt text-gray-500 text-xs">고품질 모델 권장 (예: rnj-1:8b)</span>
+              </label>
+            </div>
+
+            <!-- 안내 메시지 -->
+            <div class="alert alert-info py-2 text-sm">
+              <i class="fa-solid fa-info-circle"></i>
+              <span>변경 시 새 대화부터 적용됩니다.</span>
+            </div>
+
+            <!-- 버튼 영역 -->
+            <div class="flex flex-col gap-2">
+              <button class="btn btn-primary btn-sm" id="save-models-btn">
+                <i class="fa-solid fa-save"></i>
+                모델 설정 저장
+              </button>
+              <button class="btn btn-outline btn-sm" id="refresh-models-btn">
+                <i class="fa-solid fa-rotate"></i>
+                목록 새로고침
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="modal-action">
-        <button class="btn btn-primary" id="save-settings-btn">
-          <i class="fa-solid fa-save"></i>
-          저장
-        </button>
-        <form method="dialog">
-          <button class="btn">취소</button>
-        </form>
+      <!-- 청크 설정 카드 -->
+      <div class="card bg-base-100 shadow-sm border border-gray-100 mt-4">
+        <div class="card-body p-4">
+          <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-gear text-blue-500"></i>
+            청크 설정
+          </h4>
+
+          <div class="space-y-3">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-sm">청크 크기</span>
+                <span class="label-text-alt text-gray-500 text-xs">기본: 3000</span>
+              </label>
+              <input type="number" id="chunk-size-input" class="input input-bordered input-sm"
+                     min="500" max="10000" step="100" placeholder="3000">
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-sm">청크 중첩</span>
+                <span class="label-text-alt text-gray-500 text-xs">기본: 300</span>
+              </label>
+              <input type="number" id="chunk-overlap-input" class="input input-bordered input-sm"
+                     min="0" max="1000" step="50" placeholder="300">
+            </div>
+
+            <button class="btn btn-outline btn-sm w-full" id="save-settings-btn">
+              <i class="fa-solid fa-save"></i>
+              청크 설정 저장
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
-  </dialog>
+  </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -390,8 +422,155 @@
       'other': '기타'
     };
 
-    // 문서 목록 로드
+    // 문서 목록 및 모델 목록 초기 로드
     loadDocuments();
+    loadModelsList();
+    loadServerSettings();
+
+    // 모델 목록 로드 함수
+    function loadModelsList() {
+      console.log('모델 목록 로드 시작');
+
+      const intentSelect = $('#intent-classifier-model');
+      const responseSelect = $('#response-generator-model');
+
+      intentSelect.html('<option value="">로딩 중...</option>');
+      responseSelect.html('<option value="">로딩 중...</option>');
+
+      sendFormRequest(
+        '/api/ai-server/suh-aider/models',
+        null,
+        function(response) {
+          console.log('모델 목록 응답:', response);
+
+          let models = [];
+          if (response && response.models && Array.isArray(response.models)) {
+            models = response.models;
+          }
+
+          if (models.length > 0) {
+            // 드롭다운 채우기
+            intentSelect.html('<option value="">모델 선택</option>');
+            responseSelect.html('<option value="">모델 선택</option>');
+
+            models.forEach(function(model) {
+              const option = $('<option></option>')
+                .attr('value', model.name)
+                .text(model.name);
+              intentSelect.append(option.clone());
+              responseSelect.append(option.clone());
+            });
+
+            // 현재 설정된 모델 로드
+            loadModelSettings();
+          } else {
+            intentSelect.html('<option value="">모델이 없습니다</option>');
+            responseSelect.html('<option value="">모델이 없습니다</option>');
+            if (typeof showToast === 'function') {
+              showToast('설치된 모델이 없습니다.', 'warning');
+            }
+          }
+        },
+        function(xhr, status, error) {
+          console.error('모델 목록 로드 실패:', error);
+          intentSelect.html('<option value="">로드 실패</option>');
+          responseSelect.html('<option value="">로드 실패</option>');
+          if (typeof showToast === 'function') {
+            showToast('모델 목록을 불러오는 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // 현재 모델 설정 로드 함수
+    function loadModelSettings() {
+      // Step 1: 의도 분류 모델
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_INTENT_CLASSIFIER_MODEL' },
+        function(response) {
+          if (response && response.optionValue) {
+            $('#intent-classifier-model').val(response.optionValue);
+          }
+        },
+        function(xhr, status, error) {
+          console.error('의도 분류 모델 설정 로드 실패:', error);
+        }
+      );
+
+      // Step 3: 응답 생성 모델
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_RESPONSE_GENERATOR_MODEL' },
+        function(response) {
+          if (response && response.optionValue) {
+            $('#response-generator-model').val(response.optionValue);
+          }
+        },
+        function(xhr, status, error) {
+          console.error('응답 생성 모델 설정 로드 실패:', error);
+        }
+      );
+    }
+
+    // 모델 설정 저장 함수
+    function saveModelSettings() {
+      const intentModel = $('#intent-classifier-model').val();
+      const responseModel = $('#response-generator-model').val();
+
+      if (!intentModel || !responseModel) {
+        if (typeof showToast === 'function') {
+          showToast('모든 모델을 선택해주세요.', 'warning');
+        }
+        return;
+      }
+
+      // Step 1 모델 저장
+      sendFormRequest(
+        '/api/server-option/update',
+        {
+          optionKey: 'CHATBOT_INTENT_CLASSIFIER_MODEL',
+          optionValue: intentModel
+        },
+        function(response) {
+          // Step 3 모델 저장
+          sendFormRequest(
+            '/api/server-option/update',
+            {
+              optionKey: 'CHATBOT_RESPONSE_GENERATOR_MODEL',
+              optionValue: responseModel
+            },
+            function(response) {
+              if (typeof showToast === 'function') {
+                showToast('모델 설정이 저장되었습니다. 새로운 대화부터 적용됩니다.', 'positive');
+              }
+            },
+            function(xhr, status, error) {
+              console.error('응답 생성 모델 저장 실패:', error);
+              if (typeof showToast === 'function') {
+                showToast('모델 설정 저장 중 오류가 발생했습니다.', 'negative');
+              }
+            }
+          );
+        },
+        function(xhr, status, error) {
+          console.error('의도 분류 모델 저장 실패:', error);
+          if (typeof showToast === 'function') {
+            showToast('모델 설정 저장 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // 모델 목록 새로고침 버튼
+    $('#refresh-models-btn').click(function() {
+      loadModelsList();
+    });
+
+    // 모델 설정 저장 버튼
+    $('#save-models-btn').click(function() {
+      saveModelSettings();
+    });
 
     // 새로고침 버튼 클릭 이벤트
     $('#refresh-btn').click(function() {
@@ -444,13 +623,7 @@
       }
     });
 
-    // 설정 버튼
-    $('#settings-btn').click(function() {
-      loadServerSettings();
-      document.getElementById('settings-modal').showModal();
-    });
-
-    // 설정 저장 버튼
+    // 청크 설정 저장 버튼
     $('#save-settings-btn').click(function() {
       saveServerSettings();
     });
@@ -596,35 +769,23 @@
       let html = '';
       pageData.forEach(function(doc) {
         const icon = doc.isActive
-          ? '<i class="fa-solid fa-file-lines text-blue-500 mr-2"></i>'
-          : '<i class="fa-solid fa-file-lines text-gray-400 mr-2"></i>';
-        
-        const titleHtml = icon + escapeHtml(doc.title);
-        const categoryBadge = `<span class="badge badge-outline badge-sm">${categoryMap[doc.category] || doc.category}</span>`;
-        
-        const description = doc.description 
-          ? (doc.description.length > 30 ? doc.description.substring(0, 30) + '...' : doc.description)
-          : '-';
-        
-        const processedIcon = doc.isProcessed
-          ? '<i class="fa-solid fa-check text-green-500"></i>'
-          : '<i class="fa-solid fa-times text-red-500"></i>';
-        
+          ? '<i class="fa-solid fa-file-lines text-blue-500 mr-1"></i>'
+          : '<i class="fa-solid fa-file-lines text-gray-400 mr-1"></i>';
+
+        const titleText = doc.title.length > 25 ? doc.title.substring(0, 25) + '...' : doc.title;
+        const titleHtml = icon + escapeHtml(titleText);
+        const categoryBadge = `<span class="badge badge-outline badge-xs">${categoryMap[doc.category] || doc.category}</span>`;
+
         const activeIcon = doc.isActive
           ? '<i class="fa-solid fa-check text-green-500"></i>'
           : '<i class="fa-solid fa-times text-red-500"></i>';
 
-        const createdDate = doc.createdDate ? formatDate(doc.createdDate) : '-';
-
         html += `
           <tr class="hover:bg-base-300 cursor-pointer" data-document-id="${doc.documentId}">
-            <td>${titleHtml}</td>
+            <td class="text-sm">${titleHtml}</td>
             <td>${categoryBadge}</td>
-            <td>${escapeHtml(description)}</td>
-            <td class="text-center">${doc.chunkCount || 0}</td>
-            <td class="text-center">${processedIcon}</td>
+            <td class="text-center text-sm">${doc.chunkCount || 0}</td>
             <td class="text-center">${activeIcon}</td>
-            <td>${createdDate}</td>
             <td>
               <div class="flex gap-1">
                 <button class="btn btn-xs btn-success edit-row-btn" title="수정">
@@ -990,9 +1151,8 @@
             },
             function(response) {
               if (typeof showToast === 'function') {
-                showToast('설정이 저장되었습니다. 전체 재처리를 실행하여 적용하세요.', 'positive');
+                showToast('청크 설정이 저장되었습니다. 재처리 시 적용됩니다.', 'positive');
               }
-              document.getElementById('settings-modal').close();
             },
             function(xhr, status, error) {
               console.error('청크 중첩 저장 오류:', error);

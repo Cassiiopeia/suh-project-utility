@@ -37,23 +37,35 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
   border-color: #60a5fa;
 }
 
-/* btn-error 색상 */
-.btn-error {
-  background-color: #ef4444;
-  border-color: #ef4444;
-  color: #ffffff;
+/* btn-error 색상 - 밝은 파스텔 빨강 */
+:root:not([data-theme="dark"]) .btn-error,
+html:not([data-theme="dark"]) .btn-error,
+[data-theme="light"] .btn-error {
+  background-color: #FFB3BA !important;
+  border-color: #FFB3BA !important;
+  color: #991b1b !important;
   border-radius: 0.3rem;
   padding: 10px;
 }
 
-.btn-error:hover {
-  background-color: #dc2626;
-  border-color: #dc2626;
+:root:not([data-theme="dark"]) .btn-error:hover,
+html:not([data-theme="dark"]) .btn-error:hover,
+[data-theme="light"] .btn-error:hover {
+  background-color: #FF9CA5 !important;
+  border-color: #FF9CA5 !important;
+}
+
+[data-theme="dark"] .btn-error {
+  background-color: #fca5a5 !important;
+  border-color: #fca5a5 !important;
+  color: #7f1d1d !important;
+  border-radius: 0.3rem;
+  padding: 10px;
 }
 
 [data-theme="dark"] .btn-error:hover {
-  background-color: #f87171;
-  border-color: #f87171;
+  background-color: #f87171 !important;
+  border-color: #f87171 !important;
 }
 
 /* btn-info 색상 */
@@ -75,23 +87,35 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
   border-color: #22d3ee;
 }
 
-/* btn-success 색상 */
-.btn-success {
-  background-color: #22c55e;
-  border-color: #22c55e;
-  color: #ffffff;
+/* btn-success 색상 - 밝은 파스텔 초록 */
+:root:not([data-theme="dark"]) .btn-success,
+html:not([data-theme="dark"]) .btn-success,
+[data-theme="light"] .btn-success {
+  background-color: #B8E6B8 !important;
+  border-color: #B8E6B8 !important;
+  color: #166534 !important;
   border-radius: 0.3rem;
   padding: 10px;
 }
 
-.btn-success:hover {
-  background-color: #16a34a;
-  border-color: #16a34a;
+:root:not([data-theme="dark"]) .btn-success:hover,
+html:not([data-theme="dark"]) .btn-success:hover,
+[data-theme="light"] .btn-success:hover {
+  background-color: #A8E0A8 !important;
+  border-color: #A8E0A8 !important;
+}
+
+[data-theme="dark"] .btn-success {
+  background-color: #86efac !important;
+  border-color: #86efac !important;
+  color: #14532d !important;
+  border-radius: 0.3rem;
+  padding: 10px;
 }
 
 [data-theme="dark"] .btn-success:hover {
-  background-color: #4ade80;
-  border-color: #4ade80;
+  background-color: #4ade80 !important;
+  border-color: #4ade80 !important;
 }
 
 /* Light 모드 - btn-outline */
@@ -546,6 +570,34 @@ html:not([data-theme="dark"]) .toast .alert-info,
 
 [data-theme="dark"] .toast .alert .btn-ghost:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/*
+===========================
+  Alert Info Styles - 밝은 하늘색 파스텔 톤
+===========================
+*/
+
+/* Light 모드 - Alert Info (밝은 하늘색 파스텔 톤) */
+:root:not([data-theme="dark"]) .alert-info,
+html:not([data-theme="dark"]) .alert-info,
+[data-theme="light"] .alert-info {
+  background-color: #E0F7FF !important;
+  color: #0369a1 !important;
+  border-color: #81D4FA !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Dark 모드 - Alert Info */
+[data-theme="dark"] .alert-info {
+  background-color: #93c5fd !important;
+  color: #082f49 !important;
+  border-color: #60a5fa !important;
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
 }
 
 /*

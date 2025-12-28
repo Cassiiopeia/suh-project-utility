@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.ServerOptionKey;
 import me.suhsaechan.common.entity.ServerOption;
 import me.suhsaechan.common.repository.ServerOptionRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,9 @@ public class ServerOptionService {
 
   /**
    * 설정 값 조회 (없으면 기본값 반환)
+   * Redis 캐시 사용 (1시간 TTL)
    */
+  @Cacheable(value = "serverOption", key = "#key.name()")
   public String getOptionValue(ServerOptionKey key) {
     return serverOptionRepository.findByOptionKey(key)
         .map(ServerOption::getOptionValue)
@@ -49,7 +53,9 @@ public class ServerOptionService {
 
   /**
    * 설정 값 저장 또는 업데이트
+   * 저장 시 해당 키의 캐시 무효화
    */
+  @CacheEvict(value = "serverOption", key = "#key.name()")
   @Transactional
   public ServerOption setOptionValue(ServerOptionKey key, String value) {
     ServerOption option = serverOptionRepository.findByOptionKey(key)
@@ -65,7 +71,9 @@ public class ServerOptionService {
 
   /**
    * 모든 설정 조회
+   * Redis 캐시 사용 (1시간 TTL)
    */
+  @Cacheable(value = "serverOption", key = "'all'")
   public List<ServerOption> getAllOptions() {
     return serverOptionRepository.findAll();
   }
