@@ -178,8 +178,6 @@
 
 
   function processClientIP(clientIP) {
-    console.log("실제 클라이언트 IP:", clientIP);
-    // AES 암호화
     const key = CryptoJS.enc.Utf8.parse(window.encryptionKey);
     const iv = CryptoJS.enc.Utf8.parse(window.encryptionIv);
 
@@ -189,7 +187,6 @@
       padding: CryptoJS.pad.Pkcs7
     });
 
-    console.log("ClientHash 값:", encrypted.toString());
     window.clientHash = encrypted.toString();
   }
 

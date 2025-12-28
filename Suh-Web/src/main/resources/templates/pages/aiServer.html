@@ -482,7 +482,14 @@ function createProgressBar(modelName) {
           <i class="fa-solid fa-download text-blue-500"></i>
           ${modelName}
         </span>
-        <span class="download-size text-sm text-gray-500">0 B / 0 B</span>
+        <div class="flex items-center gap-2">
+          <span class="download-size text-sm text-gray-500">0 B / 0 B</span>
+          <button class="btn btn-xs btn-error btn-outline cancel-download-btn"
+                  onclick="cancelDownload('${modelName}')"
+                  title="다운로드 취소">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
       </div>
       <progress class="progress progress-primary w-full" value="0" max="100"></progress>
       <div class="text-sm text-gray-500 mt-1 progress-label">다운로드 준비 중...</div>
@@ -565,7 +572,22 @@ function updateProgressBar(progressId, progress) {
   } else if (progress.status === 'failed') {
     element.find('progress').removeClass('progress-primary progress-warning').addClass('progress-error');
     element.find('.progress-label').html('<i class="fa-solid fa-times text-red-500"></i> ' + (progress.message || '다운로드 실패'));
+    element.find('.cancel-download-btn').prop('disabled', true).addClass('btn-disabled');
     lastProgressValues.delete(modelName);
+  } else if (progress.status === 'cancelled') {
+    element.find('progress').removeClass('progress-primary progress-warning progress-success').addClass('progress-error');
+    element.find('.progress-label').html('<i class="fa-solid fa-ban text-orange-500"></i> ' + (progress.message || '취소됨'));
+    element.find('.cancel-download-btn').prop('disabled', true).addClass('btn-disabled');
+    lastProgressValues.delete(modelName);
+
+    setTimeout(() => {
+      element.fadeOut(500, function() {
+        $(this).remove();
+        if ($('#progressBars').children().length === 0) {
+          $('#downloadProgressContainer').addClass('hidden');
+        }
+      });
+    }, 3000);
   }
 }
 
@@ -585,10 +607,17 @@ function downloadModel() {
   }
 
   // 서버 측 진행 상황 확인 (이미 다운로드 중일 수 있음)
+  const statusFormData = new FormData();
+  statusFormData.append('modelName', modelName);
+
   $.ajax({
-    url: `/api/ai-server/models/pull/status/${encodeURIComponent(modelName)}`,
-    method: 'GET',
-    success: function(progress) {
+    url: '/api/ai-server/models/pull/status/model',
+    method: 'POST',
+    data: statusFormData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      const progress = response.downloadProgress;
       if (progress && progress.status === 'downloading') {
         // 서버에서 이미 다운로드 중인 경우 - 기존 진행상황 복원
         console.log('[다운로드] 서버에서 이미 진행 중, 복원:', modelName);
@@ -626,9 +655,15 @@ function startNewDownload(modelName) {
   const progressId = createProgressBar(modelName);
   $('#modelNameInput').val('');
 
+  const startFormData = new FormData();
+  startFormData.append('modelName', modelName);
+
   $.ajax({
-    url: `/api/ai-server/models/pull/start?modelName=${encodeURIComponent(modelName)}`,
+    url: '/api/ai-server/models/pull/start',
     method: 'POST',
+    data: startFormData,
+    processData: false,
+    contentType: false,
     success: function(response) {
       console.log('[다운로드] 시작 성공:', modelName);
       startPolling(modelName, progressId);
@@ -667,14 +702,21 @@ function startPolling(modelName, progressId) {
 
 // 다운로드 상태 확인
 function pollDownloadStatus(modelName, progressId) {
+  const pollFormData = new FormData();
+  pollFormData.append('modelName', modelName);
+
   $.ajax({
-    url: `/api/ai-server/models/pull/status/${encodeURIComponent(modelName)}`,
-    method: 'GET',
-    success: function(progress) {
+    url: '/api/ai-server/models/pull/status/model',
+    method: 'POST',
+    data: pollFormData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      const progress = response.downloadProgress;
       if (progress) {
         updateProgressBar(progressId, progress);
 
-        if (progress.status === 'completed' || progress.status === 'failed') {
+        if (progress.status === 'completed' || progress.status === 'failed' || progress.status === 'cancelled') {
           if (activeDownloads.has(modelName)) {
             clearInterval(activeDownloads.get(modelName));
             activeDownloads.delete(modelName);
@@ -725,6 +767,54 @@ function deleteModel(modelName) {
     error: function(xhr, status, error) {
       // 전역 핸들러가 toast를 표시함
       console.error('모델 삭제 실패:', error);
+    }
+  });
+}
+
+// 다운로드 취소
+function cancelDownload(modelName) {
+  if (!confirm(`"${modelName}" 다운로드를 취소하시겠습니까?`)) {
+    return;
+  }
+
+  const progressId = `progress-${modelName.replace(/[^a-zA-Z0-9]/g, '-')}`;
+  const cancelBtn = $(`#${progressId} .cancel-download-btn`);
+  cancelBtn.prop('disabled', true).addClass('btn-disabled');
+
+  const formData = new FormData();
+  formData.append('modelName', modelName);
+
+  $.ajax({
+    url: '/api/ai-server/models/pull/cancel',
+    method: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      console.log('[다운로드] 취소 성공:', modelName);
+
+      // 폴링 중지
+      if (activeDownloads.has(modelName)) {
+        clearInterval(activeDownloads.get(modelName));
+        activeDownloads.delete(modelName);
+      }
+      lastProgressValues.delete(modelName);
+
+      // 진행 바 상태 업데이트
+      updateProgressBar(progressId, {
+        modelName: modelName,
+        status: 'cancelled',
+        message: '사용자에 의해 취소됨',
+        percentage: 0
+      });
+
+      if (typeof showToast === 'function') {
+        showToast(`"${modelName}" 다운로드가 취소되었습니다.`, 'info');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('[다운로드] 취소 실패:', error);
+      cancelBtn.prop('disabled', false).removeClass('btn-disabled');
     }
   });
 }
