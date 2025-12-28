@@ -1225,6 +1225,7 @@
       },
       function(xhr, status, error) {
         console.error('대시보드 Summary 로드 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
         // 에러 시에도 스켈레톤 숨기고 기본값 표시
         $('#summary-skeleton').addClass('hidden');
         $('#summary-content').removeClass('hidden');
@@ -1270,6 +1271,7 @@
       },
       function(xhr, status, error) {
         console.error('대시보드 Summary 새로고침 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 버튼 상태 복구만
         refreshBtn.prop('disabled', false);
         icon.removeClass('animate-spin');
       }
@@ -1303,6 +1305,7 @@
       },
       function(xhr, status, error) {
         console.error('공지사항 로드 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
         $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-red-500 text-sm">로드 실패</span></div>');
       }
     );
@@ -1449,6 +1452,7 @@
       },
       function(xhr, status, error) {
         console.error('공지사항 상세 조회 오류:', error);
+        // 전역 핸들러가 toast를 표시함
       }
     );
   }
@@ -1484,6 +1488,7 @@
       function(xhr, status, error) {
         $('#comments-loading').hide();
         console.error('댓글 로드 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
         $('#no-comments-message').removeClass('hidden').addClass('text-red-500').text('댓글을 불러오는 중 오류가 발생했습니다.');
       }
     );
@@ -1598,6 +1603,7 @@
         }
       },
       error: function() {
+        // 전역 핸들러가 toast를 표시하므로 여기서는 상태 표시만
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
 

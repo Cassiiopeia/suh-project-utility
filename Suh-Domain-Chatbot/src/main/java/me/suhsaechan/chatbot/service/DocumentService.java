@@ -13,6 +13,8 @@ import me.suhsaechan.chatbot.entity.ChatDocument;
 import me.suhsaechan.chatbot.entity.ChatDocumentChunk;
 import me.suhsaechan.chatbot.repository.ChatDocumentChunkRepository;
 import me.suhsaechan.chatbot.repository.ChatDocumentRepository;
+import me.suhsaechan.common.constant.ServerOptionKey;
+import me.suhsaechan.common.service.ServerOptionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,10 +32,21 @@ public class DocumentService {
     private final EmbeddingService embeddingService;
     private final VectorStoreService vectorStoreService;
     private final QdrantProperties qdrantProperties;
+    private final ServerOptionService serverOptionService;
 
-    // 청크 분할 설정 (토큰 수 기준, 근사치)
-    private static final int DEFAULT_CHUNK_SIZE_TOKENS = 3000;       // 기본 청크 크기 (토큰 수)
-    private static final int DEFAULT_CHUNK_OVERLAP_TOKENS = 300;     // 청크 중첩 크기 (토큰 수, 10%)
+    /**
+     * 청크 크기 조회 (DB 설정 기반)
+     */
+    private int getChunkSize() {
+        return serverOptionService.getOptionValueAsInt(ServerOptionKey.CHATBOT_CHUNK_SIZE);
+    }
+
+    /**
+     * 청크 중첩 크기 조회 (DB 설정 기반)
+     */
+    private int getChunkOverlap() {
+        return serverOptionService.getOptionValueAsInt(ServerOptionKey.CHATBOT_CHUNK_OVERLAP);
+    }
 
     /**
      * 벡터 컬렉션 초기화
@@ -83,8 +96,8 @@ public class DocumentService {
         // 1. 기존 청크 삭제 (재처리 시)
         deleteDocumentChunks(document);
 
-        // 2. 청크 분할 (토큰 수 기준)
-        List<String> chunks = splitIntoChunksByTokens(document.getContent(), DEFAULT_CHUNK_SIZE_TOKENS, DEFAULT_CHUNK_OVERLAP_TOKENS);
+        // 2. 청크 분할 (토큰 수 기준, DB 설정 사용)
+        List<String> chunks = splitIntoChunksByTokens(document.getContent(), getChunkSize(), getChunkOverlap());
         log.info("청크 분할 완료 - 총 {} 개", chunks.size());
 
         // 3. 임베딩 생성
@@ -217,6 +230,54 @@ public class DocumentService {
     @Transactional(readOnly = true)
     public List<ChatDocument> getAllActiveDocuments() {
         return documentRepository.findByIsActiveTrueOrderByOrderIndexAsc();
+    }
+
+    /**
+     * 전체 문서 재처리
+     * 모든 활성 문서를 현재 설정으로 다시 벡터화
+     */
+    @Transactional
+    public Map<String, Object> reprocessAllDocuments() {
+        log.info("전체 문서 재처리 시작");
+        
+        List<ChatDocument> allDocuments = documentRepository.findByIsActiveTrueOrderByOrderIndexAsc();
+        int totalCount = allDocuments.size();
+        int successCount = 0;
+        int failCount = 0;
+        List<String> failedDocuments = new ArrayList<>();
+
+        log.info("재처리 대상 문서 수: {}", totalCount);
+
+        for (ChatDocument document : allDocuments) {
+            try {
+                log.info("문서 재처리 중 - documentId: {}, title: {}", 
+                    document.getChatDocumentId(), document.getTitle());
+                
+                processDocument(document);
+                successCount++;
+                
+                log.info("문서 재처리 완료 - documentId: {}", document.getChatDocumentId());
+            } catch (Exception e) {
+                failCount++;
+                String errorInfo = String.format("%s (ID: %s)", 
+                    document.getTitle(), document.getChatDocumentId());
+                failedDocuments.add(errorInfo);
+                
+                log.error("문서 재처리 실패 - documentId: {}, title: {}, error: {}", 
+                    document.getChatDocumentId(), document.getTitle(), e.getMessage(), e);
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalCount", totalCount);
+        result.put("successCount", successCount);
+        result.put("failCount", failCount);
+        result.put("failedDocuments", failedDocuments);
+
+        log.info("전체 문서 재처리 완료 - 총: {}, 성공: {}, 실패: {}", 
+            totalCount, successCount, failCount);
+
+        return result;
     }
 
     /**

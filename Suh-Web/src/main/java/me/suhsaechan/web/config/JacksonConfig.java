@@ -2,6 +2,7 @@ package me.suhsaechan.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Primary;
 /**
  * Jackson 전역 설정
  * LocalDateTime, LocalDate, LocalTime 직렬화 포맷 설정
+ * Hibernate 프록시 객체 직렬화 지원
  */
 @Configuration
 public class JacksonConfig {
@@ -26,6 +28,11 @@ public class JacksonConfig {
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
+
+        // Hibernate 프록시 처리 모듈 등록
+        Hibernate6Module hibernate6Module = new Hibernate6Module();
+        hibernate6Module.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, false);
+        objectMapper.registerModule(hibernate6Module);
 
         JavaTimeModule javaTimeModule = new JavaTimeModule();
 

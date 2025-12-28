@@ -3,21 +3,17 @@ package me.suhsaechan.web.controller.api;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.suhsaechan.ai.service.StreamCallback;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
 import me.suhsaechan.chatbot.dto.ChatbotRequest;
 import me.suhsaechan.chatbot.dto.ChatbotResponse;
-import me.suhsaechan.chatbot.dto.ChatbotConfigDto;
-import me.suhsaechan.chatbot.dto.ChatbotConfigRequest;
-import me.suhsaechan.chatbot.dto.DocumentDto;
-import me.suhsaechan.chatbot.dto.DocumentRequest;
-import me.suhsaechan.chatbot.dto.DocumentResponse;
-import me.suhsaechan.chatbot.entity.ChatDocument;
-import me.suhsaechan.chatbot.service.ChatbotConfigService;
 import me.suhsaechan.chatbot.service.ChatbotService;
 import me.suhsaechan.chatbot.service.DocumentService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
@@ -44,6 +40,7 @@ public class ChatbotController {
 
   private final ChatbotService chatbotService;
   private final DocumentService documentService;
+  private final ObjectMapper objectMapper;
 
   /**
    * 채팅 메시지 전송 (비스트리밍)
@@ -84,7 +81,7 @@ public class ChatbotController {
     emitter.onTimeout(() -> log.warn("SSE 타임아웃"));
     emitter.onError(e -> log.error("SSE 오류: {}", e.getMessage()));
 
-    // 스트리밍 응답 시작 (세션 토큰 콜백 포함)
+    // 스트리밍 응답 시작 (세션 토큰 콜백 + thinking 콜백 포함)
     chatbotService.chatStream(sessionToken, message, topK, minScore, userIp, userAgent,
         new StreamCallback() {
           @Override
@@ -139,6 +136,19 @@ public class ChatbotController {
           } catch (IOException e) {
             log.error("세션 토큰 SSE 전송 실패: {}", e.getMessage());
           }
+        },
+        // Thinking 콜백 - Agent 단계 진행 상황 전달
+        (thinkingEvent) -> {
+          try {
+            String jsonData = objectMapper.writeValueAsString(thinkingEvent);
+            log.debug("SSE thinking 이벤트 전송: step={}, status={}",
+                thinkingEvent.getStep(), thinkingEvent.getStatus());
+            emitter.send(SseEmitter.event()
+                .name("thinking")
+                .data(jsonData));
+          } catch (IOException e) {
+            log.error("SSE thinking 전송 실패: {}", e.getMessage());
+          }
         });
 
     return emitter;
@@ -182,10 +192,20 @@ public class ChatbotController {
    */
   @PostMapping(value = "/admin/init-collection", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> initializeCollection() {
     documentService.initializeCollection();
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  /**
+   * 전체 문서 재처리 (관리자용)
+   * 모든 활성 문서를 현재 설정으로 다시 벡터화
+   */
+  @PostMapping(value = "/admin/reprocess-all", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<Map<String, Object>> reprocessAllDocuments() {
+    Map<String, Object> result = documentService.reprocessAllDocuments();
+    return ResponseEntity.ok(result);
   }
 
   /**
@@ -212,119 +232,9 @@ public class ChatbotController {
   /**
    * 피드백 요청 DTO (내부 클래스)
    */
-  @lombok.Data
+  @Data
   public static class FeedbackRequest {
     private UUID messageId;
     private Boolean isHelpful;
-  }
-
-  // ========== 문서 관리 API (관리자용) ==========
-
-  /**
-   * 모든 문서 목록 조회
-   */
-  @PostMapping(value = "/document/list", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<DocumentResponse> getAllDocuments() {
-    List<ChatDocument> documents = documentService.getAllActiveDocuments();
-    List<DocumentDto> documentDtos = documents.stream()
-        .map(this::toDocumentDto)
-        .collect(Collectors.toList());
-
-    return ResponseEntity.ok(DocumentResponse.builder()
-        .documents(documentDtos)
-        .totalCount(documentDtos.size())
-        .build());
-  }
-
-  /**
-   * 문서 상세 조회
-   */
-  @PostMapping(value = "/document/detail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<DocumentDto> getDocument(@ModelAttribute DocumentRequest request) {
-    ChatDocument document = documentService.getDocument(request.getDocumentId());
-    return ResponseEntity.ok(toDocumentDto(document));
-  }
-
-  /**
-   * 문서 생성
-   */
-  @PostMapping(value = "/document/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<DocumentDto> createDocument(@ModelAttribute DocumentRequest request) {
-    ChatDocument document = documentService.createDocument(
-        request.getTitle(),
-        request.getCategory(),
-        request.getContent(),
-        request.getDescription()
-    );
-    return ResponseEntity.status(HttpStatus.CREATED).body(toDocumentDto(document));
-  }
-
-  /**
-   * 문서 수정
-   */
-  @PostMapping(value = "/document/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<DocumentDto> updateDocument(@ModelAttribute DocumentRequest request) {
-    ChatDocument document = documentService.updateDocument(
-        request.getDocumentId(),
-        request.getTitle(),
-        request.getCategory(),
-        request.getContent(),
-        request.getDescription()
-    );
-    return ResponseEntity.ok(toDocumentDto(document));
-  }
-
-  /**
-   * 문서 삭제
-   */
-  @PostMapping(value = "/document/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<Void> deleteDocument(@ModelAttribute DocumentRequest request) {
-    documentService.deleteDocument(request.getDocumentId());
-    return ResponseEntity.noContent().build();
-  }
-
-  /**
-   * 문서 활성화/비활성화 토글
-   */
-  @PostMapping(value = "/document/toggle-active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<Void> toggleDocumentActive(@ModelAttribute DocumentRequest request) {
-    ChatDocument document = documentService.getDocument(request.getDocumentId());
-    documentService.setDocumentActive(request.getDocumentId(), !document.getIsActive());
-    return ResponseEntity.noContent().build();
-  }
-
-  /**
-   * 문서 재처리 (청크 재생성 + 벡터화)
-   */
-  @PostMapping(value = "/document/reprocess", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  @LogMonitor
-  public ResponseEntity<DocumentDto> reprocessDocument(@ModelAttribute DocumentRequest request) {
-    ChatDocument document = documentService.getDocument(request.getDocumentId());
-    documentService.processDocument(document);
-    return ResponseEntity.ok(toDocumentDto(documentService.getDocument(request.getDocumentId())));
-  }
-
-  /**
-   * ChatDocument -> DocumentDto 변환
-   */
-  private DocumentDto toDocumentDto(ChatDocument document) {
-    return DocumentDto.builder()
-        .documentId(document.getChatDocumentId())
-        .title(document.getTitle())
-        .category(document.getCategory())
-        .content(document.getContent())
-        .description(document.getDescription())
-        .isActive(document.getIsActive())
-        .isProcessed(document.getIsProcessed())
-        .chunkCount(document.getChunkCount())
-        .createdDate(document.getCreatedDate() != null ? document.getCreatedDate().toString() : null)
-        .updatedDate(document.getUpdatedDate() != null ? document.getUpdatedDate().toString() : null)
-        .build();
   }
 }

@@ -12,6 +12,7 @@ const ChatbotWidget = {
   useStreaming: true,  // 스트리밍 모드 사용 여부
   currentEventSource: null,  // 현재 SSE 연결
   streamingTextMap: {},  // 스트리밍 중인 원본 텍스트 저장 (messageId -> text)
+  thinkingHistoryMap: {},  // thinking 이벤트 히스토리 저장 (messageId -> [events])
 
   /**
    * 초기화
@@ -22,6 +23,9 @@ const ChatbotWidget = {
 
     // 이벤트 바인딩
     this.bindEvents();
+
+    // 대화 히스토리 복원
+    this.restoreHistory();
 
     console.log('Chatbot widget initialized');
   },
@@ -94,6 +98,9 @@ const ChatbotWidget = {
     // 세션 토큰 삭제
     this.sessionToken = null;
     localStorage.removeItem('chatbot_session_token');
+
+    // 대화 히스토리 삭제
+    localStorage.removeItem('chatbot_history');
 
     // 메시지 영역 초기화 (웰컴 메시지만 남기고 삭제)
     $('#chatbot-messages .chat-message').remove();
@@ -212,8 +219,23 @@ const ChatbotWidget = {
       }
     });
 
+    // Thinking 이벤트 (Agent 단계 진행 상황)
+    eventSource.addEventListener('thinking', function(e) {
+      try {
+        const event = JSON.parse(e.data);
+        console.log('💭 Thinking 이벤트:', event);
+        self.handleThinkingEvent(aiMessageId, event);
+      } catch (parseError) {
+        console.error('Thinking 이벤트 파싱 오류:', parseError);
+      }
+    });
+
     // 메시지 수신
     eventSource.addEventListener('message', function(e) {
+      // 첫 메시지 수신 시 thinking 패널 숨기기
+      if (!self.hasReceivedData) {
+        self.hideThinkingPanel(aiMessageId);
+      }
       self.hasReceivedData = true;
       try {
         // JSON 형식으로 감싸진 데이터 파싱 (공백 보존을 위해)
@@ -306,6 +328,7 @@ const ChatbotWidget = {
         $('#chatbot-send-btn').prop('disabled', false);
 
         self.appendMessage('assistant', '죄송합니다. 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        // 전역 핸들러가 toast를 표시하므로 여기서는 추가 처리만
         console.error('Chatbot API error:', error);
       }
     );
@@ -320,15 +343,20 @@ const ChatbotWidget = {
 
     // 원본 텍스트 저장소 초기화
     this.streamingTextMap[messageId] = '';
+    // thinking 히스토리 초기화
+    this.thinkingHistoryMap[messageId] = [];
 
     const html = `
       <div class="chat-message assistant" id="${messageId}">
-        <div class="bubble">
-          <span class="analyzing-indicator">
-            <span class="analyzing-text">분석 중</span>
-            <span class="analyzing-dots"><span>.</span><span>.</span><span>.</span></span>
-          </span>
+        <div class="thinking-panel">
+          <div class="thinking-content">
+            <div class="thinking-line active">
+              <i class="fa-solid fa-spinner fa-spin thinking-spinner"></i>
+              <span class="thinking-text">생각하고 있어요...</span>
+            </div>
+          </div>
         </div>
+        <div class="bubble hide"></div>
         <div class="time">${time}</div>
       </div>
     `;
@@ -338,11 +366,191 @@ const ChatbotWidget = {
   },
 
   /**
+   * Thinking 이벤트 처리 (히스토리 형태)
+   */
+  handleThinkingEvent: function(messageId, event) {
+    const contentElement = $(`#${messageId} .thinking-content`);
+    if (!contentElement.length) return;
+
+    // 히스토리 배열 가져오기 (없으면 초기화)
+    if (!this.thinkingHistoryMap[messageId]) {
+      this.thinkingHistoryMap[messageId] = [];
+    }
+    const history = this.thinkingHistoryMap[messageId];
+
+    // 같은 step의 이전 이벤트 업데이트 또는 새로 추가
+    const existingIndex = history.findIndex(e => e.step === event.step);
+    if (existingIndex >= 0) {
+      history[existingIndex] = event;
+    } else {
+      history.push(event);
+    }
+
+    // 히스토리를 step 순서로 정렬
+    history.sort((a, b) => a.step - b.step);
+
+    // 전체 히스토리 렌더링
+    let allLinesHtml = '';
+    for (const evt of history) {
+      const friendlyMessage = this.buildThinkingMessage(evt);
+      const icon = this.getThinkingIcon(evt.step, evt.status);
+      const statusClass = this.getThinkingStatusClass(evt.status);
+
+      allLinesHtml += `
+        <div class="thinking-line ${statusClass}">
+          ${icon}
+          <span class="thinking-text">${this.escapeHtml(friendlyMessage)}</span>
+        </div>
+      `;
+    }
+
+    contentElement.html(allLinesHtml);
+    this.scrollToBottom();
+  },
+
+  /**
+   * 사용자 친화적 thinking 메시지 생성
+   */
+  buildThinkingMessage: function(event) {
+    const step = event.step;
+    const status = event.status;
+    const detail = event.detail;
+    const searchQuery = event.searchQuery;
+
+    if (step === 1) {
+      if (status === 'in_progress') {
+        if (detail) {
+          return `질문을 분석하고 있어요... (${detail})`;
+        }
+        return '질문을 분석하고 있어요...';
+      } else if (status === 'retrying') {
+        if (detail) {
+          return `다시 한번 분석해볼게요... (${detail})`;
+        }
+        return '다시 한번 분석해볼게요...';
+      } else if (status === 'completed') {
+        if (detail) {
+          return `${detail} 질문이네요!`;
+        }
+        return '질문 분석 완료!';
+      }
+      return '질문 분석 완료!';
+    }
+
+    if (step === 2) {
+      if (status === 'skipped') {
+        if (detail) {
+          return `${detail}`;
+        }
+        return '이건 바로 답변할 수 있어요!';
+      } else if (status === 'in_progress') {
+        if (searchQuery) {
+          return `"${this.truncateText(searchQuery, 25)}" 관련 문서를 찾고 있어요...`;
+        }
+        if (detail) {
+          return detail;
+        }
+        return '관련 문서를 검색하고 있어요...';
+      } else if (status === 'completed') {
+        if (detail) {
+          return `${detail}`;
+        }
+        return '문서 검색 완료!';
+      }
+      return '문서 검색 완료!';
+    }
+
+    if (step === 3) {
+      if (status === 'in_progress') {
+        if (detail) {
+          return detail;
+        }
+        return '답변을 작성하고 있어요...';
+      } else if (status === 'completed') {
+        return '답변 준비 완료!';
+      }
+    }
+
+    return event.title || '처리 중...';
+  },
+
+  /**
+   * 텍스트 자르기 (UI용)
+   */
+  truncateText: function(text, maxLength) {
+    if (!text || text.length <= maxLength) {
+      return text;
+    }
+    return text.substring(0, maxLength) + '...';
+  },
+
+  /**
+   * 단계별 아이콘 반환
+   */
+  getThinkingIcon: function(step, status) {
+    if (status === 'in_progress' || status === 'retrying') {
+      return '<i class="fa-solid fa-spinner fa-spin thinking-spinner"></i>';
+    }
+
+    if (step === 1) {
+      return '<i class="fa-solid fa-lightbulb thinking-icon"></i>';
+    } else if (step === 2) {
+      if (status === 'skipped') {
+        return '<i class="fa-solid fa-bolt thinking-icon"></i>';
+      }
+      return '<i class="fa-solid fa-book-open thinking-icon"></i>';
+    } else if (step === 3) {
+      return '<i class="fa-solid fa-pen thinking-icon"></i>';
+    }
+
+    return '<i class="fa-solid fa-circle-notch thinking-icon"></i>';
+  },
+
+  /**
+   * 상태별 CSS 클래스 반환
+   */
+  getThinkingStatusClass: function(status) {
+    switch (status) {
+      case 'in_progress':
+        return 'active';
+      case 'completed':
+        return 'completed';
+      case 'retrying':
+        return 'retrying';
+      case 'skipped':
+        return 'skipped';
+      default:
+        return '';
+    }
+  },
+
+  /**
+   * Thinking 패널 숨기기 및 버블 표시
+   */
+  hideThinkingPanel: function(messageId) {
+    const thinkingPanel = $(`#${messageId} .thinking-panel`);
+    const bubble = $(`#${messageId} .bubble`);
+
+    if (!thinkingPanel.length) return;
+
+    thinkingPanel.addClass('fade-out');
+    setTimeout(() => {
+      const panel = $(`#${messageId} .thinking-panel`);
+      const bbl = $(`#${messageId} .bubble`);
+      if (panel.length) panel.addClass('hide');
+      if (bbl.length) bbl.removeClass('hide');
+    }, 300);
+  },
+
+  /**
    * 스트리밍 메시지에 텍스트 추가
    */
   appendToStreamingMessage: function(messageId, chunk) {
     const bubble = document.querySelector('#' + messageId + ' .bubble');
     if (bubble) {
+      // hide 클래스가 있으면 제거 (thinking 패널 → 버블 전환)
+      bubble.classList.remove('hide');
+
       // 분석 중 인디케이터 제거
       const analyzingIndicator = bubble.querySelector('.analyzing-indicator');
       if (analyzingIndicator) {
@@ -378,6 +586,10 @@ const ChatbotWidget = {
 
       // 메모리 정리
       delete this.streamingTextMap[messageId];
+      delete this.thinkingHistoryMap[messageId];
+
+      // 히스토리 저장
+      this.saveHistory();
     }
   },
 
@@ -436,6 +648,9 @@ const ChatbotWidget = {
 
     // 스크롤 아래로
     this.scrollToBottom();
+
+    // 히스토리 저장
+    this.saveHistory();
   },
 
   /**
@@ -473,6 +688,71 @@ const ChatbotWidget = {
   },
 
   /**
+   * 대화 히스토리 저장 (localStorage)
+   */
+  saveHistory: function() {
+    const messages = [];
+    const self = this;
+    $('#chatbot-messages .chat-message').each(function() {
+      const role = $(this).hasClass('user') ? 'user' : 'assistant';
+      const bubble = $(this).find('.bubble');
+      if (bubble.length === 0) return;
+
+      const content = bubble.text().trim();
+      if (!content) return;
+
+      const time = $(this).find('.time').text();
+      messages.push({ role: role, content: content, time: time });
+    });
+
+    localStorage.setItem('chatbot_history', JSON.stringify({
+      sessionToken: this.sessionToken,
+      messages: messages
+    }));
+  },
+
+  /**
+   * 대화 히스토리 복원 (localStorage)
+   */
+  restoreHistory: function() {
+    const saved = localStorage.getItem('chatbot_history');
+    if (!saved) return;
+
+    try {
+      const data = JSON.parse(saved);
+      if (data.messages && data.messages.length > 0) {
+        $('.chatbot-welcome').hide();
+        const self = this;
+        data.messages.forEach(function(msg) {
+          self.appendMessageFromHistory(msg.role, msg.content, msg.time);
+        });
+        this.scrollToBottom();
+      }
+    } catch (e) {
+      console.error('히스토리 복원 실패:', e);
+      localStorage.removeItem('chatbot_history');
+    }
+  },
+
+  /**
+   * 히스토리에서 메시지 복원 (저장 트리거 없이)
+   */
+  appendMessageFromHistory: function(role, content, time) {
+    const messagesContainer = $('#chatbot-messages');
+    const escapedContent = this.escapeHtml(content);
+    const formattedContent = this.formatMessage(escapedContent);
+
+    const html = `
+      <div class="chat-message ${role}">
+        <div class="bubble">${formattedContent}</div>
+        <div class="time">${time}</div>
+      </div>
+    `;
+
+    messagesContainer.append(html);
+  },
+
+  /**
    * 피드백 전송
    */
   sendFeedback: function(messageId, isHelpful) {
@@ -488,6 +768,7 @@ const ChatbotWidget = {
         console.log('Feedback submitted:', messageId, isHelpful);
       },
       function(xhr, status, error) {
+        // 전역 핸들러가 toast를 표시함
         console.error('Feedback error:', error);
       }
     );

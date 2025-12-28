@@ -158,7 +158,7 @@
           window.location.href = `/study-management/category/${categoryId}`;
         },
         error: function(xhr, status, error) {
-          alert('포스트 삭제 중 오류가 발생했습니다.');
+          // 전역 핸들러가 toast를 표시함
           console.error('포스트 삭제 오류:', error);
         }
       });

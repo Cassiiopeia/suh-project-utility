@@ -281,11 +281,13 @@
             // 성공 시 페이지 새로고침
             location.reload();
           } else {
-            alert('카테고리 저장 중 오류가 발생했습니다.');
+            if (typeof showToast === 'function') {
+              showToast('카테고리 저장 중 오류가 발생했습니다.', 'negative');
+            }
           }
         },
         error: function(xhr, status, error) {
-          alert('카테고리 저장 중 오류가 발생했습니다: ' + error);
+          // 전역 핸들러가 toast를 표시함
           console.error('카테고리 저장 오류:', xhr.responseText);
         }
       });
@@ -307,7 +309,7 @@
           location.reload();
         },
         error: function(xhr, status, error) {
-          alert('카테고리 삭제 중 오류가 발생했습니다: ' + error);
+          // 전역 핸들러가 toast를 표시함
           console.error('카테고리 삭제 오류:', xhr.responseText);
         }
       });

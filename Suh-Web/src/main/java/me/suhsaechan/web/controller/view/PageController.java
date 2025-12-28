@@ -9,10 +9,16 @@ import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.grassplanter.dto.GrassRequest;
 import me.suhsaechan.grassplanter.dto.GrassResponse;
 import me.suhsaechan.grassplanter.service.GrassService;
+import me.suhsaechan.somansabus.dto.SomansaBusResponse;
+import me.suhsaechan.somansabus.service.SomansaBusMemberService;
+import me.suhsaechan.somansabus.service.SomansaBusRouteService;
 import me.suhsaechan.web.config.ServerInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.UUID;
 
 @Controller
 @Slf4j
@@ -23,6 +29,8 @@ public class PageController {
 	private final NoticeService noticeService;
 	private final GrassService grassService;
 	private final ServerInfo serverInfo;
+	private final SomansaBusMemberService somansaBusMemberService;
+	private final SomansaBusRouteService somansaBusRouteService;
 
 	@GetMapping("/")
 	public String indexPage(Model model) {
@@ -120,5 +128,32 @@ public class PageController {
 	@GetMapping("/chatbot-management")
 	public String chatbotManagementPage() {
 		return "pages/chatbotManagement";
+	}
+
+	@GetMapping("/somansa/bus-reservation")
+	public String somansaBusReservationRedirect() {
+		return "redirect:/somansa/bus";
+	}
+
+	@GetMapping("/somansa/bus")
+	public String somansaBusDashboard(Model model) {
+		SomansaBusResponse memberResponse = somansaBusMemberService.getActiveMembers();
+		SomansaBusResponse routeResponse = somansaBusRouteService.getAllRoutes();
+
+		model.addAttribute("members", memberResponse.getMembers());
+		model.addAttribute("routes", routeResponse.getRoutes());
+
+		return "pages/somansaBusDashboard";
+	}
+
+	@GetMapping("/somansa/bus/member/{memberId}")
+	public String somansaBusMemberDetail(@PathVariable UUID memberId, Model model) {
+		SomansaBusResponse memberResponse = somansaBusMemberService.getMemberById(memberId);
+		SomansaBusResponse routeResponse = somansaBusRouteService.getAllRoutes();
+
+		model.addAttribute("member", memberResponse.getMember());
+		model.addAttribute("routes", routeResponse.getRoutes());
+
+		return "pages/somansaBusMemberDetail";
 	}
 }

@@ -25,11 +25,11 @@ public class GlobalModelController {
     model.addAttribute("encryptionKey", serverInfo.getSecretKey());
     model.addAttribute("encryptionIV", serverInfo.getIv());
 
+    // CSRF 토큰 생성을 위해 세션 생성 (없으면)
+    HttpSession session = request.getSession(true);
+    
     // 세션에서 clientHash 가져와서 모델에 추가
-    HttpSession session = request.getSession(false);
-    if (session != null) {
-      String clientHash = (String) session.getAttribute(ServerInfo.CLIENT_HASH_SESSION_KEY);
-      model.addAttribute("clientHash", clientHash != null ? clientHash : "");
-    }
+    String clientHash = (String) session.getAttribute(ServerInfo.CLIENT_HASH_SESSION_KEY);
+    model.addAttribute("clientHash", clientHash != null ? clientHash : "");
   }
 }

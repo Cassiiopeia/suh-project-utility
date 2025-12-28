@@ -1,11 +1,38 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-20T08:35:06Z",
-    "currentVersion": "2.1.16",
+    "lastUpdated": "2025-12-28T14:38:59Z",
+    "currentVersion": "2.2.1",
     "projectType": "spring",
-    "totalReleases": 31
+    "totalReleases": 32
   },
   "releases": [
+    {
+      "version": "2.2.1",
+      "project_type": "spring",
+      "date": "2025-12-28",
+      "pr_number": 139,
+      "raw_summary": "> [!NOTE]\n> Adds major new domain and config capabilities and upgrades chatbot behavior.\n> \n> - **Somansa Bus**: New module with entities (Member/Route/Schedule/History), repositories, services (login/session/reserve via OkHttp, scheduler), data initializer, and REST APIs; wired into Web and views.\n> - **Server options (DB-backed)**: New `ServerOption` entity/repo/service with Redis caching, DTOs, and `/api/server-option` endpoints; initialized on boot; Redis/Jackson configs updated.\n> - **Chatbot enhancements**: Intent classification now retries with stronger prompt, yields `searchQuery`/`responseFormat`; streaming adds \"thinking\" SSE via `ThinkingCallback`; response model selection and chunk sizes read from server options; document processing supports reprocess-all; document DTOs/controllers renamed `ChatBot*`.\n> - **Web**: Added custom error controller, global model/session tweak, new Somansa Bus pages/routes; added Jackson Hibernate module & cache config for `serverOption`.\n> - **Build/deps**: Centralized libs in `Suh-Common` (incl. Jackson Hibernate, integration, Qdrant/gRPC); added `testImplementation project(':Suh-Web')` across modules; version bump in README.\n> \n> Written by [Cursor Bugbot](https://cursor.com/dashboard?tab=bugbot) for commit a01748388e350b159ea8671c9771a148ce2bde7f. This will update automatically on new commits. Configure [here](https://cursor.com/dashboard?tab=bugbot).\n\n## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * 소만사 버스 예약 시스템 추가: 회원 관리, 노선 조회, 일정 관리, 예약 및 기록 추적 기능\n  * 챗봇 사고 과정 실시간 시각화 기능 추가\n  * 동적 서버 설정 관리 시스템 구현\n  * 이전 채팅 기록 복원 기능 추가\n\n* **개선 사항**\n  * 개선된 토스트 알림 시스템\n  * 챗봇 청크 크기 및 모델 선택을 설정에서 관리 가능\n  * UI 재구성 및 사용자 경험 개선",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "소만사 버스 예약 시스템 추가: 회원 관리, 노선 조회, 일정 관리, 예약 및 기록 추적 기능",
+            "챗봇 사고 과정 실시간 시각화 기능 추가",
+            "동적 서버 설정 관리 시스템 구현",
+            "이전 채팅 기록 복원 기능 추가"
+          ]
+        },
+        "개선_사항": {
+          "title": "개선 사항",
+          "items": [
+            "개선된 토스트 알림 시스템",
+            "챗봇 청크 크기 및 모델 선택을 설정에서 관리 가능",
+            "UI 재구성 및 사용자 경험 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.1.16",
       "project_type": "spring",

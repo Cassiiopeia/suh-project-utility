@@ -272,6 +272,7 @@
         },
         error: function(xhr, status, error) {
           console.error('폴링 요청 실패:', error);
+          // 전역 핸들러에서 제외된 URL이므로 여기서는 상태 업데이트만
           updateStatus('연결 실패', 'badge-error');
           stopLogPoll();
         }

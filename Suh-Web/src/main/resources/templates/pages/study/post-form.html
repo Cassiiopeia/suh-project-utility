@@ -296,7 +296,12 @@
           }
         },
         error: function(xhr, status, error) {
-          onError('파일 업로드 오류: ' + error);
+          // 전역 핸들러가 toast를 표시하므로 여기서는 콜백만 호출
+          let errorMessage = '파일 업로드 오류';
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            errorMessage = xhr.responseJSON.message;
+          }
+          onError(errorMessage);
         }
       });
     }
@@ -388,11 +393,13 @@
             // 저장 성공 시 포스트 상세 페이지로 이동
             window.location.href = `/study-management/post/${response.post.id}`;
           } else {
-            alert('포스트 저장 중 오류가 발생했습니다.');
+            if (typeof showToast === 'function') {
+              showToast('포스트 저장 중 오류가 발생했습니다.', 'negative');
+            }
           }
         },
         error: function(xhr, status, error) {
-          alert('포스트 저장 중 오류가 발생했습니다: ' + error);
+          // 전역 핸들러가 toast를 표시함
           console.error('포스트 저장 오류:', xhr.responseText);
         }
       });
