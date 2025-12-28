@@ -347,14 +347,7 @@
     });
 
     // 액션 버튼 클릭 이벤트 (이벤트 위임)
-    $(document).on('click', '.view-btn', function(e) {
-      e.stopPropagation();
-      const noticeId = $(this).closest('tr').data('notice-id');
-      const notice = allNotices.find(n => n.noticeId === noticeId);
-      if (notice) {
-        showNoticeDetail(notice);
-      }
-    });
+    // view-btn 제거됨 - 행 클릭으로 대체
 
     $(document).on('click', '.edit-row-btn', function(e) {
       e.stopPropagation();
@@ -487,9 +480,6 @@
             <td>${createdDate}</td>
             <td>
               <div class="flex gap-1">
-                <button class="btn btn-xs btn-info view-btn" title="상세보기">
-                  <i class="fa-solid fa-eye"></i>
-                </button>
                 <button class="btn btn-xs btn-success edit-row-btn" title="수정">
                   <i class="fa-solid fa-pen"></i>
                 </button>

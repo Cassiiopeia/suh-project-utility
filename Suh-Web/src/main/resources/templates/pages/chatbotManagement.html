@@ -93,9 +93,18 @@
             <button class="btn btn-outline btn-secondary" id="init-collection-btn">
               <i class="fa-solid fa-database"></i>
               컬렉션 초기화
-              <i class="fa-solid fa-circle-question ml-1 text-xs opacity-70"></i>
             </button>
           </div>
+          <div class="tooltip tooltip-bottom" data-tip="모든 문서를 현재 설정으로 다시 처리합니다. 시간이 오래 걸릴 수 있습니다.">
+            <button class="btn btn-outline btn-warning" id="reprocess-all-btn">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              전체 재처리
+            </button>
+          </div>
+          <button class="btn btn-outline btn-accent" id="settings-btn">
+            <i class="fa-solid fa-gear"></i>
+            설정
+          </button>
           <button class="btn btn-outline" id="refresh-btn">
             <i class="fa-solid fa-rotate"></i>
             새로고침
@@ -298,6 +307,67 @@
       <button>close</button>
     </form>
   </dialog>
+
+  <!-- 설정 모달 -->
+  <dialog id="settings-modal" class="modal">
+    <div class="modal-box max-w-2xl">
+      <h3 class="font-bold text-lg mb-4">
+        <i class="fa-solid fa-gear text-blue-500"></i>
+        챗봇 설정
+      </h3>
+
+      <div class="space-y-4">
+        <!-- 청크 크기 설정 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">청크 크기 (토큰 수)</span>
+            <span class="label-text-alt text-gray-500">기본값: 3000</span>
+          </label>
+          <input type="number" id="chunk-size-input" class="input input-bordered" 
+                 min="500" max="10000" step="100" placeholder="3000">
+          <label class="label">
+            <span class="label-text-alt text-gray-500">
+              문서를 분할하는 청크의 크기입니다. 값이 클수록 더 많은 컨텍스트를 포함합니다.
+            </span>
+          </label>
+        </div>
+
+        <!-- 청크 중첩 설정 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">청크 중첩 크기 (토큰 수)</span>
+            <span class="label-text-alt text-gray-500">기본값: 300</span>
+          </label>
+          <input type="number" id="chunk-overlap-input" class="input input-bordered" 
+                 min="0" max="1000" step="50" placeholder="300">
+          <label class="label">
+            <span class="label-text-alt text-gray-500">
+              인접한 청크 간 중첩되는 부분의 크기입니다. 문맥 연속성을 유지합니다.
+            </span>
+          </label>
+        </div>
+
+        <!-- 안내 메시지 -->
+        <div class="alert alert-info">
+          <i class="fa-solid fa-info-circle"></i>
+          <span>설정을 변경한 후 <strong>'전체 재처리'</strong>를 실행해야 새 설정이 적용됩니다.</span>
+        </div>
+      </div>
+
+      <div class="modal-action">
+        <button class="btn btn-primary" id="save-settings-btn">
+          <i class="fa-solid fa-save"></i>
+          저장
+        </button>
+        <form method="dialog">
+          <button class="btn">취소</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -367,6 +437,24 @@
       }
     });
 
+    // 전체 재처리 버튼
+    $('#reprocess-all-btn').click(function() {
+      if (confirm('모든 문서를 다시 처리합니다. 시간이 오래 걸릴 수 있습니다. 계속하시겠습니까?')) {
+        reprocessAllDocuments();
+      }
+    });
+
+    // 설정 버튼
+    $('#settings-btn').click(function() {
+      loadServerSettings();
+      document.getElementById('settings-modal').showModal();
+    });
+
+    // 설정 저장 버튼
+    $('#save-settings-btn').click(function() {
+      saveServerSettings();
+    });
+
     // 저장 버튼 클릭 이벤트
     $('#save-btn').click(function() {
       saveDocument();
@@ -416,14 +504,7 @@
     });
 
     // 액션 버튼 클릭 이벤트 (이벤트 위임)
-    $(document).on('click', '.view-btn', function(e) {
-      e.stopPropagation();
-      const documentId = $(this).closest('tr').data('document-id');
-      const doc = allDocuments.find(d => d.documentId === documentId);
-      if (doc) {
-        showDocumentDetail(doc);
-      }
-    });
+    // view-btn 제거됨 - 행 클릭으로 대체
 
     $(document).on('click', '.edit-row-btn', function(e) {
       e.stopPropagation();
@@ -546,9 +627,6 @@
             <td>${createdDate}</td>
             <td>
               <div class="flex gap-1">
-                <button class="btn btn-xs btn-info view-btn" title="상세보기">
-                  <i class="fa-solid fa-eye"></i>
-                </button>
                 <button class="btn btn-xs btn-success edit-row-btn" title="수정">
                   <i class="fa-solid fa-pen"></i>
                 </button>
@@ -800,6 +878,135 @@
         },
         function(xhr, status, error) {
           console.error('컬렉션 초기화 오류:', error);
+        }
+      );
+    }
+
+    // 전체 재처리 함수
+    function reprocessAllDocuments() {
+      // 로딩 표시
+      if (typeof showToast === 'function') {
+        showToast('문서 재처리를 시작했습니다. 잠시만 기다려주세요...', 'info');
+      }
+
+      // 버튼 비활성화
+      $('#reprocess-all-btn').prop('disabled', true).addClass('loading');
+
+      sendFormRequest(
+        '/api/chatbot/admin/reprocess-all',
+        null,
+        function(response) {
+          // 버튼 활성화
+          $('#reprocess-all-btn').prop('disabled', false).removeClass('loading');
+
+          const totalCount = response.totalCount || 0;
+          const successCount = response.successCount || 0;
+          const failCount = response.failCount || 0;
+
+          let message = `전체 재처리 완료: 총 ${totalCount}개 (성공: ${successCount}, 실패: ${failCount})`;
+          
+          if (typeof showToast === 'function') {
+            showToast(message, failCount > 0 ? 'warning' : 'positive');
+          }
+
+          // 문서 목록 새로고침
+          loadDocuments();
+        },
+        function(xhr, status, error) {
+          // 버튼 활성화
+          $('#reprocess-all-btn').prop('disabled', false).removeClass('loading');
+          
+          console.error('전체 재처리 오류:', error);
+          if (typeof showToast === 'function') {
+            showToast('전체 재처리 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // 서버 설정 로드 함수
+    function loadServerSettings() {
+      // 청크 크기 로드
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_CHUNK_SIZE' },
+        function(response) {
+          $('#chunk-size-input').val(response.optionValue || 3000);
+        },
+        function(xhr, status, error) {
+          console.error('청크 크기 로드 오류:', error);
+          $('#chunk-size-input').val(3000);
+        }
+      );
+
+      // 청크 중첩 로드
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_CHUNK_OVERLAP' },
+        function(response) {
+          $('#chunk-overlap-input').val(response.optionValue || 300);
+        },
+        function(xhr, status, error) {
+          console.error('청크 중첩 로드 오류:', error);
+          $('#chunk-overlap-input').val(300);
+        }
+      );
+    }
+
+    // 서버 설정 저장 함수
+    function saveServerSettings() {
+      const chunkSize = $('#chunk-size-input').val();
+      const chunkOverlap = $('#chunk-overlap-input').val();
+
+      // 유효성 검사
+      if (!chunkSize || chunkSize < 500 || chunkSize > 10000) {
+        if (typeof showToast === 'function') {
+          showToast('청크 크기는 500~10000 사이의 값이어야 합니다.', 'negative');
+        }
+        return;
+      }
+
+      if (!chunkOverlap || chunkOverlap < 0 || chunkOverlap > 1000) {
+        if (typeof showToast === 'function') {
+          showToast('청크 중첩은 0~1000 사이의 값이어야 합니다.', 'negative');
+        }
+        return;
+      }
+
+      // 청크 크기 저장
+      sendFormRequest(
+        '/api/server-option/update',
+        { 
+          optionKey: 'CHATBOT_CHUNK_SIZE',
+          optionValue: chunkSize
+        },
+        function(response) {
+          // 청크 중첩 저장
+          sendFormRequest(
+            '/api/server-option/update',
+            { 
+              optionKey: 'CHATBOT_CHUNK_OVERLAP',
+              optionValue: chunkOverlap
+            },
+            function(response) {
+              if (typeof showToast === 'function') {
+                showToast('설정이 저장되었습니다. 전체 재처리를 실행하여 적용하세요.', 'positive');
+              }
+              document.getElementById('settings-modal').close();
+            },
+            function(xhr, status, error) {
+              console.error('청크 중첩 저장 오류:', error);
+              if (typeof showToast === 'function') {
+                showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
+              }
+            }
+          );
+        },
+        function(xhr, status, error) {
+          console.error('청크 크기 저장 오류:', error);
+          if (typeof showToast === 'function') {
+            showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
+          }
         }
       );
     }

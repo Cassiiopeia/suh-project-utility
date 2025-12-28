@@ -7,21 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 문서 DTO
+ * 챗봇 문서 관리 요청 DTO
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DocumentDto {
+public class ChatBotDocumentRequest {
     private UUID documentId;
     private String title;
     private String category;
     private String content;
     private String description;
-    private Boolean isActive;
-    private Boolean isProcessed;
-    private Integer chunkCount;
-    private String createdDate;
-    private String updatedDate;
 }
