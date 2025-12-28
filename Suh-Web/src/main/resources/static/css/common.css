@@ -851,7 +851,7 @@ html:not([data-theme="dark"]) .alert-info,
 .translator-page textarea {
   width: 100%;
   min-height: 170px;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #bdbdbd;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   resize: vertical;
@@ -861,7 +861,7 @@ html:not([data-theme="dark"]) .alert-info,
 }
 
 .translator-page textarea:focus {
-  border-color: #3b82f6;
+  border: 2px solid #3b82f6;
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -1156,7 +1156,7 @@ html:not([data-theme="dark"]) .alert-info,
 /* Input focus 스타일 */
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border: 2px solid #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -1328,8 +1328,9 @@ html:not([data-theme="dark"]) .select,
 [data-theme="light"] .textarea,
 [data-theme="light"] .select {
   background-color: #ffffff !important;
-  border-color: #d1d5db !important;
+  border: 1.5px solid #bdbdbd !important;
   color: #1f2937 !important;
+  padding-left: 10px !important;
 }
 
 :root:not([data-theme="dark"]) .input::placeholder,
@@ -1346,8 +1347,9 @@ html:not([data-theme="dark"]) .textarea::placeholder,
 html:not([data-theme="dark"]) textarea,
 [data-theme="light"] textarea {
   background-color: #ffffff !important;
-  border-color: #d1d5db !important;
+  border: 1.5px solid #bdbdbd !important;
   color: #1f2937 !important;
+  padding-left: 10px !important;
 }
 
 :root:not([data-theme="dark"]) textarea::placeholder,
@@ -1537,7 +1539,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 [data-theme="dark"] textarea,
 [data-theme="dark"] select {
   background-color: #374151 !important;
-  border-color: #4b5563 !important;
+  border: 1.5px solid #6b7280 !important;
   color: #e5e7eb !important;
 }
 
@@ -2012,21 +2014,23 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 .chat-message .bubble .chat-list-item {
-  display: flex;
-  gap: 8px;
+  display: block;
   margin: 4px 0;
   padding-left: 4px;
 }
 
 .chat-message .bubble .list-number {
+  display: inline;
   color: #3b82f6;
   font-weight: 600;
-  min-width: 20px;
+  margin-right: 8px;
 }
 
 .chat-message .bubble .list-bullet {
+  display: inline;
   color: #3b82f6;
   font-weight: bold;
+  margin-right: 8px;
 }
 
 /* 입력 영역 */
@@ -2041,7 +2045,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 .chatbot-input-area textarea {
   flex: 1;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #bdbdbd;
   border-radius: 14px;
   padding: 12px 16px;
   resize: none;
@@ -2647,7 +2651,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 [data-theme="dark"] .chatbot-input-area textarea {
   background-color: #374151 !important;
-  border-color: #4b5563 !important;
+  border: 1.5px solid #6b7280 !important;
   color: #f3f4f6 !important;
 }
 
@@ -2656,7 +2660,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 [data-theme="dark"] .chatbot-input-area textarea:focus {
-  border-color: #3b82f6 !important;
+  border: 2px solid #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
 }
 
@@ -2815,8 +2819,9 @@ html:not([data-theme="dark"]) .input,
 html:not([data-theme="dark"]) .textarea,
 html:not([data-theme="dark"]) .select {
   background-color: #ffffff !important;
-  border-color: #d1d5db !important;
+  border: 1.5px solid #bdbdbd !important;
   color: #1f2937 !important;
+  padding-left: 10px !important;
 }
 
 /* Light 모드 - modal */
