@@ -1,22 +1,20 @@
 package me.suhsaechan.web.controller.api;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.aiserver.dto.AiServerRequest;
 import me.suhsaechan.aiserver.dto.AiServerResponse;
+import me.suhsaechan.aiserver.dto.DownloadProgressDto;
 import me.suhsaechan.aiserver.service.AiServerService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import me.suhsaechan.aiserver.dto.DownloadProgressDto;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -76,14 +74,15 @@ public class AiServerController {
 
     /**
      * 모델 다운로드를 시작합니다 (비동기, 폴링용).
-     * @param modelName 다운로드할 모델 이름
-     * @return 성공 응답
      */
-    @PostMapping(value = "/models/pull/start", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> startModelDownload(@RequestParam String modelName) {
-        log.info("AI 모델 다운로드 시작 요청 - 모델: {}", modelName);
-        aiServerService.startModelDownload(modelName);
-        return ResponseEntity.ok(Map.of("status", "started", "modelName", modelName));
+    @PostMapping(value = "/models/pull/start", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> startModelDownload(AiServerRequest request) {
+        log.info("AI 모델 다운로드 시작 요청 - 모델: {}", request.getModelName());
+        aiServerService.startModelDownload(request.getModelName());
+        return ResponseEntity.ok(AiServerResponse.builder()
+                .isActive(true)
+                .model(request.getModelName())
+                .build());
     }
 
     /**
@@ -108,25 +107,26 @@ public class AiServerController {
 
     /**
      * 현재 진행 중인 모든 다운로드의 상태를 조회합니다.
-     * @return 다운로드 진행 상황 맵
      */
-    @GetMapping(value = "/models/pull/status", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, DownloadProgressDto>> getDownloadStatus() {
-        return ResponseEntity.ok(aiServerService.getDownloadStatus());
+    @PostMapping(value = "/models/pull/status", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> getDownloadStatus(AiServerRequest request) {
+        return ResponseEntity.ok(AiServerResponse.builder()
+                .isActive(true)
+                .downloadProgressMap(aiServerService.getDownloadStatus())
+                .build());
     }
 
     /**
      * 특정 모델의 다운로드 상태를 조회합니다.
-     * @param modelName 모델 이름
-     * @return 다운로드 진행 상황
      */
-    @GetMapping(value = "/models/pull/status/{modelName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DownloadProgressDto> getModelDownloadStatus(@PathVariable String modelName) {
-        DownloadProgressDto progress = aiServerService.getModelDownloadStatus(modelName);
-        if (progress == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(progress);
+    @PostMapping(value = "/models/pull/status/model", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiServerResponse> getModelDownloadStatus(AiServerRequest request) {
+        DownloadProgressDto progress = aiServerService.getModelDownloadStatus(request.getModelName());
+        return ResponseEntity.ok(AiServerResponse.builder()
+                .isActive(true)
+                .model(request.getModelName())
+                .downloadProgress(progress)
+                .build());
     }
 
     /**

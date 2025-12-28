@@ -67,4 +67,10 @@ public class AiServerResponse {
     // 처리 시간 (ms)
     private Long processingTime;
 
+    // 다운로드 진행 상황 (단일)
+    private DownloadProgressDto downloadProgress;
+
+    // 다운로드 진행 상황 맵 (전체)
+    private java.util.Map<String, DownloadProgressDto> downloadProgressMap;
+
 }
