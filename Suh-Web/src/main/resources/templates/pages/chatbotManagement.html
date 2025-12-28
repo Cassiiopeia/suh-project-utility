@@ -163,19 +163,15 @@
         </button>
       </form>
       <h3 class="font-bold text-lg mb-4" id="modal-title">문서 등록</h3>
-      <form id="document-form" class="space-y-4">
+      <form id="document-form">
         <input type="hidden" id="document-id">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">제목 <span class="text-red-500">*</span></span>
-            </label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">제목 *</legend>
             <input type="text" id="document-title" class="input w-full" placeholder="문서 제목을 입력하세요">
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">카테고리 <span class="text-red-500">*</span></span>
-            </label>
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">카테고리 *</legend>
             <select id="document-category" class="select w-full">
               <option value="site-info">사이트 정보</option>
               <option value="features">기능 안내</option>
@@ -184,23 +180,17 @@
               <option value="project">프로젝트 정보</option>
               <option value="other">기타</option>
             </select>
-          </div>
+          </fieldset>
         </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">설명</span>
-          </label>
+        <fieldset class="fieldset mb-4">
+          <legend class="fieldset-legend">설명</legend>
           <input type="text" id="document-description" class="input w-full" placeholder="문서에 대한 간단한 설명 (선택)">
-        </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">내용 (Markdown) <span class="text-red-500">*</span></span>
-          </label>
-          <textarea id="document-content" class="textarea h-64 font-mono text-sm" placeholder="문서 내용을 마크다운 형식으로 입력하세요..."></textarea>
-          <label class="label">
-            <span class="label-text-alt text-gray-500">마크다운 문법을 지원합니다. 청크 분할: 약 500자 단위</span>
-          </label>
-        </div>
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">내용 (Markdown) *</legend>
+          <textarea id="document-content" class="textarea h-64 w-full font-mono text-sm" placeholder="문서 내용을 마크다운 형식으로 입력하세요..."></textarea>
+          <p class="label text-gray-500">마크다운 문법을 지원합니다.</p>
+        </fieldset>
       </form>
       <div class="modal-action">
         <form method="dialog">
@@ -376,19 +366,19 @@
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-sm">청크 크기</span>
-                <span class="label-text-alt text-gray-500 text-xs">기본: 3000</span>
+                <span class="label-text-alt text-gray-500 text-xs">기본: 500</span>
               </label>
               <input type="number" id="chunk-size-input" class="input input-bordered input-sm"
-                     min="500" max="10000" step="100" placeholder="3000">
+                     min="100" max="10000" step="100" placeholder="500">
             </div>
 
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-sm">청크 중첩</span>
-                <span class="label-text-alt text-gray-500 text-xs">기본: 300</span>
+                <span class="label-text-alt text-gray-500 text-xs">기본: 100</span>
               </label>
               <input type="number" id="chunk-overlap-input" class="input input-bordered input-sm"
-                     min="0" max="1000" step="50" placeholder="300">
+                     min="0" max="1000" step="50" placeholder="100">
             </div>
 
             <button class="btn btn-outline btn-sm w-full" id="save-settings-btn">
@@ -1092,11 +1082,11 @@
         '/api/server-option/get',
         { optionKey: 'CHATBOT_CHUNK_SIZE' },
         function(response) {
-          $('#chunk-size-input').val(response.optionValue || 3000);
+          $('#chunk-size-input').val(response.optionValue || 500);
         },
         function(xhr, status, error) {
           console.error('청크 크기 로드 오류:', error);
-          $('#chunk-size-input').val(3000);
+          $('#chunk-size-input').val(500);
         }
       );
 
@@ -1105,11 +1095,11 @@
         '/api/server-option/get',
         { optionKey: 'CHATBOT_CHUNK_OVERLAP' },
         function(response) {
-          $('#chunk-overlap-input').val(response.optionValue || 300);
+          $('#chunk-overlap-input').val(response.optionValue || 100);
         },
         function(xhr, status, error) {
           console.error('청크 중첩 로드 오류:', error);
-          $('#chunk-overlap-input').val(300);
+          $('#chunk-overlap-input').val(100);
         }
       );
     }

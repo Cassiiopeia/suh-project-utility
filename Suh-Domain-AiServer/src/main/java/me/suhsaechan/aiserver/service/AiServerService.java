@@ -63,10 +63,10 @@ public class AiServerService {
     private final Map<String, DownloadProgressDto> downloadProgressMap = new ConcurrentHashMap<>();
 
 
-    // OkHttp 클라이언트 (타임아웃 없음 - 장시간 다운로드 지원)
+    // OkHttp 클라이언트 (readTimeout 60초 - 스트림 블로킹 감지)
     private final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .readTimeout(0, java.util.concurrent.TimeUnit.SECONDS)
-            .writeTimeout(0, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
             .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
             .build();
 
@@ -341,9 +341,11 @@ public class AiServerService {
 
     /**
      * AI 서버에서 모델을 삭제합니다.
+     * SuhAiderEngine을 사용하여 모델 삭제 및 캐시 자동 갱신
      */
     public AiServerResponse deleteModel(AiServerRequest request) {
         log.info("AI 서버 모델 삭제 시작 - 모델: {}", request.getModelName());
+        checkSuhAiderEngine();
 
         if (request.getModelName() == null || request.getModelName().trim().isEmpty()) {
             log.error("모델 이름이 비어있습니다");
@@ -351,22 +353,8 @@ public class AiServerService {
         }
 
         try {
-            String deleteUrl = baseUrl + "/api/delete";
-            log.debug("모델 삭제 URL: {}", deleteUrl);
-
-            // JSON 페이로드 생성
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("name", request.getModelName());
-
-            // 헤더 설정
-            Map<String, String> headers = new HashMap<>();
-            headers.put("X-API-Key", apiKey);
-            headers.put("Content-Type", "application/json");
-
-            // NetworkUtil을 통해 HTTP DELETE 요청 수행
-            String jsonPayload = objectMapper.writeValueAsString(payload);
-            String jsonResponse = networkUtil.sendPostRequest(deleteUrl, headers, jsonPayload);
-            log.info("모델 삭제 성공 - 모델: {}", request.getModelName());
+            boolean result = suhAiderEngine.deleteModel(request.getModelName());
+            log.info("모델 삭제 완료 - 모델: {}, 결과: {}", request.getModelName(), result);
 
             return AiServerResponse.builder()
                     .isActive(true)
@@ -374,13 +362,8 @@ public class AiServerService {
                     .model(request.getModelName())
                     .build();
 
-        } catch (JsonProcessingException e) {
-            log.error("JSON 직렬화 실패: {}", e.getMessage(), e);
-            throw new CustomException(ErrorCode.JSON_PARSING_ERROR);
-        } catch (CustomException e) {
-            throw e;
         } catch (Exception e) {
-            log.error("모델 삭제 중 예기치 않은 오류 발생: {}", e.getMessage(), e);
+            log.error("모델 삭제 중 오류 발생: {}", e.getMessage(), e);
             throw new CustomException(ErrorCode.AI_SERVER_MODEL_DELETE_FAILED);
         }
     }
@@ -512,6 +495,7 @@ public class AiServerService {
         }
 
         // 초기 진행 상황 생성
+        long currentTime = System.currentTimeMillis();
         DownloadProgressDto progress = DownloadProgressDto.builder()
                 .modelName(modelName)
                 .status("downloading")
@@ -519,7 +503,8 @@ public class AiServerService {
                 .total(0L)
                 .percentage(0)
                 .message("다운로드 시작 중...")
-                .startTime(System.currentTimeMillis())
+                .startTime(currentTime)
+                .lastUpdateTime(currentTime)
                 .build();
         downloadProgressMap.put(modelName, progress);
 
@@ -527,10 +512,10 @@ public class AiServerService {
         Thread downloadThread = new Thread(() -> {
             try {
                 log.info("[다운로드] === 다운로드 스트리밍 스레드 시작 === 모델: {}, 스레드: {}", modelName, Thread.currentThread().getName());
-                streamModelDownloadWithoutEmitter(modelName);
+                streamModelDownloadWithRetry(modelName);
                 log.info("[다운로드] === 다운로드 스트리밍 스레드 완료 === 모델: {}", modelName);
             } catch (Exception e) {
-                log.error("[다운로드] === 다운로드 스트리밍 스레드 실패 === 모델: {}, 에러: {}, 스택: {}", modelName, e.getMessage(), e);
+                log.error("[다운로드] === 다운로드 스트리밍 스레드 실패 === 모델: {}, 에러: {}", modelName, e.getMessage(), e);
                 updateProgressError(modelName, e.getMessage());
             }
         });
@@ -538,6 +523,71 @@ public class AiServerService {
         downloadThread.setName("DownloadThread-" + modelName);
         downloadThread.start();
         log.info("[다운로드] === 다운로드 스트리밍 스레드 시작됨 === 모델: {}, 스레드 ID: {}", modelName, downloadThread.getId());
+    }
+
+    /**
+     * 재시도 로직이 포함된 모델 다운로드.
+     * 타임아웃이나 연결 끊김 시 최대 3회 재시도합니다.
+     */
+    private void streamModelDownloadWithRetry(String modelName) {
+        int maxRetries = 3;
+        int retryCount = 0;
+
+        while (retryCount < maxRetries) {
+            try {
+                streamModelDownloadWithoutEmitter(modelName);
+                return;
+            } catch (java.net.SocketTimeoutException e) {
+                retryCount++;
+                log.warn("[다운로드] 타임아웃 발생, 재시도 {}/{} - 모델: {}, 에러: {}",
+                        retryCount, maxRetries, modelName, e.getMessage());
+
+                if (retryCount >= maxRetries) {
+                    log.error("[다운로드] 최대 재시도 횟수 초과 - 모델: {}", modelName);
+                    updateProgressError(modelName, "타임아웃으로 다운로드 실패 (재시도 " + maxRetries + "회 초과)");
+                    return;
+                }
+
+                // 재시도 전 진행상황 업데이트
+                DownloadProgressDto progress = downloadProgressMap.get(modelName);
+                if (progress != null) {
+                    progress.setMessage("재연결 시도 중... (" + retryCount + "/" + maxRetries + ")");
+                    progress.setLastUpdateTime(System.currentTimeMillis());
+                }
+
+                // 2초 대기 후 재시도
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            } catch (IOException e) {
+                // 다른 IOException은 완료 체크 후 처리
+                DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
+                if (currentProgress != null &&
+                    "completed".equals(currentProgress.getStatus())) {
+                    log.info("[다운로드] 스트림 종료되었지만 다운로드 완료 상태 - 모델: {}", modelName);
+                    return;
+                }
+
+                retryCount++;
+                log.warn("[다운로드] IO 오류 발생, 재시도 {}/{} - 모델: {}, 에러: {}",
+                        retryCount, maxRetries, modelName, e.getMessage());
+
+                if (retryCount >= maxRetries) {
+                    updateProgressError(modelName, "연결 오류로 다운로드 실패");
+                    return;
+                }
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -626,20 +676,20 @@ public class AiServerService {
                             progress.setTotal(total);
                             progress.setPercentage(percentage);
                             progress.setMessage(status);
+                            progress.setLastUpdateTime(System.currentTimeMillis());
                             log.debug("[DEBUG] 진행 상황 맵 업데이트 완료: {}", progress);
                         } else {
                             log.warn("[DEBUG] 진행 상황 맵에서 모델을 찾을 수 없음: {}", modelName);
                         }
 
-                        // 완료 확인: status가 "success"이거나 completed == total인 경우
-                        boolean isCompleted = "success".equals(status) ||
-                                             (total > 0 && completed > 0 && completed >= total);
+                        // 완료 확인: status가 "success"인 경우만 (개별 레이어 완료가 아닌 전체 모델 다운로드 완료)
+                        boolean isCompleted = "success".equals(status);
 
                         log.debug("[DEBUG] 완료 체크 - status: {}, total: {}, completed: {}, isCompleted: {}",
                                   status, total, completed, isCompleted);
 
                         if (isCompleted) {
-                            log.info("[다운로드] 모델 다운로드 완료 - 모델: {}, completed: {}/{}", modelName, completed, total);
+                            log.info("[다운로드] 모델 다운로드 완료 (status=success) - 모델: {}, completed: {}/{}", modelName, completed, total);
                             updateProgressCompleted(modelName);
                             break;
                         }
@@ -653,22 +703,17 @@ public class AiServerService {
         } catch (IOException e) {
             // 스트림이 중간에 끊긴 경우 (stream was reset 등)
             String errorMessage = e.getMessage();
-            log.warn("[다운로드] 스트림 읽기 중 오류 발생 - 모델: {}, 에러: {}, 스택: {}", modelName, errorMessage, e);
-            
-            // 스트림이 끊겨도 다운로드는 계속 진행될 수 있으므로, 
-            // 현재 진행 상황을 확인하여 완료되었는지 체크
+            log.warn("[다운로드] 스트림 읽기 중 오류 발생 - 모델: {}, 에러: {}", modelName, errorMessage, e);
+
+            // 스트림이 끊긴 경우 현재 상태 확인
             DownloadProgressDto currentProgress = downloadProgressMap.get(modelName);
             if (currentProgress != null) {
-                // 완료 여부 확인 (completed >= total이면 완료로 간주)
-                if (currentProgress.getTotal() > 0 && 
-                    currentProgress.getCompleted() >= currentProgress.getTotal()) {
-                    log.info("[다운로드] 스트림이 끊겼지만 다운로드는 완료된 것으로 확인 - 모델: {}, completed: {}/{}", 
-                            modelName, currentProgress.getCompleted(), currentProgress.getTotal());
-                    updateProgressCompleted(modelName);
+                // status가 이미 completed인 경우만 완료로 처리 (개별 레이어 완료가 아닌 실제 완료)
+                if ("completed".equals(currentProgress.getStatus())) {
+                    log.info("[다운로드] 스트림이 끊겼지만 이미 완료 상태 - 모델: {}", modelName);
                 } else {
-                    // 스트림이 끊겼지만 다운로드가 완료되지 않은 경우
-                    // 에러 상태로 변경하되, 진행 상황은 유지
-                    log.warn("[다운로드] 스트림이 끊겼고 다운로드 미완료 - 모델: {}, completed: {}/{}", 
+                    // 스트림이 끊겼고 완료 상태가 아닌 경우 에러 처리
+                    log.warn("[다운로드] 스트림이 끊겼고 다운로드 미완료 - 모델: {}, completed: {}/{}",
                             modelName, currentProgress.getCompleted(), currentProgress.getTotal());
                     updateProgressError(modelName, "스트림 연결 오류: " + errorMessage);
                 }
@@ -770,6 +815,7 @@ public class AiServerService {
                             progress.setTotal(total);
                             progress.setPercentage(percentage);
                             progress.setMessage(status);
+                            progress.setLastUpdateTime(System.currentTimeMillis());
                             log.debug("[DEBUG] 진행 상황 맵 업데이트 완료: {}", progress);
                         } else {
                             log.warn("[DEBUG] 진행 상황 맵에서 모델을 찾을 수 없음: {}", modelName);
@@ -817,16 +863,14 @@ public class AiServerService {
                             return; // 스트림 처리 중단
                         }
 
-                        // 완료 확인: status가 "success"이거나 completed == total인 경우
-                        // digest 필드는 다운로드 시작 시부터 존재하므로 완료 조건으로 부적합
-                        boolean isCompleted = "success".equals(status) ||
-                                             (total > 0 && completed > 0 && completed >= total);
+                        // 완료 확인: status가 "success"인 경우만 (개별 레이어 완료가 아닌 전체 모델 다운로드 완료)
+                        boolean isCompleted = "success".equals(status);
 
                         log.debug("[DEBUG] 완료 체크 - status: {}, total: {}, completed: {}, isCompleted: {}",
                                   status, total, completed, isCompleted);
 
                         if (isCompleted) {
-                            log.info("[SSE] 모델 다운로드 완료 - 모델: {}, completed: {}/{}", modelName, completed, total);
+                            log.info("[SSE] 모델 다운로드 완료 (status=success) - 모델: {}, completed: {}/{}", modelName, completed, total);
                             updateProgressCompleted(modelName);
 
                             // 업데이트된 progress 가져오기
