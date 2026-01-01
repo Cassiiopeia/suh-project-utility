@@ -65,6 +65,14 @@ public class DashboardService {
             Long totalNoticeViews = noticeRepository.sumTotalViewCount();
             Long totalStudyViews = studyPostRepository.sumTotalViewCount();
 
+            // 페이지 조회수
+            Long totalProfileViews = statisticsService.getTotalProfileViews();
+            Long todayProfileViews = statisticsService.getTodayProfileViews();
+
+            // 세종대 인증 통계
+            Long totalSejongAuth = statisticsService.getTotalSejongAuth();
+            Long todaySejongAuth = statisticsService.getTodaySejongAuth();
+
             DashboardSummaryDto summary = DashboardSummaryDto.builder()
                 .totalUniqueVisitors(totalUniqueVisitors)
                 .todayUniqueVisitors(todayUniqueVisitors)
@@ -80,6 +88,10 @@ public class DashboardService {
                 .todayOutputTokens(todayOutputTokens)
                 .totalNoticeViews(totalNoticeViews)
                 .totalStudyViews(totalStudyViews)
+                .totalProfileViews(totalProfileViews)
+                .todayProfileViews(todayProfileViews)
+                .totalSejongAuth(totalSejongAuth)
+                .todaySejongAuth(todaySejongAuth)
                 .featureUsageCounts(statisticsService.getFeatureUsageCounts())
                 .build();
 
@@ -106,6 +118,10 @@ public class DashboardService {
                 .todayOutputTokens(0L)
                 .totalNoticeViews(0L)
                 .totalStudyViews(0L)
+                .totalProfileViews(0L)
+                .todayProfileViews(0L)
+                .totalSejongAuth(0L)
+                .todaySejongAuth(0L)
                 .build();
         }
     }

@@ -26,7 +26,8 @@ public class PublicEndpointConfig {
         "/api/chatbot/chat",        // 챗봇 채팅 (비스트리밍)
         "/api/chatbot/chat/stream", // 챗봇 채팅 (스트리밍 SSE)
         "/api/chatbot/feedback",    // 챗봇 피드백
-        "/api/chatbot/history"      // 챗봇 대화 이력
+        "/api/chatbot/history",     // 챗봇 대화 이력
+        "/api/sejong-auth/**"       // 세종대 인증 테스트
     );
   }
 
@@ -41,6 +42,7 @@ public class PublicEndpointConfig {
         "/profile",
         "/issue-helper",  // GitHub 이슈 도우미 페이지
         "/translator",    // AI 번역기 페이지
+        "/sejong-auth",   // 세종대 인증 테스트 페이지
         "/css/**",
         "/js/**",
         "/images/**",

@@ -70,6 +70,11 @@ public class PageController {
 	public String translatorPage(Model model){
 		return "pages/translator";
 	}
+
+	@GetMapping("/sejong-auth")
+	public String sejongAuthPage(){
+		return "pages/sejongAuth";
+	}
 	
 	@GetMapping("/notice-management")
 	public String noticeManagementPage(HttpSession session, Model model){

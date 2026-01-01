@@ -1,0 +1,532 @@
+<!-- src/main/resources/templates/pages/sejongAuth.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='세종대 인증 모듈-SAECHAN-LAB')}"></head>
+<body class="min-h-screen">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Hero Section -->
+  <section class="sejong-auth-hero relative overflow-hidden bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 py-12 rounded-2xl mb-8 shadow-lg">
+    <div class="sejong-auth-hero-overlay absolute inset-0 bg-white/20"></div>
+    <div class="relative text-center px-6">
+      <div class="flex justify-center gap-2 mb-4 flex-wrap">
+        <span class="badge bg-indigo-600/80 text-white border-indigo-700">v1.2.0</span>
+        <span class="badge bg-indigo-600/80 text-white border-indigo-700">Java 17+</span>
+        <span class="badge bg-indigo-600/80 text-white border-indigo-700">Spring Boot 3.x</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2 flex items-center justify-center gap-3 text-gray-800">
+        <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
+        세종대학교 인증 모듈
+      </h1>
+      <p class="font-mono text-gray-700 text-sm sm:text-base mb-1">SUH Sejong University Auth Module</p>
+      <div class="mt-4 flex justify-center gap-2">
+        <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank"
+           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-gray-900">
+          <i class="fa-brands fa-github"></i>
+          GitHub
+        </a>
+        <a href="https://nexus.suhsaechan.kr/#browse/browse:maven-releases:kr%2Fsuhsaechan%2Fsejong-univ-auth" target="_blank"
+           class="btn btn-sm bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-700">
+          <i class="fa-solid fa-box"></i>
+          Nexus
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2단 그리드 (입력 + 결과) -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- 입력 카드 -->
+    <div class="card bg-base-100 shadow-lg border border-gray-100">
+      <div class="card-body">
+        <h2 class="card-title text-lg mb-4">
+          <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+            <i class="fa-solid fa-key text-blue-600"></i>
+          </div>
+          인증 정보 입력
+          <span class="badge badge-soft badge-info text-xs ml-1">
+            <i class="fa-solid fa-shield-halved"></i>
+            안심하세요! 데이터를 저장하지 않아요!
+          </span>
+        </h2>
+
+        <!-- 학번 입력 -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-medium">학번</span>
+          </label>
+          <input type="text" id="studentId" placeholder="예: 18010561"
+                 class="input input-bordered w-full" autocomplete="off"/>
+        </div>
+
+        <!-- 비밀번호 입력 -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-medium">비밀번호</span>
+          </label>
+          <div class="relative">
+            <input type="password" id="password" placeholder="포털 비밀번호"
+                   class="input input-bordered w-full pr-12"/>
+            <button type="button" id="togglePassword"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <i class="fa-solid fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 인증 방식 선택 -->
+        <fieldset class="fieldset mb-6">
+          <legend class="fieldset-legend text-sm font-medium text-gray-700 mb-3">인증 방식 선택</legend>
+          <div class="space-y-3">
+            <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="authType" value="INTEGRATED" class="radio radio-primary" checked/>
+              <div class="flex-1">
+                <span class="font-medium">통합 인증</span>
+                <span class="badge badge-sm badge-success ml-2">추천</span>
+                <p class="text-xs text-gray-500 mt-1">DHC + SIS 모든 정보 조회</p>
+              </div>
+            </label>
+            <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="authType" value="DHC" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">DHC 전용</span>
+                <p class="text-xs text-gray-500 mt-1">대양휴머니티칼리지 + 고전독서 정보</p>
+              </div>
+            </label>
+            <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="authType" value="SIS" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">SIS 전용</span>
+                <p class="text-xs text-gray-500 mt-1">학사정보시스템 + 연락처 정보</p>
+              </div>
+            </label>
+            <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="authType" value="DHC_RAW" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">DHC + Raw HTML</span>
+                <p class="text-xs text-gray-500 mt-1">원본 HTML 응답 포함</p>
+              </div>
+            </label>
+            <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="authType" value="SIS_RAW" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">SIS + Raw JSON</span>
+                <p class="text-xs text-gray-500 mt-1">원본 JSON 응답 포함</p>
+              </div>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- 인증 버튼 -->
+        <button id="authBtn" class="btn btn-primary btn-lg w-full">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          인증하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 결과 카드 -->
+    <div class="card bg-base-100 shadow-lg border border-gray-100">
+      <div class="card-body">
+        <h2 class="card-title text-lg mb-4">
+          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+            <i class="fa-solid fa-chart-simple text-green-600"></i>
+          </div>
+          인증 결과
+        </h2>
+
+        <!-- Tabs -->
+        <div role="tablist" class="tabs tabs-border mb-4">
+          <a role="tab" class="tab" data-tab="table">
+            <i class="fa-solid fa-table mr-1"></i> 테이블
+          </a>
+          <a role="tab" class="tab" data-tab="json">
+            <i class="fa-solid fa-code mr-1"></i> JSON
+          </a>
+        </div>
+
+        <!-- 결과 영역 -->
+        <div id="resultContainer" class="sejong-auth-result-container bg-gray-50 rounded-lg p-4 min-h-80 overflow-auto">
+          <!-- 초기 상태 -->
+          <div id="resultPlaceholder" class="text-center text-gray-400 py-16">
+            <i class="fa-solid fa-arrow-left text-5xl mb-4 opacity-50"></i>
+            <p class="text-sm">인증 정보를 입력하고<br/>인증하기 버튼을 눌러주세요</p>
+          </div>
+
+          <!-- 로딩 상태 -->
+          <div id="resultLoading" class="hidden py-8">
+            <div class="flex flex-col items-center gap-4">
+              <span class="loading loading-spinner loading-lg text-primary"></span>
+              <p class="text-gray-500">세종대학교 포털에 인증 중...</p>
+            </div>
+          </div>
+
+          <!-- JSON 결과 -->
+          <div id="resultJsonWrapper" class="hidden relative">
+            <button type="button" id="copyJsonBtn"
+                    class="absolute top-2 right-2 btn btn-ghost btn-xs text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                    title="JSON 복사">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+            <pre id="resultJson" class="text-sm whitespace-pre-wrap break-words pt-6"></pre>
+          </div>
+
+          <!-- 테이블 결과 -->
+          <div id="resultTable" class="hidden">
+            <table class="table table-zebra w-full">
+              <tbody id="resultTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collapse 섹션들 -->
+  <div class="space-y-4">
+    <!-- API 사용법 -->
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+      <input type="checkbox"/>
+      <div class="collapse-title text-lg font-medium flex items-center gap-2">
+        <i class="fa-solid fa-code text-blue-500"></i>
+        API 사용법
+      </div>
+      <div class="collapse-content">
+        <div class="pt-4 space-y-4">
+          <div class="mockup-code text-sm">
+            <pre data-prefix="1"><code>// 1. 의존성 추가 (Gradle)</code></pre>
+            <pre data-prefix="2"><code>implementation 'kr.suhsaechan:sejong-univ-auth:1.2.0'</code></pre>
+            <pre data-prefix="3"><code></code></pre>
+            <pre data-prefix="4"><code>// 2. 통합 인증 사용</code></pre>
+            <pre data-prefix="5"><code>@Autowired</code></pre>
+            <pre data-prefix="6"><code>private SuhSejongAuthEngine authEngine;</code></pre>
+            <pre data-prefix="7"><code></code></pre>
+            <pre data-prefix="8"><code>SejongAuthResult result = authEngine.authenticate("학번", "비밀번호");</code></pre>
+            <pre data-prefix="9"><code>String name = result.getName();       // "홍길동"</code></pre>
+            <pre data-prefix="10"><code>String major = result.getMajor();     // "컴퓨터공학과"</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 에러 코드 설명 -->
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+      <input type="checkbox"/>
+      <div class="collapse-title text-lg font-medium flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+        에러 코드 설명
+      </div>
+      <div class="collapse-content">
+        <div class="pt-4">
+          <table class="table table-zebra w-full text-sm">
+            <thead>
+              <tr>
+                <th>코드</th>
+                <th>설명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono text-error">AUTHENTICATION_FAILED</td><td>학번 또는 비밀번호가 일치하지 않음</td></tr>
+              <tr><td class="font-mono text-error">INVALID_INPUT</td><td>입력값이 비어있거나 유효하지 않음</td></tr>
+              <tr><td class="font-mono text-error">CONNECTION_FAILED</td><td>세종대학교 포털 연결 실패</td></tr>
+              <tr><td class="font-mono text-error">CONNECTION_TIMEOUT</td><td>연결 시간 초과</td></tr>
+              <tr><td class="font-mono text-error">DATA_FETCH_FAILED</td><td>학생 정보 조회 실패</td></tr>
+              <tr><td class="font-mono text-error">PARSE_ERROR</td><td>HTML/JSON 파싱 오류</td></tr>
+              <tr><td class="font-mono text-error">SESSION_ERROR</td><td>세션 처리 오류</td></tr>
+              <tr><td class="font-mono text-error">SSL_CONFIGURATION_ERROR</td><td>SSL 설정 오류</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 데이터 소스 설명 -->
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+      <input type="checkbox"/>
+      <div class="collapse-title text-lg font-medium flex items-center gap-2">
+        <i class="fa-solid fa-database text-blue-500"></i>
+        데이터 소스 설명
+      </div>
+      <div class="collapse-content">
+        <div class="pt-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="sejong-auth-datasource-dhc card bg-blue-50 border border-blue-200">
+              <div class="card-body p-4">
+                <h3 class="font-bold text-blue-700 flex items-center gap-2">
+                  <i class="fa-solid fa-book"></i> DHC (대양휴머니티칼리지)
+                </h3>
+                <p class="text-sm text-gray-600 mt-2">classic.sejong.ac.kr</p>
+                <ul class="text-sm text-gray-600 mt-2 space-y-1">
+                  <li>- 학생 기본 정보 (학번, 이름, 학과)</li>
+                  <li>- 학년, 재학 상태</li>
+                  <li>- 고전독서 인증 정보</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sejong-auth-datasource-sis card bg-green-50 border border-green-200">
+              <div class="card-body p-4">
+                <h3 class="font-bold text-green-700 flex items-center gap-2">
+                  <i class="fa-solid fa-user"></i> SIS (학사정보시스템)
+                </h3>
+                <p class="text-sm text-gray-600 mt-2">sjpt.sejong.ac.kr</p>
+                <ul class="text-sm text-gray-600 mt-2 space-y-1">
+                  <li>- 학생 기본 정보</li>
+                  <li>- 이메일 주소</li>
+                  <li>- 전화번호</li>
+                  <li>- 영어 이름</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+  $(document).ready(function() {
+    initElements();
+    setupEventHandlers();
+    initTab();
+  });
+
+  let currentTab = localStorage.getItem('sejongAuthTab') || 'table';
+  let lastResult = null;
+
+  function initElements() {
+    window.elements = {
+      studentId: document.getElementById('studentId'),
+      password: document.getElementById('password'),
+      authBtn: document.getElementById('authBtn'),
+      togglePassword: document.getElementById('togglePassword'),
+      eyeIcon: document.getElementById('eyeIcon'),
+      resultContainer: document.getElementById('resultContainer'),
+      resultPlaceholder: document.getElementById('resultPlaceholder'),
+      resultLoading: document.getElementById('resultLoading'),
+      resultJsonWrapper: document.getElementById('resultJsonWrapper'),
+      resultJson: document.getElementById('resultJson'),
+      copyJsonBtn: document.getElementById('copyJsonBtn'),
+      resultTable: document.getElementById('resultTable'),
+      resultTableBody: document.getElementById('resultTableBody')
+    };
+  }
+
+  function initTab() {
+    document.querySelectorAll('[data-tab]').forEach(t => {
+      t.classList.remove('tab-active');
+    });
+    const activeTab = document.querySelector(`[data-tab="${currentTab}"]`);
+    if (activeTab) {
+      activeTab.classList.add('tab-active');
+    }
+  }
+
+  function setupEventHandlers() {
+    window.elements.authBtn.addEventListener('click', authenticate);
+    window.elements.togglePassword.addEventListener('click', togglePasswordVisibility);
+    window.elements.studentId.addEventListener('keypress', handleEnterKey);
+    window.elements.password.addEventListener('keypress', handleEnterKey);
+    window.elements.copyJsonBtn.addEventListener('click', copyJsonToClipboard);
+
+    document.querySelectorAll('[data-tab]').forEach(tab => {
+      tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab(this.dataset.tab);
+      });
+    });
+  }
+
+  function copyJsonToClipboard() {
+    const json = window.elements.resultJson.textContent;
+    navigator.clipboard.writeText(json).then(() => {
+      showToast('JSON이 클립보드에 복사되었습니다!', 'positive');
+    }).catch(() => {
+      showToast('복사에 실패했습니다.', 'negative');
+    });
+  }
+
+  function handleEnterKey(e) {
+    if (e.key === 'Enter') {
+      authenticate();
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const passwordInput = window.elements.password;
+    const eyeIcon = window.elements.eyeIcon;
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye');
+    }
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    localStorage.setItem('sejongAuthTab', tab);
+
+    document.querySelectorAll('[data-tab]').forEach(t => {
+      t.classList.remove('tab-active');
+    });
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('tab-active');
+
+    if (lastResult) {
+      renderResult(lastResult);
+    }
+  }
+
+  function authenticate() {
+    const studentId = window.elements.studentId.value.trim();
+    const password = window.elements.password.value;
+    const authType = document.querySelector('input[name="authType"]:checked').value;
+
+    if (!studentId) {
+      showToast('학번을 입력해주세요.', 'warning');
+      window.elements.studentId.focus();
+      return;
+    }
+
+    if (!password) {
+      showToast('비밀번호를 입력해주세요.', 'warning');
+      window.elements.password.focus();
+      return;
+    }
+
+    showLoading();
+
+    const formData = new FormData();
+    formData.append('studentId', studentId);
+    formData.append('password', password);
+    formData.append('authType', authType);
+
+    $.ajax({
+      url: '/api/sejong-auth/authenticate',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        lastResult = response;
+        renderResult(response);
+
+        if (response.isSuccess) {
+          showToast('인증에 성공했습니다!', 'positive');
+        } else {
+          showToast('인증에 실패했습니다: ' + (response.errorMessage || response.errorCode), 'negative');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Authentication error:', error);
+        hideLoading();
+        showToast('인증 요청 중 오류가 발생했습니다.', 'negative');
+      }
+    });
+  }
+
+  function showLoading() {
+    window.elements.resultPlaceholder.classList.add('hidden');
+    window.elements.resultJsonWrapper.classList.add('hidden');
+    window.elements.resultTable.classList.add('hidden');
+    window.elements.resultLoading.classList.remove('hidden');
+    window.elements.authBtn.disabled = true;
+    window.elements.authBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> 인증 중...';
+  }
+
+  function hideLoading() {
+    window.elements.resultLoading.classList.add('hidden');
+    window.elements.authBtn.disabled = false;
+    window.elements.authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> 인증하기';
+  }
+
+  function renderResult(result) {
+    hideLoading();
+
+    if (currentTab === 'json') {
+      window.elements.resultJson.textContent = JSON.stringify(result, null, 2);
+      window.elements.resultJsonWrapper.classList.remove('hidden');
+      window.elements.resultTable.classList.add('hidden');
+    } else {
+      renderTableResult(result);
+      window.elements.resultTable.classList.remove('hidden');
+      window.elements.resultJsonWrapper.classList.add('hidden');
+    }
+  }
+
+  function renderTableResult(result) {
+    const tbody = window.elements.resultTableBody;
+    tbody.innerHTML = '';
+
+    const fields = [
+      { key: 'isSuccess', label: '인증 성공', format: v => v ? '<span class="badge badge-success">성공</span>' : '<span class="badge badge-error">실패</span>' },
+      { key: 'authType', label: '인증 방식' },
+      { key: 'studentId', label: '학번' },
+      { key: 'name', label: '이름' },
+      { key: 'major', label: '학과' },
+      { key: 'grade', label: '학년' },
+      { key: 'status', label: '상태' },
+      { key: 'email', label: '이메일' },
+      { key: 'phoneNumber', label: '전화번호' },
+      { key: 'englishName', label: '영어 이름' },
+      { key: 'authenticatedAt', label: '인증 시간' },
+      { key: 'errorCode', label: '에러 코드', format: v => v ? `<span class="text-error font-mono">${v}</span>` : '-' },
+      { key: 'errorMessage', label: '에러 메시지', format: v => v ? `<span class="text-error">${v}</span>` : '-' }
+    ];
+
+    fields.forEach(field => {
+      const value = result[field.key];
+      if (value !== null && value !== undefined) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <th class="font-medium text-gray-600 w-32">${field.label}</th>
+          <td>${field.format ? field.format(value) : (value || '-')}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+
+    if (result.classicReading) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <th class="font-medium text-gray-600 w-32">고전독서</th>
+        <td><pre class="text-xs whitespace-pre-wrap">${JSON.stringify(result.classicReading, null, 2)}</pre></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    if (result.rawHtml) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <th class="font-medium text-gray-600 w-32">Raw HTML</th>
+        <td><details class="collapse collapse-arrow"><summary class="collapse-title text-sm p-0 min-h-0">HTML 보기 (클릭)</summary><pre class="text-xs whitespace-pre-wrap max-h-48 overflow-auto bg-gray-100 p-2 rounded mt-2">${escapeHtml(result.rawHtml)}</pre></details></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    if (result.rawJson) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <th class="font-medium text-gray-600 w-32">Raw JSON</th>
+        <td><details class="collapse collapse-arrow"><summary class="collapse-title text-sm p-0 min-h-0">JSON 보기 (클릭)</summary><pre class="text-xs whitespace-pre-wrap max-h-48 overflow-auto bg-gray-100 p-2 rounded mt-2">${result.rawJson}</pre></details></td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+</script>
+</body>
+</html>

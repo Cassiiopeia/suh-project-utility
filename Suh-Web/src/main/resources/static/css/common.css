@@ -851,7 +851,7 @@ html:not([data-theme="dark"]) .alert-info,
 .translator-page textarea {
   width: 100%;
   min-height: 170px;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #bdbdbd;
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   resize: vertical;
@@ -861,7 +861,7 @@ html:not([data-theme="dark"]) .alert-info,
 }
 
 .translator-page textarea:focus {
-  border-color: #3b82f6;
+  border: 2px solid #3b82f6;
   outline: none;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -1156,7 +1156,7 @@ html:not([data-theme="dark"]) .alert-info,
 /* Input focus 스타일 */
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #3b82f6;
+  border: 2px solid #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -1328,8 +1328,9 @@ html:not([data-theme="dark"]) .select,
 [data-theme="light"] .textarea,
 [data-theme="light"] .select {
   background-color: #ffffff !important;
-  border-color: #d1d5db !important;
+  border: 1.5px solid #bdbdbd !important;
   color: #1f2937 !important;
+  padding-left: 10px !important;
 }
 
 :root:not([data-theme="dark"]) .input::placeholder,
@@ -1346,8 +1347,9 @@ html:not([data-theme="dark"]) .textarea::placeholder,
 html:not([data-theme="dark"]) textarea,
 [data-theme="light"] textarea {
   background-color: #ffffff !important;
-  border-color: #d1d5db !important;
+  border: 1.5px solid #bdbdbd !important;
   color: #1f2937 !important;
+  padding-left: 10px !important;
 }
 
 :root:not([data-theme="dark"]) textarea::placeholder,
@@ -1537,7 +1539,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 [data-theme="dark"] textarea,
 [data-theme="dark"] select {
   background-color: #374151 !important;
-  border-color: #4b5563 !important;
+  border: 1.5px solid #6b7280 !important;
   color: #e5e7eb !important;
 }
 
@@ -1630,6 +1632,150 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 [data-theme="dark"] .border-red-300 {
   border-color: #ef4444 !important;
+}
+
+/* 세종대 인증 페이지 다크모드 */
+[data-theme="dark"] .sejong-auth-hero {
+  background: linear-gradient(to right, #1e3a5f, #312e81, #4c1d95) !important;
+}
+
+[data-theme="dark"] .sejong-auth-hero-overlay {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .sejong-auth-radio-option {
+  border-color: #4b5563 !important;
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .sejong-auth-radio-option:hover {
+  border-color: #3b82f6 !important;
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .sejong-auth-result-container {
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .sejong-auth-datasource-dhc {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  border-color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .sejong-auth-datasource-dhc h3 {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .sejong-auth-datasource-sis {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  border-color: #22c55e !important;
+}
+
+[data-theme="dark"] .sejong-auth-datasource-sis h3 {
+  color: #4ade80 !important;
+}
+
+[data-theme="dark"] .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-gray-50 {
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .border-blue-200 {
+  border-color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .border-green-200 {
+  border-color: #22c55e !important;
+}
+
+[data-theme="dark"] .border-gray-100 {
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .border-gray-200 {
+  border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+[data-theme="dark"] .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .text-gray-800 {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .text-blue-700 {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .text-green-700 {
+  color: #4ade80 !important;
+}
+
+[data-theme="dark"] .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+[data-theme="dark"] .bg-gray-100 {
+  background-color: #4b5563 !important;
+}
+
+/* input 패딩 수정 (라이트/다크 공통) */
+.input,
+.input-bordered {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* 다크모드 fieldset legend */
+[data-theme="dark"] .fieldset-legend {
+  color: #e5e7eb !important;
+}
+
+/* 다크모드 collapse */
+[data-theme="dark"] .collapse {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .collapse-title {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .collapse-content {
+  color: #d1d5db !important;
+}
+
+/* 다크모드 mockup-code */
+[data-theme="dark"] .mockup-code {
+  background-color: #111827 !important;
+}
+
+[data-theme="dark"] .mockup-code pre {
+  background-color: transparent !important;
+}
+
+[data-theme="dark"] .mockup-code code {
+  color: #e5e7eb !important;
 }
 
 /*
@@ -2012,21 +2158,23 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 .chat-message .bubble .chat-list-item {
-  display: flex;
-  gap: 8px;
+  display: block;
   margin: 4px 0;
   padding-left: 4px;
 }
 
 .chat-message .bubble .list-number {
+  display: inline;
   color: #3b82f6;
   font-weight: 600;
-  min-width: 20px;
+  margin-right: 8px;
 }
 
 .chat-message .bubble .list-bullet {
+  display: inline;
   color: #3b82f6;
   font-weight: bold;
+  margin-right: 8px;
 }
 
 /* 입력 영역 */
@@ -2041,7 +2189,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 .chatbot-input-area textarea {
   flex: 1;
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #bdbdbd;
   border-radius: 14px;
   padding: 12px 16px;
   resize: none;
@@ -2647,7 +2795,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 [data-theme="dark"] .chatbot-input-area textarea {
   background-color: #374151 !important;
-  border-color: #4b5563 !important;
+  border: 1.5px solid #6b7280 !important;
   color: #f3f4f6 !important;
 }
 
@@ -2656,7 +2804,7 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 [data-theme="dark"] .chatbot-input-area textarea:focus {
-  border-color: #3b82f6 !important;
+  border: 2px solid #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
 }
 
@@ -2815,8 +2963,9 @@ html:not([data-theme="dark"]) .input,
 html:not([data-theme="dark"]) .textarea,
 html:not([data-theme="dark"]) .select {
   background-color: #ffffff !important;
-  border-color: #d1d5db !important;
+  border: 1.5px solid #bdbdbd !important;
   color: #1f2937 !important;
+  padding-left: 10px !important;
 }
 
 /* Light 모드 - modal */

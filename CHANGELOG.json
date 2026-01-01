@@ -1,11 +1,37 @@
 {
   "metadata": {
-    "lastUpdated": "2025-12-28T14:38:59Z",
-    "currentVersion": "2.2.1",
+    "lastUpdated": "2026-01-01T11:54:39Z",
+    "currentVersion": "2.3.4",
     "projectType": "spring",
-    "totalReleases": 32
+    "totalReleases": 33
   },
   "releases": [
+    {
+      "version": "2.3.4",
+      "project_type": "spring",
+      "date": "2026-01-01",
+      "pr_number": 142,
+      "raw_summary": "> [!NOTE]\n> Adds a new Sejong University authentication capability and overhauls AI model download handling while extending dashboard metrics.\n> \n> - Web/API: New `SejongAuthController` with multipart endpoints, DTOs, and `/sejong-auth` page; public routes updated; header/menu/profile links added\n> - Statistics: Adds `SEJONG_AUTH` feature type and methods; dashboard summary now includes `totalProfileViews/todayProfileViews` and `totalSejongAuth/todaySejongAuth`\n> - Dashboard UI: New cards for all page views, profile views, and Sejong auth; skeleton/grid updated\n> - AI Server: Model delete via `SuhAiderEngine`; streaming downloads use engine callbacks with progress `lastUpdateTime`, cancel support, and POST status endpoints; `AiServerResponse`/`DownloadProgressDto` extended; client adds cancel button, stale detection, and multipart POST calls\n> - Common: `NetworkUtil.sendDeleteRequest` added; chatbot chunk defaults changed to `500/100` and reflected in chatbot management UI\n> - Build/version: Project bumped to `2.3.4`; `kr.suhsaechan:suh-aider:1.1.1` and `kr.suhsaechan:sejong-univ-auth:1.2.0` added; misc CSS tweaks for inputs/dark mode\n> \n> Written by [Cursor Bugbot](https://cursor.com/dashboard?tab=bugbot) for commit 6a0ed068f4dad04e704d84ae614235dec0fba89a. This will update automatically on new commits. Configure [here](https://cursor.com/dashboard?tab=bugbot).\n\n## Summary by CodeRabbit\n\n# 릴리스 노트\n\n## 새 기능\n- 세종대 대학교 인증 기능 추가: 학번과 비밀번호로 대학 정보 조회\n- AI 모델 다운로드 취소 기능: 진행 중인 모델 다운로드 중단 가능\n- 대시보드 통계 강화: 프로필 페이지 조회 수 및 세종대 인증 현황 표시\n\n## 스타일\n- 입력 필드 및 UI 컴포넌트 시각적 개선",
+      "parsed_changes": {
+        "세종대_대학교_인증_기능_추가__학번과_비밀번호로_대학_정보_조회": {
+          "title": "세종대 대학교 인증 기능 추가: 학번과 비밀번호로 대학 정보 조회",
+          "items": []
+        },
+        "ai_모델_다운로드_취소_기능__진행_중인_모델_다운로드_중단_가능": {
+          "title": "AI 모델 다운로드 취소 기능: 진행 중인 모델 다운로드 중단 가능",
+          "items": []
+        },
+        "대시보드_통계_강화__프로필_페이지_조회_수_및_세종대_인증_현황_표시": {
+          "title": "대시보드 통계 강화: 프로필 페이지 조회 수 및 세종대 인증 현황 표시",
+          "items": []
+        },
+        "입력_필드_및_ui_컴포넌트_시각적_개선": {
+          "title": "입력 필드 및 UI 컴포넌트 시각적 개선",
+          "items": []
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.2.1",
       "project_type": "spring",

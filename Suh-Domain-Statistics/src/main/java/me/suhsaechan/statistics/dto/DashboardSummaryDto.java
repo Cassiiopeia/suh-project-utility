@@ -39,6 +39,14 @@ public class DashboardSummaryDto {
     private Long totalNoticeViews;        // 공지사항 총 조회수
     private Long totalStudyViews;         // 스터디 총 조회수
 
+    // === 페이지 조회 통계 ===
+    private Long totalProfileViews;      // 프로필 페이지 총 조회수
+    private Long todayProfileViews;      // 프로필 페이지 오늘 조회수
+
+    // === 세종대 인증 통계 ===
+    private Long totalSejongAuth;        // 세종대 인증 총 횟수
+    private Long todaySejongAuth;        // 세종대 인증 오늘 횟수
+
     // === 기능별 사용 통계 (확장용) ===
     private Map<FeatureType, Long> featureUsageCounts;
 }
