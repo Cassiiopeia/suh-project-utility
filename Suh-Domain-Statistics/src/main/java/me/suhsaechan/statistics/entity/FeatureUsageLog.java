@@ -66,6 +66,7 @@ public class FeatureUsageLog extends BasePostgresEntity {
         SWAGGER_GENERATOR,    // Swagger 생성기
         TS_API_CONVERTER,     // TS API 변환기
         LOGIN,                // 로그인
-        PROFILE_VIEW          // 프로필 조회
+        PROFILE_VIEW,         // 프로필 조회
+        SEJONG_AUTH           // 세종대 인증
     }
 }

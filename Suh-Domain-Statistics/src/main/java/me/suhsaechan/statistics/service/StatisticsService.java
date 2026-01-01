@@ -141,6 +141,32 @@ public class StatisticsService {
     }
 
     /**
+     * 프로필 페이지 오늘 조회수 조회
+     */
+    @Transactional(readOnly = true)
+    public long getTodayProfileViews() {
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        return pageVisitLogRepository.countByPagePathAndVisitedAtAfterAndIsBotFalse(PROFILE_PAGE_PATH, todayStart);
+    }
+
+    /**
+     * 세종대 인증 총 횟수 조회
+     */
+    @Transactional(readOnly = true)
+    public long getTotalSejongAuth() {
+        return featureUsageLogRepository.countByFeatureName(FeatureType.SEJONG_AUTH);
+    }
+
+    /**
+     * 세종대 인증 오늘 횟수 조회
+     */
+    @Transactional(readOnly = true)
+    public long getTodaySejongAuth() {
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        return featureUsageLogRepository.countByFeatureNameAndUsedAtAfter(FeatureType.SEJONG_AUTH, todayStart);
+    }
+
+    /**
      * 기능별 사용 통계 조회 (GROUP BY 단일 쿼리)
      */
     @Transactional(readOnly = true)

@@ -77,7 +77,17 @@
         </button>
       </div>
       <!-- Summary 스켈레톤 -->
-      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
         <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
           <div class="flex items-center gap-4">
             <div class="skeleton w-12 h-12 rounded-lg"></div>
@@ -132,7 +142,7 @@
 
       <!-- Summary 실제 콘텐츠 -->
       <div id="summary-content" class="hidden">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <!-- 방문자 통계 -->
           <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="card-body p-5">
@@ -191,7 +201,7 @@
                 <div class="flex-1 min-w-0">
                   <p class="text-xs text-gray-500 font-medium mb-1">모든 페이지 조회</p>
                   <p class="text-2xl font-bold text-gray-900" id="stat-total-page-views">-</p>
-                  <p class="text-xs text-gray-400">전체 페이지</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-page-views" class="text-green-600 font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -205,9 +215,25 @@
                   <i class="fa-solid fa-user text-pink-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-gray-500 font-medium mb-1">프로필 페이지 조회</p>
+                  <p class="text-xs text-gray-500 font-medium mb-1">프로필 조회</p>
                   <p class="text-2xl font-bold text-gray-900" id="stat-total-profile-views">-</p>
-                  <p class="text-xs text-gray-400">프로필 페이지</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-profile-views" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 세종대 인증 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-graduation-cap text-blue-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">세종대 인증</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-sejong-auth">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-sejong-auth" class="text-green-600 font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1274,7 +1300,13 @@
 
           // 페이지 조회수
           $('#stat-total-page-views').text(formatNumber(response.totalPageViews || 0));
+          $('#stat-today-page-views').text('+' + formatNumber(response.todayPageViews || 0));
           $('#stat-total-profile-views').text(formatNumber(response.totalProfileViews || 0));
+          $('#stat-today-profile-views').text('+' + formatNumber(response.todayProfileViews || 0));
+
+          // 세종대 인증 통계
+          $('#stat-total-sejong-auth').text(formatNumber(response.totalSejongAuth || 0));
+          $('#stat-today-sejong-auth').text('+' + formatNumber(response.todaySejongAuth || 0));
 
           // 스켈레톤 숨기고 실제 콘텐츠 표시
           $('#summary-skeleton').addClass('hidden');
@@ -1321,7 +1353,13 @@
 
           // 페이지 조회수
           $('#stat-total-page-views').text(formatNumber(response.totalPageViews || 0));
+          $('#stat-today-page-views').text('+' + formatNumber(response.todayPageViews || 0));
           $('#stat-total-profile-views').text(formatNumber(response.totalProfileViews || 0));
+          $('#stat-today-profile-views').text('+' + formatNumber(response.todayProfileViews || 0));
+
+          // 세종대 인증 통계
+          $('#stat-total-sejong-auth').text(formatNumber(response.totalSejongAuth || 0));
+          $('#stat-today-sejong-auth').text('+' + formatNumber(response.todaySejongAuth || 0));
         }
         // 버튼 복구
         refreshBtn.prop('disabled', false);

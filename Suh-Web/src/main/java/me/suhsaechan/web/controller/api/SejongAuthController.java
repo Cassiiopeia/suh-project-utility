@@ -7,6 +7,8 @@ import kr.suhsaechan.sejong.auth.model.SejongSisAuthResult;
 import kr.suhsaechan.sejong.auth.service.SuhSejongAuthEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.statistics.entity.FeatureUsageLog.FeatureType;
+import me.suhsaechan.statistics.service.StatisticsService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import me.suhsaechan.web.dto.SejongAuthRequest;
 import me.suhsaechan.web.dto.SejongAuthResponse;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SejongAuthController {
 
 	private final SuhSejongAuthEngine authEngine;
+	private final StatisticsService statisticsService;
 
 	@PostMapping(value = "/authenticate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@LogMonitor
@@ -34,7 +37,7 @@ public class SejongAuthController {
 		}
 
 		try {
-			return switch (authType) {
+			ResponseEntity<SejongAuthResponse> response = switch (authType) {
 				case "INTEGRATED" -> handleIntegratedAuth(request);
 				case "DHC" -> handleDhcAuth(request);
 				case "SIS" -> handleSisAuth(request);
@@ -42,6 +45,13 @@ public class SejongAuthController {
 				case "SIS_RAW" -> handleSisRawAuth(request);
 				default -> handleIntegratedAuth(request);
 			};
+
+			SejongAuthResponse body = response.getBody();
+			if (body != null && Boolean.TRUE.equals(body.getIsSuccess())) {
+				statisticsService.logFeatureUsageAsync(FeatureType.SEJONG_AUTH, null, authType);
+			}
+
+			return response;
 		} catch (SejongAuthException e) {
 			log.warn("세종대 인증 실패: {}", e.getMessage());
 			return ResponseEntity.ok(SejongAuthResponse.builder()
