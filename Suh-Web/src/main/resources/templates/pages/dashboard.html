@@ -77,7 +77,27 @@
         </button>
       </div>
       <!-- Summary 스켈레톤 -->
-      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-12 h-12 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-3 w-16 mb-2"></div>
+              <div class="skeleton h-6 w-12 mb-1"></div>
+              <div class="skeleton h-3 w-20"></div>
+            </div>
+          </div>
+        </div>
         <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
           <div class="flex items-center gap-4">
             <div class="skeleton w-12 h-12 rounded-lg"></div>
@@ -122,7 +142,7 @@
 
       <!-- Summary 실제 콘텐츠 -->
       <div id="summary-content" class="hidden">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <!-- 방문자 통계 -->
           <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="card-body p-5">
@@ -171,17 +191,49 @@
             </div>
           </div>
 
-          <!-- 콘텐츠 조회 -->
+          <!-- 모든 페이지 조회수 -->
           <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="card-body p-5">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <i class="fa-solid fa-eye text-emerald-600 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-globe text-indigo-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-gray-500 font-medium mb-1">콘텐츠 조회</p>
-                  <p class="text-2xl font-bold text-gray-900" id="stat-total-views">-</p>
-                  <p class="text-xs text-gray-400">공지 + 스터디</p>
+                  <p class="text-xs text-gray-500 font-medium mb-1">모든 페이지 조회</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-page-views">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-page-views" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 프로필 페이지 조회수 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-user text-pink-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">프로필 조회</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-profile-views">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-profile-views" class="text-green-600 font-medium">+0</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 세종대 인증 -->
+          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="card-body p-5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <i class="fa-solid fa-graduation-cap text-blue-600 text-xl"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs text-gray-500 font-medium mb-1">세종대 인증</p>
+                  <p class="text-2xl font-bold text-gray-900" id="stat-total-sejong-auth">-</p>
+                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-sejong-auth" class="text-green-600 font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -371,6 +423,38 @@
                 </div>
                 <div class="card-actions justify-end">
                   <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 세종대 인증 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
+                      <i class="fa-solid fa-graduation-cap text-indigo-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">세종대 인증</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-primary badge-xs">Library</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/sejong-auth" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">세종대학교 포털 인증 테스트</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">Auth</span>
+                  <span class="badge badge-ghost badge-xs">Sejong</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank" class="btn btn-outline btn-xs">
                     <i class="fa-brands fa-github"></i> GitHub
                   </a>
                 </div>
@@ -1214,9 +1298,15 @@
           $('#stat-total-tokens').text(formatTokens(totalTokens));
           $('#stat-today-tokens').text('+' + formatTokens(todayTokens));
 
-          // 콘텐츠 조회
-          const totalViews = (response.totalNoticeViews || 0) + (response.totalStudyViews || 0);
-          $('#stat-total-views').text(formatNumber(totalViews));
+          // 페이지 조회수
+          $('#stat-total-page-views').text(formatNumber(response.totalPageViews || 0));
+          $('#stat-today-page-views').text('+' + formatNumber(response.todayPageViews || 0));
+          $('#stat-total-profile-views').text(formatNumber(response.totalProfileViews || 0));
+          $('#stat-today-profile-views').text('+' + formatNumber(response.todayProfileViews || 0));
+
+          // 세종대 인증 통계
+          $('#stat-total-sejong-auth').text(formatNumber(response.totalSejongAuth || 0));
+          $('#stat-today-sejong-auth').text('+' + formatNumber(response.todaySejongAuth || 0));
 
           // 스켈레톤 숨기고 실제 콘텐츠 표시
           $('#summary-skeleton').addClass('hidden');
@@ -1225,6 +1315,7 @@
       },
       function(xhr, status, error) {
         console.error('대시보드 Summary 로드 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
         // 에러 시에도 스켈레톤 숨기고 기본값 표시
         $('#summary-skeleton').addClass('hidden');
         $('#summary-content').removeClass('hidden');
@@ -1260,9 +1351,15 @@
           $('#stat-total-tokens').text(formatTokens(totalTokens));
           $('#stat-today-tokens').text('+' + formatTokens(todayTokens));
 
-          // 콘텐츠 조회
-          const totalViews = (response.totalNoticeViews || 0) + (response.totalStudyViews || 0);
-          $('#stat-total-views').text(formatNumber(totalViews));
+          // 페이지 조회수
+          $('#stat-total-page-views').text(formatNumber(response.totalPageViews || 0));
+          $('#stat-today-page-views').text('+' + formatNumber(response.todayPageViews || 0));
+          $('#stat-total-profile-views').text(formatNumber(response.totalProfileViews || 0));
+          $('#stat-today-profile-views').text('+' + formatNumber(response.todayProfileViews || 0));
+
+          // 세종대 인증 통계
+          $('#stat-total-sejong-auth').text(formatNumber(response.totalSejongAuth || 0));
+          $('#stat-today-sejong-auth').text('+' + formatNumber(response.todaySejongAuth || 0));
         }
         // 버튼 복구
         refreshBtn.prop('disabled', false);
@@ -1270,6 +1367,7 @@
       },
       function(xhr, status, error) {
         console.error('대시보드 Summary 새로고침 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 버튼 상태 복구만
         refreshBtn.prop('disabled', false);
         icon.removeClass('animate-spin');
       }
@@ -1303,6 +1401,7 @@
       },
       function(xhr, status, error) {
         console.error('공지사항 로드 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
         $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-red-500 text-sm">로드 실패</span></div>');
       }
     );
@@ -1449,6 +1548,7 @@
       },
       function(xhr, status, error) {
         console.error('공지사항 상세 조회 오류:', error);
+        // 전역 핸들러가 toast를 표시함
       }
     );
   }
@@ -1484,6 +1584,7 @@
       function(xhr, status, error) {
         $('#comments-loading').hide();
         console.error('댓글 로드 오류:', error);
+        // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
         $('#no-comments-message').removeClass('hidden').addClass('text-red-500').text('댓글을 불러오는 중 오류가 발생했습니다.');
       }
     );
@@ -1598,6 +1699,7 @@
         }
       },
       error: function() {
+        // 전역 핸들러가 toast를 표시하므로 여기서는 상태 표시만
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
 

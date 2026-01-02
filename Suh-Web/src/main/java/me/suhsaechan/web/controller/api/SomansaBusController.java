@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.somansabus.dto.SomansaBusRequest;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
+import me.suhsaechan.somansabus.service.SomansaBusMemberService;
 import me.suhsaechan.somansabus.service.SomansaBusReservationService;
 import me.suhsaechan.somansabus.service.SomansaBusRouteService;
 import me.suhsaechan.somansabus.service.SomansaBusScheduleService;
-import me.suhsaechan.somansabus.service.SomansaBusUserService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,45 +23,45 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/somansa-bus")
 public class SomansaBusController {
 
-  private final SomansaBusUserService userService;
+  private final SomansaBusMemberService memberService;
   private final SomansaBusRouteService routeService;
   private final SomansaBusScheduleService scheduleService;
   private final SomansaBusReservationService reservationService;
 
-  @PostMapping(value = "/user/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> registerUser(@ModelAttribute SomansaBusRequest request) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(request));
+  public ResponseEntity<SomansaBusResponse> registerMember(@ModelAttribute SomansaBusRequest request) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(memberService.registerMember(request));
   }
 
-  @PostMapping(value = "/user/list", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member/list", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> getAllUsers() {
-    return ResponseEntity.ok(userService.getAllUsers());
+  public ResponseEntity<SomansaBusResponse> getAllMembers() {
+    return ResponseEntity.ok(memberService.getAllMembers());
   }
 
-  @PostMapping(value = "/user/list/active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member/list/active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> getActiveUsers() {
-    return ResponseEntity.ok(userService.getActiveUsers());
+  public ResponseEntity<SomansaBusResponse> getActiveMembers() {
+    return ResponseEntity.ok(memberService.getActiveMembers());
   }
 
-  @PostMapping(value = "/user/detail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member/detail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> getUserDetail(@ModelAttribute SomansaBusRequest request) {
-    return ResponseEntity.ok(userService.getUserById(request.getSomansaBusUserId()));
+  public ResponseEntity<SomansaBusResponse> getMemberDetail(@ModelAttribute SomansaBusRequest request) {
+    return ResponseEntity.ok(memberService.getMemberById(request.getSomansaBusMemberId()));
   }
 
-  @PostMapping(value = "/user/toggle-active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member/toggle-active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> toggleUserActive(@ModelAttribute SomansaBusRequest request) {
-    return ResponseEntity.ok(userService.toggleUserActive(request.getSomansaBusUserId()));
+  public ResponseEntity<SomansaBusResponse> toggleMemberActive(@ModelAttribute SomansaBusRequest request) {
+    return ResponseEntity.ok(memberService.toggleMemberActive(request.getSomansaBusMemberId()));
   }
 
-  @PostMapping(value = "/user/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/member/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<Void> deleteUser(@ModelAttribute SomansaBusRequest request) {
-    userService.deleteUser(request.getSomansaBusUserId());
+  public ResponseEntity<Void> deleteMember(@ModelAttribute SomansaBusRequest request) {
+    memberService.deleteMember(request.getSomansaBusMemberId());
     return ResponseEntity.noContent().build();
   }
 
@@ -89,10 +89,10 @@ public class SomansaBusController {
     return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(request));
   }
 
-  @PostMapping(value = "/schedule/list/by-user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/schedule/list/by-member", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> getSchedulesByUser(@ModelAttribute SomansaBusRequest request) {
-    return ResponseEntity.ok(scheduleService.getSchedulesByUser(request.getSomansaBusUserId()));
+  public ResponseEntity<SomansaBusResponse> getSchedulesByMember(@ModelAttribute SomansaBusRequest request) {
+    return ResponseEntity.ok(scheduleService.getSchedulesByMember(request.getSomansaBusMemberId()));
   }
 
   @PostMapping(value = "/schedule/list/active", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -120,15 +120,27 @@ public class SomansaBusController {
     return ResponseEntity.ok(reservationService.manualReserve(request));
   }
 
-  @PostMapping(value = "/history/list/by-user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/history/list/by-member", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> getHistoryByUser(@ModelAttribute SomansaBusRequest request) {
-    return ResponseEntity.ok(reservationService.getHistoryByUser(request.getSomansaBusUserId()));
+  public ResponseEntity<SomansaBusResponse> getHistoryByMember(@ModelAttribute SomansaBusRequest request) {
+    return ResponseEntity.ok(reservationService.getHistoryByMember(request.getSomansaBusMemberId()));
   }
 
-  @PostMapping(value = "/history/recent/by-user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/history/recent/by-member", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<SomansaBusResponse> getRecentHistoryByUser(@ModelAttribute SomansaBusRequest request) {
-    return ResponseEntity.ok(reservationService.getRecentHistoryByUser(request.getSomansaBusUserId()));
+  public ResponseEntity<SomansaBusResponse> getRecentHistoryByMember(@ModelAttribute SomansaBusRequest request) {
+    return ResponseEntity.ok(reservationService.getRecentHistoryByMember(request.getSomansaBusMemberId()));
+  }
+
+  @PostMapping(value = "/history/recent", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<SomansaBusResponse> getRecentHistory() {
+    return ResponseEntity.ok(reservationService.getRecentHistory());
+  }
+
+  @PostMapping(value = "/stats", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<SomansaBusResponse> getStats() {
+    return ResponseEntity.ok(scheduleService.getStats());
   }
 }

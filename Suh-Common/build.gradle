@@ -36,6 +36,7 @@ dependencies {
     api 'org.apache.commons:commons-lang3:3.12.0'
     api 'org.jsoup:jsoup:1.15.4'
     api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:2.18.2'
 
     // HTTP Client - API로 제공
     api 'com.squareup.okhttp3:okhttp:4.9.3'
@@ -49,10 +50,11 @@ dependencies {
     api 'org.redisson:redisson-spring-boot-starter:3.20.0'
 
     // Suh-Libraries
-    api "me.suhsaechan:suh-random-engine:1.1.0"
-    api "me.suhsaechan:suh-logger:1.3.11"
-    api "me.suhsaechan:suh-api-log:1.1.5"
-    api 'kr.suhsaechan:suh-aider:0.2.1'
+    api 'me.suhsaechan:suh-random-engine:1.1.0'
+    api 'me.suhsaechan:suh-logger:1.3.11'
+    api 'me.suhsaechan:suh-api-log:1.1.5'
+    api 'kr.suhsaechan:suh-aider:1.1.1'
+    api 'kr.suhsaechan:sejong-univ-auth:1.2.0'
     // TODO: JVM 21 필요 - 프로젝트 업그레이드 후 활성화
     // api 'me.suhsaechan:suh-somansa-auth:1.0.24'
 

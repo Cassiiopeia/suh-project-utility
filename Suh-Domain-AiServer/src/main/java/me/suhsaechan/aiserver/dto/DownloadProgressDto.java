@@ -53,4 +53,9 @@ public class DownloadProgressDto {
      * 다운로드 종료 시간
      */
     private Long endTime;
+
+    /**
+     * 마지막 진행상황 업데이트 시간 (stale 감지용)
+     */
+    private Long lastUpdateTime;
 }

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='소만사 버스 예약 - 대시보드')}"></head>
+<body class="somansa-bus-page bg-gray-50">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-solid fa-bus text-blue-500"></i>
+      소만사 버스 예약
+    </h2>
+    <p class="text-gray-500 mt-1">통근버스 자동 예약 관리 시스템</p>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="statsContainer">
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <i class="fa-solid fa-users text-blue-500"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">전체 멤버</p>
+            <p class="text-xl font-bold text-gray-800" id="statTotalMembers">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <i class="fa-solid fa-calendar-check text-green-500"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">활성 스케줄</p>
+            <p class="text-xl font-bold text-gray-800" id="statActiveSchedules">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+            <i class="fa-solid fa-ticket text-purple-500"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">이번주 예약</p>
+            <p class="text-xl font-bold text-gray-800" id="statThisWeekReservations">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+            <i class="fa-solid fa-circle-xmark text-red-500"></i>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500">이번주 실패</p>
+            <p class="text-xl font-bold text-gray-800" id="statThisWeekFailed">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-users text-blue-500"></i>
+            멤버 목록
+          </h3>
+          <p class="text-gray-500 text-sm">등록된 버스 예약 멤버 관리</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showAddMemberModal()">
+          <i class="fa-solid fa-plus"></i>
+          멤버 추가
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>이름</th>
+              <th>이메일</th>
+              <th>상태</th>
+              <th>인증</th>
+              <th>스케줄</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody id="memberTable">
+            <tr th:each="member : ${members}"
+                th:data-member-id="${member.somansaBusMemberId}"
+                class="hover:bg-base-300 cursor-pointer">
+              <td>
+                <div class="flex items-center gap-2">
+                  <div class="avatar placeholder">
+                    <div class="bg-neutral text-neutral-content rounded-full w-8">
+                      <span class="text-xs" th:text="${member.displayName != null ? member.displayName.substring(0,1) : '?'}">?</span>
+                    </div>
+                  </div>
+                  <span class="font-medium" th:text="${member.displayName ?: '-'}">이름</span>
+                </div>
+              </td>
+              <td class="text-sm text-gray-500" th:text="${member.loginId}">email@somansa.com</td>
+              <td>
+                <span th:if="${member.isActive}" class="badge badge-success badge-sm">활성</span>
+                <span th:unless="${member.isActive}" class="badge badge-ghost badge-sm">비활성</span>
+              </td>
+              <td>
+                <span th:if="${member.isVerified}" class="badge badge-info badge-sm">인증됨</span>
+                <span th:unless="${member.isVerified}" class="badge badge-warning badge-sm">미인증</span>
+              </td>
+              <td>
+                <span class="text-sm text-gray-500">-</span>
+              </td>
+              <td>
+                <div class="flex gap-1">
+                  <button th:if="${member.isActive}"
+                          class="btn btn-sm btn-error toggle-member-active-btn"
+                          th:data-member-id="${member.somansaBusMemberId}"
+                          title="멤버 비활성화">
+                    <i class="fa-solid fa-toggle-off text-xs"></i>
+                    <span class="hidden sm:inline">비활성화</span>
+                  </button>
+                  <button th:unless="${member.isActive}"
+                          class="btn btn-sm btn-success toggle-member-active-btn"
+                          th:data-member-id="${member.somansaBusMemberId}"
+                          title="멤버 활성화">
+                    <i class="fa-solid fa-toggle-on text-xs"></i>
+                    <span class="hidden sm:inline">활성화</span>
+                  </button>
+                  <button class="btn btn-circle btn-sm btn-error delete-member-btn"
+                          th:data-member-id="${member.somansaBusMemberId}"
+                          title="멤버 삭제">
+                    <i class="fa-solid fa-trash text-xs"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-route text-blue-500"></i>
+            버스 노선
+          </h3>
+          <p class="text-gray-500 text-sm">등록된 버스 노선 목록</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>출발시간</th>
+              <th>정류장</th>
+              <th>호차</th>
+              <th>설명</th>
+            </tr>
+          </thead>
+          <tbody id="routeTable">
+            <tr th:each="route : ${routes}">
+              <td>
+                <span th:if="${route.caralias == '출근'}" class="badge badge-soft badge-info badge-sm">출근</span>
+                <span th:if="${route.caralias == '퇴근'}" class="badge badge-soft badge-warning badge-sm">퇴근</span>
+              </td>
+              <td th:text="${route.departureTime}">06:55</td>
+              <td th:text="${route.station}">당산역</td>
+              <td th:text="${route.busNumber + '호'}">1호</td>
+              <td th:text="${route.description}">06:55 당산역 1호 - 출근</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+            최근 예약 기록
+          </h3>
+          <p class="text-gray-500 text-sm">최근 예약 실행 기록</p>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="loadReservationHistory()">
+          <i class="fa-solid fa-rotate"></i>
+          새로고침
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>실행시간</th>
+              <th>멤버</th>
+              <th>노선</th>
+              <th>예약일</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable">
+            <tr>
+              <td colspan="5" class="text-center py-8">
+                <span class="loading loading-spinner loading-md text-primary"></span>
+                <span class="ml-2 text-gray-500">기록 로딩 중...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="modal" id="memberModal">
+    <div class="modal-box max-w-md">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
+        <i class="fa-solid fa-user-plus text-blue-500"></i>
+        멤버 등록
+      </h3>
+      <form id="memberForm" class="space-y-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">소만사 아이디</span>
+          </label>
+          <div class="join w-full">
+            <input type="text" id="loginIdPrefix" name="loginIdPrefix"
+                   class="input input-bordered join-item flex-1" 
+                   placeholder="아이디 입력 (예: hong)" 
+                   required>
+            <span class="btn btn-ghost join-item no-animation pointer-events-none">
+              @somansa.com
+            </span>
+          </div>
+          <label class="label">
+            <span class="label-text-alt text-gray-500">소만사 이메일로 인증됩니다</span>
+          </label>
+        </div>
+      </form>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost">취소</button>
+        </form>
+        <button class="btn btn-primary" onclick="registerMember()">
+          <i class="fa-solid fa-check"></i>
+          등록
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+$(document).ready(function() {
+  loadStats();
+  loadMembers();
+  loadReservationHistory();
+
+  // 테이블 row 클릭 이벤트 (이벤트 위임)
+  $(document).on('click', '#memberTable tr', function(e) {
+    // 액션 버튼 클릭 시는 무시
+    if ($(e.target).closest('button, a').length > 0) {
+      return;
+    }
+    const memberId = $(this).data('member-id');
+    if (memberId) {
+      window.location.href = '/somansa/bus/member/' + memberId;
+    }
+  });
+
+  // 액션 버튼 클릭 이벤트 (이벤트 위임)
+  $(document).on('click', '.toggle-member-active-btn', function(e) {
+    e.stopPropagation();
+    const memberId = $(this).data('member-id');
+    toggleMemberActive(memberId);
+  });
+
+  $(document).on('click', '.delete-member-btn', function(e) {
+    e.stopPropagation();
+    const memberId = $(this).data('member-id');
+    deleteMember(memberId);
+  });
+});
+
+function loadStats() {
+  sendFormRequest('/api/somansa-bus/stats', {},
+    function(response) {
+      $('#statTotalMembers').text(response.totalMembers || 0);
+      $('#statActiveSchedules').text(response.activeSchedules || 0);
+      $('#statThisWeekReservations').text(response.thisWeekReservations || 0);
+      $('#statThisWeekFailed').text(response.thisWeekFailedReservations || 0);
+    },
+    function(xhr) {
+      console.error('통계 로드 실패');
+      // 전역 핸들러가 toast를 표시하므로 여기서는 추가 처리만
+    }
+  );
+}
+
+function loadMembers() {
+  sendFormRequest('/api/somansa-bus/member/list', {},
+    function(response) {
+      displayMembers(response.members || []);
+    },
+    function(xhr) {
+      console.error('멤버 목록 로드 실패');
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
+      $('#memberTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">멤버 목록을 불러오는데 실패했습니다.</td></tr>');
+    }
+  );
+}
+
+function displayMembers(members) {
+  const tableBody = $('#memberTable');
+  tableBody.empty();
+
+  if (!members || members.length === 0) {
+    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-gray-500">등록된 멤버가 없습니다.</td></tr>');
+    return;
+  }
+
+  members.forEach(function(member) {
+    const row = $('<tr>')
+      .attr('data-member-id', member.somansaBusMemberId)
+      .addClass('hover:bg-base-300 cursor-pointer');
+
+    // 이름 컬럼
+    const nameCell = $('<td>');
+    const nameDiv = $('<div>').addClass('flex items-center gap-2');
+    const avatarDiv = $('<div>').addClass('avatar placeholder');
+    const avatarInner = $('<div>').addClass('bg-neutral text-neutral-content rounded-full w-8');
+    const avatarText = $('<span>').addClass('text-xs').text(member.displayName ? member.displayName.substring(0, 1) : '?');
+    avatarInner.append(avatarText);
+    avatarDiv.append(avatarInner);
+    const nameSpan = $('<span>').addClass('font-medium').text(member.displayName || '-');
+    nameDiv.append(avatarDiv, nameSpan);
+    nameCell.append(nameDiv);
+    row.append(nameCell);
+
+    // 이메일 컬럼
+    const emailCell = $('<td>').addClass('text-sm text-gray-500').text(member.loginId);
+    row.append(emailCell);
+
+    // 상태 컬럼
+    const statusCell = $('<td>');
+    if (member.isActive) {
+      statusCell.html('<span class="badge badge-success badge-sm">활성</span>');
+    } else {
+      statusCell.html('<span class="badge badge-ghost badge-sm">비활성</span>');
+    }
+    row.append(statusCell);
+
+    // 인증 컬럼
+    const verifiedCell = $('<td>');
+    if (member.isVerified) {
+      verifiedCell.html('<span class="badge badge-info badge-sm">인증됨</span>');
+    } else {
+      verifiedCell.html('<span class="badge badge-warning badge-sm">미인증</span>');
+    }
+    row.append(verifiedCell);
+
+    // 스케줄 컬럼
+    const scheduleCell = $('<td>');
+    scheduleCell.html('<span class="text-sm text-gray-500">-</span>');
+    row.append(scheduleCell);
+
+    // 액션 컬럼
+    const actionCell = $('<td>');
+    const actionDiv = $('<div>').addClass('flex gap-1');
+
+    let toggleBtn;
+    if (member.isActive) {
+      toggleBtn = $('<button>')
+        .addClass('btn btn-sm btn-error toggle-member-active-btn')
+        .attr('data-member-id', member.somansaBusMemberId)
+        .attr('title', '멤버 비활성화')
+        .html('<i class="fa-solid fa-toggle-off text-xs"></i> <span class="hidden sm:inline">비활성화</span>');
+    } else {
+      toggleBtn = $('<button>')
+        .addClass('btn btn-sm btn-success toggle-member-active-btn')
+        .attr('data-member-id', member.somansaBusMemberId)
+        .attr('title', '멤버 활성화')
+        .html('<i class="fa-solid fa-toggle-on text-xs"></i> <span class="hidden sm:inline">활성화</span>');
+    }
+
+    const deleteBtn = $('<button>')
+      .addClass('btn btn-circle btn-sm btn-error delete-member-btn')
+      .attr('data-member-id', member.somansaBusMemberId)
+      .attr('title', '멤버 삭제')
+      .html('<i class="fa-solid fa-trash text-xs"></i>');
+
+    actionDiv.append(toggleBtn, deleteBtn);
+    actionCell.append(actionDiv);
+    row.append(actionCell);
+
+    tableBody.append(row);
+  });
+}
+
+function showAddMemberModal() {
+  $('#memberForm')[0].reset();
+  document.getElementById('memberModal').showModal();
+}
+
+function registerMember() {
+  const loginIdPrefix = $('#loginIdPrefix').val();
+  if (!loginIdPrefix) {
+    showToast('아이디를 입력해주세요.', 'negative');
+    return;
+  }
+
+  const loginId = loginIdPrefix + '@somansa.com';
+
+  sendFormRequest('/api/somansa-bus/member/register', { loginId: loginId },
+    function(response) {
+      showToast('멤버가 등록되었습니다.', 'positive');
+      document.getElementById('memberModal').close();
+      loadMembers();
+      loadStats();
+    },
+    function(xhr) {
+      let errorMessage = '멤버 등록 중 오류가 발생했습니다.';
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage = xhr.responseJSON.message;
+      }
+      showToast(errorMessage, 'negative');
+    }
+  );
+}
+
+function toggleMemberActive(memberId) {
+  sendFormRequest('/api/somansa-bus/member/toggle-active', { somansaBusMemberId: memberId },
+    function(response) {
+      showToast('멤버 상태가 변경되었습니다.', 'positive');
+      loadMembers();
+      loadStats();
+    },
+    function(xhr) {
+      showToast('상태 변경 중 오류가 발생했습니다.', 'negative');
+    }
+  );
+}
+
+function deleteMember(memberId) {
+  if (!confirm('정말로 이 멤버를 삭제하시겠습니까?')) {
+    return;
+  }
+
+  sendFormRequest('/api/somansa-bus/member/delete', { somansaBusMemberId: memberId },
+    function(response) {
+      showToast('멤버가 삭제되었습니다.', 'positive');
+      loadMembers();
+      loadStats();
+    },
+    function(xhr) {
+      showToast('멤버 삭제 중 오류가 발생했습니다.', 'negative');
+    }
+  );
+}
+
+function loadReservationHistory() {
+  sendFormRequest('/api/somansa-bus/history/recent', {},
+    function(response) {
+      displayReservationHistory(response.histories || []);
+    },
+    function(xhr) {
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
+      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">기록 로드 실패</td></tr>');
+    }
+  );
+}
+
+function displayReservationHistory(histories) {
+  const tableBody = $('#historyTable');
+
+  if (!histories || histories.length === 0) {
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-gray-500">예약 기록이 없습니다.</td></tr>');
+    return;
+  }
+
+  tableBody.empty();
+  histories.forEach(function(history) {
+    const row = $('<tr>');
+
+    const timeCell = $('<td>');
+    timeCell.text(history.executedAt ? new Date(history.executedAt).toLocaleString('ko-KR') : '-');
+    row.append(timeCell);
+
+    const memberCell = $('<td>');
+    memberCell.text(history.somansaBusMember ? history.somansaBusMember.displayName : '-');
+    row.append(memberCell);
+
+    const routeCell = $('<td>');
+    routeCell.text(history.somansaBusRoute ? history.somansaBusRoute.description : '-');
+    row.append(routeCell);
+
+    const dateCell = $('<td>');
+    dateCell.text(history.reservationDate || '-');
+    row.append(dateCell);
+
+    const statusCell = $('<td>');
+    if (history.isSuccess) {
+      statusCell.html('<span class="badge badge-success badge-sm">성공</span>');
+    } else {
+      statusCell.html('<span class="badge badge-error badge-sm">실패</span>');
+    }
+    row.append(statusCell);
+
+    tableBody.append(row);
+  });
+}
+</script>
+</body>
+</html>

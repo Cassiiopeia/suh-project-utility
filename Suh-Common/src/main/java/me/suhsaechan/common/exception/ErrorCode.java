@@ -80,8 +80,8 @@ public enum ErrorCode {
   AI_SERVER_STREAM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SSE 스트리밍 중 오류가 발생했습니다."),
 
   // SOMANSA BUS
-  SOMANSA_BUS_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "버스 예약 사용자를 찾을 수 없습니다."),
-  SOMANSA_BUS_USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 사용자입니다."),
+  SOMANSA_BUS_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "버스 예약 멤버를 찾을 수 없습니다."),
+  SOMANSA_BUS_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 등록된 멤버입니다."),
   SOMANSA_BUS_NOT_SOMANSA_EMPLOYEE(HttpStatus.UNAUTHORIZED, "소만사 직원이 아닙니다."),
   SOMANSA_BUS_ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "버스 노선을 찾을 수 없습니다."),
   SOMANSA_BUS_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "예약 스케줄을 찾을 수 없습니다."),

@@ -174,4 +174,47 @@ public class NetworkUtil {
     public String sendPostJsonRequest(String url, Object payload) {
         return sendPostJsonRequest(url, null, payload);
     }
+
+    /**
+     * DELETE 요청 수행 (JSON 문자열 데이터)
+     *
+     * @param url 요청할 URL
+     * @param headers HTTP 헤더 맵 (null 가능)
+     * @param jsonBody JSON 요청 본문 (null 가능)
+     * @return HTTP 응답 문자열
+     */
+    public String sendDeleteRequest(String url, Map<String, String> headers, String jsonBody) {
+        log.debug("DELETE 요청 시작: {}", url);
+
+        RequestBody body = RequestBody.create(
+                jsonBody != null ? jsonBody : "",
+                MediaType.get("application/json; charset=utf-8")
+        );
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(url)
+                .delete(body);
+
+        if (headers != null) {
+            headers.forEach(requestBuilder::addHeader);
+        }
+
+        Request request = requestBuilder.build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String responseBody = response.body() != null ? response.body().string() : "";
+
+            if (!response.isSuccessful()) {
+                log.error("DELETE 요청 실패: {} - Status: {}, Body: {}", url, response.code(), responseBody);
+                throw new CustomException(ErrorCode.NETWORK_REQUEST_FAILED);
+            }
+
+            log.debug("DELETE 요청 성공: {} - Status: {}, Body Size: {} bytes",
+                    url, response.code(), responseBody.length());
+            return responseBody;
+        } catch (IOException e) {
+            log.error("DELETE 요청 중 IOException 발생: {} - {}", url, e.getMessage(), e);
+            throw new CustomException(ErrorCode.NETWORK_REQUEST_FAILED);
+        }
+    }
 }

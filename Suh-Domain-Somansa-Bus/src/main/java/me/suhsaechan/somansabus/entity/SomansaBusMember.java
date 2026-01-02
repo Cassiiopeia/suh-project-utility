@@ -22,12 +22,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class SomansaBusUser extends BasePostgresEntity {
+public class SomansaBusMember extends BasePostgresEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(nullable = false, updatable = false)
-  private UUID somansaBusUserId;
+  private UUID somansaBusMemberId;
 
   @Column(unique = true, nullable = false)
   private String loginId;

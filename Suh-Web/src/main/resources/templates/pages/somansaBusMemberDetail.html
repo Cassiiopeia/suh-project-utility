@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='소만사 버스 예약 - 멤버 상세')}"></head>
+<body class="somansa-bus-page bg-gray-50">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
+  <div class="mb-6">
+    <a href="/somansa/bus" class="btn btn-ghost btn-sm mb-4">
+      <i class="fa-solid fa-arrow-left"></i>
+      목록으로
+    </a>
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-solid fa-user text-blue-500"></i>
+      멤버 상세
+    </h2>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="avatar placeholder">
+            <div class="bg-primary text-primary-content rounded-full w-16">
+              <span class="text-2xl" th:text="${member.displayName != null ? member.displayName.substring(0,1) : '?'}">?</span>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold" th:text="${member.displayName ?: '이름 없음'}">홍길동</h3>
+            <p class="text-gray-500" th:text="${member.loginId}">email@somansa.com</p>
+            <div class="flex gap-2 mt-2">
+              <span th:if="${member.isActive}" class="badge badge-success">활성</span>
+              <span th:unless="${member.isActive}" class="badge badge-ghost">비활성</span>
+              <span th:if="${member.isVerified}" class="badge badge-info">인증됨</span>
+              <span th:unless="${member.isVerified}" class="badge badge-warning">미인증</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button th:if="${member.isActive}"
+                  class="btn btn-error btn-sm"
+                  th:data-member-id="${member.somansaBusMemberId}"
+                  onclick="toggleMemberActive(this.getAttribute('data-member-id'))">
+            <i class="fa-solid fa-toggle-off"></i>
+            비활성화하기
+          </button>
+          <button th:unless="${member.isActive}"
+                  class="btn btn-success btn-sm"
+                  th:data-member-id="${member.somansaBusMemberId}"
+                  onclick="toggleMemberActive(this.getAttribute('data-member-id'))">
+            <i class="fa-solid fa-toggle-on"></i>
+            활성화하기
+          </button>
+          <button class="btn btn-error btn-sm"
+                  th:data-member-id="${member.somansaBusMemberId}"
+                  onclick="deleteMember(this.getAttribute('data-member-id'))">
+            <i class="fa-solid fa-trash"></i>
+            삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-ticket text-blue-500"></i>
+        빠른 예약
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="font-medium mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-sun text-orange-400"></i> 출근
+          </h4>
+          <div class="space-y-2" id="commuteRoutes">
+            <label th:each="route : ${routes}"
+                   th:if="${route.caralias == '출근'}"
+                   class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <input type="radio" name="selectedRoute"
+                     th:value="${route.somansaBusRouteId}"
+                     class="radio radio-primary radio-sm">
+              <span th:text="${route.departureTime + ' ' + route.station + ' ' + route.busNumber + '호'}">
+                06:55 당산역 1호
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-medium mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-moon text-indigo-400"></i> 퇴근
+          </h4>
+          <div class="space-y-2" id="offworkRoutes">
+            <label th:each="route : ${routes}"
+                   th:if="${route.caralias == '퇴근'}"
+                   class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              <input type="radio" name="selectedRoute"
+                     th:value="${route.somansaBusRouteId}"
+                     class="radio radio-primary radio-sm">
+              <span th:text="${route.departureTime + ' ' + route.station + ' ' + route.busNumber + '호'}">
+                18:00 당산역 1호
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4 mt-6 pt-4 border-t">
+        <div class="form-control w-full sm:w-auto">
+          <label class="label">
+            <span class="label-text font-medium">예약 날짜</span>
+          </label>
+          <input type="date" id="reservationDate" class="input input-bordered w-full sm:w-48">
+        </div>
+        <button class="btn btn-primary" onclick="executeReservation()">
+          <i class="fa-solid fa-ticket"></i>
+          예약하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-calendar text-blue-500"></i>
+            자동 예약 스케줄
+          </h3>
+          <p class="text-gray-500 text-sm">등록된 자동 예약 스케줄</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showAddScheduleModal()">
+          <i class="fa-solid fa-plus"></i>
+          스케줄 추가
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>노선</th>
+              <th>예약 일수</th>
+              <th>상태</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTable">
+            <tr>
+              <td colspan="4" class="text-center py-8">
+                <span class="loading loading-spinner loading-md text-primary"></span>
+                <span class="ml-2 text-gray-500">스케줄 로딩 중...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+            예약 기록
+          </h3>
+          <p class="text-gray-500 text-sm">이 멤버의 예약 기록</p>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="loadMemberHistory()">
+          <i class="fa-solid fa-rotate"></i>
+          새로고침
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>실행시간</th>
+              <th>노선</th>
+              <th>예약일</th>
+              <th>상태</th>
+              <th>메시지</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable">
+            <tr>
+              <td colspan="5" class="text-center py-8">
+                <span class="loading loading-spinner loading-md text-primary"></span>
+                <span class="ml-2 text-gray-500">기록 로딩 중...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="modal" id="scheduleModal">
+    <div class="modal-box max-w-md">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
+        <i class="fa-solid fa-calendar-plus text-blue-500"></i>
+        스케줄 추가
+      </h3>
+      <form id="scheduleForm" class="space-y-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">노선 선택</span>
+          </label>
+          <select class="select select-bordered w-full" id="scheduleRouteId" required>
+            <option value="">노선을 선택하세요</option>
+            <option th:each="route : ${routes}"
+                    th:value="${route.somansaBusRouteId}"
+                    th:text="${route.description}">노선</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">예약 일수 (D+N)</span>
+          </label>
+          <input type="number" id="daysAhead" class="input input-bordered w-full" value="3" min="1" max="7">
+          <label class="label">
+            <span class="label-text-alt text-gray-500">오늘 기준 며칠 후 예약할지 설정</span>
+          </label>
+        </div>
+      </form>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost">취소</button>
+        </form>
+        <button class="btn btn-primary" onclick="createSchedule()">
+          <i class="fa-solid fa-plus"></i>
+          추가
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:inline="javascript">
+const memberId = /*[[${member.somansaBusMemberId}]]*/ '';
+
+$(document).ready(function() {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  $('#reservationDate').val(tomorrow.toISOString().split('T')[0]);
+
+  loadMemberSchedules();
+  loadMemberHistory();
+});
+
+function executeReservation() {
+  const routeId = $('input[name="selectedRoute"]:checked').val();
+  const reservationDate = $('#reservationDate').val();
+
+  if (!routeId) {
+    showToast('노선을 선택해주세요.', 'negative');
+    return;
+  }
+
+  if (!reservationDate) {
+    showToast('예약 날짜를 선택해주세요.', 'negative');
+    return;
+  }
+
+  sendFormRequest('/api/somansa-bus/reserve/manual', {
+    somansaBusMemberId: memberId,
+    somansaBusRouteId: routeId,
+    reservationDate: reservationDate
+  },
+  function(response) {
+    if (response.isReservationSuccess) {
+      showToast('예약이 완료되었습니다!', 'positive');
+    } else {
+      showToast('예약이 실패했습니다.', 'negative');
+    }
+    loadMemberHistory();
+  },
+  function(xhr) {
+    let errorMessage = '예약 중 오류가 발생했습니다.';
+    if (xhr.responseJSON && xhr.responseJSON.message) {
+      errorMessage = xhr.responseJSON.message;
+    }
+    showToast(errorMessage, 'negative');
+  });
+}
+
+function loadMemberSchedules() {
+  sendFormRequest('/api/somansa-bus/schedule/list/by-member', { somansaBusMemberId: memberId },
+    function(response) {
+      displaySchedules(response.schedules || []);
+    },
+    function(xhr) {
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
+      $('#scheduleTable').html('<tr><td colspan="4" class="text-center py-8 text-gray-500">스케줄 로드 실패</td></tr>');
+    }
+  );
+}
+
+function displaySchedules(schedules) {
+  const tableBody = $('#scheduleTable');
+
+  if (!schedules || schedules.length === 0) {
+    tableBody.html('<tr><td colspan="4" class="text-center py-8 text-gray-500">등록된 스케줄이 없습니다.</td></tr>');
+    return;
+  }
+
+  tableBody.empty();
+  schedules.forEach(function(schedule) {
+    const row = $('<tr>');
+
+    const routeCell = $('<td>');
+    routeCell.text(schedule.somansaBusRoute ? schedule.somansaBusRoute.description : '-');
+    row.append(routeCell);
+
+    const daysCell = $('<td>');
+    daysCell.text('D+' + (schedule.daysAhead || 3));
+    row.append(daysCell);
+
+    const statusCell = $('<td>');
+    if (schedule.isActive) {
+      statusCell.html('<span class="badge badge-success badge-sm">활성</span>');
+    } else {
+      statusCell.html('<span class="badge badge-ghost badge-sm">비활성</span>');
+    }
+    row.append(statusCell);
+
+    const actionCell = $('<td>');
+    actionCell.html(`
+      <div class="flex gap-1">
+        <button class="btn btn-circle btn-sm btn-warning" onclick="toggleScheduleActive('${schedule.somansaBusScheduleId}')" title="상태 변경">
+          <i class="fa-solid fa-toggle-on text-xs"></i>
+        </button>
+        <button class="btn btn-circle btn-sm btn-error" onclick="deleteSchedule('${schedule.somansaBusScheduleId}')" title="삭제">
+          <i class="fa-solid fa-trash text-xs"></i>
+        </button>
+      </div>
+    `);
+    row.append(actionCell);
+
+    tableBody.append(row);
+  });
+}
+
+function showAddScheduleModal() {
+  $('#scheduleForm')[0].reset();
+  $('#daysAhead').val(3);
+  document.getElementById('scheduleModal').showModal();
+}
+
+function createSchedule() {
+  const routeId = $('#scheduleRouteId').val();
+  const daysAhead = $('#daysAhead').val();
+
+  if (!routeId) {
+    showToast('노선을 선택해주세요.', 'negative');
+    return;
+  }
+
+  sendFormRequest('/api/somansa-bus/schedule/create', {
+    somansaBusMemberId: memberId,
+    somansaBusRouteId: routeId,
+    daysAhead: daysAhead
+  },
+  function(response) {
+    showToast('스케줄이 추가되었습니다.', 'positive');
+    document.getElementById('scheduleModal').close();
+    loadMemberSchedules();
+  },
+  function(xhr) {
+    showToast('스케줄 추가 중 오류가 발생했습니다.', 'negative');
+  });
+}
+
+function toggleScheduleActive(scheduleId) {
+  sendFormRequest('/api/somansa-bus/schedule/toggle-active', { somansaBusScheduleId: scheduleId },
+    function(response) {
+      showToast('스케줄 상태가 변경되었습니다.', 'positive');
+      loadMemberSchedules();
+    },
+    function(xhr) {
+      showToast('상태 변경 중 오류가 발생했습니다.', 'negative');
+    }
+  );
+}
+
+function deleteSchedule(scheduleId) {
+  if (!confirm('정말로 이 스케줄을 삭제하시겠습니까?')) {
+    return;
+  }
+
+  sendFormRequest('/api/somansa-bus/schedule/delete', { somansaBusScheduleId: scheduleId },
+    function(response) {
+      showToast('스케줄이 삭제되었습니다.', 'positive');
+      loadMemberSchedules();
+    },
+    function(xhr) {
+      showToast('스케줄 삭제 중 오류가 발생했습니다.', 'negative');
+    }
+  );
+}
+
+function loadMemberHistory() {
+  sendFormRequest('/api/somansa-bus/history/list/by-member', { somansaBusMemberId: memberId },
+    function(response) {
+      displayHistory(response.histories || []);
+    },
+    function(xhr) {
+      // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
+      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">기록 로드 실패</td></tr>');
+    }
+  );
+}
+
+function displayHistory(histories) {
+  const tableBody = $('#historyTable');
+
+  if (!histories || histories.length === 0) {
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-gray-500">예약 기록이 없습니다.</td></tr>');
+    return;
+  }
+
+  tableBody.empty();
+  histories.forEach(function(history) {
+    const row = $('<tr>');
+
+    const timeCell = $('<td>');
+    timeCell.text(history.executedAt ? new Date(history.executedAt).toLocaleString('ko-KR') : '-');
+    row.append(timeCell);
+
+    const routeCell = $('<td>');
+    routeCell.text(history.somansaBusRoute ? history.somansaBusRoute.description : '-');
+    row.append(routeCell);
+
+    const dateCell = $('<td>');
+    dateCell.text(history.reservationDate || '-');
+    row.append(dateCell);
+
+    const statusCell = $('<td>');
+    if (history.isSuccess) {
+      statusCell.html('<span class="badge badge-success badge-sm">성공</span>');
+    } else {
+      statusCell.html('<span class="badge badge-error badge-sm">실패</span>');
+    }
+    row.append(statusCell);
+
+    const msgCell = $('<td class="text-sm text-gray-500">');
+    msgCell.text(history.errorMessage || '-');
+    row.append(msgCell);
+
+    tableBody.append(row);
+  });
+}
+
+function toggleMemberActive(memberId) {
+  sendFormRequest('/api/somansa-bus/member/toggle-active', { somansaBusMemberId: memberId },
+    function(response) {
+      showToast('멤버 상태가 변경되었습니다.', 'positive');
+      location.reload();
+    },
+    function(xhr) {
+      showToast('상태 변경 중 오류가 발생했습니다.', 'negative');
+    }
+  );
+}
+
+function deleteMember(memberId) {
+  if (!confirm('정말로 이 멤버를 삭제하시겠습니까? 관련된 모든 스케줄과 기록도 삭제됩니다.')) {
+    return;
+  }
+
+  sendFormRequest('/api/somansa-bus/member/delete', { somansaBusMemberId: memberId },
+    function(response) {
+      showToast('멤버가 삭제되었습니다.', 'positive');
+      location.href = '/somansa/bus';
+    },
+    function(xhr) {
+      showToast('멤버 삭제 중 오류가 발생했습니다.', 'negative');
+    }
+  );
+}
+</script>
+</body>
+</html>

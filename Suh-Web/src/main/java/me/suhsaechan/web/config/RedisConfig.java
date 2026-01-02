@@ -62,9 +62,17 @@ public class RedisConfig {
         .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
         .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
+    // ServerOption 캐시: 1시간 TTL (설정 변경 빈도 낮음)
+    RedisCacheConfiguration serverOptionConfig = RedisCacheConfiguration.defaultCacheConfig()
+        .entryTtl(Duration.ofHours(1))
+        .disableCachingNullValues()
+        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+
     return RedisCacheManager.builder(factory)
         .cacheDefaults(defaultConfig)
         .withCacheConfiguration("dashboardSummary", dashboardConfig)
+        .withCacheConfiguration("serverOption", serverOptionConfig)
         .build();
   }
 

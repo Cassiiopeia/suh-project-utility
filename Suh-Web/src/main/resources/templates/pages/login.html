@@ -50,27 +50,23 @@
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 
         <!-- 아이디 입력 -->
-        <div class="form-control -mb-2">
+        <div class="form-control">
           <label class="label">
             <span class="label-text font-medium">Username</span>
           </label>
-          <div class="relative">
-            <i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
-            <input type="text" name="username" placeholder="Enter your username"
-                   class="input w-full pl-10 validator" required />
-          </div>
+          <input type="text" name="username" placeholder="Enter your username"
+                 class="input w-full validator" required />
           <p class="validator-hint text-error text-xs mt-1">Username is required</p>
         </div>
 
         <!-- 비밀번호 입력 -->
-        <div class="form-control">
+        <div class="form-control !mt-0">
           <label class="label">
             <span class="label-text font-medium">Password</span>
           </label>
           <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none"></i>
             <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
-                   class="input w-full pl-10 pr-12 validator" required />
+                   class="input w-full pr-12 validator" required />
             <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70 z-20">
               <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
             </span>
@@ -178,8 +174,6 @@
 
 
   function processClientIP(clientIP) {
-    console.log("실제 클라이언트 IP:", clientIP);
-    // AES 암호화
     const key = CryptoJS.enc.Utf8.parse(window.encryptionKey);
     const iv = CryptoJS.enc.Utf8.parse(window.encryptionIv);
 
@@ -189,7 +183,6 @@
       padding: CryptoJS.pad.Pkcs7
     });
 
-    console.log("ClientHash 값:", encrypted.toString());
     window.clientHash = encrypted.toString();
   }
 

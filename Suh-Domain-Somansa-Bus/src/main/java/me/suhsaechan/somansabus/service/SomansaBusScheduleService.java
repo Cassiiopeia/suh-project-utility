@@ -6,15 +6,19 @@ import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.somansabus.dto.SomansaBusRequest;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
+import me.suhsaechan.somansabus.entity.SomansaBusMember;
 import me.suhsaechan.somansabus.entity.SomansaBusRoute;
 import me.suhsaechan.somansabus.entity.SomansaBusSchedule;
-import me.suhsaechan.somansabus.entity.SomansaBusUser;
+import me.suhsaechan.somansabus.repository.SomansaBusMemberRepository;
+import me.suhsaechan.somansabus.repository.SomansaBusReservationHistoryRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusRouteRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusScheduleRepository;
-import me.suhsaechan.somansabus.repository.SomansaBusUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,16 +28,17 @@ import java.util.UUID;
 public class SomansaBusScheduleService {
 
   private final SomansaBusScheduleRepository scheduleRepository;
-  private final SomansaBusUserRepository userRepository;
+  private final SomansaBusMemberRepository memberRepository;
   private final SomansaBusRouteRepository routeRepository;
+  private final SomansaBusReservationHistoryRepository historyRepository;
 
   @Transactional
   public SomansaBusResponse createSchedule(SomansaBusRequest request) {
-    log.info("예약 스케줄 생성 - 사용자: {}, 노선: {}",
-        request.getSomansaBusUserId(), request.getSomansaBusRouteId());
+    log.info("예약 스케줄 생성 - 멤버: {}, 노선: {}",
+        request.getSomansaBusMemberId(), request.getSomansaBusRouteId());
 
-    SomansaBusUser user = userRepository.findById(request.getSomansaBusUserId())
-        .orElseThrow(() -> new CustomException(ErrorCode.SOMANSA_BUS_USER_NOT_FOUND));
+    SomansaBusMember member = memberRepository.findById(request.getSomansaBusMemberId())
+        .orElseThrow(() -> new CustomException(ErrorCode.SOMANSA_BUS_MEMBER_NOT_FOUND));
 
     SomansaBusRoute route = routeRepository.findById(request.getSomansaBusRouteId())
         .orElseThrow(() -> new CustomException(ErrorCode.SOMANSA_BUS_ROUTE_NOT_FOUND));
@@ -41,7 +46,7 @@ public class SomansaBusScheduleService {
     Integer daysAhead = request.getDaysAhead() != null ? request.getDaysAhead() : 3;
 
     SomansaBusSchedule schedule = SomansaBusSchedule.builder()
-        .somansaBusUser(user)
+        .somansaBusMember(member)
         .somansaBusRoute(route)
         .isActive(true)
         .daysAhead(daysAhead)
@@ -56,9 +61,9 @@ public class SomansaBusScheduleService {
   }
 
   @Transactional(readOnly = true)
-  public SomansaBusResponse getSchedulesByUser(UUID userId) {
-    log.info("사용자별 스케줄 조회: {}", userId);
-    List<SomansaBusSchedule> schedules = scheduleRepository.findBySomansaBusUserSomansaBusUserId(userId);
+  public SomansaBusResponse getSchedulesByMember(UUID memberId) {
+    log.info("멤버별 스케줄 조회: {}", memberId);
+    List<SomansaBusSchedule> schedules = scheduleRepository.findByMemberIdWithDetails(memberId);
     return SomansaBusResponse.builder()
         .schedules(schedules)
         .totalCount((long) schedules.size())
@@ -66,9 +71,9 @@ public class SomansaBusScheduleService {
   }
 
   @Transactional(readOnly = true)
-  public SomansaBusResponse getActiveSchedulesByUser(UUID userId) {
-    log.info("사용자별 활성 스케줄 조회: {}", userId);
-    List<SomansaBusSchedule> schedules = scheduleRepository.findBySomansaBusUserSomansaBusUserIdAndIsActiveTrue(userId);
+  public SomansaBusResponse getActiveSchedulesByMember(UUID memberId) {
+    log.info("멤버별 활성 스케줄 조회: {}", memberId);
+    List<SomansaBusSchedule> schedules = scheduleRepository.findBySomansaBusMemberSomansaBusMemberIdAndIsActiveTrue(memberId);
     return SomansaBusResponse.builder()
         .schedules(schedules)
         .totalCount((long) schedules.size())
@@ -111,6 +116,34 @@ public class SomansaBusScheduleService {
 
     return SomansaBusResponse.builder()
         .schedule(schedule)
+        .build();
+  }
+
+  @Transactional(readOnly = true)
+  public SomansaBusResponse getStats() {
+    log.info("버스 예약 시스템 통계 조회");
+
+    Integer totalMembers = (int) memberRepository.count();
+    Integer activeMembers = memberRepository.findByIsActiveTrueAndIsVerifiedTrue().size();
+    Integer totalSchedules = (int) scheduleRepository.count();
+    Integer activeSchedules = scheduleRepository.findByIsActiveTrue().size();
+
+    LocalDate today = LocalDate.now();
+    LocalDate weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    LocalDate weekEnd = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+    Integer thisWeekReservations = historyRepository.countByReservationDateBetween(weekStart, weekEnd);
+    Integer thisWeekSuccess = historyRepository.countByReservationDateBetweenAndIsSuccessTrue(weekStart, weekEnd);
+    Integer thisWeekFailed = historyRepository.countByReservationDateBetweenAndIsSuccessFalse(weekStart, weekEnd);
+
+    return SomansaBusResponse.builder()
+        .totalMembers(totalMembers)
+        .activeMembers(activeMembers)
+        .totalSchedules(totalSchedules)
+        .activeSchedules(activeSchedules)
+        .thisWeekReservations(thisWeekReservations != null ? thisWeekReservations : 0)
+        .thisWeekSuccessReservations(thisWeekSuccess != null ? thisWeekSuccess : 0)
+        .thisWeekFailedReservations(thisWeekFailed != null ? thisWeekFailed : 0)
         .build();
   }
 }

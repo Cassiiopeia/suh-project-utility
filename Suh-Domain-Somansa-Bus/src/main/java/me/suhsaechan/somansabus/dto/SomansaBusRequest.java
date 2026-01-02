@@ -14,8 +14,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SomansaBusRequest {
 
-    // 사용자 관련
-    private UUID somansaBusUserId;
+    // 멤버 관련
+    private UUID somansaBusMemberId;
     private String loginId;
     private String password;
     private Boolean isActive;

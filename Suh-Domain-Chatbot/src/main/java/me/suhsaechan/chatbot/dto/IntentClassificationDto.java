@@ -1,5 +1,6 @@
 package me.suhsaechan.chatbot.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import kr.suhsaechan.ai.annotation.AiClass;
 import kr.suhsaechan.ai.annotation.AiSchema;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 @AiClass(
     title = "사용자 의도 분류 결과",
     description = "사용자 질문을 분석하여 질문 유형을 분류하고, RAG 벡터 검색의 필요 여부를 판단한 결과입니다. " +

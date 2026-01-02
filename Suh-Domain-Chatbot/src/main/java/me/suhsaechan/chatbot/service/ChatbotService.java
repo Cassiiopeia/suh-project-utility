@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.config.ChatbotProperties;
 import me.suhsaechan.chatbot.config.QdrantProperties;
 import me.suhsaechan.chatbot.dto.ChatHistoryDto;
+import me.suhsaechan.common.constant.ServerOptionKey;
+import me.suhsaechan.common.service.ServerOptionService;
 import me.suhsaechan.chatbot.dto.ChatbotRequest;
 import me.suhsaechan.chatbot.dto.ChatbotResponse;
 import me.suhsaechan.chatbot.dto.ChatbotResponse.ReferencedDocument;
@@ -76,6 +78,7 @@ public class ChatbotService {
     private final QdrantProperties qdrantProperties;
     private final SuhAiderEngine suhAiderEngine;
     private final ChatbotProperties chatbotProperties;
+    private final ServerOptionService serverOptionService;
     private final ObjectMapper objectMapper;
 
     /**
@@ -207,12 +210,13 @@ public class ChatbotService {
             List<ChatMessage> recentHistory = context.getRecentHistory();
 
             // ===== Agent Step 1: 의도 분류 (재시도 로직 포함) =====
-            sendThinkingEvent(thinkingCallback, 1, 3, "in_progress", "질문 분석 중", null, null);
+            sendThinkingEvent(thinkingCallback, 1, 3, "in_progress", "질문 분석 중", "의도 분류 LLM 호출 중...", null);
             log.info("[Agent Step 1/3] 의도 분류 시작");
 
             IntentClassificationDto intent = classifyUserIntentWithRetry(message, recentHistory, thinkingCallback);
 
-            String intentDetail = getIntentTypeDisplayName(intent.getIntentType());
+            String confidencePercent = String.format("%d%%", Math.round(intent.getConfidence() * 100));
+            String intentDetail = getIntentTypeDisplayName(intent.getIntentType()) + " (" + confidencePercent + ")";
             sendThinkingEvent(thinkingCallback, 1, 3, "completed", "질문 분석 완료", intentDetail, null);
             log.info("[Agent Step 1/3] 의도 분류 완료 - type: {}, needsRAG: {}, confidence: {}, searchQuery: {}",
                 intent.getIntentType(), intent.getNeedsRagSearch(), intent.getConfidence(), intent.getSearchQuery());
@@ -223,7 +227,7 @@ public class ChatbotService {
                 // 검색 쿼리: searchQuery > summary > 원본 메시지 순서로 사용
                 String searchQuery = getSearchQuery(intent, message);
 
-                sendThinkingEvent(thinkingCallback, 2, 3, "in_progress", "관련 문서 검색 중", null, searchQuery);
+                sendThinkingEvent(thinkingCallback, 2, 3, "in_progress", "관련 문서 검색 중", "벡터 임베딩 생성 및 검색 중...", searchQuery);
                 log.info("[Agent Step 2/3] RAG 검색 시작 - 쿼리: {}", searchQuery);
 
                 int actualTopK = topK > 0 ? topK : chatbotProperties.getAgent().getRag().getTopK();
@@ -231,18 +235,34 @@ public class ChatbotService {
 
                 searchResults = searchRelevantDocuments(searchQuery, actualTopK, actualMinScore);
 
-                String searchDetail = searchResults.isEmpty()
-                    ? "관련 문서 없음"
-                    : String.format("%d개 문서", searchResults.size());
+                String searchDetail;
+                if (searchResults.isEmpty()) {
+                    searchDetail = "관련 문서 없음";
+                } else {
+                    float maxScore = searchResults.stream()
+                        .map(VectorSearchResult::getScore)
+                        .max(Float::compareTo)
+                        .orElse(0f);
+                    searchDetail = String.format("%d개 문서 (최고 유사도 %.0f%%)", searchResults.size(), maxScore * 100);
+                }
                 sendThinkingEvent(thinkingCallback, 2, 3, "completed", "문서 검색 완료", searchDetail, searchQuery);
                 log.info("[Agent Step 2/3] RAG 검색 완료 - 결과 수: {}", searchResults.size());
             } else {
-                sendThinkingEvent(thinkingCallback, 2, 3, "skipped", "문서 검색 생략", "일반 대화", null);
+                String skipReason = getIntentTypeDisplayName(intent.getIntentType()) + " - 바로 답변 가능";
+                sendThinkingEvent(thinkingCallback, 2, 3, "skipped", "문서 검색 생략", skipReason, null);
                 log.info("[Agent Step 2/3] RAG 검색 생략 - 의도: {} (일반 대화)", intent.getIntentType());
             }
 
             // ===== Agent Step 3: 응답 생성 (고품질 LLM, 스트리밍) =====
-            sendThinkingEvent(thinkingCallback, 3, 3, "in_progress", "응답 생성 중", null, null);
+            String step3Detail;
+            if (!searchResults.isEmpty()) {
+                step3Detail = String.format("검색된 %d개 문서 기반 답변 작성 중...", searchResults.size());
+            } else if (!recentHistory.isEmpty()) {
+                step3Detail = String.format("대화 이력 %d개 참고하여 답변 작성 중...", recentHistory.size());
+            } else {
+                step3Detail = "답변을 작성하고 있어요...";
+            }
+            sendThinkingEvent(thinkingCallback, 3, 3, "in_progress", "응답 생성 중", step3Detail, null);
             log.info("[Agent Step 3/3] 스트리밍 응답 생성 시작");
             String fullPrompt = buildFullPrompt(message, searchResults, recentHistory, intent);
 
@@ -257,7 +277,7 @@ public class ChatbotService {
                 .distinct()
                 .collect(Collectors.toList());
 
-            String model = chatbotProperties.getModels().getResponseGenerator();
+            String model = serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RESPONSE_GENERATOR_MODEL);
             suhAiderEngine.generateStreamAsync(model, fullPrompt, new StreamCallback() {
                 @Override
                 public void onNext(String chunk) {
@@ -387,28 +407,67 @@ public class ChatbotService {
         // 1차 시도
         IntentClassificationDto intent = classifyUserIntentInternal(userMessage, recentHistory, false);
 
+        // 파싱 실패 시 기본값으로 폴백 (안전을 위해 RAG 검색 수행)
+        if (!isValidIntentResult(intent)) {
+            log.warn("[Agent Step 1/3] 의도 분류 파싱 실패, 기본값(KNOWLEDGE_QUERY) 사용");
+            return createFallbackIntent(userMessage);
+        }
+
         // 신뢰도 충분하면 바로 반환
-        if (intent.getConfidence() >= CONFIDENCE_THRESHOLD) {
+        float confidence = intent.getConfidence();
+        if (confidence >= CONFIDENCE_THRESHOLD) {
             return intent;
         }
 
         // 재시도 알림
-        log.info("[Agent Step 1/3] 신뢰도 낮음 ({}%), 재분류 시도", Math.round(intent.getConfidence() * 100));
+        log.info("[Agent Step 1/3] 신뢰도 낮음 ({}%), 재분류 시도", Math.round(confidence * 100));
         sendThinkingEvent(thinkingCallback, 1, 3, "retrying", "재분석 중",
-            String.format("신뢰도 낮음 (%d%%)", Math.round(intent.getConfidence() * 100)), null);
+            String.format("신뢰도 낮음 (%d%%)", Math.round(confidence * 100)), null);
 
         // 2차 시도 (강화된 프롬프트)
         IntentClassificationDto retryIntent = classifyUserIntentInternal(userMessage, recentHistory, true);
 
+        // 재시도 결과도 파싱 실패 시 원본 결과 사용
+        if (!isValidIntentResult(retryIntent)) {
+            log.warn("[Agent Step 1/3] 재시도 파싱 실패, 원본 결과 사용");
+            return intent;
+        }
+
         // 더 나은 결과 선택
-        if (retryIntent.getConfidence() > intent.getConfidence()) {
+        float retryConfidence = retryIntent.getConfidence();
+        if (retryConfidence > confidence) {
             log.info("[Agent Step 1/3] 재분류 성공 - 신뢰도 향상: {}% → {}%",
-                Math.round(intent.getConfidence() * 100), Math.round(retryIntent.getConfidence() * 100));
+                Math.round(confidence * 100), Math.round(retryConfidence * 100));
             return retryIntent;
         }
 
         log.info("[Agent Step 1/3] 재분류 결과 개선 없음, 원본 결과 사용");
         return intent;
+    }
+
+    /**
+     * 의도 분류 결과가 유효한지 검증
+     */
+    private boolean isValidIntentResult(IntentClassificationDto intent) {
+        return intent != null
+            && intent.getIntentType() != null
+            && intent.getNeedsRagSearch() != null
+            && intent.getConfidence() != null;
+    }
+
+    /**
+     * 파싱 실패 시 기본 의도 분류 결과 생성 (안전을 위해 RAG 검색 수행)
+     */
+    private IntentClassificationDto createFallbackIntent(String userMessage) {
+        return IntentClassificationDto.builder()
+            .intentType("KNOWLEDGE_QUERY")
+            .needsRagSearch(true)
+            .confidence(0.5f)
+            .reason("의도 분류 파싱 실패로 인한 기본값 사용")
+            .summary(userMessage.length() > 50 ? userMessage.substring(0, 50) + "..." : userMessage)
+            .searchQuery("SUH Project Utility " + userMessage)
+            .responseFormat("GUIDE")
+            .build();
     }
 
     /**
@@ -506,7 +565,7 @@ public class ChatbotService {
             JsonSchema schema = JsonSchemaClassParser.parse(IntentClassificationDto.class);
 
             SuhAiderRequest request = SuhAiderRequest.builder()
-                    .model(chatbotProperties.getModels().getIntentClassifier())
+                    .model(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_INTENT_CLASSIFIER_MODEL))
                     .prompt(prompt.toString())
                     .stream(false)
                     .responseSchema(schema)
@@ -557,7 +616,7 @@ public class ChatbotService {
         String fullPrompt = buildFullPrompt(userMessage, searchResults, recentHistory, intent);
 
         try {
-            String model = chatbotProperties.getModels().getResponseGenerator();
+            String model = serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RESPONSE_GENERATOR_MODEL);
             log.debug("LLM 응답 생성 시작 - 모델: {}, 프롬프트 길이: {}", model, fullPrompt.length());
 
             String response = suhAiderEngine.generate(model, fullPrompt);

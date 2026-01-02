@@ -34,7 +34,7 @@ public class SomansaBusReservationHistory extends BasePostgresEntity {
   private UUID somansaBusReservationHistoryId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  private SomansaBusUser somansaBusUser;
+  private SomansaBusMember somansaBusMember;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private SomansaBusRoute somansaBusRoute;

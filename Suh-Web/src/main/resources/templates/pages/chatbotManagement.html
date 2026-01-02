@@ -1,7 +1,7 @@
 <!-- src/main/resources/templates/pages/chatbotManagement.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head(title='챗봇 문서 관리-SAECHAN-LAB')}"></head>
+<head th:replace="~{fragments/header :: head(title='챗봇 관리-SAECHAN-LAB')}"></head>
 <body class="chatbot-management-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
@@ -9,122 +9,150 @@
   <!-- 페이지 헤더 -->
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fa-solid fa-database text-purple-500"></i>
-      챗봇 문서 관리
+      <i class="fa-solid fa-robot text-purple-500"></i>
+      챗봇 관리
     </h2>
-    <p class="text-gray-500 mt-1">RAG 챗봇이 참조할 문서를 관리합니다. (Qdrant 벡터DB 연동)</p>
+    <p class="text-gray-500 mt-1">챗봇 문서 및 모델 설정을 관리합니다.</p>
   </div>
 
-  <!-- 통계 카드 -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-            <i class="fa-solid fa-file-lines text-blue-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">총 문서 수</p>
-            <p class="text-2xl font-bold" id="stat-total-docs">0</p>
-          </div>
-        </div>
+  <!-- 2단 레이아웃 컨테이너 -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <!-- 문서 관리 섹션 (좌측 2/3) -->
+    <div id="documents-section" class="xl:col-span-2">
+      <!-- 섹션 헤더 -->
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-file-lines text-blue-500 text-lg"></i>
+        <h3 class="text-lg font-semibold">문서 관리</h3>
       </div>
-    </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-            <i class="fa-solid fa-check-circle text-green-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">활성 문서</p>
-            <p class="text-2xl font-bold" id="stat-active-docs">0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
-            <i class="fa-solid fa-puzzle-piece text-purple-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">총 청크 수</p>
-            <p class="text-2xl font-bold" id="stat-total-chunks">0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
-      <div class="card-body p-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
-            <i class="fa-solid fa-tags text-amber-600 text-xl"></i>
-          </div>
-          <div>
-            <p class="text-gray-500 text-sm">카테고리</p>
-            <p class="text-2xl font-bold" id="stat-categories">0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 문서 관리 툴바 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
-    <div class="card-body p-4">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <!-- 검색 영역 -->
-        <div class="join w-full lg:w-auto">
-          <input type="text" id="search-keyword" class="input join-item w-full lg:w-64" placeholder="제목 또는 카테고리 검색...">
-          <button class="btn btn-primary join-item" id="search-btn">
-            <i class="fa-solid fa-search"></i>
-            검색
-          </button>
+      <!-- 통계 카드 -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <i class="fa-solid fa-file-lines text-blue-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">총 문서</p>
+                <p class="text-xl font-bold" id="stat-total-docs">0</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- 버튼 영역 -->
-        <div class="flex gap-2 flex-wrap">
-          <button class="btn btn-primary" id="create-btn">
-            <i class="fa-solid fa-plus"></i>
-            새 문서
-          </button>
-          <button class="btn btn-outline btn-secondary" id="init-collection-btn">
-            <i class="fa-solid fa-database"></i>
-            컬렉션 초기화
-          </button>
-          <button class="btn btn-outline" id="refresh-btn">
-            <i class="fa-solid fa-rotate"></i>
-            새로고침
-          </button>
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                <i class="fa-solid fa-check-circle text-green-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">활성</p>
+                <p class="text-xl font-bold" id="stat-active-docs">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                <i class="fa-solid fa-puzzle-piece text-purple-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">청크</p>
+                <p class="text-xl font-bold" id="stat-total-chunks">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 shadow-sm border border-gray-100">
+          <div class="card-body p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                <i class="fa-solid fa-tags text-amber-600"></i>
+              </div>
+              <div>
+                <p class="text-gray-500 text-xs">카테고리</p>
+                <p class="text-xl font-bold" id="stat-categories">0</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 문서 목록 테이블 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
-    <div class="card-body p-4">
-      <div id="document-table" class="modal-table-container"></div>
-      <div id="loading-indicator" class="flex justify-center py-8">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-      <div id="error-message" class="alert alert-error hidden">
-        <i class="fa-solid fa-circle-exclamation"></i>
-        <div>
-          <h3 class="font-bold">데이터 로드 실패</h3>
-          <span>문서를 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
+      <!-- 문서 관리 툴바 -->
+      <div class="card bg-base-100 shadow-sm border border-gray-100 mb-4">
+        <div class="card-body p-3">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+            <!-- 검색 영역 -->
+            <div class="join w-full lg:w-auto">
+              <input type="text" id="search-keyword" class="input input-sm join-item w-full lg:w-48" placeholder="검색...">
+              <button class="btn btn-primary btn-sm join-item" id="search-btn">
+                <i class="fa-solid fa-search"></i>
+              </button>
+            </div>
+            <!-- 버튼 영역 -->
+            <div class="flex gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm" id="create-btn">
+                <i class="fa-solid fa-plus"></i>
+                새 문서
+              </button>
+              <button class="btn btn-outline btn-secondary btn-sm" id="init-collection-btn" title="벡터 컬렉션 초기화">
+                <i class="fa-solid fa-database"></i>
+              </button>
+              <button class="btn btn-outline btn-warning btn-sm" id="reprocess-all-btn" title="전체 재처리">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
+              <button class="btn btn-outline btn-sm" id="refresh-btn" title="새로고침">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-      <div id="empty-message" class="alert alert-info hidden">
-        <i class="fa-solid fa-info-circle"></i>
-        <div>
-          <h3 class="font-bold">문서가 없습니다</h3>
-          <span>새 문서를 추가하여 챗봇이 참조할 지식을 등록하세요.</span>
+
+      <!-- 문서 목록 테이블 -->
+      <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card-body p-4">
+          <div id="loading-indicator" class="flex justify-center py-8">
+            <span class="loading loading-spinner loading-lg text-primary"></span>
+          </div>
+          <div id="error-message" class="alert alert-error hidden">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <div>
+              <h3 class="font-bold">데이터 로드 실패</h3>
+              <span>문서를 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
+            </div>
+          </div>
+          <div id="empty-message" class="alert alert-info hidden">
+            <i class="fa-solid fa-info-circle"></i>
+            <div>
+              <h3 class="font-bold">문서가 없습니다</h3>
+              <span>새 문서를 추가하여 챗봇이 참조할 지식을 등록하세요.</span>
+            </div>
+          </div>
+          <div id="table-container" class="hidden">
+            <div class="overflow-x-auto">
+              <table class="table table-zebra table-sm">
+                <thead>
+                  <tr>
+                    <th>제목</th>
+                    <th>카테고리</th>
+                    <th>청크</th>
+                    <th>활성</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody id="document-table-body">
+                </tbody>
+              </table>
+            </div>
+            <div id="document-pagination" class="flex justify-center mt-4"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
   <!-- 문서 등록/수정 모달 -->
   <dialog class="modal" id="document-modal">
@@ -135,19 +163,15 @@
         </button>
       </form>
       <h3 class="font-bold text-lg mb-4" id="modal-title">문서 등록</h3>
-      <form id="document-form" class="space-y-4">
+      <form id="document-form">
         <input type="hidden" id="document-id">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">제목 <span class="text-red-500">*</span></span>
-            </label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">제목 *</legend>
             <input type="text" id="document-title" class="input w-full" placeholder="문서 제목을 입력하세요">
-          </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">카테고리 <span class="text-red-500">*</span></span>
-            </label>
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">카테고리 *</legend>
             <select id="document-category" class="select w-full">
               <option value="site-info">사이트 정보</option>
               <option value="features">기능 안내</option>
@@ -156,23 +180,17 @@
               <option value="project">프로젝트 정보</option>
               <option value="other">기타</option>
             </select>
-          </div>
+          </fieldset>
         </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">설명</span>
-          </label>
+        <fieldset class="fieldset mb-4">
+          <legend class="fieldset-legend">설명</legend>
           <input type="text" id="document-description" class="input w-full" placeholder="문서에 대한 간단한 설명 (선택)">
-        </div>
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">내용 (Markdown) <span class="text-red-500">*</span></span>
-          </label>
-          <textarea id="document-content" class="textarea h-64 font-mono text-sm" placeholder="문서 내용을 마크다운 형식으로 입력하세요..."></textarea>
-          <label class="label">
-            <span class="label-text-alt text-gray-500">마크다운 문법을 지원합니다. 청크 분할: 약 500자 단위</span>
-          </label>
-        </div>
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">내용 (Markdown) *</legend>
+          <textarea id="document-content" class="textarea h-64 w-full font-mono text-sm" placeholder="문서 내용을 마크다운 형식으로 입력하세요..."></textarea>
+          <p class="label text-gray-500">마크다운 문법을 지원합니다.</p>
+        </fieldset>
       </form>
       <div class="modal-action">
         <form method="dialog">
@@ -275,86 +293,274 @@
       <button>close</button>
     </form>
   </dialog>
+
+    <!-- 모델 관리 섹션 (우측 1/3) -->
+    <div id="models-section" class="xl:col-span-1">
+      <!-- 섹션 헤더 -->
+      <div class="flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-brain text-purple-500 text-lg"></i>
+        <h3 class="text-lg font-semibold">모델 관리</h3>
+      </div>
+
+      <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card-body p-4">
+          <p class="text-gray-500 text-sm mb-4">챗봇의 각 단계에서 사용할 AI 모델을 선택합니다.</p>
+
+          <div class="space-y-4">
+            <!-- Step 1: 의도 분류 모델 -->
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text font-semibold text-sm">의도 분류 모델</span>
+              </label>
+              <select id="intent-classifier-model" class="select select-bordered select-sm w-full">
+                <option value="">로딩 중...</option>
+              </select>
+              <label class="label py-1">
+                <span class="label-text-alt text-gray-500 text-xs">경량 모델 권장 (예: gemma3:1b)</span>
+              </label>
+            </div>
+
+            <!-- Step 3: 응답 생성 모델 -->
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text font-semibold text-sm">응답 생성 모델</span>
+              </label>
+              <select id="response-generator-model" class="select select-bordered select-sm w-full">
+                <option value="">로딩 중...</option>
+              </select>
+              <label class="label py-1">
+                <span class="label-text-alt text-gray-500 text-xs">고품질 모델 권장 (예: rnj-1:8b)</span>
+              </label>
+            </div>
+
+            <!-- 안내 메시지 -->
+            <div class="alert alert-info py-2 text-sm">
+              <i class="fa-solid fa-info-circle"></i>
+              <span>변경 시 새 대화부터 적용됩니다.</span>
+            </div>
+
+            <!-- 버튼 영역 -->
+            <div class="flex flex-col gap-2">
+              <button class="btn btn-primary btn-sm" id="save-models-btn">
+                <i class="fa-solid fa-save"></i>
+                모델 설정 저장
+              </button>
+              <button class="btn btn-outline btn-sm" id="refresh-models-btn">
+                <i class="fa-solid fa-rotate"></i>
+                목록 새로고침
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 청크 설정 카드 -->
+      <div class="card bg-base-100 shadow-sm border border-gray-100 mt-4">
+        <div class="card-body p-4">
+          <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-gear text-blue-500"></i>
+            청크 설정
+          </h4>
+
+          <div class="space-y-3">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-sm">청크 크기</span>
+                <span class="label-text-alt text-gray-500 text-xs">기본: 500</span>
+              </label>
+              <input type="number" id="chunk-size-input" class="input input-bordered input-sm"
+                     min="100" max="10000" step="100" placeholder="500">
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-sm">청크 중첩</span>
+                <span class="label-text-alt text-gray-500 text-xs">기본: 100</span>
+              </label>
+              <input type="number" id="chunk-overlap-input" class="input input-bordered input-sm"
+                     min="0" max="1000" step="50" placeholder="100">
+            </div>
+
+            <button class="btn btn-outline btn-sm w-full" id="save-settings-btn">
+              <i class="fa-solid fa-save"></i>
+              청크 설정 저장
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-
-<!-- Tabulator 라이브러리 -->
-<link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
 
 <script>
   $(document).ready(function() {
     // 전역 변수
     let allDocuments = [];
+    let filteredDocuments = [];
+    let currentPage = 1;
+    const pageSize = 10;
 
-    // Tabulator 테이블 초기화
-    const documentTable = new Tabulator("#document-table", {
-      height: "400px",
-      layout: "fitColumns",
-      pagination: true,
-      paginationSize: 10,
-      columns: [
-        {title: "제목", field: "title", width: 250, formatter: function(cell) {
-          const value = cell.getValue();
-          const isActive = cell.getRow().getData().isActive;
-          const icon = isActive ?
-            '<i class="fa-solid fa-file-lines text-blue-500 mr-2"></i>' :
-            '<i class="fa-solid fa-file-lines text-gray-400 mr-2"></i>';
-          return icon + value;
-        }},
-        {title: "카테고리", field: "category", width: 120, formatter: function(cell) {
-          const value = cell.getValue();
-          const categoryMap = {
-            'site-info': '사이트 정보',
-            'features': '기능 안내',
-            'faq': 'FAQ',
-            'guide': '사용 가이드',
-            'project': '프로젝트',
-            'other': '기타'
-          };
-          return `<span class="badge badge-outline badge-sm">${categoryMap[value] || value}</span>`;
-        }},
-        {title: "설명", field: "description", width: 200, formatter: function(cell) {
-          const value = cell.getValue();
-          return value ? (value.length > 30 ? value.substring(0, 30) + '...' : value) : '-';
-        }},
-        {title: "청크", field: "chunkCount", width: 80, hozAlign: "center"},
-        {title: "처리", field: "isProcessed", formatter: "tickCross", width: 70, hozAlign: "center"},
-        {title: "활성", field: "isActive", formatter: "tickCross", width: 70, hozAlign: "center"},
-        {title: "생성일", field: "createdDate", formatter: function(cell) {
-          return cell.getValue() ? new Date(cell.getValue()).toLocaleDateString() : '-';
-        }, width: 100},
-        {title: "관리", formatter: function() {
-          return `<div class="flex gap-1">
-            <button class="btn btn-xs btn-info view-btn" title="상세보기"><i class="fa-solid fa-eye"></i></button>
-            <button class="btn btn-xs btn-success edit-row-btn" title="수정"><i class="fa-solid fa-pen"></i></button>
-            <button class="btn btn-xs btn-error delete-row-btn" title="삭제"><i class="fa-solid fa-trash"></i></button>
-          </div>`;
-        }, width: 120, headerSort: false, hozAlign: "center", cellClick: function(e, cell) {
-          const rowData = cell.getRow().getData();
-          const element = e.target;
+    // 카테고리 맵
+    const categoryMap = {
+      'site-info': '사이트 정보',
+      'features': '기능 안내',
+      'faq': 'FAQ',
+      'guide': '사용 가이드',
+      'project': '프로젝트',
+      'other': '기타'
+    };
 
-          if ($(element).hasClass('view-btn') || $(element).parent().hasClass('view-btn')) {
-            showDocumentDetail(rowData);
-          } else if ($(element).hasClass('edit-row-btn') || $(element).parent().hasClass('edit-row-btn')) {
-            editDocument(rowData.documentId);
-          } else if ($(element).hasClass('delete-row-btn') || $(element).parent().hasClass('delete-row-btn')) {
-            if (confirm('정말로 이 문서를 삭제하시겠습니까? 벡터DB에서도 삭제됩니다.')) {
-              deleteDocument(rowData.documentId);
-            }
+    // 문서 목록 및 모델 목록 초기 로드
+    loadDocuments();
+    loadModelsList();
+    loadServerSettings();
+
+    // 모델 목록 로드 함수
+    function loadModelsList() {
+      console.log('모델 목록 로드 시작');
+
+      const intentSelect = $('#intent-classifier-model');
+      const responseSelect = $('#response-generator-model');
+
+      intentSelect.html('<option value="">로딩 중...</option>');
+      responseSelect.html('<option value="">로딩 중...</option>');
+
+      sendFormRequest(
+        '/api/ai-server/suh-aider/models',
+        null,
+        function(response) {
+          console.log('모델 목록 응답:', response);
+
+          let models = [];
+          if (response && response.models && Array.isArray(response.models)) {
+            models = response.models;
           }
 
-          e.stopPropagation();
-        }}
-      ],
-      rowClick: function(e, row) {
-        showDocumentDetail(row.getData());
+          if (models.length > 0) {
+            // 드롭다운 채우기
+            intentSelect.html('<option value="">모델 선택</option>');
+            responseSelect.html('<option value="">모델 선택</option>');
+
+            models.forEach(function(model) {
+              const option = $('<option></option>')
+                .attr('value', model.name)
+                .text(model.name);
+              intentSelect.append(option.clone());
+              responseSelect.append(option.clone());
+            });
+
+            // 현재 설정된 모델 로드
+            loadModelSettings();
+          } else {
+            intentSelect.html('<option value="">모델이 없습니다</option>');
+            responseSelect.html('<option value="">모델이 없습니다</option>');
+            if (typeof showToast === 'function') {
+              showToast('설치된 모델이 없습니다.', 'warning');
+            }
+          }
+        },
+        function(xhr, status, error) {
+          console.error('모델 목록 로드 실패:', error);
+          intentSelect.html('<option value="">로드 실패</option>');
+          responseSelect.html('<option value="">로드 실패</option>');
+          if (typeof showToast === 'function') {
+            showToast('모델 목록을 불러오는 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // 현재 모델 설정 로드 함수
+    function loadModelSettings() {
+      // Step 1: 의도 분류 모델
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_INTENT_CLASSIFIER_MODEL' },
+        function(response) {
+          if (response && response.optionValue) {
+            $('#intent-classifier-model').val(response.optionValue);
+          }
+        },
+        function(xhr, status, error) {
+          console.error('의도 분류 모델 설정 로드 실패:', error);
+        }
+      );
+
+      // Step 3: 응답 생성 모델
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_RESPONSE_GENERATOR_MODEL' },
+        function(response) {
+          if (response && response.optionValue) {
+            $('#response-generator-model').val(response.optionValue);
+          }
+        },
+        function(xhr, status, error) {
+          console.error('응답 생성 모델 설정 로드 실패:', error);
+        }
+      );
+    }
+
+    // 모델 설정 저장 함수
+    function saveModelSettings() {
+      const intentModel = $('#intent-classifier-model').val();
+      const responseModel = $('#response-generator-model').val();
+
+      if (!intentModel || !responseModel) {
+        if (typeof showToast === 'function') {
+          showToast('모든 모델을 선택해주세요.', 'warning');
+        }
+        return;
       }
+
+      // Step 1 모델 저장
+      sendFormRequest(
+        '/api/server-option/update',
+        {
+          optionKey: 'CHATBOT_INTENT_CLASSIFIER_MODEL',
+          optionValue: intentModel
+        },
+        function(response) {
+          // Step 3 모델 저장
+          sendFormRequest(
+            '/api/server-option/update',
+            {
+              optionKey: 'CHATBOT_RESPONSE_GENERATOR_MODEL',
+              optionValue: responseModel
+            },
+            function(response) {
+              if (typeof showToast === 'function') {
+                showToast('모델 설정이 저장되었습니다. 새로운 대화부터 적용됩니다.', 'positive');
+              }
+            },
+            function(xhr, status, error) {
+              console.error('응답 생성 모델 저장 실패:', error);
+              if (typeof showToast === 'function') {
+                showToast('모델 설정 저장 중 오류가 발생했습니다.', 'negative');
+              }
+            }
+          );
+        },
+        function(xhr, status, error) {
+          console.error('의도 분류 모델 저장 실패:', error);
+          if (typeof showToast === 'function') {
+            showToast('모델 설정 저장 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // 모델 목록 새로고침 버튼
+    $('#refresh-models-btn').click(function() {
+      loadModelsList();
     });
 
-    // 문서 목록 로드
-    loadDocuments();
+    // 모델 설정 저장 버튼
+    $('#save-models-btn').click(function() {
+      saveModelSettings();
+    });
 
     // 새로고침 버튼 클릭 이벤트
     $('#refresh-btn').click(function() {
@@ -365,14 +571,17 @@
     $('#search-btn').click(function() {
       const keyword = $('#search-keyword').val().toLowerCase();
       if (keyword) {
-        const filtered = allDocuments.filter(doc =>
+        filteredDocuments = allDocuments.filter(doc =>
           doc.title.toLowerCase().includes(keyword) ||
           doc.category.toLowerCase().includes(keyword) ||
           (doc.description && doc.description.toLowerCase().includes(keyword))
         );
-        documentTable.setData(filtered);
+        currentPage = 1;
+        renderTable(filteredDocuments);
       } else {
-        documentTable.setData(allDocuments);
+        filteredDocuments = [];
+        currentPage = 1;
+        renderTable(allDocuments);
       }
     });
 
@@ -395,6 +604,18 @@
       if (confirm('벡터 컬렉션을 초기화하시겠습니까? (기존 데이터는 유지됩니다)')) {
         initializeCollection();
       }
+    });
+
+    // 전체 재처리 버튼
+    $('#reprocess-all-btn').click(function() {
+      if (confirm('모든 문서를 다시 처리합니다. 시간이 오래 걸릴 수 있습니다. 계속하시겠습니까?')) {
+        reprocessAllDocuments();
+      }
+    });
+
+    // 청크 설정 저장 버튼
+    $('#save-settings-btn').click(function() {
+      saveServerSettings();
     });
 
     // 저장 버튼 클릭 이벤트
@@ -430,11 +651,54 @@
       toggleDocumentActive(documentId);
     });
 
+    // 테이블 row 클릭 이벤트 (이벤트 위임)
+    $(document).on('click', '#document-table-body tr', function(e) {
+      // 액션 버튼 클릭 시는 무시
+      if ($(e.target).closest('button, a').length > 0) {
+        return;
+      }
+      const documentId = $(this).data('document-id');
+      if (documentId) {
+        const doc = allDocuments.find(d => d.documentId === documentId);
+        if (doc) {
+          showDocumentDetail(doc);
+        }
+      }
+    });
+
+    // 액션 버튼 클릭 이벤트 (이벤트 위임)
+    // view-btn 제거됨 - 행 클릭으로 대체
+
+    $(document).on('click', '.edit-row-btn', function(e) {
+      e.stopPropagation();
+      const documentId = $(this).closest('tr').data('document-id');
+      editDocument(documentId);
+    });
+
+    $(document).on('click', '.delete-row-btn', function(e) {
+      e.stopPropagation();
+      const documentId = $(this).closest('tr').data('document-id');
+      if (confirm('정말로 이 문서를 삭제하시겠습니까? 벡터DB에서도 삭제됩니다.')) {
+        deleteDocument(documentId);
+      }
+    });
+
+    // 페이지네이션 클릭 이벤트
+    $(document).on('click', '.pagination-btn', function(e) {
+      e.preventDefault();
+      const page = parseInt($(this).data('page'));
+      if (page >= 1 && page !== currentPage) {
+        currentPage = page;
+        renderTable(filteredDocuments.length > 0 ? filteredDocuments : allDocuments);
+      }
+    });
+
     // 문서 목록 로드 함수
     function loadDocuments() {
       $('#loading-indicator').show();
       $('#error-message').addClass('hidden');
       $('#empty-message').addClass('hidden');
+      $('#table-container').addClass('hidden');
 
       sendFormRequest(
         '/api/chatbot/document/list',
@@ -443,7 +707,9 @@
           $('#loading-indicator').hide();
           if (response && response.documents) {
             allDocuments = response.documents;
-            documentTable.setData(allDocuments);
+            filteredDocuments = [];
+            currentPage = 1;
+            renderTable(allDocuments);
             updateStatistics(allDocuments);
 
             if (allDocuments.length === 0) {
@@ -475,6 +741,117 @@
       $('#stat-categories').text(categories);
     }
 
+    // 테이블 렌더링 함수
+    function renderTable(documents) {
+      if (!documents || documents.length === 0) {
+        $('#table-container').addClass('hidden');
+        $('#empty-message').removeClass('hidden');
+        return;
+      }
+
+      $('#empty-message').addClass('hidden');
+      $('#table-container').removeClass('hidden');
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = documents.slice(startIndex, endIndex);
+
+      let html = '';
+      pageData.forEach(function(doc) {
+        const icon = doc.isActive
+          ? '<i class="fa-solid fa-file-lines text-blue-500 mr-1"></i>'
+          : '<i class="fa-solid fa-file-lines text-gray-400 mr-1"></i>';
+
+        const titleText = doc.title.length > 25 ? doc.title.substring(0, 25) + '...' : doc.title;
+        const titleHtml = icon + escapeHtml(titleText);
+        const categoryBadge = `<span class="badge badge-outline badge-xs">${categoryMap[doc.category] || doc.category}</span>`;
+
+        const activeIcon = doc.isActive
+          ? '<i class="fa-solid fa-check text-green-500"></i>'
+          : '<i class="fa-solid fa-times text-red-500"></i>';
+
+        html += `
+          <tr class="hover:bg-base-300 cursor-pointer" data-document-id="${doc.documentId}">
+            <td class="text-sm">${titleHtml}</td>
+            <td>${categoryBadge}</td>
+            <td class="text-center text-sm">${doc.chunkCount || 0}</td>
+            <td class="text-center">${activeIcon}</td>
+            <td>
+              <div class="flex gap-1">
+                <button class="btn btn-xs btn-success edit-row-btn" title="수정">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn btn-xs btn-error delete-row-btn" title="삭제">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      $('#document-table-body').html(html);
+      renderPagination(documents.length);
+    }
+
+    // 페이지네이션 렌더링 함수
+    function renderPagination(totalItems) {
+      const totalPages = Math.ceil(totalItems / pageSize);
+      
+      if (totalPages <= 1) {
+        $('#document-pagination').empty();
+        return;
+      }
+
+      let html = '<div class="join">';
+      
+      // 이전 페이지 버튼
+      html += `<button class="join-item btn btn-sm ${currentPage === 1 ? 'btn-disabled' : ''}" 
+               data-page="${currentPage - 1}" 
+               ${currentPage === 1 ? 'disabled' : ''}>
+               <i class="fa-solid fa-angle-left"></i>
+               </button>`;
+      
+      // 페이지 번호 버튼
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="join-item btn btn-sm pagination-btn ${i === currentPage ? 'btn-active' : ''}" 
+                   data-page="${i}">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += '<span class="join-item btn btn-sm btn-disabled">...</span>';
+        }
+      }
+      
+      // 다음 페이지 버튼
+      html += `<button class="join-item btn btn-sm ${currentPage === totalPages ? 'btn-disabled' : ''}" 
+               data-page="${currentPage + 1}" 
+               ${currentPage === totalPages ? 'disabled' : ''}>
+               <i class="fa-solid fa-angle-right"></i>
+               </button>`;
+      
+      html += '</div>';
+      $('#document-pagination').html(html);
+    }
+
+    // 날짜 포맷 함수
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleDateString('ko-KR');
+    }
+
+    function formatDateTime(dateStr) {
+      if (!dateStr) return '-';
+      return new Date(dateStr).toLocaleString('ko-KR');
+    }
+
+    // HTML 이스케이프 함수
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     // 문서 저장 함수
     function saveDocument() {
       const documentId = $('#document-id').val();
@@ -484,7 +861,9 @@
       const description = $('#document-description').val();
 
       if (!title || !content) {
-        alert('제목과 내용을 입력해주세요.');
+        if (typeof showToast === 'function') {
+          showToast('제목과 내용을 입력해주세요.', 'warning');
+        }
         return;
       }
 
@@ -501,15 +880,19 @@
         },
         function(response) {
           if (response) {
-            alert('문서가 저장되었습니다. 청크 분할 및 벡터화가 완료되었습니다.');
+            if (typeof showToast === 'function') {
+              showToast('문서가 저장되었습니다. 청크 분할 및 벡터화가 완료되었습니다.', 'positive');
+            }
             document.getElementById('document-modal').close();
             loadDocuments();
           } else {
-            alert('저장 실패: 알 수 없는 오류');
+            if (typeof showToast === 'function') {
+              showToast('저장 실패: 알 수 없는 오류', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('저장 오류: ' + error);
+          console.error('문서 저장 오류:', error);
         }
       );
     }
@@ -517,18 +900,9 @@
     // 문서 상세 정보 표시 함수
     function showDocumentDetail(doc) {
       $('#detail-title').text(doc.title).data('id', doc.documentId);
-
-      const categoryMap = {
-        'site-info': '사이트 정보',
-        'features': '기능 안내',
-        'faq': 'FAQ',
-        'guide': '사용 가이드',
-        'project': '프로젝트',
-        'other': '기타'
-      };
       $('#detail-category').text(categoryMap[doc.category] || doc.category);
-      $('#detail-created-date').text(doc.createdDate ? new Date(doc.createdDate).toLocaleString() : '-');
-      $('#detail-updated-date').text(doc.updatedDate ? new Date(doc.updatedDate).toLocaleString() : '-');
+      $('#detail-created-date').text(formatDateTime(doc.createdDate));
+      $('#detail-updated-date').text(doc.updatedDate ? formatDateTime(doc.updatedDate) : '-');
       $('#detail-chunk-count').text(doc.chunkCount || 0);
 
       const processedClass = doc.isProcessed ? 'badge-success' : 'badge-warning';
@@ -555,13 +929,6 @@
       document.getElementById('document-detail-modal').showModal();
     }
 
-    // HTML 이스케이프 함수
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
     // 문서 수정 함수
     function editDocument(documentId) {
       sendFormRequest(
@@ -579,11 +946,13 @@
             document.getElementById('document-detail-modal').close();
             document.getElementById('document-modal').showModal();
           } else {
-            alert('문서 정보를 불러올 수 없습니다.');
+            if (typeof showToast === 'function') {
+              showToast('문서 정보를 불러올 수 없습니다.', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('문서 정보 로드 오류: ' + error);
+          console.error('문서 정보 로드 오류:', error);
         }
       );
     }
@@ -594,12 +963,14 @@
         '/api/chatbot/document/delete',
         { documentId: documentId },
         function(response) {
-          alert('문서가 삭제되었습니다.');
+          if (typeof showToast === 'function') {
+            showToast('문서가 삭제되었습니다.', 'positive');
+          }
           document.getElementById('document-detail-modal').close();
           loadDocuments();
         },
         function(xhr, status, error) {
-          alert('삭제 오류: ' + error);
+          console.error('문서 삭제 오류:', error);
         }
       );
     }
@@ -611,15 +982,19 @@
         { documentId: documentId },
         function(response) {
           if (response) {
-            alert('문서가 재처리되었습니다. 청크 수: ' + response.chunkCount);
+            if (typeof showToast === 'function') {
+              showToast('문서가 재처리되었습니다. 청크 수: ' + response.chunkCount, 'positive');
+            }
             document.getElementById('document-detail-modal').close();
             loadDocuments();
           } else {
-            alert('재처리 실패');
+            if (typeof showToast === 'function') {
+              showToast('재처리 실패', 'negative');
+            }
           }
         },
         function(xhr, status, error) {
-          alert('재처리 오류: ' + error);
+          console.error('문서 재처리 오류:', error);
         }
       );
     }
@@ -630,12 +1005,14 @@
         '/api/chatbot/document/toggle-active',
         { documentId: documentId },
         function(response) {
-          alert('문서 상태가 변경되었습니다.');
+          if (typeof showToast === 'function') {
+            showToast('문서 상태가 변경되었습니다.', 'positive');
+          }
           document.getElementById('document-detail-modal').close();
           loadDocuments();
         },
         function(xhr, status, error) {
-          alert('상태 변경 오류: ' + error);
+          console.error('문서 상태 변경 오류:', error);
         }
       );
     }
@@ -646,10 +1023,140 @@
         '/api/chatbot/admin/init-collection',
         null,
         function(response) {
-          alert('벡터 컬렉션이 초기화되었습니다.');
+          if (typeof showToast === 'function') {
+            showToast('벡터 컬렉션이 초기화되었습니다.', 'positive');
+          }
         },
         function(xhr, status, error) {
-          alert('초기화 오류: ' + error);
+          console.error('컬렉션 초기화 오류:', error);
+        }
+      );
+    }
+
+    // 전체 재처리 함수
+    function reprocessAllDocuments() {
+      // 로딩 표시
+      if (typeof showToast === 'function') {
+        showToast('문서 재처리를 시작했습니다. 잠시만 기다려주세요...', 'info');
+      }
+
+      // 버튼 비활성화
+      $('#reprocess-all-btn').prop('disabled', true).addClass('loading');
+
+      sendFormRequest(
+        '/api/chatbot/admin/reprocess-all',
+        null,
+        function(response) {
+          // 버튼 활성화
+          $('#reprocess-all-btn').prop('disabled', false).removeClass('loading');
+
+          const totalCount = response.totalCount || 0;
+          const successCount = response.successCount || 0;
+          const failCount = response.failCount || 0;
+
+          let message = `전체 재처리 완료: 총 ${totalCount}개 (성공: ${successCount}, 실패: ${failCount})`;
+          
+          if (typeof showToast === 'function') {
+            showToast(message, failCount > 0 ? 'warning' : 'positive');
+          }
+
+          // 문서 목록 새로고침
+          loadDocuments();
+        },
+        function(xhr, status, error) {
+          // 버튼 활성화
+          $('#reprocess-all-btn').prop('disabled', false).removeClass('loading');
+          
+          console.error('전체 재처리 오류:', error);
+          if (typeof showToast === 'function') {
+            showToast('전체 재처리 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // 서버 설정 로드 함수
+    function loadServerSettings() {
+      // 청크 크기 로드
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_CHUNK_SIZE' },
+        function(response) {
+          $('#chunk-size-input').val(response.optionValue || 500);
+        },
+        function(xhr, status, error) {
+          console.error('청크 크기 로드 오류:', error);
+          $('#chunk-size-input').val(500);
+        }
+      );
+
+      // 청크 중첩 로드
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_CHUNK_OVERLAP' },
+        function(response) {
+          $('#chunk-overlap-input').val(response.optionValue || 100);
+        },
+        function(xhr, status, error) {
+          console.error('청크 중첩 로드 오류:', error);
+          $('#chunk-overlap-input').val(100);
+        }
+      );
+    }
+
+    // 서버 설정 저장 함수
+    function saveServerSettings() {
+      const chunkSize = $('#chunk-size-input').val();
+      const chunkOverlap = $('#chunk-overlap-input').val();
+
+      // 유효성 검사
+      if (!chunkSize || chunkSize < 500 || chunkSize > 10000) {
+        if (typeof showToast === 'function') {
+          showToast('청크 크기는 500~10000 사이의 값이어야 합니다.', 'negative');
+        }
+        return;
+      }
+
+      if (!chunkOverlap || chunkOverlap < 0 || chunkOverlap > 1000) {
+        if (typeof showToast === 'function') {
+          showToast('청크 중첩은 0~1000 사이의 값이어야 합니다.', 'negative');
+        }
+        return;
+      }
+
+      // 청크 크기 저장
+      sendFormRequest(
+        '/api/server-option/update',
+        { 
+          optionKey: 'CHATBOT_CHUNK_SIZE',
+          optionValue: chunkSize
+        },
+        function(response) {
+          // 청크 중첩 저장
+          sendFormRequest(
+            '/api/server-option/update',
+            { 
+              optionKey: 'CHATBOT_CHUNK_OVERLAP',
+              optionValue: chunkOverlap
+            },
+            function(response) {
+              if (typeof showToast === 'function') {
+                showToast('청크 설정이 저장되었습니다. 재처리 시 적용됩니다.', 'positive');
+              }
+            },
+            function(xhr, status, error) {
+              console.error('청크 중첩 저장 오류:', error);
+              if (typeof showToast === 'function') {
+                showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
+              }
+            }
+          );
+        },
+        function(xhr, status, error) {
+          console.error('청크 크기 저장 오류:', error);
+          if (typeof showToast === 'function') {
+            showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
+          }
         }
       );
     }
