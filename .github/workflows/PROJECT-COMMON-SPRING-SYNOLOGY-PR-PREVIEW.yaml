@@ -293,23 +293,25 @@ jobs:
             const action = command === 'rebuild' ? '재배포' : '배포';
             const sha = '${{ steps.pr.outputs.sha }}';
 
-            const body = `## 🚀 Preview ${action} 완료!
-
-| 항목 | 값 |
-|------|-----|
-| **Preview URL** | ${previewUrl} |
-| **컨테이너** | \`${projectName}-pr-${prNumber}\` |
-| **커밋** | \`${sha}\` |
-
-### 📋 명령어
-| 명령어 | 설명 |
-|--------|------|
-| \`@suh-lab pr rebuild\` | 최신 커밋으로 재배포 |
-| \`@suh-lab pr destroy\` | Preview 환경 삭제 |
-| \`@suh-lab pr status\` | 현재 상태 확인 |
-
----
-*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*`;
+            const body = [
+              `## 🚀 Preview ${action} 완료!`,
+              '',
+              '| 항목 | 값 |',
+              '|------|-----|',
+              `| **Preview URL** | ${previewUrl} |`,
+              `| **컨테이너** | \`${projectName}-pr-${prNumber}\` |`,
+              `| **커밋** | \`${sha}\` |`,
+              '',
+              '### 📋 명령어',
+              '| 명령어 | 설명 |',
+              '|--------|------|',
+              '| `@suh-lab pr rebuild` | 최신 커밋으로 재배포 |',
+              '| `@suh-lab pr destroy` | Preview 환경 삭제 |',
+              '| `@suh-lab pr status` | 현재 상태 확인 |',
+              '',
+              '---',
+              '*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*'
+            ].join('\n');
 
             github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -377,21 +379,25 @@ jobs:
             const prNumber = context.issue.number;
             const projectName = '${{ env.PROJECT_NAME }}';
 
+            const body = [
+              '## 🗑️ Preview 환경 삭제 완료!',
+              '',
+              '| 항목 | 값 |',
+              '|------|-----|',
+              `| **컨테이너** | \`${projectName}-pr-${prNumber}\` |`,
+              '| **상태** | 삭제됨 |',
+              '',
+              '다시 배포하려면: `@suh-lab pr build`',
+              '',
+              '---',
+              '*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*'
+            ].join('\n');
+
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: `## 🗑️ Preview 환경 삭제 완료!
-
-| 항목 | 값 |
-|------|-----|
-| **컨테이너** | \`${projectName}-pr-${prNumber}\` |
-| **상태** | 삭제됨 |
-
-다시 배포하려면: \`@suh-lab pr build\`
-
----
-*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*`
+              body: body
             });
 
   # -----------------------------------------------------------------
@@ -458,34 +464,38 @@ jobs:
 
             let body;
             if (isRunning) {
-              body = `## ✅ Preview 환경 실행 중
-
-| 항목 | 값 |
-|------|-----|
-| **Preview URL** | ${previewUrl} |
-| **컨테이너** | \`${projectName}-pr-${prNumber}\` |
-| **상태** | 🟢 Running |
-
-### 📋 명령어
-| 명령어 | 설명 |
-|--------|------|
-| \`@suh-lab pr rebuild\` | 최신 커밋으로 재배포 |
-| \`@suh-lab pr destroy\` | Preview 환경 삭제 |
-
----
-*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*`;
+              body = [
+                '## ✅ Preview 환경 실행 중',
+                '',
+                '| 항목 | 값 |',
+                '|------|-----|',
+                `| **Preview URL** | ${previewUrl} |`,
+                `| **컨테이너** | \`${projectName}-pr-${prNumber}\` |`,
+                '| **상태** | 🟢 Running |',
+                '',
+                '### 📋 명령어',
+                '| 명령어 | 설명 |',
+                '|--------|------|',
+                '| `@suh-lab pr rebuild` | 최신 커밋으로 재배포 |',
+                '| `@suh-lab pr destroy` | Preview 환경 삭제 |',
+                '',
+                '---',
+                '*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*'
+              ].join('\n');
             } else {
-              body = `## ❌ Preview 환경 없음
-
-| 항목 | 값 |
-|------|-----|
-| **컨테이너** | \`${projectName}-pr-${prNumber}\` |
-| **상태** | 🔴 Not Found |
-
-배포하려면: \`@suh-lab pr build\`
-
----
-*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*`;
+              body = [
+                '## ❌ Preview 환경 없음',
+                '',
+                '| 항목 | 값 |',
+                '|------|-----|',
+                `| **컨테이너** | \`${projectName}-pr-${prNumber}\` |`,
+                '| **상태** | 🔴 Not Found |',
+                '',
+                '배포하려면: `@suh-lab pr build`',
+                '',
+                '---',
+                '*🤖 이 댓글은 PR Preview 시스템에 의해 자동 생성되었습니다.*'
+              ].join('\n');
             }
 
             github.rest.issues.createComment({
