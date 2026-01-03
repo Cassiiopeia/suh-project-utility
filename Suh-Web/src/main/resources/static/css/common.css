@@ -2438,6 +2438,9 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 .thinking-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   min-height: 20px;
   display: flex;
   flex-direction: column;
@@ -2448,9 +2451,9 @@ html:not([data-theme="dark"]) textarea::placeholder,
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: #374151;
-  line-height: 1.5;
+  line-height: 1.4;
   animation: fadeInUp 0.3s ease;
   padding: 4px 0;
 }
