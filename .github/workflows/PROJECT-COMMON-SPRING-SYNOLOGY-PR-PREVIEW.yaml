@@ -6,9 +6,8 @@
 # Traefik 리버스 프록시를 통해 동적 라우팅됩니다.
 #
 # 🚀 사용법:
-#   @suh-lab pr build    - PR 빌드 및 배포
+#   @suh-lab pr build    - PR 빌드 및 배포 (기존 컨테이너 자동 교체)
 #   @suh-lab pr destroy  - Preview 환경 삭제
-#   @suh-lab pr rebuild  - 재배포 (삭제 후 빌드)
 #   @suh-lab pr status   - 현재 상태 확인
 #
 # ⚙️ 프로젝트별 필수 수정 사항:
@@ -130,10 +129,6 @@ jobs:
             echo "command=destroy" >> $GITHUB_OUTPUT
             echo "is_valid=true" >> $GITHUB_OUTPUT
             echo "✅ 명령어 감지: destroy"
-          elif [[ "$COMMENT" =~ @suh-lab[[:space:]]+pr[[:space:]]+rebuild ]]; then
-            echo "command=rebuild" >> $GITHUB_OUTPUT
-            echo "is_valid=true" >> $GITHUB_OUTPUT
-            echo "✅ 명령어 감지: rebuild"
           elif [[ "$COMMENT" =~ @suh-lab[[:space:]]+pr[[:space:]]+status ]]; then
             echo "command=status" >> $GITHUB_OUTPUT
             echo "is_valid=true" >> $GITHUB_OUTPUT
@@ -149,9 +144,7 @@ jobs:
   build-preview:
     name: Preview 빌드 & 배포
     needs: check-command
-    if: |
-      needs.check-command.outputs.is_valid == 'true' &&
-      (needs.check-command.outputs.command == 'build' || needs.check-command.outputs.command == 'rebuild')
+    if: needs.check-command.outputs.is_valid == 'true' && needs.check-command.outputs.command == 'build'
     runs-on: ubuntu-latest
     steps:
       - name: PR 정보 가져오기
@@ -209,22 +202,6 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.PROJECT_NAME }}:pr-${{ github.event.issue.number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: 기존 컨테이너 삭제 (rebuild인 경우)
-        if: needs.check-command.outputs.command == 'rebuild'
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ env.SSH_PORT }}
-          script: |
-            export PATH=$PATH:/usr/local/bin
-            export PW="${{ secrets.SERVER_PASSWORD }}"
-            PR_NUMBER=${{ github.event.issue.number }}
-            CONTAINER_NAME="${{ env.PROJECT_NAME }}-pr-${PR_NUMBER}"
-            echo $PW | sudo -S docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
-            echo "✅ 기존 컨테이너 삭제 완료: ${CONTAINER_NAME}"
 
       - name: 서버에 배포
         uses: appleboy/ssh-action@v1.0.3
@@ -294,12 +271,10 @@ jobs:
             const previewPort = '${{ env.PREVIEW_PORT }}';
             const domain = `${projectName}-pr-${prNumber}.${domainSuffix}`;
             const previewUrl = `http://${domain}:${previewPort}`;
-            const command = '${{ needs.check-command.outputs.command }}';
-            const action = command === 'rebuild' ? '재배포' : '배포';
             const sha = '${{ steps.pr.outputs.sha }}';
 
             const body = [
-              `## 🚀 Preview ${action} 완료!`,
+              '## 🚀 Preview 배포 완료!',
               '',
               '| 항목 | 값 |',
               '|------|-----|',
@@ -310,7 +285,7 @@ jobs:
               '### 📋 명령어',
               '| 명령어 | 설명 |',
               '|--------|------|',
-              '| `@suh-lab pr rebuild` | 최신 커밋으로 재배포 |',
+              '| `@suh-lab pr build` | 최신 커밋으로 재배포 |',
               '| `@suh-lab pr destroy` | Preview 환경 삭제 |',
               '| `@suh-lab pr status` | 현재 상태 확인 |',
               '',
@@ -524,7 +499,7 @@ jobs:
                 '### 📋 명령어',
                 '| 명령어 | 설명 |',
                 '|--------|------|',
-                '| `@suh-lab pr rebuild` | 최신 커밋으로 재배포 |',
+                '| `@suh-lab pr build` | 최신 커밋으로 재배포 |',
                 '| `@suh-lab pr destroy` | Preview 환경 삭제 |',
                 '',
                 '---',
