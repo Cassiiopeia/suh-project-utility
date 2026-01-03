@@ -341,8 +341,11 @@ jobs:
     name: Preview 삭제
     needs: check-command
     if: |
-      (github.event_name == 'issue_comment' && needs.check-command.outputs.is_valid == 'true' && needs.check-command.outputs.command == 'destroy') ||
-      (github.event_name == 'pull_request' && github.event.action == 'closed')
+      always() &&
+      (
+        (github.event_name == 'issue_comment' && needs.check-command.outputs.is_valid == 'true' && needs.check-command.outputs.command == 'destroy') ||
+        (github.event_name == 'pull_request' && github.event.action == 'closed')
+      )
     runs-on: ubuntu-latest
     steps:
       - name: PR 번호 가져오기
