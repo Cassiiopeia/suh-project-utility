@@ -6,7 +6,7 @@
 <body class="docker-logs-page bg-gray-50">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
+<div class="w-full px-4 py-4" id="main-content">
   <!-- 스켈레톤 로딩 컨테이너 -->
   <div id="skeleton-container">
     <div class="card bg-base-100 shadow-sm mb-4">
@@ -25,16 +25,16 @@
 
   <!-- 실제 콘텐츠 -->
   <div id="real-content" class="hidden">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <!-- 컨테이너 목록 (사이드바) -->
-      <div class="lg:col-span-3">
+      <div class="lg:col-span-2">
         <div class="card bg-base-100 shadow-sm border border-gray-100 sticky top-20">
-          <div class="card-body p-4">
-            <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-4">
+          <div class="card-body p-3">
+            <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3 text-sm">
               <i class="fa-solid fa-cubes text-blue-500"></i>
               컨테이너 목록
             </h4>
-            <div id="containerList" class="space-y-2 max-h-96 overflow-y-auto">
+            <div id="containerList" class="space-y-1 max-h-80 overflow-y-auto">
               <div class="flex justify-center py-4">
                 <span class="loading loading-spinner loading-sm text-primary"></span>
               </div>
@@ -44,55 +44,70 @@
       </div>
 
       <!-- 로그 영역 -->
-      <div class="lg:col-span-9">
-        <!-- 메인 헤더 -->
-        <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
-          <div class="card-body">
-            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2 mb-4">
-              <i class="fa-brands fa-docker text-blue-500"></i>
-              Docker 컨테이너 로그
-            </h2>
-            <p class="text-gray-500 mb-6">실시간 서버 Docker 컨테이너 로그</p>
-
-            <!-- 컨트롤 패널 -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-              <div class="lg:col-span-6">
-                <label class="label">
-                  <span class="label-text font-medium">컨테이너 이름</span>
+      <div class="lg:col-span-10">
+        <!-- 컨트롤 패널 -->
+        <div class="card bg-base-100 shadow-sm border border-gray-100 mb-4">
+          <div class="card-body p-4">
+            <div class="flex flex-wrap items-end gap-4">
+              <!-- 컨테이너 이름 + 버튼 -->
+              <div class="flex-1 min-w-64">
+                <label class="label py-1">
+                  <span class="label-text font-medium text-sm">컨테이너</span>
                 </label>
                 <div class="join w-full">
-                  <input type="text" id="containerName" class="input join-item flex-1" placeholder="컨테이너 이름" value="sejong-malsami-back">
-                  <button class="btn btn-primary join-item" id="startLogBtn">
+                  <input type="text" id="containerName" class="input input-sm join-item flex-1" placeholder="컨테이너 이름" value="sejong-malsami-back">
+                  <button class="btn btn-primary btn-sm join-item" id="startLogBtn">
                     <i class="fa-solid fa-play"></i>
                     시작
                   </button>
-                  <button class="btn btn-error join-item" id="stopLogBtn">
+                  <button class="btn btn-error btn-sm join-item" id="stopLogBtn">
                     <i class="fa-solid fa-stop"></i>
                     중지
                   </button>
-                  <button class="btn btn-outline join-item" id="clearLogBtn">
+                  <button class="btn btn-outline btn-sm join-item" id="clearLogBtn">
                     <i class="fa-solid fa-eraser"></i>
                   </button>
                 </div>
               </div>
-              <div class="lg:col-span-3">
-                <label class="label">
-                  <span class="label-text font-medium">라인 제한</span>
+
+              <!-- 검색 -->
+              <div class="flex-1 min-w-64">
+                <label class="label py-1">
+                  <span class="label-text font-medium text-sm">로그 검색</span>
                 </label>
-                <select class="select w-full" id="lineLimit">
+                <div class="join w-full">
+                  <input type="text" id="searchInput" class="input input-sm join-item flex-1" placeholder="검색어 입력...">
+                  <button class="btn btn-outline btn-sm join-item" id="searchPrevBtn" title="이전 결과">
+                    <i class="fa-solid fa-chevron-up"></i>
+                  </button>
+                  <button class="btn btn-outline btn-sm join-item" id="searchNextBtn" title="다음 결과">
+                    <i class="fa-solid fa-chevron-down"></i>
+                  </button>
+                  <span id="searchCount" class="btn btn-ghost btn-sm join-item min-w-16">0/0</span>
+                </div>
+              </div>
+
+              <!-- 라인 제한 -->
+              <div class="w-28">
+                <label class="label py-1">
+                  <span class="label-text font-medium text-sm">라인 제한</span>
+                </label>
+                <select class="select select-sm w-full" id="lineLimit">
                   <option value="100">100줄</option>
                   <option value="500">500줄</option>
                   <option value="1000">1000줄</option>
-                  <option value="0">제한 없음</option>
+                  <option value="2000">2000줄</option>
                 </select>
               </div>
-              <div class="lg:col-span-3">
-                <label class="label">
-                  <span class="label-text font-medium">자동 스크롤</span>
+
+              <!-- 자동 스크롤 -->
+              <div class="w-28">
+                <label class="label py-1">
+                  <span class="label-text font-medium text-sm">자동 스크롤</span>
                 </label>
-                <label class="label cursor-pointer justify-start gap-2">
-                  <input type="checkbox" id="autoScroll" class="toggle toggle-primary" checked>
-                  <span class="label-text">켜기</span>
+                <label class="label cursor-pointer justify-start gap-2 py-0">
+                  <input type="checkbox" id="autoScroll" class="toggle toggle-primary toggle-sm" checked>
+                  <span class="label-text text-sm">켜기</span>
                 </label>
               </div>
             </div>
@@ -100,25 +115,28 @@
         </div>
 
         <!-- 로그 출력 화면 -->
-        <div class="card bg-gray-900 shadow-sm border border-gray-700 mb-6">
+        <div class="card shadow-sm border border-gray-700 mb-4 docker-log-card">
           <div class="card-body p-0">
-            <div class="log-output-container overflow-auto max-h-96 p-4">
-              <pre id="logOutput" class="text-green-400 text-sm font-mono whitespace-pre-wrap"></pre>
+            <div id="logOutputContainer" class="log-output-container overflow-auto p-4">
+              <div id="logOutput" class="log-output"></div>
             </div>
           </div>
         </div>
 
         <!-- 상태 표시 -->
         <div class="card bg-base-100 shadow-sm border border-gray-100">
-          <div class="card-body p-4">
+          <div class="card-body p-3">
             <div class="flex items-center justify-between">
               <div id="logStatus" class="badge badge-info gap-2">
                 <i class="fa-solid fa-circle text-xs"></i>
                 준비됨
               </div>
-              <div id="lineCount" class="badge badge-outline gap-2">
-                <i class="fa-solid fa-list-ol"></i>
-                라인: 0
+              <div class="flex items-center gap-4">
+                <div id="lineCount" class="badge badge-outline gap-2">
+                  <i class="fa-solid fa-list-ol"></i>
+                  라인: 0
+                </div>
+                <div id="connectionInfo" class="text-xs text-gray-500"></div>
               </div>
             </div>
           </div>
@@ -130,22 +148,23 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- Highlight.js 스타일 및 스크립트 -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/bash.min.js"></script>
-
 <script>
   $(document).ready(function() {
-    // 변수 초기화
-    let pollInterval = null;
+    let eventSource = null;
     let logLineCount = 0;
-    let lastLogHash = null;
-    const logOutput = document.querySelector('#logOutput');
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
+    let currentContainerName = 'sejong-malsami-back';
+
+    const logOutput = document.getElementById('logOutput');
+    const logOutputContainer = document.getElementById('logOutputContainer');
     const logStatusLabel = $('#logStatus');
     const lineCountLabel = $('#lineCount');
+    const connectionInfo = $('#connectionInfo');
 
-    // 컨테이너 목록 로드
+    let searchMatches = [];
+    let currentMatchIndex = -1;
+
     loadContainerList();
 
     function loadContainerList() {
@@ -154,19 +173,18 @@
         const list = $('#containerList');
         list.empty();
         if (!data || data.length === 0) {
-          list.append('<div class="text-gray-500 text-sm py-2">컨테이너 없음</div>');
+          list.append('<div class="text-gray-500 text-xs py-2">컨테이너 없음</div>');
           return;
         }
         data.forEach(function(c) {
           const statusClass = c.isRunning ? 'bg-green-500' : 'bg-red-500';
           const imageInfo = (c.image && c.image !== 'null') ? c.image.split(':')[0] : 'Unknown';
           const item = $(`
-            <a class="container-item flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" data-name="${c.name}">
-              <div class="w-3 h-3 rounded-full ${statusClass} flex-shrink-0"></div>
+            <a class="container-item flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors" data-name="${c.name}">
+              <div class="w-2 h-2 rounded-full ${statusClass} flex-shrink-0"></div>
               <div class="min-w-0 flex-1">
-                <div class="font-medium text-gray-800 truncate">${c.name}</div>
-                <div class="text-xs text-gray-500 truncate">${c.status}</div>
-                <div class="text-xs text-gray-400 truncate">${imageInfo}</div>
+                <div class="font-medium text-gray-800 truncate text-xs">${c.name}</div>
+                <div class="text-xs text-gray-400 truncate">${c.status}</div>
               </div>
             </a>
           `);
@@ -179,154 +197,233 @@
       });
     }
 
-    // 페이지 로딩 효과
     setTimeout(function() {
       document.getElementById('skeleton-container').classList.add('hidden');
       document.getElementById('real-content').classList.remove('hidden');
     }, 500);
 
-    // 로그 시작 버튼 클릭 이벤트
     $('#startLogBtn').on('click', function() {
-      if (pollInterval) {
-        stopLogPoll();
-      }
-      startLogPoll();
+      stopStreaming();
+      startStreaming();
     });
 
-    // 로그 중지 버튼 클릭 이벤트
     $('#stopLogBtn').on('click', function() {
-      stopLogPoll();
+      stopStreaming();
       updateStatus('중지됨', 'badge-warning');
     });
 
-    // 로그 지우기 버튼 클릭 이벤트
     $('#clearLogBtn').on('click', function() {
       clearLogOutput();
       updateStatus('준비됨', 'badge-info');
     });
 
-    // 폴링 시작 함수
-    function startLogPoll() {
-      const containerName = $('#containerName').val() || 'sejong-malsami-back';
-      const lineLimit = $('#lineLimit').val() || 100;
+    function startStreaming() {
+      currentContainerName = $('#containerName').val() || 'sejong-malsami-back';
+      const tailLines = $('#lineLimit').val() || 100;
 
-      updateStatus('폴링 시작', 'badge-info');
-      lastLogHash = null;
+      updateStatus('연결 중...', 'badge-info');
+      clearLogOutput();
 
-      // 즉시 한 번 호출
-      pollLogs(containerName, lineLimit);
+      const url = `/api/docker-log/stream?containerName=${encodeURIComponent(currentContainerName)}&tailLines=${tailLines}`;
+      eventSource = new EventSource(url);
 
-      // 이후 1초마다 폴링
-      pollInterval = setInterval(function() {
-        pollLogs(containerName, lineLimit);
-      }, 1000);
-
-      console.log('폴링 시작 - 컨테이너:', containerName, ', 간격: 1초');
-    }
-
-    // 폴링 중지 함수
-    function stopLogPoll() {
-      if (pollInterval) {
-        clearInterval(pollInterval);
-        pollInterval = null;
-        console.log('폴링 중지');
-      }
-    }
-
-    // 로그 폴링 함수
-    function pollLogs(containerName, lineLimit) {
-      const url = `/api/docker-log/poll?containerName=${encodeURIComponent(containerName)}&lineLimit=${lineLimit}`;
-
-      $.ajax({
-        url: url,
-        type: 'GET',
-        success: function(response) {
-          if (response.error) {
-            console.error('로그 조회 오류:', response.error);
-            updateStatus('오류: ' + response.error, 'badge-error');
-            appendToLog('\n=== 오류 ===\n' + response.error + '\n');
-            stopLogPoll();
-            return;
-          }
-
-          if (response.logs) {
-            const currentHash = hashString(response.logs);
-
-            // 로그가 변경되었을 때만 업데이트
-            if (currentHash !== lastLogHash) {
-              console.log('로그 업데이트 - 총 라인 수:', response.totalLines);
-              logOutput.textContent = response.logs;
-              logLineCount = response.totalLines || 0;
-              updateLineCount();
-              updateStatus('폴링 중', 'badge-success');
-
-              // 자동 스크롤
-              if ($('#autoScroll').is(':checked')) {
-                const container = document.querySelector('.log-output-container');
-                container.scrollTop = container.scrollHeight;
-              }
-
-              lastLogHash = currentHash;
-            }
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error('폴링 요청 실패:', error);
-          // 전역 핸들러에서 제외된 URL이므로 여기서는 상태 업데이트만
-          updateStatus('연결 실패', 'badge-error');
-          stopLogPoll();
-        }
+      eventSource.addEventListener('log', function(event) {
+        appendLogLine(event.data);
+        reconnectAttempts = 0;
       });
+
+      eventSource.addEventListener('error', function(event) {
+        appendLogLine('[ERROR] ' + event.data, 'error');
+      });
+
+      eventSource.onopen = function() {
+        updateStatus('스트리밍 중', 'badge-success');
+        connectionInfo.text('SSE 연결됨');
+      };
+
+      eventSource.onerror = function(e) {
+        if (eventSource.readyState === EventSource.CLOSED) {
+          updateStatus('연결 끊김', 'badge-error');
+          connectionInfo.text('');
+          handleReconnect();
+        }
+      };
     }
 
-    // 문자열 해시 함수 (로그 변경 감지용)
-    function hashString(str) {
-      let hash = 0;
-      if (str.length === 0) return hash;
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
+    function stopStreaming() {
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
       }
-      return hash;
+      reconnectAttempts = 0;
+      connectionInfo.text('');
     }
 
-    // 로그 출력 지우기 함수
-    function clearLogOutput() {
-      logOutput.textContent = '';
-      logLineCount = 0;
-      lastLogHash = null;
-      updateLineCount();
-    }
-
-    // 로그 추가 함수
-    function appendToLog(text) {
-      if (!text || text.trim().length === 0) {
-        return;
+    function handleReconnect() {
+      if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        reconnectAttempts++;
+        const delay = Math.min(5000 * reconnectAttempts, 30000);
+        updateStatus(`재연결 시도 중 (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`, 'badge-warning');
+        setTimeout(() => {
+          if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
+            startStreaming();
+          }
+        }, delay);
+      } else {
+        updateStatus('연결 실패 - 수동으로 다시 시작하세요', 'badge-error');
       }
-      const currentText = logOutput.textContent || '';
-      logOutput.textContent = currentText + text;
-      const allLines = logOutput.textContent.split('\n');
-      logLineCount = allLines.length - 1;
+    }
+
+    function appendLogLine(line, type) {
+      const lineElement = document.createElement('div');
+      lineElement.className = getLogLineClass(line, type);
+      lineElement.textContent = line;
+      logOutput.appendChild(lineElement);
+      logLineCount++;
       updateLineCount();
 
       if ($('#autoScroll').is(':checked')) {
-        const container = document.querySelector('.log-output-container');
-        container.scrollTop = container.scrollHeight;
+        logOutputContainer.scrollTop = logOutputContainer.scrollHeight;
       }
     }
 
-    // 상태 업데이트 함수
+    function getLogLineClass(line, type) {
+      if (type === 'error') return 'log-line log-line-error';
+
+      const upperLine = line.toUpperCase();
+      if (upperLine.includes('ERROR') || upperLine.includes('EXCEPTION') || upperLine.includes('FATAL')) {
+        return 'log-line log-line-error';
+      }
+      if (upperLine.includes('WARN')) {
+        return 'log-line log-line-warn';
+      }
+      if (upperLine.includes('INFO')) {
+        return 'log-line log-line-info';
+      }
+      if (upperLine.includes('DEBUG')) {
+        return 'log-line log-line-debug';
+      }
+      if (upperLine.includes('TRACE')) {
+        return 'log-line log-line-trace';
+      }
+      return 'log-line log-line-default';
+    }
+
+    function clearLogOutput() {
+      logOutput.innerHTML = '';
+      logLineCount = 0;
+      searchMatches = [];
+      currentMatchIndex = -1;
+      updateLineCount();
+      updateSearchCount();
+    }
+
     function updateStatus(text, badgeClass) {
       logStatusLabel.removeClass('badge-info badge-success badge-warning badge-error');
       logStatusLabel.addClass(badgeClass);
       logStatusLabel.html(`<i class="fa-solid fa-circle text-xs"></i> ${text}`);
     }
 
-    // 라인 카운트 업데이트 함수
     function updateLineCount() {
       lineCountLabel.html(`<i class="fa-solid fa-list-ol"></i> 라인: ${logLineCount}`);
     }
+
+    // 검색 기능
+    $('#searchInput').on('input', debounce(function() {
+      searchLogs($(this).val());
+    }, 300));
+
+    $('#searchInput').on('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          navigateToPrevMatch();
+        } else {
+          navigateToNextMatch();
+        }
+      }
+    });
+
+    $('#searchPrevBtn').on('click', navigateToPrevMatch);
+    $('#searchNextBtn').on('click', navigateToNextMatch);
+
+    function searchLogs(keyword) {
+      $('.log-line').removeClass('log-line-highlight log-line-current');
+      searchMatches = [];
+      currentMatchIndex = -1;
+
+      if (!keyword || keyword.trim() === '') {
+        updateSearchCount();
+        return;
+      }
+
+      const lowerKeyword = keyword.toLowerCase();
+      const lines = logOutput.querySelectorAll('.log-line');
+
+      lines.forEach((line, index) => {
+        if (line.textContent.toLowerCase().includes(lowerKeyword)) {
+          searchMatches.push(line);
+          line.classList.add('log-line-highlight');
+        }
+      });
+
+      updateSearchCount();
+
+      if (searchMatches.length > 0) {
+        navigateToMatch(0);
+      }
+    }
+
+    function navigateToMatch(index) {
+      if (searchMatches.length === 0) return;
+
+      if (currentMatchIndex >= 0 && currentMatchIndex < searchMatches.length) {
+        searchMatches[currentMatchIndex].classList.remove('log-line-current');
+      }
+
+      currentMatchIndex = index;
+      const currentMatch = searchMatches[currentMatchIndex];
+      currentMatch.classList.add('log-line-current');
+      currentMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      updateSearchCount();
+    }
+
+    function navigateToNextMatch() {
+      if (searchMatches.length === 0) return;
+      const nextIndex = (currentMatchIndex + 1) % searchMatches.length;
+      navigateToMatch(nextIndex);
+    }
+
+    function navigateToPrevMatch() {
+      if (searchMatches.length === 0) return;
+      const prevIndex = (currentMatchIndex - 1 + searchMatches.length) % searchMatches.length;
+      navigateToMatch(prevIndex);
+    }
+
+    function updateSearchCount() {
+      if (searchMatches.length === 0) {
+        $('#searchCount').text('0/0');
+      } else {
+        $('#searchCount').text(`${currentMatchIndex + 1}/${searchMatches.length}`);
+      }
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func.apply(this, args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    $(window).on('beforeunload', function() {
+      stopStreaming();
+    });
   });
 </script>
 </body>
