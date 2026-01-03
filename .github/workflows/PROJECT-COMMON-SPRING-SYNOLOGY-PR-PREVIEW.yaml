@@ -25,7 +25,6 @@
 # 📋 사전 요구사항:
 #   - Traefik 컨테이너 실행 중 (traefik-network)
 #   - 와일드카드 DNS 설정: *.pr.suhsaechan.kr → 서버
-#   - 서버에 프로젝트 디렉토리 존재
 #
 # 🌐 Traefik 대시보드:
 #   https://traefik.suhsaechan.kr/dashboard/#/

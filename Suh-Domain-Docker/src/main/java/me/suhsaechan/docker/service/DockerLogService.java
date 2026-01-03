@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -22,9 +23,10 @@ import me.suhsaechan.docker.dto.DockerRequest;
 import me.suhsaechan.docker.dto.DockerLogResponse;
 import me.suhsaechan.docker.dto.ContainerInfoDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
- * Docker 로그 서비스 (폴링 방식)
+ * Docker 로그 서비스 (폴링 + SSE 스트리밍 방식)
  */
 @Slf4j
 @Service
@@ -33,6 +35,9 @@ public class DockerLogService {
 
     private final SshCommandExecutor sshCommandExecutor;
     private final SshConnectionProperties sshProps;
+
+    private static final int SSH_CONNECT_TIMEOUT = 10000;
+    private static final int STREAM_READ_TIMEOUT = 100;
 
     /**
      * Docker 컨테이너 로그 조회 (폴링용)
@@ -147,6 +152,106 @@ public class DockerLogService {
             if (session != null && session.isConnected()) {
                 session.disconnect();
             }
+        }
+    }
+
+    /**
+     * Docker 컨테이너 로그 실시간 스트리밍 (SSE용)
+     * docker logs -f 명령어를 사용하여 실시간으로 로그를 전송
+     *
+     * @param containerName 컨테이너 이름
+     * @param tailLines 초기 로드할 라인 수
+     * @param emitter SSE 이미터
+     * @param isRunning 스트리밍 실행 상태 플래그
+     */
+    public void streamContainerLogs(String containerName, int tailLines, SseEmitter emitter, AtomicBoolean isRunning) {
+        Session session = null;
+        ChannelExec channel = null;
+
+        try {
+            String host = sshProps.getHost();
+            String username = sshProps.getUsername();
+            String password = sshProps.getPassword();
+            int port = sshProps.getPort();
+
+            JSch jsch = new JSch();
+            session = jsch.getSession(username, host, port);
+            session.setPassword(password);
+
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+
+            log.info("SSE 스트리밍 시작 - 컨테이너: {}, tail: {}", containerName, tailLines);
+            session.connect(SSH_CONNECT_TIMEOUT);
+
+            channel = (ChannelExec) session.openChannel("exec");
+            String command = String.format(
+                "sudo -S -p '' bash -c 'export PATH=$PATH:/usr/local/bin && docker logs -f --tail=%d %s 2>&1'",
+                tailLines, containerName
+            );
+            channel.setCommand(command);
+            channel.setPty(true);
+
+            InputStream inputStream = channel.getInputStream();
+            OutputStream outputStream = channel.getOutputStream();
+            channel.connect(SSH_CONNECT_TIMEOUT);
+
+            outputStream.write((password + "\n").getBytes(StandardCharsets.UTF_8));
+            outputStream.flush();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            String line;
+
+            while (isRunning.get() && !channel.isClosed()) {
+                if (reader.ready()) {
+                    line = reader.readLine();
+                    if (line != null) {
+                        try {
+                            emitter.send(SseEmitter.event()
+                                .name("log")
+                                .data(line));
+                        } catch (IOException e) {
+                            log.debug("SSE 전송 실패 (클라이언트 연결 종료): {}", e.getMessage());
+                            break;
+                        }
+                    }
+                } else {
+                    Thread.sleep(STREAM_READ_TIMEOUT);
+                }
+            }
+
+            log.info("SSE 스트리밍 종료 - 컨테이너: {}", containerName);
+
+        } catch (JSchException e) {
+            log.error("SSE 스트리밍 SSH 연결 실패: {}", e.getMessage());
+            sendErrorEvent(emitter, "SSH 연결 실패: " + e.getMessage());
+        } catch (IOException e) {
+            log.error("SSE 스트리밍 IO 오류: {}", e.getMessage());
+            sendErrorEvent(emitter, "로그 읽기 오류: " + e.getMessage());
+        } catch (InterruptedException e) {
+            log.debug("SSE 스트리밍 인터럽트: {}", e.getMessage());
+            Thread.currentThread().interrupt();
+        } finally {
+            if (channel != null && channel.isConnected()) {
+                channel.disconnect();
+            }
+            if (session != null && session.isConnected()) {
+                session.disconnect();
+            }
+            try {
+                emitter.complete();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void sendErrorEvent(SseEmitter emitter, String errorMessage) {
+        try {
+            emitter.send(SseEmitter.event()
+                .name("error")
+                .data(errorMessage));
+        } catch (IOException ignored) {
         }
     }
 

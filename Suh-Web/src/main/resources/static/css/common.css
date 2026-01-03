@@ -3471,3 +3471,70 @@ html:not([data-theme="dark"]) .collapse {
 [data-theme="dark"] .shadow-xl {
   --tw-shadow-color: rgba(0, 0, 0, 0.3) !important;
 }
+
+/*
+===========================
+   Docker Log Viewer Styles
+===========================
+*/
+
+.docker-logs-page .log-output-container {
+  height: calc(100vh - 280px);
+  min-height: 400px;
+  background-color: #1e1e1e;
+  border-radius: 0.5rem;
+}
+
+.docker-logs-page .docker-log-card {
+  background-color: #1e1e1e;
+}
+
+.docker-logs-page .log-output {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.docker-logs-page .log-line {
+  padding: 1px 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.docker-logs-page .log-line-error {
+  color: #f87171;
+}
+
+.docker-logs-page .log-line-warn {
+  color: #fbbf24;
+}
+
+.docker-logs-page .log-line-info {
+  color: #60a5fa;
+}
+
+.docker-logs-page .log-line-debug {
+  color: #9ca3af;
+}
+
+.docker-logs-page .log-line-trace {
+  color: #6b7280;
+}
+
+.docker-logs-page .log-line-default {
+  color: #e5e7eb;
+}
+
+.docker-logs-page .log-line-highlight {
+  background-color: rgba(250, 204, 21, 0.3);
+}
+
+.docker-logs-page .log-line-current {
+  background-color: rgba(250, 204, 21, 0.5);
+  outline: 1px solid #facc15;
+}
+
+[data-theme="dark"] .docker-logs-page .container-item:hover {
+  background-color: #374151 !important;
+}
+
