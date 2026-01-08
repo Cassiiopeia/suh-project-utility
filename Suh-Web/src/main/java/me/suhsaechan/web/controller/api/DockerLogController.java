@@ -1,6 +1,12 @@
 package me.suhsaechan.web.controller.api;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.docker.dto.DockerRequest;
@@ -13,10 +19,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
- * Docker 컨테이너 로그를 위한 컨트롤러 (폴링 방식)
+ * Docker 컨테이너 로그를 위한 컨트롤러 (폴링 + SSE 스트리밍)
  */
 @Slf4j
 @RestController
@@ -24,6 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/docker-log")
 public class DockerLogController {
     private final DockerLogService dockerLogService;
+
+    private static final long SSE_TIMEOUT = 30 * 60 * 1000L;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final Map<SseEmitter, AtomicBoolean> activeEmitters = new ConcurrentHashMap<>();
 
     /**
      * Docker 컨테이너 로그 조회 (폴링용)
@@ -67,5 +79,65 @@ public class DockerLogController {
     @GetMapping(value = "/containers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ContainerInfoDto>> listContainers() {
         return ResponseEntity.ok(dockerLogService.listContainers());
+    }
+
+    /**
+     * Docker 컨테이너 로그 실시간 스트리밍 (SSE)
+     * @param containerName 컨테이너 이름
+     * @param tailLines 초기 로드할 라인 수
+     * @return SSE 이미터
+     */
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter streamContainerLogs(
+            @RequestParam(defaultValue = "sejong-malsami-back") String containerName,
+            @RequestParam(defaultValue = "100") int tailLines) {
+
+        log.info("SSE 스트리밍 요청 - 컨테이너: {}, tail: {}", containerName, tailLines);
+
+        SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
+        AtomicBoolean isRunning = new AtomicBoolean(true);
+        activeEmitters.put(emitter, isRunning);
+
+        emitter.onCompletion(() -> {
+            log.debug("SSE 연결 완료 - 컨테이너: {}", containerName);
+            cleanupEmitter(emitter);
+        });
+
+        emitter.onTimeout(() -> {
+            log.debug("SSE 연결 타임아웃 - 컨테이너: {}", containerName);
+            cleanupEmitter(emitter);
+        });
+
+        emitter.onError((e) -> {
+            log.debug("SSE 연결 에러 - 컨테이너: {}, 에러: {}", containerName, e.getMessage());
+            cleanupEmitter(emitter);
+        });
+
+        executorService.execute(() -> {
+            dockerLogService.streamContainerLogs(containerName, tailLines, emitter, isRunning);
+        });
+
+        return emitter;
+    }
+
+    private void cleanupEmitter(SseEmitter emitter) {
+        AtomicBoolean isRunning = activeEmitters.remove(emitter);
+        if (isRunning != null) {
+            isRunning.set(false);
+        }
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        log.info("DockerLogController 종료 - 활성 SSE 연결 정리");
+        activeEmitters.forEach((emitter, isRunning) -> {
+            isRunning.set(false);
+            try {
+                emitter.complete();
+            } catch (Exception ignored) {
+            }
+        });
+        activeEmitters.clear();
+        executorService.shutdown();
     }
 }

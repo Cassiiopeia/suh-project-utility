@@ -1,11 +1,42 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-01T11:54:39Z",
-    "currentVersion": "2.3.4",
+    "lastUpdated": "2026-01-08T10:01:45Z",
+    "currentVersion": "2.3.12",
     "projectType": "spring",
-    "totalReleases": 33
+    "totalReleases": 34
   },
   "releases": [
+    {
+      "version": "2.3.12",
+      "project_type": "spring",
+      "date": "2026-01-08",
+      "pr_number": 149,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * Docker 로그 실시간 스트리밍 기능 추가\n  * 랜덤 닉네임 생성기 추가 (다양한 언어 및 타입 지원)\n  * PR/이슈 기반 자동 미리보기 배포 기능 추가\n\n* **스타일**\n  * Docker 로그 뷰어 UI 개선\n  * 로그 검색 기능 추가\n\n* **기타**\n  * 버전 업그레이드 (v2.3.4 → v2.3.12)",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "Docker 로그 실시간 스트리밍 기능 추가",
+            "랜덤 닉네임 생성기 추가 (다양한 언어 및 타입 지원)",
+            "PR/이슈 기반 자동 미리보기 배포 기능 추가"
+          ]
+        },
+        "스타일": {
+          "title": "스타일",
+          "items": [
+            "Docker 로그 뷰어 UI 개선",
+            "로그 검색 기능 추가"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "버전 업그레이드 (v2.3.4 → v2.3.12)"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.3.4",
       "project_type": "spring",
