@@ -56,17 +56,18 @@ public class FeatureUsageLog extends BasePostgresEntity {
      * 기능 타입 Enum (확장 가능)
      */
     public enum FeatureType {
-        CHATBOT,              // AI 챗봇
-        GITHUB_ISSUE_HELPER,  // GitHub 이슈 헬퍼
-        AI_TRANSLATOR,        // AI 번역기
-        STUDY_VIEW,           // 스터디 조회
-        NOTICE_VIEW,          // 공지사항 조회
-        CONTAINER_LOG,        // 컨테이너 로그
-        GRASS_PLANTER,        // Grass Planter
-        SWAGGER_GENERATOR,    // Swagger 생성기
-        TS_API_CONVERTER,     // TS API 변환기
-        LOGIN,                // 로그인
-        PROFILE_VIEW,         // 프로필 조회
-        SEJONG_AUTH           // 세종대 인증
+        CHATBOT,
+        GITHUB_ISSUE_HELPER,
+        AI_TRANSLATOR,
+        STUDY_VIEW,
+        NOTICE_VIEW,
+        CONTAINER_LOG,
+        GRASS_PLANTER,
+        SWAGGER_GENERATOR,
+        TS_API_CONVERTER,
+        LOGIN,
+        PROFILE_VIEW,
+        SEJONG_AUTH,
+        SUH_RANDOM
     }
 }

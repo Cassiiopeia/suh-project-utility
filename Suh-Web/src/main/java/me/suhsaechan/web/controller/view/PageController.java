@@ -75,6 +75,11 @@ public class PageController {
 	public String sejongAuthPage(){
 		return "pages/sejongAuth";
 	}
+
+	@GetMapping("/suh-random")
+	public String suhRandomPage(){
+		return "pages/suhRandom";
+	}
 	
 	@GetMapping("/notice-management")
 	public String noticeManagementPage(HttpSession session, Model model){

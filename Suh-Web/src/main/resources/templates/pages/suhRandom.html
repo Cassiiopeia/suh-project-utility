@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='SUH Random - SAECHAN-LAB')}"></head>
+<body class="min-h-screen">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Hero Section -->
+  <section class="suh-random-hero relative overflow-hidden bg-gradient-to-r from-green-200 via-teal-200 to-cyan-200 py-12 rounded-2xl mb-8 shadow-lg">
+    <div class="suh-random-hero-overlay absolute inset-0 bg-white/20"></div>
+    <div class="relative text-center px-6">
+      <div class="flex justify-center gap-2 mb-4 flex-wrap">
+        <span class="badge bg-teal-600/80 text-white border-teal-700">v1.1.0</span>
+        <span class="badge bg-teal-600/80 text-white border-teal-700">Java 17+</span>
+        <span class="badge bg-teal-600/80 text-white border-teal-700">Spring Boot 3.x</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2 flex items-center justify-center gap-3 text-gray-800">
+        <i class="fa-solid fa-dice text-teal-600"></i>
+        SUH Random Nickname Generator
+      </h1>
+      <p class="font-mono text-gray-700 text-sm sm:text-base mb-1">96만 조합의 개성 있는 닉네임 생성기</p>
+      <div class="mt-4 flex justify-center gap-2">
+        <a href="https://github.com/Cassiiopeia/suh-random-engine" target="_blank"
+           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-gray-900">
+          <i class="fa-brands fa-github"></i>
+          GitHub
+        </a>
+        <a href="https://nexus.suhsaechan.kr/#browse/browse:maven-releases:me%2Fsuhsaechan%2Fsuh-random-engine" target="_blank"
+           class="btn btn-sm bg-teal-600 hover:bg-teal-700 text-white border-teal-700">
+          <i class="fa-solid fa-box"></i>
+          Nexus
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2단 그리드 (입력 + 결과) -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- 입력 카드 -->
+    <div class="card bg-base-100 shadow-lg border border-gray-100">
+      <div class="card-body">
+        <h2 class="card-title text-lg mb-4">
+          <div class="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-teal-600"></i>
+          </div>
+          닉네임 생성 옵션
+        </h2>
+
+        <!-- 언어 선택 -->
+        <div class="form-control mb-4">
+          <label class="label">
+            <span class="label-text font-medium">언어</span>
+          </label>
+          <select id="locale" class="select select-bordered w-full">
+            <option value="ko" selected>한국어 (ko)</option>
+            <option value="en">영어 (en)</option>
+          </select>
+        </div>
+
+        <!-- 닉네임 타입 선택 -->
+        <fieldset class="fieldset mb-4">
+          <legend class="fieldset-legend text-sm font-medium text-gray-700 mb-3">닉네임 타입 선택</legend>
+          <div class="space-y-3">
+            <!-- 기본 닉네임 -->
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="nicknameType" value="SIMPLE" class="radio radio-primary" checked/>
+              <div class="flex-1">
+                <span class="font-medium">기본 닉네임</span>
+                <span class="badge badge-sm badge-success ml-2">추천</span>
+                <p class="text-xs text-gray-500 mt-1">형용사 + 명사 조합 (예: 멋진고양이)</p>
+              </div>
+            </label>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="nicknameType" value="NUMBER" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">숫자 접미사</span>
+                <p class="text-xs text-gray-500 mt-1">닉네임 + 숫자 (예: 멋진고양이-1234)</p>
+              </div>
+            </label>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="nicknameType" value="UUID" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">UUID 접미사</span>
+                <p class="text-xs text-gray-500 mt-1">닉네임 + UUID (예: 멋진고양이-abcd)</p>
+              </div>
+            </label>
+
+            <!-- 정치인 닉네임 -->
+            <div class="divider text-xs text-gray-400 my-2">정치인 닉네임</div>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="nicknameType" value="POLITICIAN" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">정치인 닉네임</span>
+                <p class="text-xs text-gray-500 mt-1">형용사 + 정치인 이름 (예: 멋진윤석열)</p>
+              </div>
+            </label>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="nicknameType" value="POLITICIAN_NUMBER" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">정치인 + 숫자</span>
+                <p class="text-xs text-gray-500 mt-1">정치인 닉네임 + 숫자 (예: 빛나는이재명-1234)</p>
+              </div>
+            </label>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 transition-colors">
+              <input type="radio" name="nicknameType" value="POLITICIAN_UUID" class="radio radio-primary"/>
+              <div class="flex-1">
+                <span class="font-medium">정치인 + UUID</span>
+                <p class="text-xs text-gray-500 mt-1">정치인 닉네임 + UUID (예: 멋진이준석-abcd)</p>
+              </div>
+            </label>
+
+            <!-- 성인용 닉네임 -->
+            <div class="divider text-xs text-gray-400 my-2">성인용 닉네임 (19+)</div>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-amber-200 bg-amber-50 transition-colors">
+              <input type="radio" name="nicknameType" value="MATURE" class="radio radio-warning"/>
+              <div class="flex-1">
+                <span class="font-medium text-amber-700">성인용 닉네임</span>
+                <span class="badge badge-sm badge-warning ml-2">19+</span>
+                <p class="text-xs text-amber-600 mt-1">성인용 형용사 + 명사 조합</p>
+              </div>
+            </label>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-amber-200 bg-amber-50 transition-colors">
+              <input type="radio" name="nicknameType" value="MATURE_NUMBER" class="radio radio-warning"/>
+              <div class="flex-1">
+                <span class="font-medium text-amber-700">성인용 + 숫자</span>
+                <span class="badge badge-sm badge-warning ml-2">19+</span>
+                <p class="text-xs text-amber-600 mt-1">성인용 닉네임 + 숫자</p>
+              </div>
+            </label>
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-amber-200 bg-amber-50 transition-colors">
+              <input type="radio" name="nicknameType" value="MATURE_UUID" class="radio radio-warning"/>
+              <div class="flex-1">
+                <span class="font-medium text-amber-700">성인용 + UUID</span>
+                <span class="badge badge-sm badge-warning ml-2">19+</span>
+                <p class="text-xs text-amber-600 mt-1">성인용 닉네임 + UUID</p>
+              </div>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- 접미사 길이 설정 (조건부 표시) -->
+        <div id="suffixLengthSection" class="hidden mb-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-control" id="numberLengthControl">
+              <label class="label">
+                <span class="label-text font-medium">숫자 길이</span>
+              </label>
+              <input type="number" id="numberLength" min="1" max="10" value="4"
+                     class="input input-bordered w-full"/>
+            </div>
+            <div class="form-control" id="uuidLengthControl">
+              <label class="label">
+                <span class="label-text font-medium">UUID 길이</span>
+              </label>
+              <input type="number" id="uuidLength" min="1" max="10" value="4"
+                     class="input input-bordered w-full"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- 성인 동의 체크박스 (조건부 표시) -->
+        <div id="adultConsentSection" class="hidden mb-4">
+          <div class="alert alert-warning mb-4">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>성인용 콘텐츠는 만 19세 이상만 사용할 수 있습니다.</span>
+          </div>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="ageConsent" class="checkbox checkbox-warning"/>
+              <span class="text-sm">본인은 만 19세 이상임을 확인합니다.</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="responsibilityConsent" class="checkbox checkbox-warning"/>
+              <span class="text-sm">성인용 콘텐츠 사용에 대한 책임은 본인에게 있음을 동의합니다.</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="illegalConsent" class="checkbox checkbox-warning"/>
+              <span class="text-sm">생성된 콘텐츠를 불법적인 용도로 사용하지 않을 것을 동의합니다.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 생성 버튼 -->
+        <button id="generateBtn" class="btn btn-primary btn-lg w-full">
+          <i class="fa-solid fa-dice"></i>
+          닉네임 생성하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 결과 카드 -->
+    <div class="card bg-base-100 shadow-lg border border-gray-100">
+      <div class="card-body">
+        <h2 class="card-title text-lg mb-4">
+          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+            <i class="fa-solid fa-star text-green-600"></i>
+          </div>
+          생성 결과
+        </h2>
+
+        <!-- Tabs -->
+        <div role="tablist" class="tabs tabs-border mb-4">
+          <a role="tab" class="tab" data-tab="result">
+            <i class="fa-solid fa-font mr-1"></i> 결과
+          </a>
+          <a role="tab" class="tab" data-tab="json">
+            <i class="fa-solid fa-code mr-1"></i> JSON
+          </a>
+          <a role="tab" class="tab" data-tab="history">
+            <i class="fa-solid fa-clock-rotate-left mr-1"></i> 히스토리
+          </a>
+        </div>
+
+        <!-- 결과 영역 -->
+        <div id="resultContainer" class="suh-random-result-container bg-gray-50 rounded-lg p-4 min-h-80 overflow-auto">
+          <!-- 초기 상태 -->
+          <div id="resultPlaceholder" class="text-center text-gray-400 py-16">
+            <i class="fa-solid fa-arrow-left text-5xl mb-4 opacity-50"></i>
+            <p class="text-sm">옵션을 선택하고<br/>닉네임 생성하기 버튼을 눌러주세요</p>
+          </div>
+
+          <!-- 로딩 상태 -->
+          <div id="resultLoading" class="hidden py-8">
+            <div class="flex flex-col items-center gap-4">
+              <span class="loading loading-spinner loading-lg text-primary"></span>
+              <p class="text-gray-500">닉네임 생성 중...</p>
+            </div>
+          </div>
+
+          <!-- 결과 표시 -->
+          <div id="resultDisplay" class="hidden">
+            <div class="text-center py-8">
+              <p class="text-sm text-gray-500 mb-2">생성된 닉네임</p>
+              <div class="text-3xl sm:text-4xl font-bold text-teal-600 mb-4" id="generatedNickname"></div>
+              <button type="button" id="copyNicknameBtn"
+                      class="btn btn-outline btn-sm gap-2">
+                <i class="fa-regular fa-copy"></i>
+                복사하기
+              </button>
+            </div>
+            <div class="divider"></div>
+            <table class="table table-zebra w-full text-sm">
+              <tbody id="resultTableBody">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- JSON 결과 -->
+          <div id="resultJsonWrapper" class="hidden relative">
+            <button type="button" id="copyJsonBtn"
+                    class="absolute top-2 right-2 btn btn-ghost btn-xs text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                    title="JSON 복사">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+            <pre id="resultJson" class="text-sm whitespace-pre-wrap break-words pt-6"></pre>
+          </div>
+
+          <!-- 히스토리 -->
+          <div id="resultHistory" class="hidden">
+            <div id="historyList" class="space-y-2">
+              <p class="text-center text-gray-400 py-8">아직 생성된 닉네임이 없습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Collapse 섹션들 -->
+  <div class="space-y-4">
+    <!-- API 사용법 -->
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+      <input type="checkbox"/>
+      <div class="collapse-title text-lg font-medium flex items-center gap-2">
+        <i class="fa-solid fa-code text-teal-500"></i>
+        API 사용법
+      </div>
+      <div class="collapse-content">
+        <div class="pt-4 space-y-4">
+          <div class="mockup-code text-sm">
+            <pre data-prefix="1"><code>// 1. 의존성 추가 (Gradle)</code></pre>
+            <pre data-prefix="2"><code>implementation 'me.suhsaechan:suh-random-engine:1.1.0'</code></pre>
+            <pre data-prefix="3"><code></code></pre>
+            <pre data-prefix="4"><code>// 2. 기본 사용법</code></pre>
+            <pre data-prefix="5"><code>SuhRandomKit generator = SuhRandomKit.builder()</code></pre>
+            <pre data-prefix="6"><code>    .locale("ko")     // 한국어</code></pre>
+            <pre data-prefix="7"><code>    .numberLength(4)  // 숫자 길이</code></pre>
+            <pre data-prefix="8"><code>    .uuidLength(4)    // UUID 길이</code></pre>
+            <pre data-prefix="9"><code>    .build();</code></pre>
+            <pre data-prefix="10"><code></code></pre>
+            <pre data-prefix="11"><code>String nickname = generator.simpleNickname();  // 멋진고양이</code></pre>
+            <pre data-prefix="12"><code>String withNumber = generator.nicknameWithNumber();  // 멋진고양이-1234</code></pre>
+            <pre data-prefix="13"><code>String withUuid = generator.nicknameWithUuid();  // 멋진고양이-abcd</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 닉네임 타입 설명 -->
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+      <input type="checkbox"/>
+      <div class="collapse-title text-lg font-medium flex items-center gap-2">
+        <i class="fa-solid fa-list text-blue-500"></i>
+        닉네임 타입 설명
+      </div>
+      <div class="collapse-content">
+        <div class="pt-4">
+          <table class="table table-zebra w-full text-sm">
+            <thead>
+              <tr>
+                <th>타입</th>
+                <th>설명</th>
+                <th>예시</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-mono">SIMPLE</td><td>형용사 + 명사 조합</td><td>멋진고양이</td></tr>
+              <tr><td class="font-mono">NUMBER</td><td>닉네임 + 숫자</td><td>멋진고양이-1234</td></tr>
+              <tr><td class="font-mono">UUID</td><td>닉네임 + UUID</td><td>멋진고양이-abcd</td></tr>
+              <tr><td class="font-mono">POLITICIAN</td><td>형용사 + 정치인 이름</td><td>멋진윤석열</td></tr>
+              <tr><td class="font-mono">POLITICIAN_NUMBER</td><td>정치인 닉네임 + 숫자</td><td>빛나는이재명-1234</td></tr>
+              <tr><td class="font-mono">POLITICIAN_UUID</td><td>정치인 닉네임 + UUID</td><td>멋진이준석-abcd</td></tr>
+              <tr><td class="font-mono text-amber-600">MATURE</td><td>성인용 형용사 + 명사</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-amber-600">MATURE_NUMBER</td><td>성인용 닉네임 + 숫자</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-amber-600">MATURE_UUID</td><td>성인용 닉네임 + UUID</td><td>(19+)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 성인용 콘텐츠 주의사항 -->
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+      <input type="checkbox"/>
+      <div class="collapse-title text-lg font-medium flex items-center gap-2">
+        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+        성인용 콘텐츠 주의사항
+      </div>
+      <div class="collapse-content">
+        <div class="pt-4">
+          <div class="alert alert-warning mb-4">
+            <i class="fa-solid fa-exclamation-circle"></i>
+            <span>성인용 콘텐츠는 만 19세 이상만 사용할 수 있습니다.</span>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-bold text-sm mb-2">필수 동의 사항</h4>
+              <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                <li>사용자가 만 19세 이상임을 확인</li>
+                <li>성인용 콘텐츠의 사용에 대한 책임은 사용자에게 있음을 동의</li>
+                <li>생성된 콘텐츠를 불법적인 용도로 사용하지 않을 것을 동의</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm mb-2">법적 책임</h4>
+              <p class="text-sm text-gray-600">
+                성인용 콘텐츠의 부적절한 사용으로 인한 모든 법적 책임은 사용자 본인에게 있습니다.
+                서비스 제공자는 어떠한 책임도 지지 않습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+  $(document).ready(function() {
+    initElements();
+    setupEventHandlers();
+    initTab();
+  });
+
+  let currentTab = localStorage.getItem('suhRandomTab') || 'result';
+  let lastResult = null;
+  let nicknameHistory = JSON.parse(localStorage.getItem('suhRandomHistory') || '[]');
+
+  function initElements() {
+    window.elements = {
+      locale: document.getElementById('locale'),
+      generateBtn: document.getElementById('generateBtn'),
+      numberLength: document.getElementById('numberLength'),
+      uuidLength: document.getElementById('uuidLength'),
+      suffixLengthSection: document.getElementById('suffixLengthSection'),
+      numberLengthControl: document.getElementById('numberLengthControl'),
+      uuidLengthControl: document.getElementById('uuidLengthControl'),
+      adultConsentSection: document.getElementById('adultConsentSection'),
+      ageConsent: document.getElementById('ageConsent'),
+      responsibilityConsent: document.getElementById('responsibilityConsent'),
+      illegalConsent: document.getElementById('illegalConsent'),
+      resultContainer: document.getElementById('resultContainer'),
+      resultPlaceholder: document.getElementById('resultPlaceholder'),
+      resultLoading: document.getElementById('resultLoading'),
+      resultDisplay: document.getElementById('resultDisplay'),
+      resultJsonWrapper: document.getElementById('resultJsonWrapper'),
+      resultJson: document.getElementById('resultJson'),
+      resultHistory: document.getElementById('resultHistory'),
+      historyList: document.getElementById('historyList'),
+      generatedNickname: document.getElementById('generatedNickname'),
+      resultTableBody: document.getElementById('resultTableBody'),
+      copyNicknameBtn: document.getElementById('copyNicknameBtn'),
+      copyJsonBtn: document.getElementById('copyJsonBtn')
+    };
+  }
+
+  function initTab() {
+    document.querySelectorAll('[data-tab]').forEach(t => {
+      t.classList.remove('tab-active');
+    });
+    const activeTab = document.querySelector(`[data-tab="${currentTab}"]`);
+    if (activeTab) {
+      activeTab.classList.add('tab-active');
+    }
+  }
+
+  function setupEventHandlers() {
+    window.elements.generateBtn.addEventListener('click', generateNickname);
+    window.elements.copyNicknameBtn.addEventListener('click', copyNickname);
+    window.elements.copyJsonBtn.addEventListener('click', copyJsonToClipboard);
+
+    document.querySelectorAll('input[name="nicknameType"]').forEach(radio => {
+      radio.addEventListener('change', handleTypeChange);
+    });
+
+    document.querySelectorAll('[data-tab]').forEach(tab => {
+      tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab(this.dataset.tab);
+      });
+    });
+  }
+
+  function handleTypeChange() {
+    const selectedType = document.querySelector('input[name="nicknameType"]:checked').value;
+
+    const needsSuffix = selectedType.includes('NUMBER') || selectedType.includes('UUID');
+    window.elements.suffixLengthSection.classList.toggle('hidden', !needsSuffix);
+
+    if (needsSuffix) {
+      window.elements.numberLengthControl.classList.toggle('hidden', !selectedType.includes('NUMBER'));
+      window.elements.uuidLengthControl.classList.toggle('hidden', !selectedType.includes('UUID'));
+    }
+
+    const isMature = selectedType.startsWith('MATURE');
+    window.elements.adultConsentSection.classList.toggle('hidden', !isMature);
+
+    if (!isMature) {
+      window.elements.ageConsent.checked = false;
+      window.elements.responsibilityConsent.checked = false;
+      window.elements.illegalConsent.checked = false;
+    }
+  }
+
+  function copyNickname() {
+    const nickname = window.elements.generatedNickname.textContent;
+    navigator.clipboard.writeText(nickname).then(() => {
+      showToast('닉네임이 클립보드에 복사되었습니다!', 'positive');
+    }).catch(() => {
+      showToast('복사에 실패했습니다.', 'negative');
+    });
+  }
+
+  function copyJsonToClipboard() {
+    const json = window.elements.resultJson.textContent;
+    navigator.clipboard.writeText(json).then(() => {
+      showToast('JSON이 클립보드에 복사되었습니다!', 'positive');
+    }).catch(() => {
+      showToast('복사에 실패했습니다.', 'negative');
+    });
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    localStorage.setItem('suhRandomTab', tab);
+
+    document.querySelectorAll('[data-tab]').forEach(t => {
+      t.classList.remove('tab-active');
+    });
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('tab-active');
+
+    window.elements.resultDisplay.classList.add('hidden');
+    window.elements.resultJsonWrapper.classList.add('hidden');
+    window.elements.resultHistory.classList.add('hidden');
+
+    if (tab === 'result' && lastResult) {
+      window.elements.resultPlaceholder.classList.add('hidden');
+      window.elements.resultDisplay.classList.remove('hidden');
+    } else if (tab === 'json' && lastResult) {
+      window.elements.resultPlaceholder.classList.add('hidden');
+      window.elements.resultJsonWrapper.classList.remove('hidden');
+    } else if (tab === 'history') {
+      window.elements.resultPlaceholder.classList.add('hidden');
+      window.elements.resultHistory.classList.remove('hidden');
+      renderHistory();
+    } else if (!lastResult) {
+      window.elements.resultPlaceholder.classList.remove('hidden');
+    }
+  }
+
+  function generateNickname() {
+    const nicknameType = document.querySelector('input[name="nicknameType"]:checked').value;
+    const locale = window.elements.locale.value;
+    const numberLength = parseInt(window.elements.numberLength.value) || 4;
+    const uuidLength = parseInt(window.elements.uuidLength.value) || 4;
+
+    const isMature = nicknameType.startsWith('MATURE');
+    if (isMature) {
+      const allConsented = window.elements.ageConsent.checked &&
+                          window.elements.responsibilityConsent.checked &&
+                          window.elements.illegalConsent.checked;
+      if (!allConsented) {
+        showToast('성인용 콘텐츠 사용을 위해 모든 동의 사항에 체크해주세요.', 'warning');
+        return;
+      }
+    }
+
+    showLoading();
+
+    const formData = new FormData();
+    formData.append('nicknameType', nicknameType);
+    formData.append('locale', locale);
+    formData.append('numberLength', numberLength);
+    formData.append('uuidLength', uuidLength);
+    formData.append('isAdultConsent', isMature);
+
+    $.ajax({
+      url: '/api/suh-random/generate',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        lastResult = response;
+        renderResult(response);
+        addToHistory(response);
+        showToast('닉네임이 생성되었습니다!', 'positive');
+      },
+      error: function(xhr, status, error) {
+        console.error('Generation error:', error);
+        hideLoading();
+        let errorMessage = '닉네임 생성 중 오류가 발생했습니다.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        showToast(errorMessage, 'negative');
+      }
+    });
+  }
+
+  function showLoading() {
+    window.elements.resultPlaceholder.classList.add('hidden');
+    window.elements.resultDisplay.classList.add('hidden');
+    window.elements.resultJsonWrapper.classList.add('hidden');
+    window.elements.resultHistory.classList.add('hidden');
+    window.elements.resultLoading.classList.remove('hidden');
+    window.elements.generateBtn.disabled = true;
+    window.elements.generateBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> 생성 중...';
+  }
+
+  function hideLoading() {
+    window.elements.resultLoading.classList.add('hidden');
+    window.elements.generateBtn.disabled = false;
+    window.elements.generateBtn.innerHTML = '<i class="fa-solid fa-dice"></i> 닉네임 생성하기';
+  }
+
+  function renderResult(result) {
+    hideLoading();
+
+    window.elements.generatedNickname.textContent = result.nickname;
+    window.elements.resultJson.textContent = JSON.stringify(result, null, 2);
+
+    const tbody = window.elements.resultTableBody;
+    tbody.innerHTML = '';
+
+    const fields = [
+      { key: 'nicknameType', label: '타입' },
+      { key: 'locale', label: '언어', format: v => v === 'ko' ? '한국어' : '영어' },
+      { key: 'numberLength', label: '숫자 길이' },
+      { key: 'uuidLength', label: 'UUID 길이' },
+      { key: 'generatedAt', label: '생성 시간' }
+    ];
+
+    fields.forEach(field => {
+      const value = result[field.key];
+      if (value !== null && value !== undefined) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <th class="font-medium text-gray-600 w-32">${field.label}</th>
+          <td>${field.format ? field.format(value) : value}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+
+    if (currentTab === 'result') {
+      window.elements.resultDisplay.classList.remove('hidden');
+    } else if (currentTab === 'json') {
+      window.elements.resultJsonWrapper.classList.remove('hidden');
+    }
+  }
+
+  function addToHistory(result) {
+    nicknameHistory.unshift({
+      nickname: result.nickname,
+      nicknameType: result.nicknameType,
+      locale: result.locale,
+      generatedAt: result.generatedAt
+    });
+
+    if (nicknameHistory.length > 10) {
+      nicknameHistory = nicknameHistory.slice(0, 10);
+    }
+
+    localStorage.setItem('suhRandomHistory', JSON.stringify(nicknameHistory));
+  }
+
+  function renderHistory() {
+    const historyList = window.elements.historyList;
+
+    if (nicknameHistory.length === 0) {
+      historyList.innerHTML = '<p class="text-center text-gray-400 py-8">아직 생성된 닉네임이 없습니다.</p>';
+      return;
+    }
+
+    let html = '';
+    nicknameHistory.forEach((item, index) => {
+      html += `
+        <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:border-teal-200 transition-colors">
+          <div>
+            <span class="font-medium text-teal-600">${escapeHtml(item.nickname)}</span>
+            <span class="text-xs text-gray-400 ml-2">${item.nicknameType}</span>
+          </div>
+          <button class="btn btn-ghost btn-xs" onclick="copyHistoryItem('${escapeHtml(item.nickname)}')">
+            <i class="fa-regular fa-copy"></i>
+          </button>
+        </div>
+      `;
+    });
+
+    historyList.innerHTML = html;
+  }
+
+  function copyHistoryItem(nickname) {
+    navigator.clipboard.writeText(nickname).then(() => {
+      showToast('닉네임이 클립보드에 복사되었습니다!', 'positive');
+    }).catch(() => {
+      showToast('복사에 실패했습니다.', 'negative');
+    });
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+</script>
+</body>
+</html>
