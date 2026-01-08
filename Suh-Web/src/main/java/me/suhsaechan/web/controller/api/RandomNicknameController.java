@@ -53,16 +53,12 @@ public class RandomNicknameController {
 			throw new IllegalArgumentException("성인용 콘텐츠 사용을 위해서는 동의가 필요합니다.");
 		}
 
-		SuhRandomKit.SuhRandomKitBuilder builder = SuhRandomKit.builder()
+		SuhRandomKit generator = SuhRandomKit.builder()
 				.locale(locale)
 				.numberLength(numberLength)
-				.uuidLength(uuidLength);
-
-		if (isAdultConsent) {
-			builder.enableAdultContent(true);
-		}
-
-		SuhRandomKit generator = builder.build();
+				.uuidLength(uuidLength)
+				.enableAdultContent(isAdultConsent)
+				.build();
 
 		String nickname = generateByType(generator, nicknameType, numberLength, uuidLength);
 
