@@ -49,4 +49,5 @@ public class DashboardSummaryDto {
 
     // === 기능별 사용 통계 (확장용) ===
     private Map<FeatureType, Long> featureUsageCounts;
+    private Map<FeatureType, Long> todayFeatureUsageCounts;
 }

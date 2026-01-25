@@ -93,6 +93,7 @@ public class DashboardService {
                 .totalSejongAuth(totalSejongAuth)
                 .todaySejongAuth(todaySejongAuth)
                 .featureUsageCounts(statisticsService.getFeatureUsageCounts())
+                .todayFeatureUsageCounts(statisticsService.getTodayFeatureUsageCounts())
                 .build();
 
             log.debug("대시보드 Summary 데이터 조회 완료 - 방문자: {}, 챗봇세션: {}, 토큰: {}",
@@ -122,6 +123,8 @@ public class DashboardService {
                 .todayProfileViews(0L)
                 .totalSejongAuth(0L)
                 .todaySejongAuth(0L)
+                .featureUsageCounts(java.util.Collections.emptyMap())
+                .todayFeatureUsageCounts(java.util.Collections.emptyMap())
                 .build();
         }
     }
