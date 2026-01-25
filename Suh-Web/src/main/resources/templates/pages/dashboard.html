@@ -77,17 +77,7 @@
         </button>
       </div>
       <!-- Summary 스켈레톤 -->
-      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
-          <div class="flex items-center gap-4">
-            <div class="skeleton w-12 h-12 rounded-lg"></div>
-            <div class="flex-1">
-              <div class="skeleton h-3 w-16 mb-2"></div>
-              <div class="skeleton h-6 w-12 mb-1"></div>
-              <div class="skeleton h-3 w-20"></div>
-            </div>
-          </div>
-        </div>
+      <div id="summary-skeleton" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
           <div class="flex items-center gap-4">
             <div class="skeleton w-12 h-12 rounded-lg"></div>
@@ -142,7 +132,7 @@
 
       <!-- Summary 실제 콘텐츠 -->
       <div id="summary-content" class="hidden">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <!-- 방문자 통계 -->
           <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="card-body p-5">
@@ -223,17 +213,42 @@
             </div>
           </div>
 
-          <!-- 세종대 인증 -->
-          <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <i class="fa-solid fa-graduation-cap text-blue-600 text-xl"></i>
+        </div>
+
+        <!-- 기능별 상세 통계 -->
+        <div class="mt-4">
+          <h3 class="text-sm font-medium text-gray-700 mb-3">
+            <i class="fa-solid fa-chart-bar mr-2 text-gray-500"></i>
+            기능별 상세 통계
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <!-- 세종대 인증 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-graduation-cap text-blue-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-500 font-medium mb-1">세종대 인증</p>
+                    <p class="text-lg font-bold text-gray-900" id="stat-total-sejong-auth">-</p>
+                    <p class="text-xs text-gray-400">오늘: <span id="stat-today-sejong-auth" class="text-green-600 font-medium">+0</span></p>
+                  </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-xs text-gray-500 font-medium mb-1">세종대 인증</p>
-                  <p class="text-2xl font-bold text-gray-900" id="stat-total-sejong-auth">-</p>
-                  <p class="text-xs text-gray-400">오늘: <span id="stat-today-sejong-auth" class="text-green-600 font-medium">+0</span></p>
+              </div>
+            </div>
+            <!-- SUH 랜덤 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div class="card-body p-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-dice text-rose-600"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-500 font-medium mb-1">SUH 랜덤</p>
+                    <p class="text-lg font-bold text-gray-900" id="stat-total-suh-random">-</p>
+                    <p class="text-xs text-gray-400">오늘: <span id="stat-today-suh-random" class="text-green-600 font-medium">+0</span></p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -487,6 +502,38 @@
                 </div>
                 <div class="card-actions justify-end">
                   <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" class="btn btn-outline btn-xs">
+                    <i class="fa-brands fa-github"></i> GitHub
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUH 랜덤 엔진 -->
+            <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-lg bg-rose-100 flex items-center justify-center">
+                      <i class="fa-solid fa-dice text-rose-600 text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-gray-900">SUH 랜덤 엔진</h3>
+                      <div class="flex gap-1 mt-1">
+                        <span class="badge badge-soft badge-warning badge-xs">Library</span>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/suh-random" class="btn btn-primary btn-xs btn-circle" title="바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  </a>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">랜덤 닉네임 & 가챠 시스템</p>
+                <div class="flex flex-wrap gap-1 mb-3">
+                  <span class="badge badge-ghost badge-xs">Random</span>
+                  <span class="badge badge-ghost badge-xs">Gacha</span>
+                </div>
+                <div class="card-actions justify-end">
+                  <a href="https://github.com/Cassiiopeia/suh-random-engine" target="_blank" class="btn btn-outline btn-xs">
                     <i class="fa-brands fa-github"></i> GitHub
                   </a>
                 </div>
@@ -1308,6 +1355,18 @@
           $('#stat-total-sejong-auth').text(formatNumber(response.totalSejongAuth || 0));
           $('#stat-today-sejong-auth').text('+' + formatNumber(response.todaySejongAuth || 0));
 
+          // SUH 랜덤 통계
+          if (response.featureUsageCounts && response.featureUsageCounts['SUH_RANDOM']) {
+            $('#stat-total-suh-random').text(formatNumber(response.featureUsageCounts['SUH_RANDOM']));
+          } else {
+            $('#stat-total-suh-random').text('0');
+          }
+          if (response.todayFeatureUsageCounts && response.todayFeatureUsageCounts['SUH_RANDOM']) {
+            $('#stat-today-suh-random').text('+' + formatNumber(response.todayFeatureUsageCounts['SUH_RANDOM']));
+          } else {
+            $('#stat-today-suh-random').text('+0');
+          }
+
           // 스켈레톤 숨기고 실제 콘텐츠 표시
           $('#summary-skeleton').addClass('hidden');
           $('#summary-content').removeClass('hidden');
@@ -1360,6 +1419,18 @@
           // 세종대 인증 통계
           $('#stat-total-sejong-auth').text(formatNumber(response.totalSejongAuth || 0));
           $('#stat-today-sejong-auth').text('+' + formatNumber(response.todaySejongAuth || 0));
+
+          // SUH 랜덤 통계
+          if (response.featureUsageCounts && response.featureUsageCounts['SUH_RANDOM']) {
+            $('#stat-total-suh-random').text(formatNumber(response.featureUsageCounts['SUH_RANDOM']));
+          } else {
+            $('#stat-total-suh-random').text('0');
+          }
+          if (response.todayFeatureUsageCounts && response.todayFeatureUsageCounts['SUH_RANDOM']) {
+            $('#stat-today-suh-random').text('+' + formatNumber(response.todayFeatureUsageCounts['SUH_RANDOM']));
+          } else {
+            $('#stat-today-suh-random').text('+0');
+          }
         }
         // 버튼 복구
         refreshBtn.prop('disabled', false);
