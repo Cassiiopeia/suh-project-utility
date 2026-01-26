@@ -3475,6 +3475,10 @@ html:not([data-theme="dark"]) .collapse {
   background-color: rgba(245, 158, 11, 0.15) !important;
 }
 
+[data-theme="dark"] .bg-violet-50 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
 /*
 ===========================
    SUH Random 다크모드
