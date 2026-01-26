@@ -3459,6 +3459,74 @@ html:not([data-theme="dark"]) .collapse {
   background-color: rgba(59, 130, 246, 0.15) !important;
 }
 
+[data-theme="dark"] .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-cyan-50 {
+  background-color: rgba(6, 182, 212, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-orange-50 {
+  background-color: rgba(249, 115, 22, 0.15) !important;
+}
+
+[data-theme="dark"] .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+/*
+===========================
+   SUH Random 다크모드
+===========================
+*/
+
+[data-theme="dark"] .suh-random-hero {
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.3), rgba(20, 184, 166, 0.3), rgba(6, 182, 212, 0.3)) !important;
+}
+
+[data-theme="dark"] .suh-random-hero-overlay {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .suh-random-hero h1,
+[data-theme="dark"] .suh-random-hero p {
+  color: #f3f4f6 !important;
+}
+
+[data-theme="dark"] .suh-random-radio-option {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .suh-random-radio-option:hover {
+  border-color: #14b8a6 !important;
+  background-color: #374151 !important;
+}
+
+[data-theme="dark"] .suh-random-radio-option.bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+[data-theme="dark"] .suh-random-radio-option.bg-amber-50:hover {
+  background-color: rgba(245, 158, 11, 0.25) !important;
+  border-color: rgba(245, 158, 11, 0.5) !important;
+}
+
+[data-theme="dark"] .suh-random-radio-option .text-amber-700,
+[data-theme="dark"] .suh-random-radio-option .text-amber-600 {
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .suh-random-result-container {
+  background-color: #1f2937 !important;
+}
+
+[data-theme="dark"] #resultHistory .bg-white {
+  background-color: #374151 !important;
+}
+
 /*
 ===========================
    shadow 다크모드
