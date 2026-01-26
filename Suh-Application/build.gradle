@@ -19,7 +19,6 @@ dependencies {
     implementation project(':Suh-Domain-Docker')
     implementation project(':Suh-Domain-Github')
     implementation project(':Suh-Domain-Notice')
-    implementation project(':Suh-Domain-Module')
     implementation project(':Suh-Domain-Study')
     implementation project(':Suh-Domain-Chatbot')
     implementation project(':Suh-Domain-GrassPlanter')
