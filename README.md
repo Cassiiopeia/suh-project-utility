@@ -6,7 +6,8 @@
 [![GitHub](https://img.shields.io/badge/GitHub-Cassiiopeia-black)](https://github.com/Cassiiopeia)
 
 <!-- 수정하지마세요 자동으로 동기화 됩니다 -->
-## Version: v2.3.12 (2026-01-08)
+<!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
+## Version: v2.4.2 (2026-01-26)
 
 [View Changelog (Korean)](CHANGELOG.md)
 
