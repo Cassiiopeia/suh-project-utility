@@ -1,11 +1,35 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-26T06:03:37Z",
-    "currentVersion": "2.4.2",
+    "lastUpdated": "2026-01-26T06:29:21Z",
+    "currentVersion": "2.5.1",
     "projectType": "spring",
-    "totalReleases": 35
+    "totalReleases": 36
   },
   "releases": [
+    {
+      "version": "2.5.1",
+      "project_type": "spring",
+      "date": "2026-01-26",
+      "pr_number": 155,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **New Features**\n  * 다크 모드 스타일이 확대되어 더 많은 UI 컴포넌트에서 일관된 어두운 테마 지원\n  * 대시보드에 서버 및 서비스 관리 섹션 추가\n\n* **Chores**\n  * 버전 업데이트 (v2.5.1)\n  * 메타데이터 및 빌드 설정 업데이트",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "다크 모드 스타일이 확대되어 더 많은 UI 컴포넌트에서 일관된 어두운 테마 지원",
+            "대시보드에 서버 및 서비스 관리 섹션 추가"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 업데이트 (v2.5.1)",
+            "메타데이터 및 빌드 설정 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.4.2",
       "project_type": "spring",
