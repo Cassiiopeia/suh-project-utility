@@ -1,11 +1,52 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-08T10:01:45Z",
-    "currentVersion": "2.3.12",
+    "lastUpdated": "2026-01-26T06:03:37Z",
+    "currentVersion": "2.4.2",
     "projectType": "spring",
-    "totalReleases": 34
+    "totalReleases": 35
   },
   "releases": [
+    {
+      "version": "2.4.2",
+      "project_type": "spring",
+      "date": "2026-01-26",
+      "pr_number": 154,
+      "raw_summary": "## Summary by CodeRabbit\n\n# 릴리스 노트\n\n* **New Features**\n  * Git 워크트리 자동 생성 명령어 추가\n  * SUH 랜덤 엔진 메뉴 항목 추가\n  * 대시보드에 일일 기능별 사용 통계 추가 표시\n  * Spring Boot 테스트 코드 자동 생성 명령어 추가\n\n* **Improvements**\n  * Git 작업 신뢰성 향상 (자동 리베이스 재시도 로직 추가)\n  * 대시보드 레이아웃 최적화\n\n* **Documentation**\n  * 워크플로우 자동화 명령어 가이드 추가\n  * 테스트 생성 도구 사용 설명서 추가\n  * 민감한 정보 마스킹 가이드라인 추가\n\n* **Chores**\n  * 버전 업그레이드 (v2.3.12 → v2.4.2)\n  * GitHub 이슈 라벨 표준화",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "Git 워크트리 자동 생성 명령어 추가",
+            "SUH 랜덤 엔진 메뉴 항목 추가",
+            "대시보드에 일일 기능별 사용 통계 추가 표시",
+            "Spring Boot 테스트 코드 자동 생성 명령어 추가"
+          ]
+        },
+        "improvements": {
+          "title": "Improvements",
+          "items": [
+            "Git 작업 신뢰성 향상 (자동 리베이스 재시도 로직 추가)",
+            "대시보드 레이아웃 최적화"
+          ]
+        },
+        "documentation": {
+          "title": "Documentation",
+          "items": [
+            "워크플로우 자동화 명령어 가이드 추가",
+            "테스트 생성 도구 사용 설명서 추가",
+            "민감한 정보 마스킹 가이드라인 추가"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 업그레이드 (v2.3.12 → v2.4.2)",
+            "GitHub 이슈 라벨 표준화"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.3.12",
       "project_type": "spring",
