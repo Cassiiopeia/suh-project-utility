@@ -22,7 +22,6 @@ dependencies {
     implementation project(':Suh-Domain-AiServer')
     implementation project(':Suh-Module-Translate')
     implementation project(':Suh-Domain-Notice')
-    implementation project(':Suh-Domain-Module')
     implementation project(':Suh-Domain-Study')
     implementation project(':Suh-Domain-GrassPlanter')
     implementation project(':Suh-Domain-Chatbot')
