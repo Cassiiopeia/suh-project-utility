@@ -1212,6 +1212,58 @@ input:focus, textarea:focus, select:focus {
 
 /*
 ===========================
+   Dashboard Card Grid Styles
+===========================
+*/
+
+.dashboard-card-grid-4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-card-grid-4 > * {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.dashboard-card-grid-5 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-card-grid-5 > * {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .dashboard-card-grid-4 > * {
+    width: calc(50% - 0.5rem);
+    max-width: 280px;
+  }
+  .dashboard-card-grid-5 > * {
+    width: calc(50% - 0.5rem);
+    max-width: 220px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-card-grid-4 > * {
+    width: calc(25% - 0.75rem);
+    max-width: 280px;
+  }
+  .dashboard-card-grid-5 > * {
+    width: calc(20% - 0.8rem);
+    max-width: 220px;
+  }
+}
+
+/*
+===========================
    Light Mode Override Styles
 ===========================
 */
@@ -3459,10 +3511,6 @@ html:not([data-theme="dark"]) .collapse {
   background-color: rgba(59, 130, 246, 0.15) !important;
 }
 
-[data-theme="dark"] .bg-emerald-50 {
-  background-color: rgba(16, 185, 129, 0.15) !important;
-}
-
 [data-theme="dark"] .bg-cyan-50 {
   background-color: rgba(6, 182, 212, 0.15) !important;
 }
@@ -3473,14 +3521,6 @@ html:not([data-theme="dark"]) .collapse {
 
 [data-theme="dark"] .bg-amber-50 {
   background-color: rgba(245, 158, 11, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-violet-50 {
-  background-color: rgba(139, 92, 246, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-violet-100 {
-  background-color: rgba(139, 92, 246, 0.25) !important;
 }
 
 /*
