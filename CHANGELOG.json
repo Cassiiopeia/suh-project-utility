@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-26T06:29:21Z",
-    "currentVersion": "2.5.1",
+    "lastUpdated": "2026-01-28T23:43:28Z",
+    "currentVersion": "2.5.4",
     "projectType": "spring",
-    "totalReleases": 36
+    "totalReleases": 37
   },
   "releases": [
+    {
+      "version": "2.5.4",
+      "project_type": "spring",
+      "date": "2026-01-28",
+      "pr_number": 156,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **스타일**\n  * 대시보드 카드 그리드 레이아웃에 반응형 스타일 추가\n\n* **리팩토**\n  * 대시보드 섹션 재정렬 및 최적화\n  * 카드 전체 클릭 가능 처리\n  * 외부 링크 및 네비게이션 개선\n\n* **Chores**\n  * 프로젝트 버전 업데이트 (v2.5.4)",
+      "parsed_changes": {
+        "스타일": {
+          "title": "스타일",
+          "items": [
+            "대시보드 카드 그리드 레이아웃에 반응형 스타일 추가"
+          ]
+        },
+        "리팩토": {
+          "title": "리팩토",
+          "items": [
+            "대시보드 섹션 재정렬 및 최적화",
+            "카드 전체 클릭 가능 처리",
+            "외부 링크 및 네비게이션 개선"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "프로젝트 버전 업데이트 (v2.5.4)"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.1",
       "project_type": "spring",
