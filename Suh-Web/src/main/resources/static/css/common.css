@@ -1416,15 +1416,17 @@ html:not([data-theme="dark"]) textarea::placeholder,
 ===========================
 */
 
-/* validator-hint 기본 숨김 */
+/* validator-hint 기본 숨김 (공간 예약으로 레이아웃 안정화) */
 .validator-hint {
-  display: none;
+  display: block;
+  visibility: hidden;
+  min-height: 1rem;
 }
 
 /* 인풋이 invalid일 때만 hint 표시 */
 .validator:invalid ~ .validator-hint,
 .validator:user-invalid ~ .validator-hint {
-  display: block;
+  visibility: visible;
 }
 
 /*
