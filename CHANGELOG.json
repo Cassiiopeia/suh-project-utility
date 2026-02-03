@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-01-28T23:43:28Z",
-    "currentVersion": "2.5.4",
+    "lastUpdated": "2026-02-03T06:20:05Z",
+    "currentVersion": "2.5.5",
     "projectType": "spring",
-    "totalReleases": 37
+    "totalReleases": 38
   },
   "releases": [
+    {
+      "version": "2.5.5",
+      "project_type": "spring",
+      "date": "2026-02-03",
+      "pr_number": 158,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새로운 기능**\n  * DevOps 템플릿 페이지 추가 (OS 선택, 명령어 복사, 대시보드 포함)\n\n* **개선 사항**\n  * 검증 힌트 표시 시 레이아웃 안정성 개선\n  * 대시보드 그리드 레이아웃을 3열에서 4열로 조정\n  * 로그인 폼 간격 조정\n\n* **버전 업데이트**\n  * v2.5.5로 업데이트",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "DevOps 템플릿 페이지 추가 (OS 선택, 명령어 복사, 대시보드 포함)"
+          ]
+        },
+        "개선_사항": {
+          "title": "개선 사항",
+          "items": [
+            "검증 힌트 표시 시 레이아웃 안정성 개선",
+            "대시보드 그리드 레이아웃을 3열에서 4열로 조정",
+            "로그인 폼 간격 조정"
+          ]
+        },
+        "버전_업데이트": {
+          "title": "버전 업데이트",
+          "items": [
+            "v2.5.5로 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.4",
       "project_type": "spring",
