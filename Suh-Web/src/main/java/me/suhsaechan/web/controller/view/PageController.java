@@ -80,6 +80,11 @@ public class PageController {
 	public String suhRandomPage(){
 		return "pages/suhRandom";
 	}
+
+	@GetMapping("/suh-devops-template")
+	public String suhDevopsTemplatePage(){
+		return "pages/suhDevopsTemplate";
+	}
 	
 	@GetMapping("/notice-management")
 	public String noticeManagementPage(HttpSession session, Model model){
