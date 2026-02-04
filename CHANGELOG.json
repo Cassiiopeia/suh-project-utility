@@ -1,11 +1,44 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-03T06:20:05Z",
-    "currentVersion": "2.5.5",
+    "lastUpdated": "2026-02-04T02:30:41Z",
+    "currentVersion": "2.5.6",
     "projectType": "spring",
-    "totalReleases": 38
+    "totalReleases": 39
   },
   "releases": [
+    {
+      "version": "2.5.6",
+      "project_type": "spring",
+      "date": "2026-02-04",
+      "pr_number": 160,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리즈 노트\n\n* **새로운 기능**\n  * 다크 모드 테마 지원 추가\n  * DevOps 템플릿에 기능별 상세 정보 모달 추가\n  * 명령어 복사 버튼 기능 추가\n  * 기능 카드 클릭 상호작용 구현\n\n* **스타일 개선**\n  * 다크 모드 UI 컴포넌트 스타일링\n  * 로그인 페이지 레이아웃 조정\n  * 카드 및 테이블 스타일 업데이트\n\n* **기타**\n  * 버전 2.5.6으로 업데이트",
+      "parsed_changes": {
+        "새로운_기능": {
+          "title": "새로운 기능",
+          "items": [
+            "다크 모드 테마 지원 추가",
+            "DevOps 템플릿에 기능별 상세 정보 모달 추가",
+            "명령어 복사 버튼 기능 추가",
+            "기능 카드 클릭 상호작용 구현"
+          ]
+        },
+        "스타일_개선": {
+          "title": "스타일 개선",
+          "items": [
+            "다크 모드 UI 컴포넌트 스타일링",
+            "로그인 페이지 레이아웃 조정",
+            "카드 및 테이블 스타일 업데이트"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "버전 2.5.6으로 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.5",
       "project_type": "spring",

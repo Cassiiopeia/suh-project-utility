@@ -1729,6 +1729,78 @@ html:not([data-theme="dark"]) textarea::placeholder,
   color: #4ade80 !important;
 }
 
+/* SUH DevOps Template 페이지 다크모드 */
+[data-theme="dark"] .devops-hero {
+  background: linear-gradient(to right, #78350f, #92400e, #a16207) !important;
+}
+
+[data-theme="dark"] .devops-hero-overlay {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .devops-hero h1,
+[data-theme="dark"] .devops-hero p {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .devops-command-box {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .devops-command-box code {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .devops-command-item {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .devops-command-item:hover {
+  border-color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .devops-feature-card {
+  background: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .devops-feature-card:hover {
+  border-color: #6b7280 !important;
+}
+
+[data-theme="dark"] .devops-feature-card p {
+  color: #9ca3af !important;
+}
+
+[data-theme="dark"] .devops-feature-card .text-blue-500 {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .devops-project-code {
+  background-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .devops-flow-card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .devops-quick-start-card {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+[data-theme="dark"] .devops-quick-start-card h3 {
+  color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .devops-quick-start-card p {
+  color: #9ca3af !important;
+}
+
 [data-theme="dark"] .bg-blue-50 {
   background-color: rgba(59, 130, 246, 0.15) !important;
 }
