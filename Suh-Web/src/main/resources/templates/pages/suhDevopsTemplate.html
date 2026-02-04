@@ -6,8 +6,8 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Hero Section -->
-  <section class="relative overflow-hidden bg-gradient-to-r from-orange-200 via-amber-200 to-yellow-200 py-12 rounded-2xl mb-8 shadow-lg">
-    <div class="absolute inset-0 bg-white/20"></div>
+  <section class="devops-hero relative overflow-hidden bg-gradient-to-r from-orange-200 via-amber-200 to-yellow-200 py-12 rounded-2xl mb-8 shadow-lg">
+    <div class="devops-hero-overlay absolute inset-0 bg-white/20"></div>
     <div class="relative text-center px-6">
       <div class="flex justify-center gap-2 mb-4 flex-wrap">
         <span class="badge bg-amber-600/80 text-white border-amber-700">v2.7.12</span>
@@ -18,8 +18,7 @@
         <i class="fa-solid fa-rocket text-amber-600"></i>
         SUH-DEVOPS-TEMPLATE
       </h1>
-      <p class="text-gray-700 text-sm sm:text-base mb-1">완전 자동화된 GitHub 프로젝트 관리 템플릿</p>
-      <p class="text-sm text-gray-600">개발자는 코드만 작성하세요. 버전 관리, 체인지로그, 배포는 자동입니다.</p>
+      <p class="text-gray-700 text-sm sm:text-base">완전 자동화된 GitHub 프로젝트 관리 템플릿</p>
       <div class="mt-4">
         <a href="https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE" target="_blank"
            class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-gray-900">
@@ -33,7 +32,7 @@
   <!-- 2단 그리드 (마법사 명령어 + 댓글 명령어) -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- 마법사 명령어 카드 -->
-    <div class="card bg-base-100 shadow-lg border border-gray-100">
+    <div class="card bg-base-100 shadow-lg border border-gray-200">
       <div class="card-body">
         <h2 class="card-title text-lg mb-4">
           <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
@@ -44,12 +43,11 @@
 
         <!-- OS 선택 -->
         <fieldset class="fieldset mb-4">
-          <legend class="fieldset-legend text-sm font-medium text-gray-700 mb-3">운영체제 선택</legend>
+          <legend class="fieldset-legend text-sm font-medium mb-3">운영체제 선택</legend>
           <div class="flex gap-4 flex-wrap">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="os" value="unix" class="radio radio-primary" checked/>
               <span>macOS / Linux</span>
-              <span class="badge badge-sm badge-success">추천</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="radio" name="os" value="windows" class="radio radio-primary"/>
@@ -58,24 +56,22 @@
           </div>
         </fieldset>
 
-        <!-- 명령어 표시 -->
-        <div class="mockup-code text-sm mb-4 overflow-x-auto">
-          <pre data-prefix="$"><code id="commandDisplay">bash &lt;(curl -fsSL "https://raw.githubusercontent.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/main/template_integrator.sh")</code></pre>
+        <!-- 단순 텍스트 박스 + 복사 버튼 -->
+        <div class="devops-command-box flex items-center gap-3 p-4 bg-gray-100 rounded-lg border border-gray-200 mb-4">
+          <code id="commandDisplay" class="flex-1 text-sm font-mono break-all text-blue-700">bash &lt;(curl -fsSL "https://raw.githubusercontent.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/main/template_integrator.sh")</code>
+          <button id="copyCommandBtn" class="btn btn-primary btn-sm shrink-0">
+            <i class="fa-regular fa-copy"></i> 복사
+          </button>
         </div>
 
-        <!-- 복사 버튼 -->
-        <button id="copyCommandBtn" class="btn btn-primary w-full">
-          <i class="fa-regular fa-copy"></i> 명령어 복사
-        </button>
-
-        <p class="text-xs text-gray-500 mt-2 text-center">
+        <p class="text-xs text-gray-500 text-center">
           대화형 모드로 프로젝트 타입과 버전을 자동 감지합니다
         </p>
       </div>
     </div>
 
     <!-- 댓글 명령어 카드 -->
-    <div class="card bg-base-100 shadow-lg border border-gray-100">
+    <div class="card bg-base-100 shadow-lg border border-gray-200">
       <div class="card-body">
         <h2 class="card-title text-lg mb-4">
           <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -113,7 +109,8 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- 1. 버전 자동화 -->
-      <div class="card bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 hover:shadow-md transition-shadow">
+      <div class="devops-feature-card card bg-base-100 border border-gray-200 cursor-pointer hover:shadow-lg transition-all"
+           onclick="openFeatureModal('version')">
         <div class="card-body p-4">
           <div class="flex items-center gap-3 mb-2">
             <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
@@ -121,16 +118,16 @@
             </div>
             <h3 class="font-bold">버전 자동화</h3>
           </div>
-          <p class="text-sm text-gray-600">main 푸시 시 patch 버전 자동 증가 + Git 태그 생성</p>
-          <div class="mt-2">
-            <span class="badge badge-outline badge-sm">version.yml</span>
-            <span class="badge badge-outline badge-sm">자동 태그</span>
+          <p class="text-sm text-gray-600">main 푸시 시 자동 버전 증가 + Git 태그</p>
+          <div class="text-right mt-2">
+            <span class="text-xs text-blue-500">클릭하여 자세히 보기 →</span>
           </div>
         </div>
       </div>
 
       <!-- 2. AI 체인지로그 -->
-      <div class="card bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 hover:shadow-md transition-shadow">
+      <div class="devops-feature-card card bg-base-100 border border-gray-200 cursor-pointer hover:shadow-lg transition-all"
+           onclick="openFeatureModal('changelog')">
         <div class="card-body p-4">
           <div class="flex items-center gap-3 mb-2">
             <div class="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center">
@@ -139,15 +136,15 @@
             <h3 class="font-bold">AI 체인지로그</h3>
           </div>
           <p class="text-sm text-gray-600">CodeRabbit 리뷰 기반 CHANGELOG 자동 생성</p>
-          <div class="mt-2">
-            <span class="badge badge-outline badge-sm">CodeRabbit</span>
-            <span class="badge badge-outline badge-sm">자동 문서화</span>
+          <div class="text-right mt-2">
+            <span class="text-xs text-blue-500">클릭하여 자세히 보기 →</span>
           </div>
         </div>
       </div>
 
       <!-- 3. PR Preview -->
-      <div class="card bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 hover:shadow-md transition-shadow">
+      <div class="devops-feature-card card bg-base-100 border border-gray-200 cursor-pointer hover:shadow-lg transition-all"
+           onclick="openFeatureModal('preview')">
         <div class="card-body p-4">
           <div class="flex items-center gap-3 mb-2">
             <div class="w-10 h-10 rounded-lg bg-green-500 flex items-center justify-center">
@@ -156,15 +153,15 @@
             <h3 class="font-bold">PR Preview</h3>
           </div>
           <p class="text-sm text-gray-600">Issue/PR 댓글로 임시 서버 배포, 닫으면 자동 삭제</p>
-          <div class="mt-2">
-            <span class="badge badge-outline badge-sm">@suh-lab</span>
-            <span class="badge badge-outline badge-sm">임시 서버</span>
+          <div class="text-right mt-2">
+            <span class="text-xs text-blue-500">클릭하여 자세히 보기 →</span>
           </div>
         </div>
       </div>
 
       <!-- 4. 이슈 자동화 -->
-      <div class="card bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 hover:shadow-md transition-shadow">
+      <div class="devops-feature-card card bg-base-100 border border-gray-200 cursor-pointer hover:shadow-lg transition-all"
+           onclick="openFeatureModal('issue')">
         <div class="card-body p-4">
           <div class="flex items-center gap-3 mb-2">
             <div class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center">
@@ -173,15 +170,15 @@
             <h3 class="font-bold">이슈 자동화</h3>
           </div>
           <p class="text-sm text-gray-600">브랜치명/커밋 메시지 자동 제안, QA 이슈 생성</p>
-          <div class="mt-2">
-            <span class="badge badge-outline badge-sm">Issue Helper</span>
-            <span class="badge badge-outline badge-sm">QA 봇</span>
+          <div class="text-right mt-2">
+            <span class="text-xs text-blue-500">클릭하여 자세히 보기 →</span>
           </div>
         </div>
       </div>
 
       <!-- 5. Flutter CI/CD -->
-      <div class="card bg-gradient-to-br from-cyan-50 to-sky-50 border border-cyan-200 hover:shadow-md transition-shadow">
+      <div class="devops-feature-card card bg-base-100 border border-gray-200 cursor-pointer hover:shadow-lg transition-all"
+           onclick="openFeatureModal('flutter')">
         <div class="card-body p-4">
           <div class="flex items-center gap-3 mb-2">
             <div class="w-10 h-10 rounded-lg bg-cyan-500 flex items-center justify-center">
@@ -190,15 +187,15 @@
             <h3 class="font-bold">Flutter CI/CD</h3>
           </div>
           <p class="text-sm text-gray-600">iOS TestFlight + Android Play Store 자동 배포</p>
-          <div class="mt-2">
-            <span class="badge badge-outline badge-sm">TestFlight</span>
-            <span class="badge badge-outline badge-sm">Play Store</span>
+          <div class="text-right mt-2">
+            <span class="text-xs text-blue-500">클릭하여 자세히 보기 →</span>
           </div>
         </div>
       </div>
 
       <!-- 6. Synology 배포 -->
-      <div class="card bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-200 hover:shadow-md transition-shadow">
+      <div class="devops-feature-card card bg-base-100 border border-gray-200 cursor-pointer hover:shadow-lg transition-all"
+           onclick="openFeatureModal('synology')">
         <div class="card-body p-4">
           <div class="flex items-center gap-3 mb-2">
             <div class="w-10 h-10 rounded-lg bg-indigo-500 flex items-center justify-center">
@@ -207,9 +204,8 @@
             <h3 class="font-bold">Synology 배포</h3>
           </div>
           <p class="text-sm text-gray-600">Docker 기반 NAS 무중단 배포</p>
-          <div class="mt-2">
-            <span class="badge badge-outline badge-sm">Docker</span>
-            <span class="badge badge-outline badge-sm">무중단</span>
+          <div class="text-right mt-2">
+            <span class="text-xs text-blue-500">클릭하여 자세히 보기 →</span>
           </div>
         </div>
       </div>
@@ -222,7 +218,7 @@
       <i class="fa-solid fa-diagram-project text-green-500"></i> 자동화 흐름
     </h2>
 
-    <div class="card bg-base-100 shadow-sm border border-gray-100 p-6">
+    <div class="devops-flow-card card bg-base-100 shadow-sm border border-gray-200 p-6">
       <div class="flex flex-wrap items-center justify-center gap-2 text-sm">
         <div class="badge badge-lg bg-blue-500 text-white border-blue-600">main 푸시</div>
         <i class="fa-solid fa-arrow-right text-gray-400"></i>
@@ -245,72 +241,126 @@
       <i class="fa-solid fa-layer-group text-blue-500"></i> 지원 프로젝트 타입
     </h2>
 
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-gray-200">
       <div class="card-body p-0">
         <div class="overflow-x-auto">
-          <table class="table table-zebra w-full">
+          <table class="table table-zebra w-full text-sm">
             <thead>
               <tr>
                 <th>타입</th>
                 <th>설명</th>
                 <th>버전 파일</th>
-                <th>CI/CD</th>
+                <th>지원 기능</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><code class="bg-green-100 px-2 py-1 rounded text-green-700">spring</code></td>
+                <td><code class="devops-project-code bg-green-100 px-2 py-1 rounded text-green-700">spring</code></td>
                 <td>Spring Boot 백엔드</td>
                 <td>build.gradle</td>
-                <td>Synology Docker, Nexus</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                    <span class="badge badge-xs badge-accent">Preview</span>
+                    <span class="badge badge-xs badge-info">Synology</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-cyan-100 px-2 py-1 rounded text-cyan-700">flutter</code></td>
+                <td><code class="devops-project-code bg-cyan-100 px-2 py-1 rounded text-cyan-700">flutter</code></td>
                 <td>모바일 앱</td>
                 <td>pubspec.yaml</td>
-                <td>TestFlight, Play Store</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                    <span class="badge badge-xs badge-success">TestFlight</span>
+                    <span class="badge badge-xs badge-warning">PlayStore</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-blue-100 px-2 py-1 rounded text-blue-700">react</code></td>
+                <td><code class="devops-project-code bg-blue-100 px-2 py-1 rounded text-blue-700">react</code></td>
                 <td>React 프론트엔드</td>
                 <td>package.json</td>
-                <td>Docker</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                    <span class="badge badge-xs badge-info">Docker</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-purple-100 px-2 py-1 rounded text-purple-700">next</code></td>
+                <td><code class="devops-project-code bg-purple-100 px-2 py-1 rounded text-purple-700">next</code></td>
                 <td>Next.js 풀스택</td>
                 <td>package.json</td>
-                <td>Docker</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                    <span class="badge badge-xs badge-info">Docker</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-amber-100 px-2 py-1 rounded text-amber-700">node</code></td>
+                <td><code class="devops-project-code bg-amber-100 px-2 py-1 rounded text-amber-700">node</code></td>
                 <td>Node.js 백엔드</td>
                 <td>package.json</td>
-                <td>Docker</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                    <span class="badge badge-xs badge-info">Docker</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-indigo-100 px-2 py-1 rounded text-indigo-700">python</code></td>
+                <td><code class="devops-project-code bg-indigo-100 px-2 py-1 rounded text-indigo-700">python</code></td>
                 <td>Python 백엔드</td>
                 <td>pyproject.toml</td>
-                <td>Synology Docker</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                    <span class="badge badge-xs badge-accent">Preview</span>
+                    <span class="badge badge-xs badge-info">Synology</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-pink-100 px-2 py-1 rounded text-pink-700">react-native</code></td>
+                <td><code class="devops-project-code bg-pink-100 px-2 py-1 rounded text-pink-700">react-native</code></td>
                 <td>React Native CLI</td>
                 <td>Info.plist + build.gradle</td>
-                <td>-</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-rose-100 px-2 py-1 rounded text-rose-700">react-native-expo</code></td>
+                <td><code class="devops-project-code bg-rose-100 px-2 py-1 rounded text-rose-700">react-native-expo</code></td>
                 <td>Expo CLI</td>
                 <td>app.json</td>
-                <td>-</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                  </div>
+                </td>
               </tr>
               <tr>
-                <td><code class="bg-gray-100 px-2 py-1 rounded text-gray-700">basic</code></td>
+                <td><code class="devops-project-code bg-gray-100 px-2 py-1 rounded text-gray-700">basic</code></td>
                 <td>범용 (버전만)</td>
                 <td>version.yml</td>
-                <td>-</td>
+                <td>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="badge badge-xs badge-primary">버전</span>
+                    <span class="badge badge-xs badge-secondary">AI로그</span>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -322,7 +372,7 @@
   <!-- Collapse 섹션들 -->
   <div class="space-y-4">
     <!-- 빠른 시작 -->
-    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-200">
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-bolt text-amber-500"></i>
@@ -332,7 +382,7 @@
         <div class="pt-4 space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- 새 프로젝트 -->
-            <div class="card bg-green-50 border border-green-200">
+            <div class="devops-quick-start-card card bg-green-50 border border-green-200">
               <div class="card-body p-4">
                 <h3 class="font-bold text-green-700 flex items-center gap-2">
                   <i class="fa-solid fa-plus"></i> 새 프로젝트
@@ -342,7 +392,7 @@
               </div>
             </div>
             <!-- 기존 프로젝트 -->
-            <div class="card bg-blue-50 border border-blue-200">
+            <div class="devops-quick-start-card card bg-blue-50 border border-blue-200">
               <div class="card-body p-4">
                 <h3 class="font-bold text-blue-700 flex items-center gap-2">
                   <i class="fa-solid fa-download"></i> 기존 프로젝트
@@ -357,7 +407,7 @@
     </div>
 
     <!-- 필수 설정 -->
-    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-200">
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-gear text-blue-500"></i>
@@ -370,10 +420,10 @@
             <span>자동 체인지로그, PR 머지 등을 사용하려면 아래 설정이 필요합니다.</span>
           </div>
 
-          <div class="mockup-code text-sm">
-            <pre data-prefix="1"><code>Repository Settings → Secrets → Actions → New repository secret</code></pre>
-            <pre data-prefix="2"><code>Name: _GITHUB_PAT_TOKEN</code></pre>
-            <pre data-prefix="3"><code>Value: [Personal Access Token - repo, workflow 권한]</code></pre>
+          <div class="devops-command-box p-4 bg-gray-100 rounded-lg border border-gray-200">
+            <p class="text-sm font-mono">1. Repository Settings → Secrets → Actions → New repository secret</p>
+            <p class="text-sm font-mono">2. Name: <code class="text-blue-600">_GITHUB_PAT_TOKEN</code></p>
+            <p class="text-sm font-mono">3. Value: [Personal Access Token - repo, workflow 권한]</p>
           </div>
 
           <div class="text-sm text-gray-600">
@@ -389,7 +439,7 @@
     </div>
 
     <!-- 문서 목록 -->
-    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-100">
+    <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-gray-200">
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-book text-purple-500"></i>
@@ -447,6 +497,28 @@
   </div>
 </main>
 
+<!-- 기능 상세 Modal -->
+<dialog id="featureModal" class="modal">
+  <div class="modal-box max-w-2xl">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <div id="modalHeader" class="flex items-center gap-3 mb-4"></div>
+    <div id="modalContent" class="space-y-4"></div>
+    <div class="modal-action">
+      <a id="modalDocLink" href="#" target="_blank" class="btn btn-outline btn-sm">
+        <i class="fa-solid fa-book"></i> 상세 문서 보기
+      </a>
+      <form method="dialog">
+        <button class="btn">닫기</button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
@@ -476,6 +548,87 @@
     utility: [
       { cmd: '@suh-lab create qa', desc: 'QA 이슈 자동 생성', icon: 'fa-clipboard-check', target: '모든 프로젝트' }
     ]
+  };
+
+  const featureDetails = {
+    version: {
+      title: '버전 자동화',
+      icon: 'fa-tag',
+      bgColor: 'bg-blue-500',
+      description: 'main 브랜치에 푸시하면 자동으로 patch 버전이 증가하고 Git 태그가 생성됩니다.',
+      details: [
+        'version.yml 파일에서 현재 버전 관리',
+        'main 푸시 시 자동으로 patch 버전 증가 (예: 1.0.0 → 1.0.1)',
+        'Git 태그 자동 생성 및 푸시 (v1.0.1)',
+        'deploy PR에 버전 정보 자동 포함'
+      ],
+      docLink: 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/docs/VERSION-CONTROL.md'
+    },
+    changelog: {
+      title: 'AI 체인지로그',
+      icon: 'fa-robot',
+      bgColor: 'bg-purple-500',
+      description: 'CodeRabbit AI가 PR 변경사항을 분석하여 CHANGELOG.md를 자동 생성합니다.',
+      details: [
+        'CodeRabbit 연동으로 AI 코드 리뷰',
+        'PR 머지 시 CHANGELOG.md 자동 업데이트',
+        '한국어로 변경사항 요약 생성',
+        '버전별 변경 이력 자동 정리'
+      ],
+      docLink: 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/docs/CHANGELOG-AUTOMATION.md'
+    },
+    preview: {
+      title: 'PR Preview',
+      icon: 'fa-server',
+      bgColor: 'bg-green-500',
+      description: 'Issue나 PR에 댓글로 임시 서버를 배포하고, 닫으면 자동으로 삭제됩니다.',
+      details: [
+        '@suh-lab server build 댓글로 임시 서버 생성',
+        'Synology NAS에 Docker 컨테이너로 배포',
+        '고유 포트 자동 할당 (중복 방지)',
+        'Issue/PR 닫히면 서버 자동 삭제'
+      ],
+      docLink: 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/docs/PR-PREVIEW.md'
+    },
+    issue: {
+      title: '이슈 자동화',
+      icon: 'fa-code-branch',
+      bgColor: 'bg-amber-500',
+      description: '이슈 생성 시 브랜치명/커밋 메시지를 자동 제안하고, QA 이슈를 생성합니다.',
+      details: [
+        'Issue Helper로 브랜치명 자동 생성',
+        '커밋 메시지 형식 자동 제안',
+        '@suh-lab create qa로 QA 이슈 자동 생성',
+        '4종 이슈 템플릿 제공 (버그, 기능, 문서, 질문)'
+      ],
+      docLink: 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/docs/ISSUE-AUTOMATION.md'
+    },
+    flutter: {
+      title: 'Flutter CI/CD',
+      icon: 'fa-mobile',
+      bgColor: 'bg-cyan-500',
+      description: 'Flutter 앱을 iOS TestFlight와 Android Play Store에 자동 배포합니다.',
+      details: [
+        '@suh-lab build app으로 iOS+Android 동시 빌드',
+        'TestFlight 자동 업로드 (iOS)',
+        'Play Store 내부 테스트 자동 배포 (Android)',
+        'APK/IPA 아티팩트 자동 저장'
+      ],
+      docLink: 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/docs/FLUTTER-CICD-OVERVIEW.md'
+    },
+    synology: {
+      title: 'Synology 배포',
+      icon: 'fa-hard-drive',
+      bgColor: 'bg-indigo-500',
+      description: 'Synology NAS에 Docker 기반으로 무중단 배포를 수행합니다.',
+      details: [
+        'deploy PR 머지 시 자동 배포 트리거',
+        'Docker 이미지 빌드 및 레지스트리 푸시',
+        'Synology Container Manager SSH 연동',
+        'Blue-Green 배포로 무중단 운영'
+      ],
+      docLink: 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/docs/SYNOLOGY-DEPLOYMENT-GUIDE.md'
+    }
   };
 
   let currentTab = localStorage.getItem('devopsTemplateTab') || 'server';
@@ -539,7 +692,7 @@
     const list = commentCommands[currentTab];
     const container = window.elements.commandList;
     container.innerHTML = list.map(item => `
-      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors">
+      <div class="devops-command-item flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
         <div class="flex items-center gap-3">
           <i class="fa-solid ${item.icon} text-gray-500 w-5"></i>
           <div>
@@ -564,6 +717,28 @@
     document.querySelector(`[data-tab="${tab}"]`).classList.add('tab-active');
 
     renderCommandList();
+  }
+
+  function openFeatureModal(key) {
+    const feature = featureDetails[key];
+    const modal = document.getElementById('featureModal');
+
+    document.getElementById('modalHeader').innerHTML = `
+      <div class="w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center">
+        <i class="fa-solid ${feature.icon} text-white text-xl"></i>
+      </div>
+      <h3 class="font-bold text-xl">${feature.title}</h3>
+    `;
+
+    document.getElementById('modalContent').innerHTML = `
+      <p class="text-gray-600">${feature.description}</p>
+      <ul class="list-disc list-inside space-y-2 text-sm text-gray-700">
+        ${feature.details.map(d => `<li>${d}</li>`).join('')}
+      </ul>
+    `;
+
+    document.getElementById('modalDocLink').href = feature.docLink;
+    modal.showModal();
   }
 
   function escapeHtml(text) {
