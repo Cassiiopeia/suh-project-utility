@@ -1,11 +1,35 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-04T02:30:41Z",
-    "currentVersion": "2.5.6",
+    "lastUpdated": "2026-02-06T06:58:20Z",
+    "currentVersion": "2.5.9",
     "projectType": "spring",
-    "totalReleases": 39
+    "totalReleases": 40
   },
   "releases": [
+    {
+      "version": "2.5.9",
+      "project_type": "spring",
+      "date": "2026-02-06",
+      "pr_number": 161,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **신기능**\n  * 헤더 및 모바일 메뉴에 DevOps 템플릿 네비게이션 항목 추가\n  * 대시보드에 DevOps 템플릿 타일 추가\n  * 프로필 페이지 프로젝트 포트폴리오 개편 및 새 프로젝트 추가\n\n* **변경사항**\n  * 버전 2.5.9로 업데이트",
+      "parsed_changes": {
+        "신기능": {
+          "title": "신기능",
+          "items": [
+            "헤더 및 모바일 메뉴에 DevOps 템플릿 네비게이션 항목 추가",
+            "대시보드에 DevOps 템플릿 타일 추가",
+            "프로필 페이지 프로젝트 포트폴리오 개편 및 새 프로젝트 추가"
+          ]
+        },
+        "변경사항": {
+          "title": "변경사항",
+          "items": [
+            "버전 2.5.9로 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.6",
       "project_type": "spring",
