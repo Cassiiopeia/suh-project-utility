@@ -301,204 +301,211 @@
       </h2>
       <p class="text-gray-500 text-sm mb-6">Collaborative projects I'm working on</p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- 세종말싸미 -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+      <div class="dashboard-card-grid-4">
+        <!-- ROM ROM -->
+        <a href="http://suh-project.synology.me/romrom" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-blue-500 text-xl\'></i>'" />
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Sejong Malsami</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-info badge-xs">FE</span>
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
+                <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-pink-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">ROM ROM</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
                 </div>
               </div>
-              <a href="https://www.sejong-malsami.co.kr" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Visit">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">Character-based social platform app</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Flutter</span>
+              <span class="badge badge-ghost badge-xs">PostgreSQL</span>
+            </div>
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/TEAM-ROMROM', '_blank')" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 그녀를 구하라! -->
+        <a href="https://bagel.suhsaechan.kr" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                <img src="/images/bagelLogo.jpeg" alt="그녀를 구하라!" class="w-8 h-8 rounded" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-orange-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">그녀를 구하라!</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">20-hour hackathon visual novel game with time loop story</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="badge badge-ghost badge-xs">React</span>
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">MariaDB</span>
+            </div>
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/bagle-ggul', '_blank')" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 세종말싸미 -->
+        <a href="https://www.sejong-malsami.co.kr" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                <img src="/images/세종말싸미_로고.png" alt="세종말싸미" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-blue-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">세종말싸미</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
+                </div>
+              </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">AI-powered learning platform for Sejong University students</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">React</span>
               <span class="badge badge-ghost badge-xs">PostgreSQL</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Sejong-Malsami" target="_blank" class="btn btn-outline btn-xs">
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/Sejong-Balsamic', '_blank')" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </a>
+              </span>
             </div>
           </div>
-        </div>
+        </a>
 
-        <!-- ROM ROM -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <!-- 트립게더 -->
+        <a href="https://github.com/TEAM-Tripgether" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
-                  <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-pink-500 text-xl\'></i>'" />
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">ROM ROM</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-info badge-xs">FE</span>
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
-                </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                <img src="/images/tripgetherLogo.png" alt="트립게더" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500 text-xl\'></i>'" />
               </div>
-              <a href="http://suh-project.synology.me/romrom" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Download APK">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
-            </div>
-            <p class="text-gray-500 text-sm mb-3">Character-based social platform app</p>
-            <div class="flex flex-wrap gap-1 mb-3">
-              <span class="badge badge-ghost badge-xs">Spring Boot</span>
-              <span class="badge badge-ghost badge-xs">Flutter</span>
-              <span class="badge badge-ghost badge-xs">PostgreSQL</span>
-            </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/team-romrom" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- PLANE ACCIDENT FINDER -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-          <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-plane text-amber-500 text-xl\'></i>'" />
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">PLANE ACCIDENT FINDER</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
-                </div>
-              </div>
-              <a href="http://suh-project.synology.me/plane-accident-finder/" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Download APK">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
-            </div>
-            <p class="text-gray-500 text-sm mb-3">Aircraft accident information lookup app</p>
-            <div class="flex flex-wrap gap-1 mb-3">
-              <span class="badge badge-ghost badge-xs">Spring Boot</span>
-              <span class="badge badge-ghost badge-xs">Flutter</span>
-              <span class="badge badge-ghost badge-xs">API</span>
-            </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/plane-accident-finder" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tripgether -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-          <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
-                  <img src="/images/tripgetherLogo.png" alt="Tripgether" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500 text-xl\'></i>'" />
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Tripgether</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-info badge-xs">FE</span>
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                    <span class="badge badge-soft badge-secondary badge-xs">AI</span>
-                  </div>
+              <div>
+                <h3 class="font-bold text-gray-900">트립게더</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
+                  <span class="badge badge-soft badge-secondary badge-xs">AI</span>
                 </div>
               </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">AI-powered travel guide app - extracts places from SNS posts via OCR & video analysis</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">Flutter</span>
               <span class="badge badge-ghost badge-xs">Python</span>
               <span class="badge badge-ghost badge-xs">AI/OCR</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/TEAM-Tripgether" target="_blank" class="btn btn-outline btn-xs">
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/TEAM-Tripgether', '_blank')" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </a>
+              </span>
+              <span onclick="event.preventDefault(); window.open('https://www.instagram.com/tripgether_official', '_blank')" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-instagram"></i> Instagram
+              </span>
             </div>
           </div>
-        </div>
+        </a>
 
-        <!-- BAGEL-GGUL (그녀를 구해라) -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <!-- 동반자 (DBZ) -->
+        <a href="https://github.com/SamCoMo" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
-                  <img src="/images/bagelLogo.jpeg" alt="BAGEL-GGUL" class="w-8 h-8 rounded" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-orange-500 text-xl\'></i>'" />
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Save Her!</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-info badge-xs">FE</span>
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
-                </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+                <img src="/images/SamCoMoLogo.png" alt="동반자 (DBZ)" class="w-10 h-10 object-contain" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-paw text-rose-500 text-xl\'></i>'" />
               </div>
-              <a href="https://bagel.suhsaechan.kr" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Play">
-                <i class="fa-solid fa-gamepad"></i>
-              </a>
-            </div>
-            <p class="text-gray-500 text-sm mb-3">20-hour hackathon visual novel game with time loop story</p>
-            <div class="flex flex-wrap gap-1 mb-3">
-              <span class="badge badge-ghost badge-xs">React</span>
-              <span class="badge badge-ghost badge-xs">Spring Boot</span>
-              <span class="badge badge-ghost badge-xs">MariaDB</span>
-            </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/bagle-ggul" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- DBZ-Backend -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-          <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
-                  <img src="/images/SamCoMoLogo.png" alt="SamCoMo" class="w-10 h-10 object-contain" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-paw text-rose-500 text-xl\'></i>'" />
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">DBZ-Backend</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
+              <div>
+                <h3 class="font-bold text-gray-900">동반자 (DBZ)</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
                 </div>
               </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">Lost pet finder app backend service</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">Flutter</span>
               <span class="badge badge-ghost badge-xs">PostgreSQL</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/SamCoMo/DBZ-Backend" target="_blank" class="btn btn-outline btn-xs">
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/SamCoMo', '_blank')" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </a>
+              </span>
             </div>
           </div>
-        </div>
+        </a>
+
+        <!-- 술겜위키 -->
+        <a href="https://github.com/Sul-Game-Wiki" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                <img src="/images/sulGameWiki.png" alt="술겜위키" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-dice text-amber-500 text-xl\'></i>'" />
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">술겜위키</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">술자리 게임 백과사전 앱</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Android</span>
+              <span class="badge badge-ghost badge-xs">MariaDB</span>
+            </div>
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/Sul-Game-Wiki', '_blank')" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
+              </span>
+            </div>
+          </div>
+        </a>
+
+        <!-- PlaneBlackBox -->
+        <a href="https://github.com/InquiryingAccident" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-sky-100 flex items-center justify-center">
+                <i class="fa-solid fa-plane text-sky-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">PlaneBlackBox</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-500 text-sm mb-3">항공 사고 검색기</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="badge badge-ghost badge-xs">Spring Boot</span>
+              <span class="badge badge-ghost badge-xs">Flutter</span>
+              <span class="badge badge-ghost badge-xs">API</span>
+            </div>
+            <div class="card-actions justify-end mt-3">
+              <span onclick="event.preventDefault(); window.open('https://github.com/InquiryingAccident', '_blank')" class="btn btn-outline btn-xs">
+                <i class="fa-brands fa-github"></i> GitHub
+              </span>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
   </section>
@@ -512,255 +519,187 @@
       </h2>
       <p class="text-gray-500 text-sm mb-6">Personal experiments and side projects</p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="dashboard-card-grid-4">
         <!-- SUH-PROJECT-UTILITY -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://lab.suhsaechan.kr" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <i class="fa-solid fa-flask text-blue-500 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">SUH-PROJECT-UTILITY</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-info badge-xs">FE</span>
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                <i class="fa-solid fa-flask text-blue-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">SUH-PROJECT-UTILITY</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
                 </div>
               </div>
-              <a href="https://lab.suhsaechan.kr" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Visit">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
             </div>
             <p class="text-gray-500 text-sm mb-3">Dev utility collection (This site!)</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Spring Boot</span>
               <span class="badge badge-ghost badge-xs">Thymeleaf</span>
               <span class="badge badge-ghost badge-xs">DaisyUI</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- Suh-AI-Server -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://ai.suhsaechan.kr/api/tags" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-violet-100 flex items-center justify-center">
-                  <i class="fa-solid fa-brain text-violet-500 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Suh-AI-Server</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-secondary badge-xs">AI</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-violet-100 flex items-center justify-center">
+                <i class="fa-solid fa-brain text-violet-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Suh-AI-Server</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-secondary badge-xs">AI</span>
                 </div>
               </div>
-              <a href="https://ai.suhsaechan.kr/api/tags" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Visit">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
             </div>
             <p class="text-gray-500 text-sm mb-3">Local AI server with Ollama, LLM & embedding services</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Ollama</span>
               <span class="badge badge-ghost badge-xs">Flask</span>
               <span class="badge badge-ghost badge-xs">LLM</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-project-control" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- SUH-DEVOPS-TEMPLATE -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="/suh-devops-template" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                  <i class="fa-solid fa-gears text-gray-700 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">SUH-DEVOPS-TEMPLATE</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-warning badge-xs">Module</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                <i class="fa-solid fa-gears text-gray-700 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">SUH-DEVOPS-TEMPLATE</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-warning badge-xs">Module</span>
                 </div>
               </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">Fully automated GitHub DevOps template with AI-powered workflows</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">GitHub Actions</span>
               <span class="badge badge-ghost badge-xs">CI/CD</span>
               <span class="badge badge-ghost badge-xs">Automation</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- GitHub 이슈 도우미 -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="/issue-helper" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
-                  <i class="fa-brands fa-github text-gray-700 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">GitHub Issue Helper</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-warning badge-xs">Module</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                <i class="fa-brands fa-github text-gray-700 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">GitHub Issue Helper</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-warning badge-xs">Module</span>
                 </div>
               </div>
-              <a href="/issue-helper" class="btn btn-primary btn-xs btn-circle" title="Visit">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
             </div>
             <p class="text-gray-500 text-sm mb-3">Auto-generate branch names and commit messages from issues</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">GitHub API</span>
               <span class="badge badge-ghost badge-xs">Automation</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- AI 번역기 -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="/translator" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
-                  <i class="fa-solid fa-language text-indigo-500 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Custom AI Translator</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-warning badge-xs">Module</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <i class="fa-solid fa-language text-indigo-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Custom AI Translator</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-warning badge-xs">Module</span>
                 </div>
               </div>
-              <a href="/translator" class="btn btn-primary btn-xs btn-circle" title="Visit">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
             </div>
             <p class="text-gray-500 text-sm mb-3">OpenAI-powered custom translation service</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">OpenAI API</span>
               <span class="badge badge-ghost badge-xs">Translation</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-project-utility" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- Grass Planter -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
-                  <i class="fa-solid fa-leaf text-emerald-500 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Grass Planter</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-warning badge-xs">Module</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <i class="fa-solid fa-leaf text-emerald-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Grass Planter</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-warning badge-xs">Module</span>
                 </div>
               </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">GitHub contribution graph auto-commit manager</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">GitHub API</span>
               <span class="badge badge-ghost badge-xs">Scheduler</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- Somansa Bus -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://github.com/Cassiiopeia/auto-bus-reservation" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-sky-100 flex items-center justify-center">
-                  <i class="fa-solid fa-bus text-sky-500 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">Somansa Bus</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-warning badge-xs">Module</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-sky-100 flex items-center justify-center">
+                <i class="fa-solid fa-bus text-sky-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">Somansa Bus</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-warning badge-xs">Module</span>
                 </div>
               </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">Automated bus reservation system</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Automation</span>
               <span class="badge badge-ghost badge-xs">Reservation</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/auto-bus-reservation" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- SQL Validator -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://github.com/Cassiiopeia/sql-validator" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
-                  <i class="fa-solid fa-database text-amber-500 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900">SQL Validator</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-info badge-xs">FE</span>
-                    <span class="badge badge-soft badge-success badge-xs">BE</span>
-                  </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
+                <i class="fa-solid fa-database text-amber-500 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-900">SQL Validator</h3>
+                <div class="flex gap-1 mt-1">
+                  <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  <span class="badge badge-soft badge-success badge-xs">BE</span>
                 </div>
               </div>
             </div>
             <p class="text-gray-500 text-sm mb-3">SQL file validation automation tool</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">SQL</span>
               <span class="badge badge-ghost badge-xs">Validation</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/sql-validator" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </section>
@@ -779,9 +718,9 @@
         </code>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="dashboard-card-grid-4">
         <!-- SUH-AIder -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://github.com/Cassiiopeia/SUH-AIder" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
@@ -792,20 +731,15 @@
               </div>
             </div>
             <p class="text-gray-500 text-xs mb-3">AI helper library for Spring Boot</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">OpenAI</span>
               <span class="badge badge-ghost badge-xs">Claude</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/SUH-AIder" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- suh-logger -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://github.com/Cassiiopeia/suh-logger" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
@@ -816,20 +750,15 @@
               </div>
             </div>
             <p class="text-gray-500 text-xs mb-3">Custom logging utility for Spring</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Logging</span>
               <span class="badge badge-ghost badge-xs">AOP</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-logger" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- suh-api-log -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://github.com/Cassiiopeia/suh-api-log" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center">
@@ -840,75 +769,50 @@
               </div>
             </div>
             <p class="text-gray-500 text-xs mb-3">API request/response logging module</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">API</span>
               <span class="badge badge-ghost badge-xs">Filter</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-api-log" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- suh-random-engine -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="/suh-random" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
-                  <i class="fa-solid fa-dice text-rose-500 text-lg"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm">suh-random-engine</h3>
-                </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center">
+                <i class="fa-solid fa-dice text-rose-500 text-lg"></i>
               </div>
-              <a href="/suh-random" class="btn btn-primary btn-xs btn-circle" title="Test">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
+              <div>
+                <h3 class="font-bold text-gray-900 text-sm">suh-random-engine</h3>
+              </div>
             </div>
             <p class="text-gray-500 text-xs mb-3">Weighted random & gacha system</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Random</span>
               <span class="badge badge-ghost badge-xs">Gacha</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/suh-random-engine" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
 
         <!-- sejong-univ-auth -->
-        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+        <a href="https://lab.suhsaechan.kr/sejong-auth" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <i class="fa-solid fa-graduation-cap text-blue-500 text-lg"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-900 text-sm">sejong-univ-auth</h3>
-                </div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                <i class="fa-solid fa-graduation-cap text-blue-500 text-lg"></i>
               </div>
-              <a href="https://lab.suhsaechan.kr/sejong-auth" target="_blank" class="btn btn-primary btn-xs btn-circle" title="Test">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </a>
+              <div>
+                <h3 class="font-bold text-gray-900 text-sm">sejong-univ-auth</h3>
+              </div>
             </div>
             <p class="text-gray-500 text-xs mb-3">Sejong University portal auth</p>
-            <div class="flex flex-wrap gap-1 mb-3">
+            <div class="flex flex-wrap gap-1">
               <span class="badge badge-ghost badge-xs">Auth</span>
               <span class="badge badge-ghost badge-xs">Scraping</span>
             </div>
-            <div class="card-actions justify-end">
-              <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank" class="btn btn-outline btn-xs">
-                <i class="fa-brands fa-github"></i> GitHub
-              </a>
-            </div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
   </section>
