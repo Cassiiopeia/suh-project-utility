@@ -1,11 +1,30 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-06T06:58:20Z",
-    "currentVersion": "2.5.9",
+    "lastUpdated": "2026-02-08T15:13:19Z",
+    "currentVersion": "2.5.11",
     "projectType": "spring",
-    "totalReleases": 40
+    "totalReleases": 41
   },
   "releases": [
+    {
+      "version": "2.5.11",
+      "project_type": "spring",
+      "date": "2026-02-08",
+      "pr_number": 163,
+      "raw_summary": "## Summary by CodeRabbit\n\n# 릴리스 노트\n\n* **New Features**\n  * Task 추적 시스템 추가 - 목표 생성·수정·완료 및 진행 기록 관리 기능\n  * Task Tracker 페이지 신규 추가\n  * Dashboard에 D-Day 목표 섹션 신규 추가\n  * 네비게이션에 Task 트래커 메뉴 추가",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "Task 추적 시스템 추가 - 목표 생성·수정·완료 및 진행 기록 관리 기능",
+            "Task Tracker 페이지 신규 추가",
+            "Dashboard에 D-Day 목표 섹션 신규 추가",
+            "네비게이션에 Task 트래커 메뉴 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.9",
       "project_type": "spring",

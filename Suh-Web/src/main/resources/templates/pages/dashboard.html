@@ -257,6 +257,46 @@
       </div>
     </section>
 
+    <!-- Task D-Day 섹션 -->
+    <section id="task-dday-section" class="mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">
+          <i class="fa-solid fa-bullseye text-indigo-500 mr-2"></i>
+          Task D-Day
+        </h2>
+        <a href="/task-tracker" class="text-sm text-gray-500 hover:text-primary transition-colors">
+          전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
+      </div>
+
+      <!-- 스켈레톤 -->
+      <div id="task-dday-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="card bg-base-100 border border-gray-100 shadow-sm p-4" th:each="i : ${#numbers.sequence(1, 3)}">
+          <div class="flex items-center gap-4">
+            <div class="skeleton w-14 h-14 rounded-lg"></div>
+            <div class="flex-1">
+              <div class="skeleton h-5 w-24 mb-2"></div>
+              <div class="skeleton h-3 w-16 mb-1"></div>
+              <div class="skeleton h-2 w-full"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 실제 콘텐츠 -->
+      <div id="task-dday-content" class="hidden">
+        <div id="task-dday-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- JavaScript로 동적 생성 -->
+        </div>
+
+        <!-- 등록된 Task가 없을 때 -->
+        <div id="task-dday-empty" class="hidden text-center py-8 bg-base-100 rounded-lg border border-gray-100">
+          <i class="fa-solid fa-clipboard-list text-gray-300 text-4xl mb-3"></i>
+          <p class="text-gray-500 mb-3">등록된 Task가 없습니다</p>
+          <a href="/task-tracker" class="btn btn-primary btn-sm">Task 등록하기</a>
+        </div>
+      </div>
+    </section>
 
     <!-- Dev Tools 섹션 -->
     <section class="card bg-white shadow-sm mb-8">
@@ -1265,6 +1305,9 @@
     // 대시보드 Summary 로드
     loadDashboardSummary();
 
+    // Task D-Day 로드
+    loadTaskDDay();
+
     // 페이지 로딩 효과
     setTimeout(function() {
       document.getElementById('skeleton-container').classList.add('hidden');
@@ -1710,6 +1753,111 @@
         alert('댓글 삭제 오류: ' + error);
       }
     );
+  }
+
+  // Task D-Day 로드 함수
+  function loadTaskDDay() {
+    sendFormRequest(
+      '/api/task/goal/list',
+      null,
+      function(response) {
+        $('#task-dday-skeleton').addClass('hidden');
+        $('#task-dday-content').removeClass('hidden');
+
+        if (response && response.goals && response.goals.length > 0) {
+          const cardsContainer = $('#task-dday-cards');
+          cardsContainer.empty();
+
+          const activeGoals = response.goals.filter(function(task) {
+            return task.isActive && !task.isCompleted;
+          });
+
+          if (activeGoals.length > 0) {
+            activeGoals.forEach(function(task) {
+              cardsContainer.append(renderTaskDDayCard(task));
+            });
+            $('#task-dday-empty').addClass('hidden');
+          } else {
+            $('#task-dday-cards').addClass('hidden');
+            $('#task-dday-empty').removeClass('hidden');
+          }
+        } else {
+          $('#task-dday-cards').addClass('hidden');
+          $('#task-dday-empty').removeClass('hidden');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('Task D-Day 로드 오류:', error);
+        $('#task-dday-skeleton').addClass('hidden');
+        $('#task-dday-content').removeClass('hidden');
+        $('#task-dday-cards').addClass('hidden');
+        $('#task-dday-empty').removeClass('hidden');
+      }
+    );
+  }
+
+  // Task D-Day 카드 렌더링 함수
+  function renderTaskDDayCard(task) {
+    const daysRemaining = task.daysRemaining;
+    let ddayText, ddayClass;
+
+    if (daysRemaining < 0) {
+      ddayText = 'D+' + Math.abs(daysRemaining);
+      ddayClass = 'text-gray-400';
+    } else if (daysRemaining === 0) {
+      ddayText = 'D-Day';
+      ddayClass = 'text-red-500 font-bold';
+    } else if (daysRemaining <= 7) {
+      ddayText = 'D-' + daysRemaining;
+      ddayClass = 'text-red-500 font-bold';
+    } else if (daysRemaining <= 30) {
+      ddayText = 'D-' + daysRemaining;
+      ddayClass = 'text-amber-500 font-semibold';
+    } else {
+      ddayText = 'D-' + daysRemaining;
+      ddayClass = 'text-blue-500';
+    }
+
+    const targetDate = new Date(task.targetDate).toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    const progressPercentage = task.progressPercentage || 0;
+    const currentAmount = task.currentAmount || 0;
+    const totalAmount = task.totalAmount || 0;
+    const unit = task.unit || '';
+
+    let progressHtml = '';
+    if (totalAmount > 0) {
+      progressHtml = `
+        <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+          <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${Math.min(progressPercentage, 100)}%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">${currentAmount}/${totalAmount} ${unit} (${progressPercentage.toFixed(0)}%)</p>
+      `;
+    }
+
+    return `
+      <a href="/task-tracker?id=${task.taskGoalId}" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+        <div class="card-body p-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <i class="${task.icon || 'fa-solid fa-bullseye'} text-blue-600 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="font-bold text-gray-900 truncate">${task.title}</h3>
+                <span class="${ddayClass} text-lg ml-2">${ddayText}</span>
+              </div>
+              <p class="text-xs text-gray-500">${targetDate}</p>
+              ${progressHtml}
+            </div>
+          </div>
+        </div>
+      </a>
+    `;
   }
 
   // AI 서버 상태 로드

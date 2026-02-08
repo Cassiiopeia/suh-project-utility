@@ -171,4 +171,9 @@ public class PageController {
 
 		return "pages/somansaBusMemberDetail";
 	}
+
+	@GetMapping("/task-tracker")
+	public String taskTrackerPage() {
+		return "pages/taskTracker";
+	}
 }
