@@ -38,7 +38,7 @@ public class TaskGoalService {
         .color(request.getColor() != null ? request.getColor() : "blue")
         .isActive(true)
         .isCompleted(false)
-        .priority(request.getPriority() != null ? request.getPriority() : 0)
+        .priority(request.getGoalPriority() != null ? request.getGoalPriority() : 0)
         .build();
 
     TaskGoal saved = taskGoalRepository.save(taskGoal);
@@ -105,8 +105,8 @@ public class TaskGoalService {
     if (request.getIsCompleted() != null) {
       goal.setIsCompleted(request.getIsCompleted());
     }
-    if (request.getPriority() != null) {
-      goal.setPriority(request.getPriority());
+    if (request.getGoalPriority() != null) {
+      goal.setPriority(request.getGoalPriority());
     }
 
     TaskGoal saved = taskGoalRepository.save(goal);

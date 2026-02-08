@@ -24,7 +24,7 @@ public class TaskRequest {
   private String color;
   private Boolean isActive;
   private Boolean isCompleted;
-  private Integer priority;
+  private Integer goalPriority;
 
   // Progress 관련 필드
   private UUID taskProgressId;
