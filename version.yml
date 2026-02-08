@@ -34,11 +34,11 @@
 # - 버전은 항상 높은 버전으로 자동 동기화됩니다
 # ===================================================================
 
-version: "2.5.11"
-version_code: 78 # app build number
+version: "2.5.12"
+version_code: 79 # app build number
 project_type: "spring" # spring, flutter, react, react-native, react-native-expo, node, python, basic
 metadata:
-  last_updated: "2026-02-08 15:10:07"
+  last_updated: "2026-02-08 15:26:10"
   last_updated_by: "Cassiiopeia"
   default_branch: "main"
   integrated_from: "SUH-DEVOPS-TEMPLATE"
