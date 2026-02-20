@@ -1,33 +1,55 @@
 # -*- coding: utf-8 -*-
 """
-Git Worktree Manager v1.0.2
+Git Worktree Manager v1.1.0
 
 Git worktree를 자동으로 생성하고 관리하는 스크립트입니다.
-브랜치가 없으면 자동으로 생성하고, 브랜치명의 특수문자를 안전하게 처리합니다.
+브랜치가 없으면 리모트(origin) 확인 후 자동으로 생성하고, 브랜치명의 특수문자를 안전하게 처리합니다.
 
 사용법:
-    python worktree_manager.py <branch_name>
+    macOS/Linux:
+        python worktree_manager.py <branch_name>
+
+    Windows (환경 변수 방식, 권장):
+        $env:GIT_BRANCH_NAME = "브랜치명"
+        $env:PYTHONIOENCODING = "utf-8"
+        python -X utf8 worktree_manager.py
 
 예시:
     python worktree_manager.py "20260120_#163_Github_Projects_에_대한_템플릿_개발_필요"
 
 Author: Cursor AI Assistant
-Version: 1.0.1
+Version: 1.0.4
 """
 
 import os
 import sys
 import subprocess
 import re
+import platform
+import io
 from pathlib import Path
 from typing import Dict, Optional, Tuple
+
+# Windows 인코딩 문제 해결 - stdout/stderr를 UTF-8로 래핑
+if platform.system() == 'Windows':
+  try:
+    # stdout/stderr가 버퍼를 가지고 있는 경우에만 래핑
+    if hasattr(sys.stdout, 'buffer'):
+      sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    if hasattr(sys.stderr, 'buffer'):
+      sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+  except Exception:
+    pass  # 래핑 실패 시 무시
 
 
 # ===================================================================
 # 상수 정의
 # ===================================================================
 
-VERSION = "1.0.2"
+VERSION = "1.1.0"
+
+# Windows 환경 감지
+IS_WINDOWS = platform.system() == 'Windows'
 
 # 폴더명에서 제거할 특수문자 (파일시스템에서 안전하지 않은 문자)
 SPECIAL_CHARS_PATTERN = r'[#/\\:*?"<>|]'
@@ -40,6 +62,78 @@ WORKTREE_ROOT_NAME = None  # get_worktree_root()에서 동적으로 설정
 # ===================================================================
 # 유틸리티 함수
 # ===================================================================
+
+def get_branch_name() -> str:
+  """
+  브랜치명을 안전하게 받기 (Windows 인코딩 문제 해결)
+
+  Windows 환경에서 PowerShell → Python 스크립트로 한글 브랜치명을 전달할 때
+  인코딩 문제가 발생하므로, 환경 변수나 파일에서 읽는 방식을 우선 사용합니다.
+
+  Returns:
+      str: 브랜치명 (비어있을 수 있음)
+  """
+  if IS_WINDOWS:
+    # 방법 1: 환경 변수에서 읽기 (가장 간단하고 안전)
+    # Windows에서 환경 변수는 시스템 기본 인코딩을 사용하므로 UTF-8로 디코딩 시도
+    branch_name_raw = os.environ.get('GIT_BRANCH_NAME', '')
+    if branch_name_raw:
+      try:
+        # 환경 변수가 이미 올바른 인코딩인 경우
+        branch_name = branch_name_raw.strip()
+        # 한글이 깨져있는지 확인 (깨진 경우 복구 시도)
+        if '\xef\xbf\xbd' in branch_name.encode('utf-8', errors='replace').decode('utf-8', errors='replace'):
+          # 깨진 경우, 시스템 인코딩으로 디코딩 후 UTF-8로 재인코딩 시도
+          import locale
+          sys_encoding = locale.getpreferredencoding()
+          branch_name = branch_name_raw.encode(sys_encoding, errors='replace').decode('utf-8', errors='replace').strip()
+        else:
+          branch_name = branch_name.strip()
+        if branch_name:
+          return branch_name
+      except Exception:
+        # 인코딩 변환 실패 시 원본 사용
+        branch_name = branch_name_raw.strip()
+        if branch_name:
+          return branch_name
+
+    # 방법 2: 임시 파일에서 읽기 (init-worktree에서 파일 생성 후 전달)
+    temp_file = os.environ.get('BRANCH_NAME_FILE', '')
+    if temp_file and os.path.exists(temp_file):
+      try:
+        # 여러 인코딩 시도: UTF-8, UTF-8 with BOM, 시스템 기본 인코딩
+        encodings = ['utf-8', 'utf-8-sig', 'cp949', 'euc-kr']
+        branch_name = None
+        for encoding in encodings:
+          try:
+            with open(temp_file, 'r', encoding=encoding) as f:
+              branch_name = f.read().strip()
+              if branch_name and not any(ord(c) > 0xFFFF for c in branch_name if ord(c) > 0x7F):
+                # 한글이 제대로 읽혔는지 확인 (깨진 문자가 없는지)
+                break
+          except (UnicodeDecodeError, UnicodeError):
+            continue
+
+        if branch_name:
+          return branch_name
+      except Exception as e:
+        print_warning(f"브랜치명 파일 읽기 실패: {e}")
+
+    # 방법 3: stdin에서 읽기 시도 (파이프 입력인 경우)
+    if not sys.stdin.isatty():
+      try:
+        branch_name = sys.stdin.read().strip()
+        if branch_name:
+          return branch_name
+      except Exception:
+        pass
+
+  # 기본: sys.argv에서 받기 (macOS/Linux 또는 Windows에서도 인자로 전달된 경우)
+  if len(sys.argv) >= 2:
+    return sys.argv[1].strip()
+
+  return ''
+
 
 def print_header():
   """헤더 출력"""
@@ -104,6 +198,33 @@ def run_git_command(args: list, check: bool = True) -> Tuple[bool, str, str]:
     return False, "", str(e)
 
 
+def check_and_enable_longpaths() -> bool:
+  """
+  Windows에서 Git 긴 경로 지원 확인 및 활성화
+
+  Returns:
+      bool: 긴 경로 지원이 활성화되어 있으면 True
+  """
+  if not IS_WINDOWS:
+    return True
+
+  # 현재 설정 확인
+  success, stdout, _ = run_git_command(['config', '--global', 'core.longpaths'], check=False)
+  if success and stdout.strip().lower() == 'true':
+    return True
+
+  # 긴 경로 지원 활성화
+  print_info("Windows 긴 경로 지원을 활성화합니다...")
+  success, _, stderr = run_git_command(['config', '--global', 'core.longpaths', 'true'], check=False)
+  if success:
+    print_success("긴 경로 지원이 활성화되었습니다.")
+    return True
+  else:
+    print_warning(f"긴 경로 지원 활성화 실패: {stderr}")
+    print_warning("수동으로 실행하세요: git config --global core.longpaths true")
+    return False
+
+
 def is_git_repository() -> bool:
   """현재 디렉토리가 Git 저장소인지 확인"""
   success, _, _ = run_git_command(['rev-parse', '--git-dir'], check=False)
@@ -128,13 +249,13 @@ def get_current_branch() -> Optional[str]:
 
 def branch_exists(branch_name: str) -> bool:
   """
-  브랜치 존재 여부 확인
+  로컬 브랜치 존재 여부 확인
 
   Args:
       branch_name: 확인할 브랜치명
 
   Returns:
-      bool: 브랜치가 존재하면 True
+      bool: 로컬 브랜치가 존재하면 True
   """
   success, stdout, _ = run_git_command(['branch', '--list', branch_name], check=False)
   if success and stdout:
@@ -144,9 +265,44 @@ def branch_exists(branch_name: str) -> bool:
   return False
 
 
+def remote_branch_exists(branch_name: str, remote: str = 'origin') -> bool:
+  """
+  리모트에 브랜치가 존재하는지 확인
+
+  Args:
+      branch_name: 확인할 브랜치명
+      remote: 리모트 이름 (기본: 'origin')
+
+  Returns:
+      bool: 리모트에 브랜치가 존재하면 True
+  """
+  success, stdout, _ = run_git_command(['branch', '-r', '--list', f'{remote}/{branch_name}'], check=False)
+  if success and stdout:
+    branches = [line.strip() for line in stdout.split('\n')]
+    return f'{remote}/{branch_name}' in branches
+  return False
+
+
+def fetch_remote(remote: str = 'origin') -> bool:
+  """
+  리모트에서 최신 정보를 가져옵니다 (git fetch)
+
+  Args:
+      remote: 리모트 이름 (기본: 'origin')
+
+  Returns:
+      bool: 성공 여부
+  """
+  print_step("🔄", f"리모트({remote}) 최신 정보 가져오는 중...")
+  success, _, stderr = run_git_command(['fetch', remote], check=False)
+  if not success:
+    print_warning(f"리모트 fetch 실패: {stderr}")
+  return success
+
+
 def create_branch(branch_name: str) -> bool:
   """
-  현재 브랜치에서 새 브랜치 생성
+  새 브랜치 생성 (현재 브랜치에서 분기)
 
   Args:
       branch_name: 생성할 브랜치명
@@ -157,6 +313,26 @@ def create_branch(branch_name: str) -> bool:
   success, _, stderr = run_git_command(['branch', branch_name], check=False)
   if not success:
     print_error(f"브랜치 생성 실패: {stderr}")
+  return success
+
+
+def create_branch_from_remote(branch_name: str, remote: str = 'origin') -> bool:
+  """
+  리모트 브랜치를 기반으로 로컬 tracking 브랜치 생성
+
+  Args:
+      branch_name: 생성할 브랜치명
+      remote: 리모트 이름 (기본: 'origin')
+
+  Returns:
+      bool: 성공 여부
+  """
+  success, _, stderr = run_git_command(
+    ['branch', '--track', branch_name, f'{remote}/{branch_name}'],
+    check=False
+  )
+  if not success:
+    print_error(f"리모트 브랜치 기반 로컬 브랜치 생성 실패: {stderr}")
   return success
 
 
@@ -295,7 +471,7 @@ def normalize_branch_name(branch_name: str) -> str:
   """
   브랜치명을 폴더명으로 안전하게 변환
 
-  특수문자 (#, /, \\\\, :, *, ?, ", <, >, |)를 _ 로 변환하고,
+  특수문자 (#, /, \\, :, *, ?, ", <, >, |)를 _ 로 변환하고,
   연속된 _를 하나로 통합하며, 앞뒤 _를 제거합니다.
 
   Args:
@@ -397,21 +573,30 @@ def main() -> int:
   """
   print_header()
 
-  # 1. 인자 확인
-  if len(sys.argv) < 2:
+  # 1. 브랜치명 받기 (Windows 환경 대응)
+  branch_name = get_branch_name()
+
+  if not branch_name:
     print_error("브랜치명이 제공되지 않았습니다.")
     print()
     print("사용법:")
-    print(f"  python {sys.argv[0]} <branch_name>")
+    if IS_WINDOWS:
+      print("  Windows 환경:")
+      print("    방법 1: 환경 변수 사용")
+      print(f'      $env:GIT_BRANCH_NAME = "브랜치명"')
+      print(f"      python {sys.argv[0]}")
+      print()
+      print("    방법 2: 파일 사용")
+      print(f'      $env:BRANCH_NAME_FILE = "branch_name.txt"')
+      print(f"      python {sys.argv[0]}")
+      print()
+      print("    방법 3: 인자로 전달 (한글 깨짐 가능)")
+      print(f'      python {sys.argv[0]} "브랜치명"')
+    else:
+      print(f"  python {sys.argv[0]} <branch_name>")
     print()
     print("예시:")
     print(f'  python {sys.argv[0]} "20260120_#163_Github_Projects_에_대한_템플릿_개발_필요"')
-    return 1
-
-  branch_name = sys.argv[1].strip()
-
-  if not branch_name:
-    print_error("브랜치명이 비어있습니다.")
     return 1
 
   print_step("📋", f"입력된 브랜치: {branch_name}")
@@ -421,30 +606,49 @@ def main() -> int:
     print_error("현재 디렉토리가 Git 저장소가 아닙니다.")
     return 1
 
+  # 2-1. Windows 긴 경로 지원 확인 및 활성화
+  if IS_WINDOWS:
+    check_and_enable_longpaths()
+    print()
+
   # 3. 브랜치명 정규화
   folder_name = normalize_branch_name(branch_name)
   print_step("📁", f"폴더명: {folder_name}")
   print()
 
-  # 4. 브랜치 존재 확인
+  # 4. 브랜치 존재 확인 (로컬 → 리모트 순서)
   print_step("🔍", "브랜치 확인 중...")
 
-  if not branch_exists(branch_name):
-    print_warning("브랜치가 존재하지 않습니다.")
-
-    current_branch = get_current_branch()
-    if current_branch:
-      print_step("🔄", f"현재 브랜치({current_branch})에서 새 브랜치 생성 중...")
-    else:
-      print_step("🔄", "새 브랜치 생성 중...")
-
-    if not create_branch(branch_name):
-      print_error("브랜치 생성에 실패했습니다.")
-      return 1
-
-    print_success("브랜치 생성 완료!")
+  if branch_exists(branch_name):
+    print_success("로컬 브랜치가 이미 존재합니다.")
   else:
-    print_success("브랜치가 이미 존재합니다.")
+    print_warning("로컬 브랜치가 존재하지 않습니다.")
+
+    # 리모트에서 최신 정보 가져오기
+    fetch_remote()
+
+    if remote_branch_exists(branch_name):
+      # 리모트에 브랜치가 있으면 tracking 브랜치로 생성
+      print_step("🌐", f"리모트(origin/{branch_name})에서 브랜치를 가져옵니다...")
+
+      if not create_branch_from_remote(branch_name):
+        print_error("리모트 브랜치 기반 로컬 브랜치 생성에 실패했습니다.")
+        return 1
+
+      print_success(f"리모트 브랜치(origin/{branch_name})를 기반으로 로컬 브랜치 생성 완료!")
+    else:
+      # 리모트에도 없으면 현재 브랜치에서 새로 생성
+      current_branch = get_current_branch()
+      if current_branch:
+        print_step("🔄", f"현재 브랜치({current_branch})에서 새 브랜치 생성 중...")
+      else:
+        print_step("🔄", "새 브랜치 생성 중...")
+
+      if not create_branch(branch_name):
+        print_error("브랜치 생성에 실패했습니다.")
+        return 1
+
+      print_success("새 브랜치 생성 완료!")
 
   print()
 

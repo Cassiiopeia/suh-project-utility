@@ -40,6 +40,7 @@ public class PublicEndpointConfig {
     return Arrays.asList(
         "/login",
         "/logout",
+        "/error/**",
         "/profile",
         "/issue-helper",
         "/translator",

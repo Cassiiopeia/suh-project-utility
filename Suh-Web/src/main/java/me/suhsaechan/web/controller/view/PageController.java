@@ -1,5 +1,6 @@
 package me.suhsaechan.web.controller.view;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,13 +88,13 @@ public class PageController {
 	}
 	
 	@GetMapping("/notice-management")
-	public String noticeManagementPage(HttpSession session, Model model){
-		// 슈퍼관리자 권한 확인
+	public String noticeManagementPage(HttpSession session, Model model, HttpServletResponse response){
 		if (!userAuthority.isSuperAdmin(session)) {
 			log.warn("권한 없는 사용자의 공지사항 관리 페이지 접근 시도");
-			return "redirect:/error/403";
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return "error/403";
 		}
-		
+
 		return "pages/noticeManagement";
 	}
 
