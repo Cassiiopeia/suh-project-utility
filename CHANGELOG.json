@@ -1,11 +1,48 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-08T15:13:19Z",
-    "currentVersion": "2.5.11",
+    "lastUpdated": "2026-02-20T05:59:03Z",
+    "currentVersion": "2.5.13",
     "projectType": "spring",
-    "totalReleases": 41
+    "totalReleases": 42
   },
   "releases": [
+    {
+      "version": "2.5.13",
+      "project_type": "spring",
+      "date": "2026-02-20",
+      "pr_number": 165,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **New Features**\n  * Git 워크트리 자동 생성 기능 추가\n  * GitHub 이슈 템플릿 자동 생성 기능 추가\n\n* **Bug Fixes**\n  * 403 Forbidden 에러 처리 개선\n  * 에러 페이지 레이아웃 수정\n\n* **Improvements**\n  * Windows 인코딩 및 긴 경로명 지원 개선\n  * 원격 브랜치 추적 기능 추가\n\n* **Chores**\n  * 버전 2.5.13 업데이트",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "Git 워크트리 자동 생성 기능 추가",
+            "GitHub 이슈 템플릿 자동 생성 기능 추가"
+          ]
+        },
+        "bug_fixes": {
+          "title": "Bug Fixes",
+          "items": [
+            "403 Forbidden 에러 처리 개선",
+            "에러 페이지 레이아웃 수정"
+          ]
+        },
+        "improvements": {
+          "title": "Improvements",
+          "items": [
+            "Windows 인코딩 및 긴 경로명 지원 개선",
+            "원격 브랜치 추적 기능 추가"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 2.5.13 업데이트"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.11",
       "project_type": "spring",

@@ -1,5 +1,6 @@
 package me.suhsaechan.web.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +83,14 @@ public class WebSecurityConfig {
             .invalidSessionUrl("/login?sessionExpired=true")
             .maximumSessions(20)  // 중복 세션 방지: 한 계정당 세션 20개
             .expiredUrl("/login?sessionExpired=true")
+        );
+
+    // 접근 거부(403) 처리
+    http
+        .exceptionHandling(exception -> exception
+            .accessDeniedHandler((request, response, e) -> {
+              response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            })
         );
 
     // CORS 설정
