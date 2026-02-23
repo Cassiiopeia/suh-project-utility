@@ -46,6 +46,7 @@ public class PublicEndpointConfig {
         "/translator",
         "/sejong-auth",
         "/suh-random",
+        "/suh-devops-template",
         "/css/**",
         "/js/**",
         "/images/**",
