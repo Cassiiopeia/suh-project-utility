@@ -1,11 +1,37 @@
 {
   "metadata": {
-    "lastUpdated": "2026-02-20T05:59:03Z",
-    "currentVersion": "2.5.13",
+    "lastUpdated": "2026-03-10T06:32:31Z",
+    "currentVersion": "2.5.16",
     "projectType": "spring",
-    "totalReleases": 42
+    "totalReleases": 43
   },
   "releases": [
+    {
+      "version": "2.5.16",
+      "project_type": "spring",
+      "date": "2026-03-10",
+      "pr_number": 169,
+      "raw_summary": "## Summary by CodeRabbit\n\n## Release Notes v2.5.16\n\n* **New Features**\n  * Added object storage integration for file management and presigned URL generation\n  * Automated metadata upload workflow for improved deployment tracking\n  * New public API endpoint for resource access\n\n* **Chores**\n  * Updated HTTP client dependencies to latest version\n  * Upgraded project version to v2.5.16\n  * Simplified deployment process by removing redundant configuration upload",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "Added object storage integration for file management and presigned URL generation",
+            "Automated metadata upload workflow for improved deployment tracking",
+            "New public API endpoint for resource access"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "Updated HTTP client dependencies to latest version",
+            "Upgraded project version to v2.5.16",
+            "Simplified deployment process by removing redundant configuration upload"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.13",
       "project_type": "spring",
