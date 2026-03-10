@@ -1,7 +1,23 @@
 # Changelog
 
-**현재 버전:** 2.5.13  
-**마지막 업데이트:** 2026-02-20T05:59:03Z  
+**현재 버전:** 2.5.16  
+**마지막 업데이트:** 2026-03-10T06:32:31Z  
+
+---
+
+## [2.5.16] - 2026-03-10
+
+**PR:** #169  
+
+**New Features**
+- Added object storage integration for file management and presigned URL generation
+- Automated metadata upload workflow for improved deployment tracking
+- New public API endpoint for resource access
+
+**Chores**
+- Updated HTTP client dependencies to latest version
+- Upgraded project version to v2.5.16
+- Simplified deployment process by removing redundant configuration upload
 
 ---
 

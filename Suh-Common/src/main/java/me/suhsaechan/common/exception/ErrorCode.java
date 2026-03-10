@@ -91,7 +91,21 @@ public enum ErrorCode {
 
   // TASK TRACKER
   TASK_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 목표를 찾을 수 없습니다."),
-  TASK_PROGRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 진행 기록을 찾을 수 없습니다.");
+  TASK_PROGRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 진행 기록을 찾을 수 없습니다."),
+
+  // MINIO
+  MINIO_BUCKET_NOT_FOUND(HttpStatus.NOT_FOUND, "MinIO 버킷을 찾을 수 없습니다."),
+  MINIO_BUCKET_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 버킷 생성에 실패했습니다."),
+  MINIO_BUCKET_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 버킷 삭제에 실패했습니다."),
+  MINIO_BUCKET_LIST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 버킷 목록 조회에 실패했습니다."),
+  MINIO_FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 파일 업로드에 실패했습니다."),
+  MINIO_FILE_DOWNLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 파일 다운로드에 실패했습니다."),
+  MINIO_FILE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 파일 삭제에 실패했습니다."),
+  MINIO_FILE_INFO_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 파일 정보 조회에 실패했습니다."),
+  MINIO_OBJECT_LIST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO 오브젝트 목록 조회에 실패했습니다."),
+  MINIO_PRESIGNED_URL_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MinIO Presigned URL 생성에 실패했습니다."),
+  MINIO_INVALID_BUCKET_NAME(HttpStatus.BAD_REQUEST, "유효하지 않은 MinIO 버킷 이름입니다."),
+  MINIO_INVALID_OBJECT_NAME(HttpStatus.BAD_REQUEST, "유효하지 않은 MinIO 오브젝트 이름입니다.");
 
   private final HttpStatus httpStatus;
   private final String message;

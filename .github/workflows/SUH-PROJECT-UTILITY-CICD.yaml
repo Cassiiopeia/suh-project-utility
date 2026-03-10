@@ -84,11 +84,6 @@ jobs:
             CONTAINER_NAME="suh-project-utility"
             PORT=8090
             
-            echo "application.yml 파일 원격 업로드 중..."
-            echo $PW | sudo -S mkdir -p /volume1/projects/suh-project-utility/github_secret
-            echo "${{ secrets.APPLICATION_YML }}" | sudo tee /volume1/projects/suh-project-utility/github_secret/application.yml > /dev/null
-            echo "application.yml 업로드 완료"
-
             echo "컨테이너 이름: $CONTAINER_NAME"
             echo "포트: $PORT"
 
