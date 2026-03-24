@@ -3,7 +3,7 @@ package me.suhsaechan.web.controller.api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.application.service.DashboardService;
-import me.suhsaechan.common.annotation.LogMonitor;
+import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import me.suhsaechan.statistics.dto.StatisticsResponse;
 import me.suhsaechan.statistics.service.StatisticsService;
 import org.springframework.http.MediaType;
