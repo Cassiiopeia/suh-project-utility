@@ -1,23 +1,20 @@
-<!-- src/main/resources/templates/pages/profile.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head(title='Profile - SAECHAN LAB')}"></head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='SAECHAN LAB')}"></head>
 <body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-  <!-- 프로필 헤더 카드 -->
+  <!-- 섹션 1: 프로필 헤더 카드 -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <div class="flex flex-col md:flex-row items-center gap-6">
-        <!-- 프로필 이미지 -->
         <div class="avatar">
           <div class="w-32 rounded-xl ring ring-gray-300 ring-offset-base-100">
-            <img src="/images/suhSaeChanProfile.jpeg" alt="Profile Photo" onerror="this.src='/images/logo_no_text.png'" />
+            <img src="/images/suhSaeChanProfile.jpeg" alt="Profile Photo" class="img-fallback-src" data-fallback-src="/images/logo_no_text.png" />
           </div>
         </div>
-        <!-- 기본 정보 -->
         <div class="text-center md:text-left flex-1">
           <h1 class="text-3xl font-bold text-gray-900">Suh Saechan <span class="text-gray-400 font-normal">|</span> <span class="text-gray-600 font-normal">서새찬</span></h1>
           <p class="text-md text-blue-600 font-medium mt-2">
@@ -32,7 +29,6 @@
             <span class="badge badge-soft badge-secondary">Flutter</span>
             <span class="badge badge-soft badge-accent">React</span>
           </div>
-          <!-- 소셜 링크 -->
           <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
             <a href="mailto:chan4760@gmail.com" class="btn btn-circle btn-sm btn-ghost hover:bg-gray-100" title="Email">
               <i class="fa-solid fa-envelope text-gray-500 text-lg"></i>
@@ -55,7 +51,7 @@
     </div>
   </section>
 
-  <!-- About Me -->
+  <!-- 섹션 2: About Me -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -78,7 +74,7 @@
     </div>
   </section>
 
-  <!-- 경력 타임라인 -->
+  <!-- 섹션 3: Timeline + Certifications -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-6">
@@ -87,7 +83,6 @@
       </h2>
 
       <ul class="timeline timeline-vertical timeline-snap-icon">
-        <!-- 소만사 -->
         <li class="timeline-item">
           <div class="timeline-middle">
             <div class="w-10 h-10 rounded-full overflow-hidden bg-white border border-gray-200">
@@ -105,7 +100,6 @@
           <hr/>
         </li>
 
-        <!-- 제로베이스 -->
         <li class="timeline-item">
           <hr/>
           <div class="timeline-middle">
@@ -121,7 +115,6 @@
           <hr/>
         </li>
 
-        <!-- 세종대학교 -->
         <li class="timeline-item">
           <hr/>
           <div class="timeline-middle">
@@ -137,7 +130,6 @@
           <hr/>
         </li>
 
-        <!-- 휘문고등학교 -->
         <li class="timeline-item">
           <hr/>
           <div class="timeline-middle">
@@ -155,7 +147,6 @@
     </div>
   </section>
 
-  <!-- 자격증 -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -164,7 +155,6 @@
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- 정보처리기사 -->
         <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
           <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
             <img src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
@@ -176,7 +166,6 @@
           </div>
         </div>
 
-        <!-- 화학분석기사 -->
         <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
           <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
             <img src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
@@ -191,7 +180,7 @@
     </div>
   </section>
 
-  <!-- 기술 스택 -->
+  <!-- 섹션 4: Tech Stack -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -200,7 +189,6 @@
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Backend -->
         <div class="bg-gray-50 rounded-lg p-4">
           <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-server text-blue-500"></i>
@@ -225,7 +213,6 @@
           </div>
         </div>
 
-        <!-- Database -->
         <div class="bg-gray-50 rounded-lg p-4">
           <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-database text-green-500"></i>
@@ -241,7 +228,6 @@
           </div>
         </div>
 
-        <!-- Frontend -->
         <div class="bg-gray-50 rounded-lg p-4">
           <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-display text-purple-500"></i>
@@ -259,7 +245,6 @@
           </div>
         </div>
 
-        <!-- DevOps -->
         <div class="bg-gray-50 rounded-lg p-4">
           <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-gears text-orange-500"></i>
@@ -274,7 +259,6 @@
           </div>
         </div>
 
-        <!-- AI -->
         <div class="bg-gray-50 rounded-lg p-4 md:col-span-2">
           <h3 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-brain text-violet-500"></i>
@@ -292,7 +276,7 @@
     </div>
   </section>
 
-  <!-- 협업 프로젝트 -->
+  <!-- 섹션 5: Projects -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -302,12 +286,11 @@
       <p class="text-gray-500 text-sm mb-6">Collaborative projects I'm working on</p>
 
       <div class="dashboard-card-grid-4">
-        <!-- ROM ROM -->
         <a href="http://suh-project.synology.me/romrom" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-12 h-12 rounded-lg bg-pink-100 flex items-center justify-center">
-                <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-pink-500 text-xl\'></i>'" />
+                <img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-8 h-8 img-fallback" data-fallback-icon="fa-solid fa-heart text-pink-500 text-xl" />
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">ROM ROM</h3>
@@ -324,19 +307,18 @@
               <span class="badge badge-ghost badge-xs">PostgreSQL</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/TEAM-ROMROM', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/TEAM-ROMROM" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
+              </a>
             </div>
           </div>
         </a>
 
-        <!-- 그녀를 구하라! -->
         <a href="https://bagel.suhsaechan.kr" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
-                <img src="/images/bagelLogo.jpeg" alt="그녀를 구하라!" class="w-8 h-8 rounded" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-orange-500 text-xl\'></i>'" />
+                <img src="/images/bagelLogo.jpeg" alt="그녀를 구하라!" class="w-8 h-8 rounded img-fallback" data-fallback-icon="fa-solid fa-heart text-orange-500 text-xl" />
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">그녀를 구하라!</h3>
@@ -353,19 +335,18 @@
               <span class="badge badge-ghost badge-xs">MariaDB</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/bagle-ggul', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/bagle-ggul" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
+              </a>
             </div>
           </div>
         </a>
 
-        <!-- 세종말싸미 -->
         <a href="https://www.sejong-malsami.co.kr" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
-                <img src="/images/sejongBalsamicLogo.png" alt="세종말싸미" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-blue-500 text-xl\'></i>'" />
+                <img src="/images/sejongBalsamicLogo.png" alt="세종말싸미" class="w-8 h-8 img-fallback" data-fallback-icon="fa-solid fa-graduation-cap text-blue-500 text-xl" />
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">세종말싸미</h3>
@@ -382,19 +363,18 @@
               <span class="badge badge-ghost badge-xs">PostgreSQL</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/Sejong-Balsamic', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/Sejong-Balsamic" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
+              </a>
             </div>
           </div>
         </a>
 
-        <!-- 트립게더 -->
         <a href="https://github.com/TEAM-Tripgether" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
-                <img src="/images/tripgetherLogo.png" alt="트립게더" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500 text-xl\'></i>'" />
+                <img src="/images/tripgetherLogo.png" alt="트립게더" class="w-8 h-8 img-fallback" data-fallback-icon="fa-solid fa-map-location-dot text-cyan-500 text-xl" />
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">트립게더</h3>
@@ -413,22 +393,21 @@
               <span class="badge badge-ghost badge-xs">AI/OCR</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/TEAM-Tripgether', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/TEAM-Tripgether" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
-              <span onclick="event.preventDefault(); window.open('https://www.instagram.com/tripgether_official', '_blank')" class="btn btn-outline btn-xs">
+              </a>
+              <a href="https://www.instagram.com/tripgether_official" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-instagram"></i> Instagram
-              </span>
+              </a>
             </div>
           </div>
         </a>
 
-        <!-- 동반자 (DBZ) -->
         <a href="https://github.com/SamCoMo" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
-                <img src="/images/SamCoMoLogo.png" alt="동반자 (DBZ)" class="w-10 h-10 object-contain" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-paw text-rose-500 text-xl\'></i>'" />
+                <img src="/images/SamCoMoLogo.png" alt="동반자 (DBZ)" class="w-10 h-10 object-contain img-fallback" data-fallback-icon="fa-solid fa-paw text-rose-500 text-xl" />
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">동반자 (DBZ)</h3>
@@ -444,19 +423,18 @@
               <span class="badge badge-ghost badge-xs">PostgreSQL</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/SamCoMo', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/SamCoMo" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
+              </a>
             </div>
           </div>
         </a>
 
-        <!-- 술겜위키 -->
         <a href="https://github.com/Sul-Game-Wiki" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
               <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center">
-                <img src="/images/sulGameWiki.png" alt="술겜위키" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-dice text-amber-500 text-xl\'></i>'" />
+                <img src="/images/sulGameWiki.png" alt="술겜위키" class="w-8 h-8 img-fallback" data-fallback-icon="fa-solid fa-dice text-amber-500 text-xl" />
               </div>
               <div>
                 <h3 class="font-bold text-gray-900">술겜위키</h3>
@@ -472,14 +450,13 @@
               <span class="badge badge-ghost badge-xs">MariaDB</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/Sul-Game-Wiki', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/Sul-Game-Wiki" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
+              </a>
             </div>
           </div>
         </a>
 
-        <!-- PlaneBlackBox -->
         <a href="https://github.com/InquiryingAccident" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -500,9 +477,9 @@
               <span class="badge badge-ghost badge-xs">API</span>
             </div>
             <div class="card-actions justify-end mt-3">
-              <span onclick="event.preventDefault(); window.open('https://github.com/InquiryingAccident', '_blank')" class="btn btn-outline btn-xs">
+              <a href="https://github.com/InquiryingAccident" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-xs">
                 <i class="fa-brands fa-github"></i> GitHub
-              </span>
+              </a>
             </div>
           </div>
         </a>
@@ -510,7 +487,6 @@
     </div>
   </section>
 
-  <!-- 개인 프로젝트 -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -520,7 +496,6 @@
       <p class="text-gray-500 text-sm mb-6">Personal experiments and side projects</p>
 
       <div class="dashboard-card-grid-4">
-        <!-- SUH-PROJECT-UTILITY -->
         <a href="https://lab.suhsaechan.kr" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -544,7 +519,6 @@
           </div>
         </a>
 
-        <!-- Suh-AI-Server -->
         <a href="https://ai.suhsaechan.kr/api/tags" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -567,7 +541,6 @@
           </div>
         </a>
 
-        <!-- SUH-DEVOPS-TEMPLATE -->
         <a href="/suh-devops-template" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -590,7 +563,6 @@
           </div>
         </a>
 
-        <!-- GitHub 이슈 도우미 -->
         <a href="/issue-helper" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -612,7 +584,6 @@
           </div>
         </a>
 
-        <!-- AI 번역기 -->
         <a href="/translator" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -634,7 +605,6 @@
           </div>
         </a>
 
-        <!-- Grass Planter -->
         <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -656,7 +626,6 @@
           </div>
         </a>
 
-        <!-- Somansa Bus -->
         <a href="https://github.com/Cassiiopeia/auto-bus-reservation" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -678,7 +647,6 @@
           </div>
         </a>
 
-        <!-- SQL Validator -->
         <a href="https://github.com/Cassiiopeia/sql-validator" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -704,7 +672,6 @@
     </div>
   </section>
 
-  <!-- Nexus Modules -->
   <section class="card bg-white shadow-sm mb-8">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -719,7 +686,6 @@
       </div>
 
       <div class="dashboard-card-grid-4">
-        <!-- SUH-AIder -->
         <a href="https://github.com/Cassiiopeia/SUH-AIder" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -738,7 +704,6 @@
           </div>
         </a>
 
-        <!-- suh-logger -->
         <a href="https://github.com/Cassiiopeia/suh-logger" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -757,7 +722,6 @@
           </div>
         </a>
 
-        <!-- suh-api-log -->
         <a href="https://github.com/Cassiiopeia/suh-api-log" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -776,7 +740,6 @@
           </div>
         </a>
 
-        <!-- suh-random-engine -->
         <a href="/suh-random" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -795,7 +758,6 @@
           </div>
         </a>
 
-        <!-- sejong-univ-auth -->
         <a href="https://lab.suhsaechan.kr/sejong-auth" target="_blank" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
           <div class="card-body p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -817,7 +779,171 @@
     </div>
   </section>
 
-  <!-- Contact -->
+  <!-- 섹션 6: 서버 통계 요약 -->
+  <section id="summary-section" class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-800">
+        <i class="fa-solid fa-chart-line text-blue-500 mr-2"></i>
+        서버 통계
+      </h2>
+      <div class="flex items-center gap-2">
+        <button id="refresh-summary-btn" class="btn btn-sm btn-ghost btn-circle" title="통계 새로고침">
+          <i class="fa-solid fa-arrows-rotate text-gray-500"></i>
+        </button>
+        <a href="/statistics" class="text-sm text-gray-500 hover:text-primary transition-colors">
+          자세히 보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
+      </div>
+    </div>
+
+    <div id="summary-skeleton" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="card bg-base-100 border border-gray-100 shadow-sm p-5" th:each="i : ${#numbers.sequence(1, 4)}">
+        <div class="flex items-center gap-4">
+          <div class="skeleton w-12 h-12 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="skeleton h-3 w-16 mb-2"></div>
+            <div class="skeleton h-6 w-12 mb-1"></div>
+            <div class="skeleton h-3 w-20"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="summary-content" class="hidden">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-users text-blue-600 text-xl"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs text-gray-500 font-medium mb-1">총 방문자</p>
+                <p class="text-2xl font-bold text-gray-900" id="stat-total-visitors">-</p>
+                <p class="text-xs text-gray-400">오늘: <span id="stat-today-visitors" class="text-green-600 font-medium">+0</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-comments text-purple-600 text-xl"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs text-gray-500 font-medium mb-1">챗봇 메시지</p>
+                <p class="text-2xl font-bold text-gray-900" id="stat-total-chats">-</p>
+                <p class="text-xs text-gray-400">오늘: <span id="stat-today-chats" class="text-green-600 font-medium">+0</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-globe text-indigo-600 text-xl"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs text-gray-500 font-medium mb-1">페이지 조회</p>
+                <p class="text-2xl font-bold text-gray-900" id="stat-total-page-views">-</p>
+                <p class="text-xs text-gray-400">오늘: <span id="stat-today-page-views" class="text-green-600 font-medium">+0</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div class="card-body p-5">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-bolt text-amber-600 text-xl"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs text-gray-500 font-medium mb-1">토큰 사용량</p>
+                <p class="text-2xl font-bold text-gray-900" id="stat-total-tokens">-</p>
+                <p class="text-xs text-gray-400">오늘: <span id="stat-today-tokens" class="text-green-600 font-medium">+0</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 섹션 7: 공지사항 -->
+  <section id="notice-section" class="mb-8">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-700">공지사항</h2>
+      <a href="/notice" class="text-sm text-gray-500 hover:text-primary transition-colors">
+        전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+      </a>
+    </div>
+
+    <div class="notice-cards-container relative overflow-hidden bg-white rounded-lg shadow-md" th:style="'height: 4rem;'">
+      <div id="notice-cards" class="relative w-full h-full">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="loading loading-spinner loading-sm text-primary mr-2"></span>
+          <span class="text-gray-400 text-sm">로딩중...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 섹션 8: Dev Tools -->
+  <section class="card bg-white shadow-sm mb-8">
+    <div class="card-body">
+      <h2 class="card-title text-xl mb-4">
+        <i class="fa-solid fa-wrench text-blue-500"></i>
+        Dev Tools
+      </h2>
+      <p class="text-gray-500 text-sm mb-6">개발 유틸리티 도구 모음</p>
+
+      <div th:replace="~{fragments/feature-cards :: featureCards(${isAuthenticated})}"></div>
+    </div>
+  </section>
+
+  <!-- 섹션 9: Task D-Day -->
+  <section id="task-dday-section" class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-800">
+        <i class="fa-solid fa-bullseye text-indigo-500 mr-2"></i>
+        Task D-Day
+      </h2>
+      <a href="/task-tracker" class="text-sm text-gray-500 hover:text-primary transition-colors">
+        전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+      </a>
+    </div>
+
+    <div id="task-dday-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="card bg-base-100 border border-gray-100 shadow-sm p-4" th:each="i : ${#numbers.sequence(1, 3)}">
+        <div class="flex items-center gap-4">
+          <div class="skeleton w-14 h-14 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="skeleton h-5 w-24 mb-2"></div>
+            <div class="skeleton h-3 w-16 mb-1"></div>
+            <div class="skeleton h-2 w-full"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="task-dday-content" class="hidden">
+      <div id="task-dday-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      </div>
+
+      <div id="task-dday-empty" class="hidden text-center py-8 bg-base-100 rounded-lg border border-gray-100">
+        <i class="fa-solid fa-clipboard-list text-gray-300 text-4xl mb-3"></i>
+        <p class="text-gray-500 mb-3">등록된 Task가 없습니다</p>
+        <a href="/task-tracker" class="btn btn-primary btn-sm">Task 등록하기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 섹션 10: Contact -->
   <section class="card bg-white shadow-sm">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">
@@ -863,48 +989,552 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<style>
-  /* Timeline Scroll Animation */
-  .timeline-item {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
+<!-- 공지사항 상세 모달 -->
+<dialog id="notice-detail-modal" class="modal">
+  <div class="modal-box max-w-2xl">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </form>
+    <h3 class="font-bold text-lg mb-4" id="modal-notice-title"></h3>
 
-  .timeline-item.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
+    <div class="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-4">
+      <p><i class="fa-solid fa-user mr-2"></i><span id="modal-notice-author"></span></p>
+      <p><i class="fa-solid fa-calendar mr-2"></i><span id="modal-notice-date"></span></p>
+      <p><i class="fa-solid fa-eye mr-2"></i>조회수: <span id="modal-notice-views"></span></p>
+      <p id="modal-notice-important" class="hidden text-red-500">
+        <i class="fa-solid fa-exclamation-circle mr-2"></i><strong>중요 공지사항</strong>
+      </p>
+    </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const timelineItems = document.querySelectorAll('.timeline-item');
+    <div class="divider"></div>
+    <div class="prose max-w-none" id="modal-notice-content"></div>
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '0px 0px -50px 0px',
-      threshold: 0.1
-    };
+    <div class="divider"></div>
+    <h4 class="font-semibold mb-4"><i class="fa-solid fa-comments mr-2"></i>댓글</h4>
 
-    let visibleCount = 0;
+    <div id="comment-list" class="space-y-3 mb-4">
+      <div id="comments-loading" class="flex justify-center py-4">
+        <span class="loading loading-spinner loading-md"></span>
+      </div>
+      <div id="no-comments-message" class="hidden text-center text-gray-500 py-4">
+        아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!
+      </div>
+    </div>
 
-    const observer = new IntersectionObserver(function(entries) {
+    <div class="bg-gray-50 rounded-lg p-4">
+      <div class="form-control mb-3">
+        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-sm w-full">
+      </div>
+      <div class="form-control mb-3">
+        <textarea id="comment-content" class="textarea" rows="3" placeholder="댓글을 입력하세요"></textarea>
+      </div>
+      <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-pen mr-1"></i> 댓글 작성
+      </button>
+    </div>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-primary">확인</button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script th:inline="javascript">
+  $(document).ready(function() {
+    loadActiveNotices();
+    loadDashboardSummary();
+    loadTaskDDay();
+    setupImageFallbacks();
+
+    $('#refresh-summary-btn').on('click', function() {
+      refreshDashboardSummary();
+    });
+
+    // Timeline scroll animation
+    var timelineItems = document.querySelectorAll('.timeline-item');
+    var visibleCount = 0;
+
+    var intersectionObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting && !entry.target.classList.contains('visible')) {
-          // 순차적 딜레이 적용
           setTimeout(function() {
             entry.target.classList.add('visible');
           }, visibleCount * 150);
           visibleCount++;
         }
       });
-    }, observerOptions);
+    }, {
+      root: null,
+      rootMargin: '0px 0px -50px 0px',
+      threshold: 0.1
+    });
 
     timelineItems.forEach(function(item) {
-      observer.observe(item);
+      intersectionObserver.observe(item);
+    });
+
+    window.addEventListener('beforeunload', function() {
+      intersectionObserver.disconnect();
     });
   });
+
+  function setupImageFallbacks() {
+    document.querySelectorAll('.img-fallback-src').forEach(function(img) {
+      img.addEventListener('error', function() {
+        var fallbackSrc = this.getAttribute('data-fallback-src');
+        if (fallbackSrc && this.src !== fallbackSrc) {
+          this.src = fallbackSrc;
+        }
+      });
+    });
+    document.querySelectorAll('.img-fallback').forEach(function(img) {
+      img.addEventListener('error', function() {
+        var iconClass = this.getAttribute('data-fallback-icon');
+        if (iconClass && this.parentElement) {
+          var i = document.createElement('i');
+          i.className = iconClass;
+          this.parentElement.innerHTML = '';
+          this.parentElement.appendChild(i);
+        }
+      });
+    });
+  }
+
+  function formatNumber(num) {
+    if (num === null || num === undefined) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+  }
+
+  function updateSummaryStats(response) {
+    $('#stat-total-visitors').text(formatNumber(response.totalUniqueVisitors || 0));
+    $('#stat-today-visitors').text('+' + formatNumber(response.todayUniqueVisitors || 0));
+
+    $('#stat-total-chats').text(formatNumber(response.totalChatMessages || 0));
+    $('#stat-today-chats').text('+' + formatNumber(response.todayChatMessages || 0));
+
+    var totalTokens = (response.totalInputTokens || 0) + (response.totalOutputTokens || 0);
+    var todayTokens = (response.todayInputTokens || 0) + (response.todayOutputTokens || 0);
+    $('#stat-total-tokens').text(formatNumber(totalTokens));
+    $('#stat-today-tokens').text('+' + formatNumber(todayTokens));
+
+    $('#stat-total-page-views').text(formatNumber(response.totalPageViews || 0));
+    $('#stat-today-page-views').text('+' + formatNumber(response.todayPageViews || 0));
+  }
+
+  function loadDashboardSummary() {
+    sendFormRequest(
+      '/api/dashboard/summary',
+      null,
+      function(response) {
+        if (response) {
+          updateSummaryStats(response);
+          $('#summary-skeleton').addClass('hidden');
+          $('#summary-content').removeClass('hidden');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('대시보드 Summary 로드 오류:', error);
+        $('#summary-skeleton').addClass('hidden');
+        $('#summary-content').removeClass('hidden');
+      }
+    );
+  }
+
+  function refreshDashboardSummary() {
+    var refreshBtn = $('#refresh-summary-btn');
+    var icon = refreshBtn.find('i');
+
+    refreshBtn.prop('disabled', true);
+    icon.addClass('animate-spin');
+
+    sendFormRequest(
+      '/api/dashboard/summary/refresh',
+      null,
+      function(response) {
+        if (response) {
+          updateSummaryStats(response);
+        }
+        refreshBtn.prop('disabled', false);
+        icon.removeClass('animate-spin');
+      },
+      function(xhr, status, error) {
+        console.error('대시보드 Summary 새로고침 오류:', error);
+        refreshBtn.prop('disabled', false);
+        icon.removeClass('animate-spin');
+      }
+    );
+  }
+
+  var noticeData = [];
+  var currentNoticeIndex = 0;
+  var noticeInterval = null;
+
+  function loadActiveNotices() {
+    sendFormRequest(
+      '/api/notice/get/active',
+      null,
+      function(response) {
+        if (response && response.notices && response.notices.length > 0) {
+          noticeData = response.notices.sort(function(a, b) {
+            if (a.isImportant && !b.isImportant) return -1;
+            if (!a.isImportant && b.isImportant) return 1;
+            return new Date(b.createdDate) - new Date(a.createdDate);
+          });
+          initNoticeCards();
+        } else {
+          $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-gray-400 text-sm">공지사항 없음</span></div>');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('공지사항 로드 오류:', error);
+        $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-red-500 text-sm">로드 실패</span></div>');
+      }
+    );
+  }
+
+  function initNoticeCards() {
+    var container = $('#notice-cards');
+    container.empty();
+
+    noticeData.forEach(function(notice, index) {
+      var importantBadge = notice.isImportant
+        ? '<span class="badge badge-soft badge-error badge-xs mr-2">중요</span>'
+        : '';
+
+      var dateFormatted = formatNoticeDate(notice.createdDate);
+      var viewCount = notice.viewCount || 0;
+
+      var card = $('<div class="notice-card ' + (index === 0 ? 'active' : '') + '" data-notice-id="' + notice.noticeId + '">' +
+        '<i class="fa-solid fa-bullhorn text-blue-500 mr-2"></i>' +
+        importantBadge +
+        '<span class="notice-title truncate">' + escapeHtml(notice.title) + '</span>' +
+        '<span class="notice-meta">' +
+          '<span class="notice-dot">&middot;</span>' +
+          '<span>' + dateFormatted + '</span>' +
+          '<span class="notice-dot">&middot;</span>' +
+          '<span>조회 ' + formatNumber(viewCount) + '</span>' +
+        '</span>' +
+      '</div>');
+
+      card.click(function() {
+        pauseNoticeSlide();
+        showNoticeDetail(notice.noticeId);
+      });
+
+      container.append(card);
+    });
+
+    if (noticeData.length > 1) {
+      startNoticeSlide();
+    }
+  }
+
+  function formatNoticeDate(dateString) {
+    if (!dateString) return '';
+    var date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  function startNoticeSlide() {
+    noticeInterval = setInterval(function() {
+      slideToNext();
+    }, 5000);
+  }
+
+  function slideToNext() {
+    var cards = $('.notice-card');
+    var currentCard = cards.eq(currentNoticeIndex);
+
+    currentNoticeIndex = (currentNoticeIndex + 1) % noticeData.length;
+    var nextCard = cards.eq(currentNoticeIndex);
+
+    currentCard.removeClass('active').addClass('exit');
+    nextCard.removeClass('exit').addClass('active');
+
+    setTimeout(function() {
+      currentCard.removeClass('exit');
+    }, 600);
+  }
+
+  function pauseNoticeSlide() {
+    if (noticeInterval) {
+      clearInterval(noticeInterval);
+      noticeInterval = null;
+    }
+  }
+
+  function resumeNoticeSlide() {
+    if (!noticeInterval && noticeData.length > 1) {
+      startNoticeSlide();
+    }
+  }
+
+  $('#notice-section').hover(
+    function() { pauseNoticeSlide(); },
+    function() { resumeNoticeSlide(); }
+  );
+
+  $(window).on('beforeunload', function() {
+    if (noticeInterval) {
+      clearInterval(noticeInterval);
+    }
+  });
+
+  function showNoticeDetail(noticeId) {
+    sendFormRequest(
+      '/api/notice/get/detail',
+      { noticeId: noticeId },
+      function(response) {
+        if (response) {
+          var notice = response;
+
+          $('#modal-notice-title').text(notice.title).data('id', notice.noticeId);
+          $('#modal-notice-author').text(notice.author || '관리자');
+          $('#modal-notice-date').text(new Date(notice.createdDate).toLocaleString());
+          $('#modal-notice-views').text(notice.viewCount || 0);
+          $('#modal-notice-content').html(escapeHtml(notice.content).replace(/\n/g, '<br>'));
+
+          if (notice.isImportant) {
+            $('#modal-notice-important').removeClass('hidden');
+          } else {
+            $('#modal-notice-important').addClass('hidden');
+          }
+
+          loadComments(notice.noticeId);
+          $('#comment-author').val('');
+          $('#comment-content').val('');
+
+          document.getElementById('notice-detail-modal').showModal();
+        }
+      },
+      function(xhr, status, error) {
+        console.error('공지사항 상세 조회 오류:', error);
+      }
+    );
+  }
+
+  function loadComments(noticeId) {
+    $('#comments-loading').show();
+    $('#comment-list .comment-item').remove();
+    $('#no-comments-message').addClass('hidden');
+
+    sendFormRequest(
+      '/api/notice/comment/list',
+      { noticeId: noticeId },
+      function(response) {
+        $('#comments-loading').hide();
+
+        if (response && response.noticeCommentDtos && response.noticeCommentDtos.length > 0) {
+          response.noticeCommentDtos.forEach(function(comment) {
+            var commentHtml = createCommentHtml(comment);
+            $('#comment-list').append(commentHtml);
+          });
+
+          $('.delete-comment-btn').click(function() {
+            var commentId = $(this).data('id');
+            if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+              deleteComment(commentId, noticeId);
+            }
+          });
+        } else {
+          $('#no-comments-message').removeClass('hidden');
+        }
+      },
+      function(xhr, status, error) {
+        $('#comments-loading').hide();
+        console.error('댓글 로드 오류:', error);
+        $('#no-comments-message').removeClass('hidden').addClass('text-red-500').text('댓글을 불러오는 중 오류가 발생했습니다.');
+      }
+    );
+  }
+
+  function createCommentHtml(comment) {
+    var date = new Date(comment.createdDate).toLocaleString();
+    var clientHashFromSession = getClientHashFromStorage();
+    var isMyComment = clientHashFromSession && clientHashFromSession === comment.clientHash;
+
+    var deleteButton = isMyComment ?
+      '<button class="btn btn-ghost btn-xs text-red-500 delete-comment-btn" data-id="' + comment.noticeCommentId + '">' +
+        '<i class="fa-solid fa-trash"></i>' +
+      '</button>' : '';
+
+    var ipSpan = comment.anonymizedIp ? '<span class="text-gray-400 text-xs">(' + comment.anonymizedIp + ')</span>' : '';
+
+    return '<div class="comment-item bg-gray-50 rounded-lg p-4 border border-gray-100">' +
+      '<div class="flex items-start gap-3">' +
+        '<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">' +
+          '<i class="fa-solid fa-user"></i>' +
+        '</div>' +
+        '<div class="flex-1">' +
+          '<div class="flex items-center gap-2 mb-1">' +
+            '<span class="font-semibold text-gray-900">' + escapeHtml(comment.author) + '</span>' +
+            ipSpan +
+            '<span class="text-gray-400 text-xs">' + date + '</span>' +
+          '</div>' +
+          '<p class="text-gray-600 text-sm whitespace-pre-line">' + escapeHtml(comment.content) + '</p>' +
+        '</div>' +
+        deleteButton +
+      '</div>' +
+    '</div>';
+  }
+
+  function getClientHashFromStorage() {
+    return sessionStorage.getItem('clientHash');
+  }
+
+  $(document).on('click', '#comment-submit', function() {
+    var noticeId = $('#modal-notice-title').data('id');
+    var authorName = $('#comment-author').val() || '익명';
+    var content = $('#comment-content').val();
+
+    if (!content) {
+      alert('댓글 내용을 입력해주세요.');
+      return;
+    }
+
+    sendFormRequest(
+      '/api/notice/comment/create',
+      {
+        noticeId: noticeId,
+        commentAuthor: authorName,
+        commentContent: content
+      },
+      function(response) {
+        if (response) {
+          $('#comment-content').val('');
+          loadComments(noticeId);
+        }
+      },
+      function(xhr, status, error) {
+        alert('댓글 등록 오류: ' + error);
+      }
+    );
+  });
+
+  function deleteComment(commentId, noticeId) {
+    sendFormRequest(
+      '/api/notice/comment/delete',
+      { commentId: commentId },
+      function() {
+        loadComments(noticeId);
+      },
+      function(xhr, status, error) {
+        alert('댓글 삭제 오류: ' + error);
+      }
+    );
+  }
+
+  function loadTaskDDay() {
+    sendFormRequest(
+      '/api/task/goal/list',
+      null,
+      function(response) {
+        $('#task-dday-skeleton').addClass('hidden');
+        $('#task-dday-content').removeClass('hidden');
+
+        if (response && response.goals && response.goals.length > 0) {
+          var cardsContainer = $('#task-dday-cards');
+          cardsContainer.empty();
+
+          var activeGoals = response.goals.filter(function(task) {
+            return task.isActive && !task.isCompleted;
+          });
+
+          if (activeGoals.length > 0) {
+            activeGoals.forEach(function(task) {
+              cardsContainer.append(renderTaskDDayCard(task));
+            });
+            $('#task-dday-empty').addClass('hidden');
+          } else {
+            $('#task-dday-cards').addClass('hidden');
+            $('#task-dday-empty').removeClass('hidden');
+          }
+        } else {
+          $('#task-dday-cards').addClass('hidden');
+          $('#task-dday-empty').removeClass('hidden');
+        }
+      },
+      function(xhr, status, error) {
+        console.error('Task D-Day 로드 오류:', error);
+        $('#task-dday-skeleton').addClass('hidden');
+        $('#task-dday-content').removeClass('hidden');
+        $('#task-dday-cards').addClass('hidden');
+        $('#task-dday-empty').removeClass('hidden');
+      }
+    );
+  }
+
+  function renderTaskDDayCard(task) {
+    var daysRemaining = task.daysRemaining;
+    var ddayText, ddayClass;
+
+    if (daysRemaining < 0) {
+      ddayText = 'D+' + Math.abs(daysRemaining);
+      ddayClass = 'text-gray-400';
+    } else if (daysRemaining === 0) {
+      ddayText = 'D-Day';
+      ddayClass = 'text-red-500 font-bold';
+    } else if (daysRemaining <= 7) {
+      ddayText = 'D-' + daysRemaining;
+      ddayClass = 'text-red-500 font-bold';
+    } else if (daysRemaining <= 30) {
+      ddayText = 'D-' + daysRemaining;
+      ddayClass = 'text-amber-500 font-semibold';
+    } else {
+      ddayText = 'D-' + daysRemaining;
+      ddayClass = 'text-blue-500';
+    }
+
+    var targetDate = new Date(task.targetDate).toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    var progressPercentage = task.progressPercentage || 0;
+    var currentAmount = task.currentAmount || 0;
+    var totalAmount = task.totalAmount || 0;
+    var unit = task.unit || '';
+
+    var progressHtml = '';
+    if (totalAmount > 0) {
+      progressHtml =
+        '<div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">' +
+          '<div class="bg-blue-500 h-1.5 rounded-full" style="width: ' + Math.min(progressPercentage, 100) + '%"></div>' +
+        '</div>' +
+        '<p class="text-xs text-gray-400 mt-1">' + currentAmount + '/' + totalAmount + ' ' + unit + ' (' + progressPercentage.toFixed(0) + '%)</p>';
+    }
+
+    return '<a href="/task-tracker?id=' + task.taskGoalId + '" class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">' +
+      '<div class="card-body p-4">' +
+        '<div class="flex items-center gap-4">' +
+          '<div class="w-14 h-14 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">' +
+            '<i class="' + escapeHtml(task.icon || 'fa-solid fa-bullseye') + ' text-blue-600 text-xl"></i>' +
+          '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex items-center justify-between mb-1">' +
+              '<h3 class="font-bold text-gray-900 truncate">' + escapeHtml(task.title) + '</h3>' +
+              '<span class="' + ddayClass + ' text-lg ml-2">' + ddayText + '</span>' +
+            '</div>' +
+            '<p class="text-xs text-gray-500">' + targetDate + '</p>' +
+            progressHtml +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</a>';
+  }
 </script>
 
 </body>

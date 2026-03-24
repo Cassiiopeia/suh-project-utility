@@ -28,7 +28,16 @@ public class PublicEndpointConfig {
         "/api/chatbot/feedback",
         "/api/chatbot/history",
         "/api/sejong-auth/**",
-        "/api/suh-random/**"
+        "/api/suh-random/**",
+        "/api/statistics/**",
+        "/api/dashboard/summary",
+        "/api/dashboard/summary/refresh",
+        "/api/task/goal/list",
+        "/api/notice/get/active",
+        "/api/notice/get/detail",
+        "/api/notice/comment/list",
+        "/api/notice/comment/create",
+        "/api/notice/comment/delete"
     );
   }
 
@@ -41,6 +50,10 @@ public class PublicEndpointConfig {
         "/login",
         "/logout",
         "/error/**",
+        "/",
+        "/statistics",
+        "/openai-chat",
+        "/dashboard",
         "/profile",
         "/issue-helper",
         "/translator",

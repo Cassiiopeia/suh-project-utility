@@ -1023,42 +1023,6 @@ html:not([data-theme="dark"]) .alert-info,
 
 /*
 ===========================
-   Study Page Styles
-===========================
-*/
-
-.study-page .markdown-body {
-  box-sizing: border-box;
-  min-width: 200px;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.study-page .category-tree {
-  border-right: 1px solid #e5e7eb;
-  min-height: calc(100vh - 200px);
-}
-
-.study-page .category-item {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 0.375rem;
-  transition: all 0.2s ease;
-}
-
-.study-page .category-item:hover {
-  background-color: #f3f4f6;
-}
-
-.study-page .category-item.active {
-  background-color: #dbeafe;
-  color: #1d4ed8;
-  font-weight: 500;
-}
-
-/*
-===========================
    AI Server Page Styles
 ===========================
 */
@@ -1260,6 +1224,18 @@ input:focus, textarea:focus, select:focus {
     width: calc(20% - 0.8rem);
     max-width: 220px;
   }
+}
+
+/* Timeline Scroll Animation */
+.timeline-item {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.timeline-item.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /*

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(title='통계 - SAECHAN LAB')}"></head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 페이지 헤더 -->
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fa-solid fa-chart-bar text-blue-500"></i>
+      서비스 통계
+    </h2>
+    <p class="text-gray-500 mt-1">방문자, 기능 사용량, 챗봇 통계를 한눈에 확인하세요</p>
+  </div>
+
+  <!-- 상단: Summary Stat 카드 -->
+  <section id="summary-section" class="mb-8">
+    <!-- 스켈레톤 -->
+    <div id="summary-skeleton" class="dashboard-card-grid-4">
+      <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-4">
+          <div class="skeleton w-12 h-12 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="skeleton h-3 w-16 mb-2"></div>
+            <div class="skeleton h-6 w-12 mb-1"></div>
+            <div class="skeleton h-3 w-20"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-4">
+          <div class="skeleton w-12 h-12 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="skeleton h-3 w-16 mb-2"></div>
+            <div class="skeleton h-6 w-12 mb-1"></div>
+            <div class="skeleton h-3 w-20"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-4">
+          <div class="skeleton w-12 h-12 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="skeleton h-3 w-16 mb-2"></div>
+            <div class="skeleton h-6 w-12 mb-1"></div>
+            <div class="skeleton h-3 w-20"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card bg-base-100 border border-gray-100 shadow-sm p-5">
+        <div class="flex items-center gap-4">
+          <div class="skeleton w-12 h-12 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="skeleton h-3 w-16 mb-2"></div>
+            <div class="skeleton h-6 w-12 mb-1"></div>
+            <div class="skeleton h-3 w-20"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 실제 콘텐츠 -->
+    <div id="summary-content" class="hidden dashboard-card-grid-4">
+      <!-- 총 방문자 -->
+      <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="card-body p-5">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-users text-blue-600 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-gray-500 font-medium mb-1">총 방문자</p>
+              <p class="text-2xl font-bold text-gray-900" id="stat-total-visitors">-</p>
+              <p class="text-xs text-gray-400">오늘: <span id="stat-today-visitors" class="text-green-600 font-medium">+0</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오늘 페이지뷰 -->
+      <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="card-body p-5">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-eye text-indigo-600 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-gray-500 font-medium mb-1">페이지뷰</p>
+              <p class="text-2xl font-bold text-gray-900" id="stat-total-pageviews">-</p>
+              <p class="text-xs text-gray-400">오늘: <span id="stat-today-pageviews" class="text-green-600 font-medium">+0</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 챗봇 메시지 -->
+      <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="card-body p-5">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-comments text-purple-600 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-gray-500 font-medium mb-1">챗봇 메시지</p>
+              <p class="text-2xl font-bold text-gray-900" id="stat-total-chats">-</p>
+              <p class="text-xs text-gray-400">오늘: <span id="stat-today-chats" class="text-green-600 font-medium">+0</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 토큰 사용량 -->
+      <div class="card bg-base-100 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="card-body p-5">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-bolt text-amber-600 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs text-gray-500 font-medium mb-1">토큰 사용량</p>
+              <p class="text-2xl font-bold text-gray-900" id="stat-total-tokens">-</p>
+              <p class="text-xs text-gray-400">오늘: <span id="stat-today-tokens" class="text-green-600 font-medium">+0</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 중단: 차트 영역 -->
+  <!-- 일별 방문자 추이 (전체 너비) -->
+  <section class="mb-8">
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4 sm:p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-chart-area text-blue-500"></i>
+          일별 방문자 추이
+        </h3>
+        <div id="visitors-chart-skeleton" class="skeleton w-full h-72"></div>
+        <div id="visitors-chart" class="hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 기능별 사용 비율 + 일별 챗봇 (2열) -->
+  <section class="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- 기능별 사용 비율 (Donut) -->
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4 sm:p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-green-500"></i>
+          기능별 사용 비율
+        </h3>
+        <div id="features-chart-skeleton" class="skeleton w-full h-72"></div>
+        <div id="features-chart" class="hidden"></div>
+      </div>
+    </div>
+
+    <!-- 일별 챗봇 메시지/토큰 (Line) -->
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4 sm:p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-robot text-purple-500"></i>
+          일별 챗봇 통계
+        </h3>
+        <div id="chat-chart-skeleton" class="skeleton w-full h-72"></div>
+        <div id="chat-chart" class="hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 하단: 기능별 상세 통계 테이블 -->
+  <section class="mb-8">
+    <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card-body p-4 sm:p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-table text-gray-500"></i>
+          기능별 상세 통계
+        </h3>
+        <!-- 스켈레톤 -->
+        <div id="feature-table-skeleton" class="space-y-2">
+          <div class="skeleton h-10 w-full"></div>
+          <div class="skeleton h-8 w-full"></div>
+          <div class="skeleton h-8 w-full"></div>
+          <div class="skeleton h-8 w-full"></div>
+          <div class="skeleton h-8 w-full"></div>
+        </div>
+        <!-- 실제 테이블 -->
+        <div id="feature-table-content" class="hidden overflow-x-auto">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th class="text-gray-600">기능명</th>
+                <th class="text-gray-600 text-right">총 사용</th>
+                <th class="text-gray-600 text-right">오늘</th>
+              </tr>
+            </thead>
+            <tbody id="feature-table-body">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script th:src="@{/js/statistics.js}"></script>
+</body>
+</html>

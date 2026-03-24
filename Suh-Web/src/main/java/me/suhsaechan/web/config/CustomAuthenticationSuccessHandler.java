@@ -51,6 +51,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     log.debug("로그인 성공: clientHash 세션 저장 - {}", clientHash);
 
     // 성공 후 리다이렉트
-    response.sendRedirect(request.getContextPath() + "/dashboard");
+    response.sendRedirect(request.getContextPath() + "/");
   }
 }
