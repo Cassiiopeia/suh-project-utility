@@ -54,7 +54,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> 
         + "GROUP BY DATE(m.created_date) ORDER BY date", nativeQuery = true)
     List<Object[]> countDailyMessagesSince(@Param("since") LocalDateTime since);
 
-    @Query(value = "SELECT DATE(m.created_date) as date, COALESCE(SUM(m.input_tokens + m.output_tokens), 0) as count "
+    @Query(value = "SELECT DATE(m.created_date) as date, COALESCE(SUM(COALESCE(m.input_tokens, 0) + COALESCE(m.output_tokens, 0)), 0) as count "
         + "FROM chat_message m WHERE m.created_date >= :since "
         + "GROUP BY DATE(m.created_date) ORDER BY date", nativeQuery = true)
     List<Object[]> countDailyTokensSince(@Param("since") LocalDateTime since);

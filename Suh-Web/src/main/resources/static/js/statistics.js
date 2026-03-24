@@ -140,8 +140,8 @@ function loadDailyVisitors() {
 
 function renderVisitorsChart(visitors, pageViews) {
   var baseOpts = getChartBaseOptions();
-  var visitorsData = visitors.map(function(d) { return { x: new Date(d.date).getTime(), y: d.count }; });
-  var pageViewsData = pageViews.map(function(d) { return { x: new Date(d.date).getTime(), y: d.count }; });
+  var visitorsData = visitors.map(function(d) { return { x: new Date(d.date + 'T00:00:00').getTime(), y: d.count }; });
+  var pageViewsData = pageViews.map(function(d) { return { x: new Date(d.date + 'T00:00:00').getTime(), y: d.count }; });
 
   var options = {
     series: [
@@ -276,8 +276,8 @@ function loadDailyChat() {
 
 function renderChatChart(messages, tokens) {
   var baseOpts = getChartBaseOptions();
-  var messagesData = messages.map(function(d) { return { x: new Date(d.date).getTime(), y: d.count }; });
-  var tokensData = tokens.map(function(d) { return { x: new Date(d.date).getTime(), y: d.count }; });
+  var messagesData = messages.map(function(d) { return { x: new Date(d.date + 'T00:00:00').getTime(), y: d.count }; });
+  var tokensData = tokens.map(function(d) { return { x: new Date(d.date + 'T00:00:00').getTime(), y: d.count }; });
 
   var options = {
     series: [

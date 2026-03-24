@@ -191,10 +191,21 @@ public class StatisticsService {
 
     private List<DailyStatDto> mapToDailyStatDto(List<Object[]> results) {
         return results.stream()
-            .map(row -> DailyStatDto.builder()
-                .date(((java.sql.Date) row[0]).toLocalDate())
-                .count(((Number) row[1]).longValue())
-                .build())
+            .map(row -> {
+                LocalDate date;
+                Object dateObj = row[0];
+                if (dateObj instanceof java.sql.Date) {
+                    date = ((java.sql.Date) dateObj).toLocalDate();
+                } else if (dateObj instanceof LocalDate) {
+                    date = (LocalDate) dateObj;
+                } else {
+                    date = LocalDate.parse(dateObj.toString());
+                }
+                return DailyStatDto.builder()
+                    .date(date)
+                    .count(((Number) row[1]).longValue())
+                    .build();
+            })
             .collect(Collectors.toList());
     }
 }

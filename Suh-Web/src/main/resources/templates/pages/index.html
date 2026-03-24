@@ -1427,10 +1427,8 @@
     sendFormRequest(
       '/api/notice/comment/delete',
       { commentId: commentId },
-      function(response) {
-        if (response) {
-          loadComments(noticeId);
-        }
+      function() {
+        loadComments(noticeId);
       },
       function(xhr, status, error) {
         alert('댓글 삭제 오류: ' + error);

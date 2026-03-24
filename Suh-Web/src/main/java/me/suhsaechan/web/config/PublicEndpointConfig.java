@@ -33,7 +33,11 @@ public class PublicEndpointConfig {
         "/api/dashboard/summary",
         "/api/dashboard/summary/refresh",
         "/api/task/goal/list",
-        "/api/notice/get/active"
+        "/api/notice/get/active",
+        "/api/notice/get/detail",
+        "/api/notice/comment/list",
+        "/api/notice/comment/create",
+        "/api/notice/comment/delete"
     );
   }
 
