@@ -1,29 +1,31 @@
 package me.suhsaechan.statistics.dto;
 
+import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.suhsaechan.common.dto.DailyStatDto;
 import me.suhsaechan.statistics.entity.FeatureUsageLog.FeatureType;
 
-/**
- * 통계 응답 DTO
- * 통계 조회 관련 모든 응답 통합
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class StatisticsResponse {
 
-    // 방문자 통계
     private Long totalUniqueVisitors;
     private Long todayUniqueVisitors;
     private Long totalPageViews;
     private Long todayPageViews;
 
-    // 기능별 사용 통계
     private Map<FeatureType, Long> featureUsageCounts;
     private Map<FeatureType, Long> todayFeatureUsageCounts;
+
+    private List<DailyStatDto> dailyVisitors;
+    private List<DailyStatDto> dailyPageViews;
+    private List<DailyStatDto> dailyFeatureUsage;
+    private List<DailyStatDto> dailyChatMessages;
+    private List<DailyStatDto> dailyChatTokens;
 }

@@ -28,17 +28,20 @@ public class PageVisitInterceptor implements HandlerInterceptor {
     // 기록할 페이지 경로 (명시적 화이트리스트)
     private static final List<String> TRACK_PAGES = List.of(
         "/",
-        "/dashboard",
-        "/login",
-        "/profile",
-        "/study",
-        "/notice",
-        "/docker",
-        "/github",
+        "/statistics",
+        "/issue-helper",
+        "/translator",
+        "/sejong-auth",
+        "/suh-random",
+        "/suh-devops-template",
+        "/openai-chat",
+        "/docker-logs",
+        "/ai-server",
+        "/somansa/bus",
+        "/chatbot-management",
+        "/notice-management",
         "/grass",
-        "/translate",
-        "/chatbot",
-        "/ai-server"
+        "/task-tracker"
     );
 
     @Override

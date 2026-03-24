@@ -5,15 +5,14 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.service.UserAuthority;
-import me.suhsaechan.notice.dto.NoticeResponse;
-import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.grassplanter.dto.GrassRequest;
 import me.suhsaechan.grassplanter.dto.GrassResponse;
 import me.suhsaechan.grassplanter.service.GrassService;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.service.SomansaBusMemberService;
 import me.suhsaechan.somansabus.service.SomansaBusRouteService;
-import me.suhsaechan.web.config.ServerInfo;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,17 +26,17 @@ import java.util.UUID;
 public class PageController {
 
 	private final UserAuthority userAuthority;
-	private final NoticeService noticeService;
 	private final GrassService grassService;
-	private final ServerInfo serverInfo;
 	private final SomansaBusMemberService somansaBusMemberService;
 	private final SomansaBusRouteService somansaBusRouteService;
 
 	@GetMapping("/")
 	public String indexPage(Model model) {
-		NoticeResponse noticeResponse = noticeService.getActiveNotices();
-		model.addAttribute("notices", noticeResponse.getNotices());
-		return "pages/dashboard";
+		boolean isAuthenticated = SecurityContextHolder.getContext().getAuthentication() != null
+			&& SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
+			&& !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken);
+		model.addAttribute("isAuthenticated", isAuthenticated);
+		return "pages/index";
 	}
 
 	@GetMapping("/login")
@@ -47,14 +46,17 @@ public class PageController {
 
 	@GetMapping("/profile")
 	public String profilePage() {
-		return "pages/profile";
+		return "redirect:/";
 	}
 
 	@GetMapping("/dashboard")
-	public String dashboardPage(Model model){
-		NoticeResponse noticeResponse = noticeService.getActiveNotices();
-		model.addAttribute("notices", noticeResponse.getNotices());
-		return "pages/dashboard";
+	public String dashboardPage(){
+		return "redirect:/";
+	}
+
+	@GetMapping("/statistics")
+	public String statisticsPage() {
+		return "pages/statistics";
 	}
 
 	@GetMapping("/issue-helper")

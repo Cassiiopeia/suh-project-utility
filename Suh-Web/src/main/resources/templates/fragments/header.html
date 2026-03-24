@@ -58,9 +58,9 @@
 
       <!-- 버전 태그 (모바일: 아이콘만, 데스크탑: 아이콘 + 버전) -->
       <button onclick="openChangelogModal()"
-              class="badge gap-0.5 ml-3 px-1.5 py-0.5 lg:px-2 lg:py-1 lg:gap-1 hover:opacity-80 transition-opacity cursor-pointer ml-1 version-badge text-[0.65rem]"
+              class="badge gap-0.5 ml-1 px-1.5 py-0.5 lg:px-2 lg:py-1 lg:gap-1 hover:opacity-80 transition-opacity cursor-pointer version-badge text-xs"
               title="버전 정보">
-        <i class="fa-solid fa-tag text-[0.7rem]"></i>
+        <i class="fa-solid fa-tag text-xs"></i>
         <!-- 데스크탑에서만 버전 숫자 표시 -->
         <span id="header-version-tag" class="version-tag-text hidden lg:inline">v1.0.0</span>
       </button>
@@ -82,15 +82,10 @@
           </svg>
         </label>
 
-        <!-- About Me (항상 표시) -->
-        <a href="/profile" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-          <i class="fa-solid fa-user"></i>
-          About Me
-        </a>
-
-        <a href="/dashboard" sec:authorize="isAuthenticated()" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-          <i class="fa-solid fa-clipboard-list"></i>
-          대시보드
+        <!-- 홈 (항상 표시) -->
+        <a href="/" class="btn btn-ghost btn-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+          <i class="fa-solid fa-house"></i>
+          홈
         </a>
 
         <!-- Menu (항상 표시) -->
@@ -99,7 +94,8 @@
             <i class="fa-solid fa-bars text-xl"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-gray-100">
-            <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
+            <li><a href="/" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-house w-5"></i>홈</a></li>
+            <li><a href="/statistics" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-chart-bar w-5"></i>통계</a></li>
             <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈</a></li>
             <li><a href="/suh-devops-template" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-gears w-5"></i>DevOps 템플릿</a></li>
             <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>번역기</a></li>
@@ -108,7 +104,6 @@
             <li class="divider my-1"></li>
             <li><a href="/notice-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
             <li><a href="/docker-logs" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
-            <li><a href="/study-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-book w-5"></i>스터디 플랜</a></li>
             <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
             <li><a href="/task-tracker" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullseye w-5"></i>Task 트래커</a></li>
             <li><a href="/somansa/bus" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bus w-5"></i>버스 예약</a></li>
@@ -140,9 +135,9 @@
           </svg>
         </label>
 
-        <!-- 프로필 (항상 표시) -->
-        <a href="/profile" class="btn btn-ghost btn-circle">
-          <i class="fa-solid fa-user text-gray-700"></i>
+        <!-- 홈 (항상 표시) -->
+        <a href="/" class="btn btn-ghost btn-circle">
+          <i class="fa-solid fa-house text-gray-700"></i>
         </a>
 
         <!-- 햄버거 메뉴 (항상 표시) -->
@@ -152,7 +147,8 @@
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-white rounded-box shadow-lg z-50 w-64 p-2 mt-3 border border-gray-100">
             <li class="menu-title text-gray-500 text-xs font-semibold px-4 py-2">메뉴</li>
-            <li><a href="/dashboard" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
+            <li><a href="/" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-house w-5"></i>홈</a></li>
+            <li><a href="/statistics" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-chart-bar w-5"></i>통계</a></li>
             <li><a href="/issue-helper" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-brands fa-github w-5"></i>깃헙 이슈 도우미</a></li>
             <li><a href="/suh-devops-template" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-gears w-5"></i>DevOps 템플릿</a></li>
             <li><a href="/translator" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-language w-5"></i>커스텀 AI 번역기</a></li>
@@ -160,7 +156,6 @@
             <li><a href="/suh-random" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-dice w-5"></i>SUH 랜덤 엔진</a></li>
             <li><a href="/notice-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
             <li><a href="/docker-logs" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
-            <li><a href="/study-management" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-book w-5"></i>스터디 플랜</a></li>
             <li><a href="/grass" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
             <li><a href="/task-tracker" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bullseye w-5"></i>Task 트래커</a></li>
             <li><a href="/somansa/bus" class="hover:bg-blue-50 hover:text-blue-600"><i class="fa-solid fa-bus w-5"></i>버스 예약</a></li>

@@ -10,29 +10,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-/**
- * 기능 사용 기록 Repository
- */
 @Repository
 public interface FeatureUsageLogRepository extends JpaRepository<FeatureUsageLog, UUID> {
 
-    // 특정 기능 총 사용 횟수
     long countByFeatureName(FeatureType featureName);
 
-    // 특정 기능 기간별 사용 횟수
     long countByFeatureNameAndUsedAtAfter(FeatureType featureName, LocalDateTime after);
 
-    // 전체 기능 사용 횟수
     long count();
 
-    // 기간별 전체 기능 사용 횟수
     long countByUsedAtAfter(LocalDateTime after);
 
-    // 전체 기능별 사용 횟수 (GROUP BY - N+1 방지)
     @Query("SELECT f.featureName, COUNT(f) FROM FeatureUsageLog f GROUP BY f.featureName")
     List<Object[]> countGroupByFeatureName();
 
-    // 기간별 기능별 사용 횟수 (GROUP BY - N+1 방지)
     @Query("SELECT f.featureName, COUNT(f) FROM FeatureUsageLog f WHERE f.usedAt > :after GROUP BY f.featureName")
     List<Object[]> countGroupByFeatureNameAfter(@Param("after") LocalDateTime after);
+
+    @Query(value = "SELECT DATE(f.used_at) as date, COUNT(f.feature_usage_log_id) as count "
+        + "FROM feature_usage_log f WHERE f.used_at >= :since "
+        + "GROUP BY DATE(f.used_at) ORDER BY date", nativeQuery = true)
+    List<Object[]> countDailyUsageSince(@Param("since") LocalDateTime since);
 }

@@ -1,6 +1,7 @@
 package me.suhsaechan.statistics.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import me.suhsaechan.statistics.entity.PageVisitLog;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,29 +9,30 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-/**
- * 페이지 방문 기록 Repository
- */
 @Repository
 public interface PageVisitLogRepository extends JpaRepository<PageVisitLog, UUID> {
 
-    // 총 페이지뷰 (봇 제외)
     long countByIsBotFalse();
 
-    // 기간별 페이지뷰 (봇 제외)
     long countByVisitedAtAfterAndIsBotFalse(LocalDateTime after);
 
-    // 총 고유 방문자 수 (clientHash 기준, 봇 제외)
     @Query("SELECT COUNT(DISTINCT p.clientHash) FROM PageVisitLog p WHERE p.isBot = false AND p.clientHash IS NOT NULL")
     long countDistinctClientHash();
 
-    // 기간별 고유 방문자 수 (clientHash 기준, 봇 제외)
     @Query("SELECT COUNT(DISTINCT p.clientHash) FROM PageVisitLog p WHERE p.visitedAt > :after AND p.isBot = false AND p.clientHash IS NOT NULL")
     long countDistinctClientHashAfter(@Param("after") LocalDateTime after);
 
-    // 특정 페이지 조회수
     long countByPagePathAndIsBotFalse(String pagePath);
 
-    // 특정 페이지 기간별 조회수
     long countByPagePathAndVisitedAtAfterAndIsBotFalse(String pagePath, LocalDateTime after);
+
+    @Query(value = "SELECT DATE(p.visited_at) as date, COUNT(DISTINCT p.client_hash) as count "
+        + "FROM page_visit_log p WHERE p.is_bot = false AND p.visited_at >= :since "
+        + "GROUP BY DATE(p.visited_at) ORDER BY date", nativeQuery = true)
+    List<Object[]> countDailyUniqueVisitorsSince(@Param("since") LocalDateTime since);
+
+    @Query(value = "SELECT DATE(p.visited_at) as date, COUNT(p.page_visit_log_id) as count "
+        + "FROM page_visit_log p WHERE p.is_bot = false AND p.visited_at >= :since "
+        + "GROUP BY DATE(p.visited_at) ORDER BY date", nativeQuery = true)
+    List<Object[]> countDailyPageViewsSince(@Param("since") LocalDateTime since);
 }
