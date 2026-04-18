@@ -47,7 +47,7 @@ public class PageController {
 
 	@GetMapping("/profile")
 	public String profilePage() {
-		return "pages/profile";
+		return "redirect:/";
 	}
 
 	@GetMapping("/dashboard")

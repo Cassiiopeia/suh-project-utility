@@ -38,6 +38,8 @@ public class PublicEndpointConfig {
    */
   public List<String> getPublicResourceEndpoints() {
     return Arrays.asList(
+        "/",
+        "/dashboard",
         "/login",
         "/logout",
         "/error/**",
