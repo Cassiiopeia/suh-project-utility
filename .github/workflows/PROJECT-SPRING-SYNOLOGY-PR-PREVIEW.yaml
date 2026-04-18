@@ -4,7 +4,7 @@
 #
 # 🔑 필수 GitHub Secrets
 # ===================================================================
-# APPLICATION_PROD_YML (선택): application-prod.yml 내용
+# APPLICATION_YML (필수): application.yml 내용
 # DOCKERHUB_USERNAME: DockerHub 사용자명
 # DOCKERHUB_TOKEN: DockerHub 액세스 토큰
 # SERVER_HOST: 배포 서버 주소
@@ -38,7 +38,7 @@ env:
   JAVA_VERSION: '17'
   GRADLE_BUILD_CMD: './gradlew clean build -x test -Dspring.profiles.active=prod'
   JAR_PATH: 'Suh-Web/build/libs/*.jar'
-  APPLICATION_YML_PATH: 'Suh-Web/src/main/resources/application-prod.yml'
+  APPLICATION_YML_PATH: 'Suh-Web/src/main/resources/application.yml'
 
   # Docker 설정 (프로젝트별 수정 필요)
   DOCKERFILE_PATH: './Dockerfile'
@@ -251,7 +251,7 @@ jobs:
         run: |
           mkdir -p $(dirname ${{ env.APPLICATION_YML_PATH }})
           cat << 'EOF' > ${{ env.APPLICATION_YML_PATH }}
-          ${{ secrets.APPLICATION_PROD_YML }}
+          ${{ secrets.APPLICATION_YML }}
           EOF
 
       # [선택] 아래는 예시입니다. 필요 없으면 삭제하세요.
@@ -896,7 +896,7 @@ jobs:
         run: |
           mkdir -p $(dirname ${{ env.APPLICATION_YML_PATH }})
           cat << 'EOF' > ${{ env.APPLICATION_YML_PATH }}
-          ${{ secrets.APPLICATION_PROD_YML }}
+          ${{ secrets.APPLICATION_YML }}
           EOF
       # =================================================================
       # ⚠️ [영역 2 끝] 프로젝트별 Secret 파일 생성 끝

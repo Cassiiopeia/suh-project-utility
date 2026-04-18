@@ -3,6 +3,7 @@ package me.suhsaechan.web.controller.view;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.properties.MinioProperties;
 import me.suhsaechan.study.dto.StudyRequest;
 import me.suhsaechan.study.dto.StudyResponse;
 import me.suhsaechan.study.service.StudyCategoryService;
@@ -29,6 +30,7 @@ public class StudyViewController {
 
     private final StudyCategoryService categoryService;
     private final StudyPostService postService;
+    private final MinioProperties minioProperties;
 
     /**
      * 스터디 관리 메인 페이지 - 카테고리 목록 표시
@@ -82,10 +84,11 @@ public class StudyViewController {
         // 포스트 정보 조회
         StudyResponse postResponse = postService.getPost(postId);
         model.addAttribute("post", postResponse.getPost());
-        
+        model.addAttribute("s3Domain", minioProperties.getPublicDomain());
+
         // 전체 카테고리 목록도 함께 전달
         model.addAttribute("categoriesResponse", categoryService.getAllCategories());
-        
+
         return "pages/study/post-view";
     }
 
@@ -105,7 +108,8 @@ public class StudyViewController {
         
         // 편집 모드 설정 (새 포스트 작성)
         model.addAttribute("isEdit", false);
-        
+        model.addAttribute("s3Domain", minioProperties.getPublicDomain());
+
         return "pages/study/post-form";
     }
 
@@ -118,10 +122,11 @@ public class StudyViewController {
         StudyResponse postResponse = postService.getPost(postId);
         model.addAttribute("post", postResponse.getPost());
         model.addAttribute("isEdit", true);
-        
+        model.addAttribute("s3Domain", minioProperties.getPublicDomain());
+
         // 전체 카테고리 목록
         model.addAttribute("categoriesResponse", categoryService.getAllCategories());
-        
+
         return "pages/study/post-form";
     }
 

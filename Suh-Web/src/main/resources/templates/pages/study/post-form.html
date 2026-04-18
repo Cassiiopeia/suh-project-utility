@@ -125,7 +125,7 @@
           <li th:each="attachment : ${post.attachments}" class="flex items-center gap-2">
             <input type="checkbox" th:data-id="${attachment.id}" class="checkbox existing-file-checkbox">
             <i th:class="'fa-solid fa-' + (${attachment.isImage ? 'image' : (attachment.isVideo ? 'video' : 'file')})"></i>
-            <a th:href="${attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}" class="link"></a>
+            <a th:href="${s3Domain + attachment.fileUrl}" target="_blank" th:text="${attachment.originalFilename}" class="link"></a>
             (<span th:text="${#numbers.formatDecimal(attachment.fileSize / 1024, 0, 'COMMA', 2, 'POINT')} + ' KB'"></span>)
           </li>
         </ul>
@@ -159,7 +159,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-<script>
+<script th:inline="javascript">
+  const s3Domain = [[${s3Domain}]];
+
   $(document).ready(function() {
     // EasyMDE 마크다운 에디터 초기화
     const easyMDE = new EasyMDE({
@@ -242,9 +244,7 @@
             const cm = easyMDE.codemirror;
             const cursor = cm.getCursor();
             
-            // 시놀로지 도메인 기반 URL로 변환 (인증서 문제로 HTTP 프로토콜 사용)
-            const domainUrl = 'http://suh-project.synology.me';
-            const fullFileUrl = fileUrl.startsWith('/') ? `${domainUrl}${fileUrl}` : fileUrl;
+            const fullFileUrl = fileUrl.startsWith('/') ? `${s3Domain}${fileUrl}` : fileUrl;
             
             const imageMarkdown = `![${file.name || 'image'}](${fullFileUrl})`;
             cm.replaceRange(imageMarkdown, cursor);
@@ -265,9 +265,7 @@
             const cm = easyMDE.codemirror;
             const cursor = cm.getCursor();
             
-            // 시놀로지 도메인 기반 URL로 변환 (인증서 문제로 HTTP 프로토콜 사용)
-            const domainUrl = 'http://suh-project.synology.me';
-            const fullFileUrl = fileUrl.startsWith('/') ? `${domainUrl}${fileUrl}` : fileUrl;
+            const fullFileUrl = fileUrl.startsWith('/') ? `${s3Domain}${fileUrl}` : fileUrl;
             
             const imageMarkdown = `![${file.name}](${fullFileUrl})`;
             cm.replaceRange(imageMarkdown, cursor);

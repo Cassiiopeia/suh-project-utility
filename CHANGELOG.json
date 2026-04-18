@@ -1,11 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2026-03-10T06:32:31Z",
-    "currentVersion": "2.5.16",
+    "lastUpdated": "2026-04-18T15:12:23Z",
+    "currentVersion": "2.5.18",
     "projectType": "spring",
-    "totalReleases": 43
+    "totalReleases": 44
   },
   "releases": [
+    {
+      "version": "2.5.18",
+      "project_type": "spring",
+      "date": "2026-04-18",
+      "pr_number": 175,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트 v2.5.18\n\n* **새 기능**\n  * 대시보드에 프로필 헤더 추가 (프로필 이미지, 기술 스택, 소셜 링크 포함)\n\n* **변경 사항**\n  * 프로필 페이지를 대시보드로 통합\n  * 네비게이션의 \"About Me\" 링크가 홈 페이지로 변경\n\n* **개선 사항**\n  * 첨부 파일 저장소 업그레이드",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "대시보드에 프로필 헤더 추가 (프로필 이미지, 기술 스택, 소셜 링크 포함)"
+          ]
+        },
+        "변경_사항": {
+          "title": "변경 사항",
+          "items": [
+            "프로필 페이지를 대시보드로 통합",
+            "네비게이션의 \"About Me\" 링크가 홈 페이지로 변경"
+          ]
+        },
+        "개선_사항": {
+          "title": "개선 사항",
+          "items": [
+            "첨부 파일 저장소 업그레이드"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.16",
       "project_type": "spring",
