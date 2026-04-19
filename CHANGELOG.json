@@ -1,11 +1,39 @@
 {
   "metadata": {
-    "lastUpdated": "2026-04-18T15:12:23Z",
-    "currentVersion": "2.5.18",
+    "lastUpdated": "2026-04-19T01:18:15Z",
+    "currentVersion": "2.5.19",
     "projectType": "spring",
-    "totalReleases": 44
+    "totalReleases": 45
   },
   "releases": [
+    {
+      "version": "2.5.19",
+      "project_type": "spring",
+      "date": "2026-04-19",
+      "pr_number": 178,
+      "raw_summary": "## Summary by CodeRabbit\n\n## v2.5.19 릴리스 노트\n\n* **New Features**\n  * 대시보드에 인프라 서비스 카드 추가 (Cloudflare, pgAdmin, MongoDB, MinIO).\n\n* **Removals**\n  * 스터디 플랜 기능 및 관련 페이지 제거.\n\n* **Chores**\n  * 버전 업데이트 (2.5.19).",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "대시보드에 인프라 서비스 카드 추가 (Cloudflare, pgAdmin, MongoDB, MinIO)."
+          ]
+        },
+        "removals": {
+          "title": "Removals",
+          "items": [
+            "스터디 플랜 기능 및 관련 페이지 제거."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전 업데이트 (2.5.19)."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.18",
       "project_type": "spring",
