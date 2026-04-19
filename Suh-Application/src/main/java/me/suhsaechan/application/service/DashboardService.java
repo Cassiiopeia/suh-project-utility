@@ -9,7 +9,6 @@ import me.suhsaechan.chatbot.repository.ChatSessionRepository;
 import me.suhsaechan.notice.repository.SuhProjectUtilityNoticeRepository;
 import me.suhsaechan.statistics.dto.DashboardSummaryDto;
 import me.suhsaechan.statistics.service.StatisticsService;
-import me.suhsaechan.study.repository.StudyPostRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,6 @@ public class DashboardService {
     private final ChatSessionRepository chatSessionRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final SuhProjectUtilityNoticeRepository noticeRepository;
-    private final StudyPostRepository studyPostRepository;
-
     private static final String DASHBOARD_SUMMARY_CACHE = "dashboardSummary";
 
     /**
@@ -63,7 +60,6 @@ public class DashboardService {
 
             // 콘텐츠 조회수
             Long totalNoticeViews = noticeRepository.sumTotalViewCount();
-            Long totalStudyViews = studyPostRepository.sumTotalViewCount();
 
             // 페이지 조회수
             Long totalProfileViews = statisticsService.getTotalProfileViews();
@@ -87,7 +83,6 @@ public class DashboardService {
                 .todayInputTokens(todayInputTokens)
                 .todayOutputTokens(todayOutputTokens)
                 .totalNoticeViews(totalNoticeViews)
-                .totalStudyViews(totalStudyViews)
                 .totalProfileViews(totalProfileViews)
                 .todayProfileViews(todayProfileViews)
                 .totalSejongAuth(totalSejongAuth)
@@ -118,7 +113,6 @@ public class DashboardService {
                 .todayInputTokens(0L)
                 .todayOutputTokens(0L)
                 .totalNoticeViews(0L)
-                .totalStudyViews(0L)
                 .totalProfileViews(0L)
                 .todayProfileViews(0L)
                 .totalSejongAuth(0L)

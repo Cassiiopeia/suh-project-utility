@@ -31,7 +31,6 @@ public class PageVisitInterceptor implements HandlerInterceptor {
         "/dashboard",
         "/login",
         "/profile",
-        "/study",
         "/notice",
         "/docker",
         "/github",
