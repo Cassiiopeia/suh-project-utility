@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-04-22T08:58:05Z",
-    "currentVersion": "2.5.20",
+    "lastUpdated": "2026-04-22T09:31:47Z",
+    "currentVersion": "2.5.21",
     "projectType": "spring",
-    "totalReleases": 46
+    "totalReleases": 47
   },
   "releases": [
+    {
+      "version": "2.5.21",
+      "project_type": "spring",
+      "date": "2026-04-22",
+      "pr_number": 182,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 비로그인 상태에서 페이지 접속 시 로그인 화면으로 튕기는 문제 해결\n  * 대시보드에서 누락된 프로필 섹션(자기소개, 타임라인, 자격증, 기술 스택, 프로젝트 목록 등) 복원",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "비로그인 상태에서 페이지 접속 시 로그인 화면으로 튕기는 문제 해결",
+            "대시보드에서 누락된 프로필 섹션(자기소개, 타임라인, 자격증, 기술 스택, 프로젝트 목록 등) 복원"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.20",
       "project_type": "spring",
