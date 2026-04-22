@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-04-19T01:18:15Z",
-    "currentVersion": "2.5.19",
+    "lastUpdated": "2026-04-22T08:58:05Z",
+    "currentVersion": "2.5.20",
     "projectType": "spring",
-    "totalReleases": 45
+    "totalReleases": 46
   },
   "releases": [
+    {
+      "version": "2.5.20",
+      "project_type": "spring",
+      "date": "2026-04-22",
+      "pr_number": 180,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 비로그인 상태에서 대시보드 진입 시 서버 통계, 공지사항, Task D-Day 섹션이 로그인 페이지로 리다이렉트되는 문제 해결",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "비로그인 상태에서 대시보드 진입 시 서버 통계, 공지사항, Task D-Day 섹션이 로그인 페이지로 리다이렉트되는 문제 해결"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.19",
       "project_type": "spring",

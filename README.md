@@ -7,7 +7,7 @@
 
 <!-- 수정하지마세요 자동으로 동기화 됩니다 -->
 <!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
-## Version: v2.5.18 (2026-04-18)
+## Version: v2.5.19 (2026-04-19)
 
 [View Changelog (Korean)](CHANGELOG.md)
 
