@@ -593,6 +593,25 @@ file:
 - **컨테이너**: Docker 이미지 빌드 및 배포
 - **환경**: dev(개발), prod(운영) 프로필 분리
 
+## 커밋 메시지 컨벤션
+
+모든 커밋 메시지는 아래 형식을 반드시 따른다. 이모지(이모디콘) 사용 금지.
+
+```
+{이슈제목} : {type} : {변경사항 설명} {이슈URL}
+```
+
+**type 목록**: `feat` / `fix` / `refactor` / `docs` / `chore` / `test` / `style`
+
+**예시**:
+```
+소셜 로그인 구현 : feat : Google OAuth 연동 추가 https://github.com/.../issues/5
+Swagger 접속 오류 수정 : fix : springdoc 버전 업그레이드 https://github.com/.../issues/12
+```
+
+- 이슈가 없는 경우 이슈 URL 생략 가능
+- 이모지(특수기호 포함) 커밋 메시지 사용 금지
+
 ## 작업 계획 제시 규칙
 
 ### 코드 수정 전 필수 Plan 제시
