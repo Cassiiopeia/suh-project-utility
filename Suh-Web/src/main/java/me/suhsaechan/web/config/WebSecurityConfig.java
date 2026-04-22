@@ -80,9 +80,9 @@ public class WebSecurityConfig {
     // 세션 정책 설정
     http
         .sessionManagement(session -> session
-            .invalidSessionUrl("/login?sessionExpired=true")
+            .invalidSessionUrl("/")  // 비로그인 세션 만료 시 대시보드로
             .maximumSessions(20)  // 중복 세션 방지: 한 계정당 세션 20개
-            .expiredUrl("/login?sessionExpired=true")
+            .expiredUrl("/login?sessionExpired=true")  // 중복 로그인으로 세션 만료 시 로그인 페이지
         );
 
     // 접근 거부(403) 처리
