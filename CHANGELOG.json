@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-04-22T09:31:47Z",
-    "currentVersion": "2.5.21",
+    "lastUpdated": "2026-04-22T11:25:56Z",
+    "currentVersion": "2.5.22",
     "projectType": "spring",
-    "totalReleases": 47
+    "totalReleases": 48
   },
   "releases": [
+    {
+      "version": "2.5.22",
+      "project_type": "spring",
+      "date": "2026-04-22",
+      "pr_number": 183,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **문서**\n  * 커밋 메시지 작성 규칙 및 형식 가이드 추가",
+      "parsed_changes": {
+        "문서": {
+          "title": "문서",
+          "items": [
+            "커밋 메시지 작성 규칙 및 형식 가이드 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.21",
       "project_type": "spring",
