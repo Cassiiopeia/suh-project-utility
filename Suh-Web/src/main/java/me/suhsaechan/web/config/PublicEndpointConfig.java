@@ -28,7 +28,10 @@ public class PublicEndpointConfig {
         "/api/chatbot/feedback",
         "/api/chatbot/history",
         "/api/sejong-auth/**",
-        "/api/suh-random/**"
+        "/api/suh-random/**",
+        "/api/dashboard/summary",        // 대시보드 통계 (비로그인 공개)
+        "/api/notice/get/active",         // 활성 공지사항 (비로그인 공개)
+        "/api/task/goal/list"             // Task D-Day 목록 (비로그인 공개)
     );
   }
 
