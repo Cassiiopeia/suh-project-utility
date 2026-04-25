@@ -182,29 +182,101 @@
           Certifications
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+          <!-- 정보처리기사 -->
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+               onclick="toggleCert('/images/certificates/cert-info-processing.png', '정보처리기사', this)">
+            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
               <img src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
               <div class="font-bold text-gray-900">Engineer Information Processing</div>
               <div class="text-sm text-gray-500">정보처리기사 | HRD Korea</div>
               <div class="text-xs text-gray-400 mt-1">Issued Jun 2024</div>
             </div>
+            <i class="fa-solid fa-chevron-down text-gray-400 shrink-0 cert-chevron transition-transform duration-300"></i>
           </div>
-          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+          <!-- 화학분석기사 -->
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+               onclick="toggleCert('/images/certificates/cert-chemical.png', '화학분석기사', this)">
+            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
               <img src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
               <div class="font-bold text-gray-900">Engineer Chemical Analysis</div>
               <div class="text-sm text-gray-500">화학분석기사 | HRD Korea</div>
               <div class="text-xs text-gray-400 mt-1">Issued Dec 2022</div>
             </div>
+            <i class="fa-solid fa-chevron-down text-gray-400 shrink-0 cert-chevron transition-transform duration-300"></i>
+          </div>
+          <!-- 리눅스마스터 2급 -->
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+               onclick="toggleCert('/images/certificates/cert-linux-master.png', '리눅스마스터 2급', this)">
+            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
+              <img src="/images/kaitLogo.png" alt="KAIT" class="w-10 h-10 object-contain" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-gray-900">Linux Master Grade 2</div>
+              <div class="text-sm text-gray-500">리눅스마스터 2급 | KAIT</div>
+              <div class="text-xs text-gray-400 mt-1">Issued Apr 2026</div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-gray-400 shrink-0 cert-chevron transition-transform duration-300"></i>
+          </div>
+          <!-- SQLD -->
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+               onclick="toggleCert('/images/certificates/cert-sqld.png', 'SQL Developer (SQLD)', this)">
+            <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
+              <img src="/images/kdataLogo.png" alt="K-data" class="w-10 h-10 object-contain" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-gray-900">SQL Developer (SQLD)</div>
+              <div class="text-sm text-gray-500">SQL 개발자 | K-data</div>
+              <div class="text-xs text-gray-400 mt-1">Issued Mar 2026</div>
+            </div>
+            <i class="fa-solid fa-chevron-down text-gray-400 shrink-0 cert-chevron transition-transform duration-300"></i>
           </div>
         </div>
+
       </div>
     </section>
+
+    <!-- 자격증 전체화면 오버레이 -->
+    <div id="cert-overlay" class="hide cert-overlay" onclick="closeCert()">
+      <div class="hover-3d cert-overlay-card" onclick="event.stopPropagation()">
+        <figure class="rounded-2xl overflow-hidden">
+          <img id="cert-overlay-img" src="" alt="" class="w-full object-contain" />
+        </figure>
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+      </div>
+    </div>
+
+    <script>
+      function toggleCert(imgSrc, imgAlt, card) {
+        const overlay = document.getElementById('cert-overlay');
+        const overlayImg = document.getElementById('cert-overlay-img');
+        const isOpen = !overlay.classList.contains('hide');
+        const isSame = overlayImg.src.endsWith(imgSrc);
+
+        document.querySelectorAll('.cert-chevron').forEach(c => c.style.transform = '');
+
+        if (isOpen && isSame) {
+          closeCert();
+          return;
+        }
+
+        overlayImg.src = imgSrc;
+        overlayImg.alt = imgAlt;
+        overlay.classList.remove('hide');
+        card.querySelector('.cert-chevron').style.transform = 'rotate(180deg)';
+      }
+
+      function closeCert() {
+        document.getElementById('cert-overlay').classList.add('hide');
+        document.querySelectorAll('.cert-chevron').forEach(c => c.style.transform = '');
+      }
+
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCert(); });
+    </script>
 
     <!-- 기술 스택 -->
     <section class="card bg-white shadow-sm mb-8">
