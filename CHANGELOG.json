@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-04-22T11:25:56Z",
-    "currentVersion": "2.5.22",
+    "lastUpdated": "2026-04-25T09:05:15Z",
+    "currentVersion": "2.5.23",
     "projectType": "spring",
-    "totalReleases": 48
+    "totalReleases": 49
   },
   "releases": [
+    {
+      "version": "2.5.23",
+      "project_type": "spring",
+      "date": "2026-04-25",
+      "pr_number": 185,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 프로필 페이지에서 자격증 카드를 클릭하면 자격증 이미지를 화면 중앙에서 바로 확인 가능",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "프로필 페이지에서 자격증 카드를 클릭하면 자격증 이미지를 화면 중앙에서 바로 확인 가능"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.22",
       "project_type": "spring",
