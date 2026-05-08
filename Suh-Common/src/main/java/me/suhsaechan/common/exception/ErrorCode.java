@@ -88,6 +88,7 @@ public enum ErrorCode {
   SOMANSA_BUS_RESERVATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "버스 예약에 실패했습니다."),
   SOMANSA_BUS_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "버스 예약 시스템 로그인에 실패했습니다."),
   SOMANSA_BUS_SESSION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "버스 예약 세션 생성에 실패했습니다."),
+  SOMANSA_BUS_API_FETCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "버스인 노선 조회 API 호출에 실패했습니다."),
 
   // TASK TRACKER
   TASK_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 목표를 찾을 수 없습니다."),

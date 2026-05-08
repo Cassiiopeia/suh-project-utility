@@ -1,9 +1,18 @@
 package me.suhsaechan.somansabus.service;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.common.constant.ServerOptionKey;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.common.service.ServerOptionService;
+import me.suhsaechan.somansabus.dto.RouteData;
 import me.suhsaechan.somansabus.dto.SomansaBusRequest;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.entity.SomansaBusRoute;
@@ -11,23 +20,24 @@ import me.suhsaechan.somansabus.repository.SomansaBusRouteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SomansaBusRouteService {
 
   private final SomansaBusRouteRepository routeRepository;
+  private final SomansaBusApiService apiService;
+  private final ServerOptionService serverOptionService;
 
   @Transactional(readOnly = true)
   public SomansaBusResponse getAllRoutes() {
     log.info("전체 버스 노선 조회");
     List<SomansaBusRoute> routes = routeRepository.findByIsActiveTrueOrderByDepartureTimeAsc();
+    LocalDateTime lastSyncedAt = routeRepository.findMaxUpdatedDate().orElse(null);
     return SomansaBusResponse.builder()
         .routes(routes)
         .totalCount((long) routes.size())
+        .lastSyncedAt(lastSyncedAt)
         .build();
   }
 
@@ -51,45 +61,134 @@ public class SomansaBusRouteService {
         .build();
   }
 
+  /**
+   * 외부 buseezy 노선 데이터를 가져와 DB 와 동기화한다.
+   * HTTP 호출은 트랜잭션 밖에서 실행하여 DB connection 점유 시간을 최소화한다.
+   * upsert + soft delete 단계만 트랜잭션으로 묶는다.
+   */
+  public SomansaBusResponse syncRoutes() {
+    String triggerLoginId = resolveTriggerLoginId();
+    log.info("버스 노선 동기화 시작 - 트리거 회원: {}", triggerLoginId);
+
+    List<RouteData> remoteRoutes = fetchRemoteRoutes(triggerLoginId);
+    log.info("외부 노선 응답 수신: {}개", remoteRoutes.size());
+
+    return applyRemoteRoutes(remoteRoutes, triggerLoginId);
+  }
+
+  private List<RouteData> fetchRemoteRoutes(String triggerLoginId) {
+    int passengerId = apiService.login(triggerLoginId);
+    if (passengerId <= 0) {
+      log.error("동기화 로그인 실패: {}", triggerLoginId);
+      throw new CustomException(ErrorCode.SOMANSA_BUS_LOGIN_FAILED);
+    }
+
+    boolean sessionCreated = apiService.createSession(triggerLoginId, passengerId);
+    if (!sessionCreated) {
+      log.error("동기화 세션 생성 실패: {}", triggerLoginId);
+      throw new CustomException(ErrorCode.SOMANSA_BUS_SESSION_FAILED);
+    }
+
+    return apiService.fetchRouteList();
+  }
+
   @Transactional
-  public void initializeRoutes() {
-    log.info("버스 노선 초기 데이터 생성");
+  public SomansaBusResponse applyRemoteRoutes(List<RouteData> remoteRoutes, String triggerLoginId) {
+    Set<Integer> remoteDisptids = new HashSet<>();
+    int created = 0;
+    int updated = 0;
+    int deactivated = 0;
 
-    if (routeRepository.count() > 0) {
-      log.info("이미 노선 데이터가 존재합니다. 초기화 건너뜀.");
-      return;
+    for (RouteData remote : remoteRoutes) {
+      remoteDisptids.add(remote.getDisptid());
+
+      SomansaBusRoute existing = routeRepository.findByDisptid(remote.getDisptid()).orElse(null);
+      if (existing != null) {
+        boolean changed = applyRemoteToEntity(existing, remote);
+        boolean reactivated = false;
+        if (Boolean.FALSE.equals(existing.getIsActive())) {
+          existing.setIsActive(true);
+          reactivated = true;
+        }
+        if (changed || reactivated) {
+          routeRepository.save(existing);
+          updated++;
+        }
+      } else {
+        SomansaBusRoute newRoute = SomansaBusRoute.builder()
+            .disptid(remote.getDisptid())
+            .description(remote.getDescription())
+            .caralias(remote.getCaralias())
+            .departureTime(remote.getDepartureTime())
+            .station(remote.getStation())
+            .busNumber(remote.getBusNumber())
+            .isShuttle(Boolean.TRUE.equals(remote.getIsShuttle()))
+            .isActive(true)
+            .build();
+        routeRepository.save(newRoute);
+        created++;
+      }
     }
 
-    Object[][] routeData = {
-        {"06:55 당산역 1호 - 출근", 46563, "출근", "06:55", "당산역", 1},
-        {"07:05 군자 1호 - 출근", 46569, "출근", "07:05", "군자", 1},
-        {"07:10 당산역 2호 - 출근", 46565, "출근", "07:10", "당산역", 2},
-        {"07:20 당산역 3호 - 출근", 46567, "출근", "07:20", "당산역", 3},
-        {"07:20 서울역 1호 - 출근", 46552, "출근", "07:20", "서울역", 1},
-        {"07:35 군자 2호 - 출근", 46571, "출근", "07:35", "군자", 2},
-        {"07:50 서울역 2호 - 출근", 46561, "출근", "07:50", "서울역", 2},
-        {"17:45 군자 1호 - 퇴근", 46570, "퇴근", "17:45", "군자", 1},
-        {"17:45 서울역 1호 - 퇴근", 46553, "퇴근", "17:45", "서울역", 1},
-        {"17:45 당산역 1호 - 퇴근", 46564, "퇴근", "17:45", "당산역", 1},
-        {"18:15 군자 2호 - 퇴근", 46572, "퇴근", "18:15", "군자", 2},
-        {"18:15 당산역 2호 - 퇴근", 46566, "퇴근", "18:15", "당산역", 2},
-        {"18:15 서울역 2호 - 퇴근", 46562, "퇴근", "18:15", "서울역", 2},
-        {"18:30 당산역 3호 - 퇴근", 46568, "퇴근", "18:30", "당산역", 3}
-    };
-
-    for (Object[] data : routeData) {
-      SomansaBusRoute route = SomansaBusRoute.builder()
-          .description((String) data[0])
-          .disptid((Integer) data[1])
-          .caralias((String) data[2])
-          .departureTime((String) data[3])
-          .station((String) data[4])
-          .busNumber((Integer) data[5])
-          .isActive(true)
-          .build();
-      routeRepository.save(route);
+    List<SomansaBusRoute> activeRoutes = routeRepository.findByIsActiveTrue();
+    for (SomansaBusRoute existing : activeRoutes) {
+      if (!remoteDisptids.contains(existing.getDisptid())) {
+        existing.setIsActive(false);
+        routeRepository.save(existing);
+        deactivated++;
+      }
     }
 
-    log.info("버스 노선 초기 데이터 생성 완료: {}개", routeData.length);
+    long totalCount = routeRepository.count();
+    log.info("버스 노선 동기화 완료 - 신규: {}, 변경: {}, 비활성: {}, 총: {}",
+        created, updated, deactivated, totalCount);
+
+    return SomansaBusResponse.builder()
+        .syncCreatedCount(created)
+        .syncUpdatedCount(updated)
+        .syncDeactivatedCount(deactivated)
+        .syncTotalCount((int) totalCount)
+        .syncedAt(LocalDateTime.now())
+        .syncTriggerLoginId(triggerLoginId)
+        .build();
+  }
+
+  private String resolveTriggerLoginId() {
+    String value = serverOptionService.getOptionValue(ServerOptionKey.SOMANSA_BUS_SYNC_TRIGGER_LOGIN_ID);
+    if (value == null || value.isBlank()) {
+      return ServerOptionKey.SOMANSA_BUS_SYNC_TRIGGER_LOGIN_ID.getDefaultValue();
+    }
+    return value;
+  }
+
+  private boolean applyRemoteToEntity(SomansaBusRoute entity, RouteData remote) {
+    boolean changed = false;
+    if (!Objects.equals(entity.getDescription(), remote.getDescription())) {
+      entity.setDescription(remote.getDescription());
+      changed = true;
+    }
+    if (!Objects.equals(entity.getCaralias(), remote.getCaralias())) {
+      entity.setCaralias(remote.getCaralias());
+      changed = true;
+    }
+    if (!Objects.equals(entity.getDepartureTime(), remote.getDepartureTime())) {
+      entity.setDepartureTime(remote.getDepartureTime());
+      changed = true;
+    }
+    if (!Objects.equals(entity.getStation(), remote.getStation())) {
+      entity.setStation(remote.getStation());
+      changed = true;
+    }
+    if (!Objects.equals(entity.getBusNumber(), remote.getBusNumber())) {
+      entity.setBusNumber(remote.getBusNumber());
+      changed = true;
+    }
+    boolean remoteIsShuttle = Boolean.TRUE.equals(remote.getIsShuttle());
+    boolean entityIsShuttle = Boolean.TRUE.equals(entity.getIsShuttle());
+    if (entityIsShuttle != remoteIsShuttle) {
+      entity.setIsShuttle(remoteIsShuttle);
+      changed = true;
+    }
+    return changed;
   }
 }
