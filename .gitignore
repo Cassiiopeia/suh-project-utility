@@ -92,8 +92,9 @@ Thumbs.db
 # ====================================================================
 /.idea
 
+# Superpowers brainstorming session artifacts (mockup HTML, server state)
+.superpowers/
+
 # ====================================================================
 # SUH-DEVOPS-TEMPLATE: Auto-added entries
 # ====================================================================
-/.report
-/.issue

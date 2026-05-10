@@ -83,6 +83,12 @@ public class SomansaBusController {
     return ResponseEntity.ok(routeService.getRouteById(request.getSomansaBusRouteId()));
   }
 
+  @PostMapping(value = "/route/sync", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<SomansaBusResponse> syncRoutes() {
+    return ResponseEntity.ok(routeService.syncRoutes());
+  }
+
   @PostMapping(value = "/schedule/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
   public ResponseEntity<SomansaBusResponse> createSchedule(@ModelAttribute SomansaBusRequest request) {

@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-04-25T09:05:15Z",
-    "currentVersion": "2.5.23",
+    "lastUpdated": "2026-05-10T22:29:05Z",
+    "currentVersion": "2.5.27",
     "projectType": "spring",
-    "totalReleases": 49
+    "totalReleases": 50
   },
   "releases": [
+    {
+      "version": "2.5.27",
+      "project_type": "spring",
+      "date": "2026-05-10",
+      "pr_number": 191,
+      "raw_summary": "## Summary by CodeRabbit\n\n# 릴리스 노트 v2.5.27\n\n* **New Features**\n  * 버스 노선 데이터를 외부 API와 동기화하는 기능 추가\n  * 대시보드에 노선 동기화 버튼 및 마지막 동기화 시간 표시\n  * 셔틀 노선 구분 기능 추가\n\n* **Bug Fixes**\n  * 403 접근 거부 오류 페이지가 정상적으로 표시되도록 수정\n\n* **Chores**\n  * 프로젝트 버전 업데이트 (2.5.23 → 2.5.27)",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "버스 노선 데이터를 외부 API와 동기화하는 기능 추가",
+            "대시보드에 노선 동기화 버튼 및 마지막 동기화 시간 표시",
+            "셔틀 노선 구분 기능 추가"
+          ]
+        },
+        "bug_fixes": {
+          "title": "Bug Fixes",
+          "items": [
+            "403 접근 거부 오류 페이지가 정상적으로 표시되도록 수정"
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "프로젝트 버전 업데이트 (2.5.23 → 2.5.27)"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.23",
       "project_type": "spring",

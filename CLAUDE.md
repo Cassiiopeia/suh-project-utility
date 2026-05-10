@@ -1,5 +1,157 @@
 # SUH 프로젝트 유틸리티 - Claude AI 가이드
 
+## Global Instructions
+
+> Think clearly. Act honestly. Code minimally. Verify rigorously. Learn continuously.
+
+> 본 섹션은 본 프로젝트 모든 코딩 컨벤션·도메인 규칙·작업 Flow 보다 **하위 우선순위**다. 본 프로젝트 절대 규칙(예: `@OneToMany 금지`, `git commit 자동 실행 금지`)이 본 섹션과 충돌하면 항상 프로젝트 절대 규칙이 우선한다.
+
+---
+
+### Hard Rules (Non-Negotiable)
+
+#### Git Conventions
+- **`Co-Authored-By` 태그 절대 금지.** 커밋 메시지에 추가하지 않는다.
+
+---
+
+### Core Discipline (Priority Order)
+
+원칙들이 충돌할 때 아래 순서로 해결한다:
+
+1. **Truthfulness** — 절대 지어내지 않는다. 모르면 모른다고 말한다. 편집 전 읽고, 완료 선언 전 검증한다.
+2. **Correctness** — 실제로 동작하는가?
+3. **Simplicity** — 문제를 푸는 가장 적은 움직이는 부품.
+4. **Surgical scope** — 코드베이스에 미치는 영향 최소화.
+5. **Elegance** — 위 4개가 만족된 후에만.
+
+> "우아함을 추구하라"는 절대 "단순성 우선"을 덮지 않는다. 우아함은 *불필요한 복잡성의 부재*이지, *영리한 추상화의 존재*가 아니다.
+
+---
+
+### 1. Pre-Execution — Think & Decide
+
+#### 1.1 Ask vs. Act
+
+**ASK 해야 하는 경우:**
+- 요구사항/의도가 불명확할 때
+- 여러 유효한 해석이 존재할 때 — 옵션을 제시하고, 임의로 선택하지 않는다
+- 요청보다 더 단순한 접근법이 존재할 때 — 만들기 전에 먼저 말한다
+
+**ACT 자율적으로 해야 하는 경우:**
+- 버그 리포트, 실패한 CI, 에러 로그가 주어졌을 때 — 조사 후 수정한다
+- 신호가 명확할 때는 직접 해결할 수 있는 일에 손잡이를 요구하지 않는다
+
+**항상:**
+- 확인 없이 진행할 때는 가정을 명시적으로 진술한다
+- 진정으로 혼란스러울 때는 멈추고 무엇이 불명확한지 말한다 — 절대 컨텍스트를 지어내지 않는다
+
+#### 1.2 Plan Mode (non-trivial 작업용)
+
+트리거: 3단계 이상, 아키텍처 결정, 또는 여러 파일을 건드리는 작업.
+
+- 구현 코드를 쓰기 전에 점검 가능한 계획을 펼친다
+- 실행이 어긋나면 **멈추고 재계획한다** — 즉석 패치 금지
+- 단순한 1단계 수정에는 plan mode 생략
+
+#### 1.3 Subagent Delegation
+
+main context 를 깨끗하게 유지하기 위해 서브에이전트 활용. 좋은 후보:
+- 리서치 및 코드베이스 탐색
+- 독립 파일들의 병렬 분석
+- context 를 부풀릴 장기 조사
+
+서브에이전트당 한 가지 집중 과제. 단순 작업에는 생략 — 오버헤드는 공짜가 아니다.
+
+---
+
+### 2. Execution — Simplicity & Surgery
+
+#### 2.1 Simplicity First
+
+문제를 푸는 최소한의 코드. 추측성 코드 금지.
+
+- 요청되지 않은 기능 추가 금지
+- 1회 사용 코드에 대한 추상화 금지
+- 요청되지 않은 "유연성"이나 "구성 가능성" 금지
+- 발생 불가능한 시나리오에 대한 에러 처리 금지
+- 200줄이 50줄이 될 수 있다면 다시 쓴다
+
+**테스트:** 시니어 엔지니어가 이걸 과복잡하다고 말할까? 그렇다면 단순화한다.
+
+#### 2.2 Surgical Changes
+
+꼭 건드려야 하는 것만 건드린다. 자기가 만든 흔적만 정리한다.
+
+**편집 전에 읽는다.** 수정 전에 항상 현재 파일 상태를 확인한다 — 절대 기억이나 추정에 의존하지 않는다.
+
+기존 코드를 편집할 때:
+- 인접 코드, 주석, 포맷을 "개선"하지 않는다
+- 망가지지 않은 것을 리팩토링하지 않는다
+- 기존 스타일을 따른다, 다르게 했을 것 같아도
+- 무관한 dead code 를 발견하면 **언급한다 — 삭제하지 않는다**
+
+변경이 고아를 만들 때:
+- *내 변경이* 사용하지 않게 만든 import/변수/함수만 제거한다
+- 요청 없이는 기존 dead code 를 제거하지 않는다
+
+**테스트:** 모든 변경 라인이 사용자 요청과 직접 연결되는가?
+
+#### 2.3 Elegance Check (non-trivial 변경에만)
+
+동작하는 솔루션이 존재한 후 **한 번** 멈추고 묻는다: "더 우아한 방법이 있는가?"
+
+- 수정이 hacky 하다고 느껴지면: "지금 알고 있는 모든 것을 알면, 우아한 솔루션을 구현하라."
+- 단순하고 명백한 수정에는 생략 — 과잉 엔지니어링이 여기서의 실패 양식이다
+- 우아함은 §2.1 의 제약을 받는다 — 추상화를 위한 추상화는 절대 금지
+
+---
+
+### 3. Verification — Goal-Driven Done
+
+#### 3.1 Define Success Before Starting
+
+| 대신... | 이렇게 변환 |
+|---------|-----------|
+| "validation 추가" | "유효하지 않은 입력에 대한 테스트를 쓰고, 통과시킨다" |
+| "버그 수정" | "재현 테스트를 쓰고, 통과시킨다" |
+| "X 리팩토링" | "전후로 테스트가 통과하는지 확인한다" |
+| "더 빠르게" | "현재를 벤치마크; N% 감소 목표; 검증" |
+
+#### 3.2 Verify Before Marking Done
+
+동작 증명 없이 절대 작업을 완료로 표시하지 않는다.
+
+- 테스트 실행, 로그 확인, 정확성 시연
+- 관련 시 전후 동작 diff
+- "완료"는 **증거** 기반으로 주장한다, 절대 믿음 기반이 아니다
+- 묻는다: "스태프 엔지니어가 이걸 승인할까?"
+
+---
+
+### 4. Learning — Self-Improvement Loop
+
+사용자가 무언가를 교정할 때:
+1. 실수를 일으킨 패턴을 식별한다
+2. 재발을 방지하는 구체적 규칙을 공식화한다
+3. 그 패턴에 대한 실수율이 떨어질 때까지 가차없이 반복한다
+
+프로젝트가 lessons/notes 파일을 제공하면, 세션 시작 시 검토하고 이전 교정에 대한 컨텍스트를 다시 로드한다.
+
+---
+
+### Quick Reference — The Five Tests
+
+| Phase | 자기 점검 |
+|-------|--------------|
+| 코딩 전 | "내 가정을 진술했는가 — 추측하고 있는가?" |
+| 코딩 중 | "시니어 엔지니어가 이걸 과복잡하다고 부를까?" |
+| 편집 중 | "모든 변경 라인이 사용자 요청에 연결되는가?" |
+| 완료 전 | "이게 동작함을 증명했는가 — 그저 믿고 있는가?" |
+| 교정 후 | "교훈을 포착했는가?" |
+
+---
+
 ## 프로젝트 개요
 SUH 프로젝트 유틸리티는 Spring Boot 3.4.2 기반의 멀티모듈 웹 애플리케이션입니다. 다양한 도메인 기능(Docker, GitHub, Notice, Study 등)을 제공하며, PostgreSQL과 Redis를 데이터 저장소로 사용합니다.
 
@@ -301,6 +453,55 @@ try {
 - **Bean 설정**: `Suh-Web/src/main/java/me/suhsaechan/web/config/` 하위에 위치
 - **예시**: `WebConfig`, `DatabaseConfig`, `RedisConfig`, `WebSecurityConfig`
 - **모든 Configuration 클래스는 Web 모듈에 집중**
+
+### 시스템 동적 설정값 관리 (ServerOptionKey) ⚠️ 필수 준수
+- **시스템 전역 동적 설정값은 반드시 `ServerOptionKey` enum + `ServerOption` entity 로 관리한다**
+- `application.yml` 하드코딩 금지 (환경별 비밀값/인프라 값 제외)
+- Service 상수(`private static final`) 하드코딩 금지
+- `@Value` 주입은 빌드 타임 / 환경 단위 값(DB 호스트, 외부 API URL, 시크릿 키 등)에만 사용. 운영 중 변경 가능 값은 모두 `ServerOptionKey` 사용
+
+#### 새 설정 추가 절차
+1. `Suh-Common/src/main/java/me/suhsaechan/common/constant/ServerOptionKey.java` 에 키 추가 (description, defaultValue 명시)
+2. Service 에서 `serverOptionService.getOption(ServerOptionKey.XXX)` 으로 조회
+3. 기존 admin 페이지에서 자동으로 편집 가능 (enum 자동 노출)
+
+#### 예시
+```java
+@Getter
+@RequiredArgsConstructor
+public enum ServerOptionKey {
+  CHATBOT_CHUNK_SIZE("챗봇 청크 크기 (토큰 수)", "500"),
+  CHATBOT_CHUNK_OVERLAP("챗봇 청크 중첩 크기 (토큰 수)", "100"),
+  SOMANSA_BUS_SYNC_TRIGGER_LOGIN_ID("소만사 버스 노선 동기화 트리거 회원 loginId", "chan4760@somansa.com");
+
+  private final String description;
+  private final String defaultValue;
+}
+```
+
+```java
+// Service 사용 예
+@RequiredArgsConstructor
+public class SomansaBusRouteService {
+  private final ServerOptionService serverOptionService;
+
+  public void syncRoutes() {
+    String triggerLoginId = serverOptionService
+        .getOption(ServerOptionKey.SOMANSA_BUS_SYNC_TRIGGER_LOGIN_ID)
+        .getOptionValue();
+    // ... triggerLoginId 사용
+  }
+}
+```
+
+#### 판단 가이드
+| 상황 | 위치 |
+|------|------|
+| 운영 중 변경 가능, 코드 재배포 없이 바꾸고 싶음 | `ServerOptionKey` |
+| 외부 API 호출 시 사용할 식별자/계정 등 비즈니스 설정값 | `ServerOptionKey` |
+| AI 모델명, 청크 크기 같은 튜닝 파라미터 | `ServerOptionKey` |
+| DB 호스트, Redis 비밀번호 같은 인프라 시크릿 | `application.yml` + `@Value` (환경변수) |
+| 코드에서 절대 안 바뀌는 상수 (예: HTTP timeout=5000ms) | Service 내 `private static final` 허용 |
 
 ### 의존성 관리 규칙 ⚠️ 필수 준수
 - **외부 라이브러리**: 무조건 `Suh-Common/build.gradle`에만 선언 (`api`로 제공)
@@ -671,6 +872,54 @@ TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiRes
 // ✅ 올바른 예시 - 주석 없이 명확한 코드
 TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiResult.getDetectedLanguage());
 ```
+
+## 표준 작업 Flow (AgenticFlow)
+
+이슈 기반 작업 시 **무조건 이 순서**를 따른다. 관련 issue: [#186](https://github.com/Cassiiopeia/suh-project-utility/issues/186)
+
+### Phase 1 — 이슈 + 워크트리
+- **신규 이슈**: `/cassiiopeia:issue` (이슈 작성·등록·브랜치명 계산·worktree 옵션까지 한 방)
+- **이슈 이미 있고 브랜치만 분리**: `/cassiiopeia:init-worktree`
+- **긴급 버그 등 신속 대응 케이스**: worktree 생성 생략 가능 (main 또는 메인 작업 디렉터리에서 바로 진행)
+
+### Phase 2 — 설계 (무조건 superpowers)
+- `/superpowers:brainstorming` — 요구사항 명확화 → 디자인 → spec 문서 작성
+- `/superpowers:writing-plans` — plan 문서 작성 (Task 단위로 분해)
+
+### Phase 3 — 구현
+- `/superpowers:subagent-driven-development` — Task별 implementer + spec reviewer + quality reviewer 디스패치
+
+### Phase 4 — Commit + PR
+- `/cassiiopeia:commit` — 사용자 승인 후 commit. push는 사용자 명시 요청 시
+- `/cassiiopeia:github` — PR 생성
+
+### Phase 5 — 빌드 + QA
+- `/cassiiopeia:github` — 이슈에 `@suh-lab server build` 댓글 추가
+- `/cassiiopeia:testcase` — 테스트케이스 MD 작성
+- `/cassiiopeia:github` — 테스트케이스 이슈 댓글로 게시
+
+### Phase 6 — main 머지 후 배포
+- `/cassiiopeia:changelog-deploy` — main push + deploy PR 생성 + 릴리스 노트 작성 + automerge
+
+### 절대 규칙 — Skill 우회 금지
+- **GitHub 작업** (이슈/PR/댓글) → 무조건 `/cassiiopeia:github` 거치기. `gh`/`curl`/`Invoke-RestMethod` 직접 호출 금지
+- **Commit** → 무조건 `/cassiiopeia:commit` 거치기. `git commit` 직접 호출 금지
+- **설계/구현** → 무조건 superpowers 3-skill 체인 (`brainstorming` → `writing-plans` → `subagent-driven-development`) 거치기. 바로 코드 작성 금지
+
+### 본 flow 미적용 예외
+- 단순 typo 수정 / 1줄 변경 같은 trivial fix는 brainstorming/plan 생략 가능. 단 commit/push/PR/댓글은 skill 거치기
+- 긴급 버그는 worktree 생성 생략 가능
+- **메타성 / 문서성 변경** (CLAUDE.md, 리포트, plan/spec md, commands·skill 정리, 문서 오타 수정 등 앱 동작 영향 없는 변경)은 **Phase 5 생략** — `@suh-lab server build` 댓글 불필요, 테스트케이스 작성 불필요. Phase 4 commit/PR까지만 처리
+
+## Git 커밋 규칙
+
+### ⛔ 절대 자동 커밋 금지 (가장 중요한 규칙)
+- **Claude는 절대로, 어떤 상황에서도, 어떤 스킬/워크플로우를 따르더라도 사용자 명시적 허락 없이 `git commit`을 실행하지 않는다**
+- **`git add`도 사용자 확인 없이 절대 실행 금지**
+- 코드 수정 후 반드시 사용자가 diff를 확인할 수 있도록 대기한다
+- 커밋은 사용자가 명시적으로 "커밋해줘"라고 요청했을 때만 수행한다
+- 스킬(skill)이 커밋을 지시하더라도 이 규칙이 우선한다
+- 서브에이전트(subagent)에게도 커밋하지 말라고 명시적으로 지시한다
 
 ## 주의사항
 1. **파일 생성 최소화**: 기존 파일 수정 우선
