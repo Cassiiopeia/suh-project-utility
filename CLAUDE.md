@@ -454,6 +454,55 @@ try {
 - **예시**: `WebConfig`, `DatabaseConfig`, `RedisConfig`, `WebSecurityConfig`
 - **모든 Configuration 클래스는 Web 모듈에 집중**
 
+### 시스템 동적 설정값 관리 (ServerOptionKey) ⚠️ 필수 준수
+- **시스템 전역 동적 설정값은 반드시 `ServerOptionKey` enum + `ServerOption` entity 로 관리한다**
+- `application.yml` 하드코딩 금지 (환경별 비밀값/인프라 값 제외)
+- Service 상수(`private static final`) 하드코딩 금지
+- `@Value` 주입은 빌드 타임 / 환경 단위 값(DB 호스트, 외부 API URL, 시크릿 키 등)에만 사용. 운영 중 변경 가능 값은 모두 `ServerOptionKey` 사용
+
+#### 새 설정 추가 절차
+1. `Suh-Common/src/main/java/me/suhsaechan/common/constant/ServerOptionKey.java` 에 키 추가 (description, defaultValue 명시)
+2. Service 에서 `serverOptionService.getOption(ServerOptionKey.XXX)` 으로 조회
+3. 기존 admin 페이지에서 자동으로 편집 가능 (enum 자동 노출)
+
+#### 예시
+```java
+@Getter
+@RequiredArgsConstructor
+public enum ServerOptionKey {
+  CHATBOT_CHUNK_SIZE("챗봇 청크 크기 (토큰 수)", "500"),
+  CHATBOT_CHUNK_OVERLAP("챗봇 청크 중첩 크기 (토큰 수)", "100"),
+  SOMANSA_BUS_SYNC_TRIGGER_LOGIN_ID("소만사 버스 노선 동기화 트리거 회원 loginId", "chan4760@somansa.com");
+
+  private final String description;
+  private final String defaultValue;
+}
+```
+
+```java
+// Service 사용 예
+@RequiredArgsConstructor
+public class SomansaBusRouteService {
+  private final ServerOptionService serverOptionService;
+
+  public void syncRoutes() {
+    String triggerLoginId = serverOptionService
+        .getOption(ServerOptionKey.SOMANSA_BUS_SYNC_TRIGGER_LOGIN_ID)
+        .getOptionValue();
+    // ... triggerLoginId 사용
+  }
+}
+```
+
+#### 판단 가이드
+| 상황 | 위치 |
+|------|------|
+| 운영 중 변경 가능, 코드 재배포 없이 바꾸고 싶음 | `ServerOptionKey` |
+| 외부 API 호출 시 사용할 식별자/계정 등 비즈니스 설정값 | `ServerOptionKey` |
+| AI 모델명, 청크 크기 같은 튜닝 파라미터 | `ServerOptionKey` |
+| DB 호스트, Redis 비밀번호 같은 인프라 시크릿 | `application.yml` + `@Value` (환경변수) |
+| 코드에서 절대 안 바뀌는 상수 (예: HTTP timeout=5000ms) | Service 내 `private static final` 허용 |
+
 ### 의존성 관리 규칙 ⚠️ 필수 준수
 - **외부 라이브러리**: 무조건 `Suh-Common/build.gradle`에만 선언 (`api`로 제공)
 - **도메인 모듈 간 의존성**: 허용 (예: `implementation project(':Suh-Domain-Github')`)

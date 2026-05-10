@@ -159,8 +159,18 @@
           <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <i class="fa-solid fa-route text-blue-500"></i>
             버스 노선
+            <span class="badge badge-ghost badge-sm" id="routeTotalCount">-</span>
           </h3>
           <p class="text-gray-500 text-sm">등록된 버스 노선 목록</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-gray-500">
+            마지막 동기화: <span id="lastSyncedAt">-</span>
+          </span>
+          <button class="btn btn-primary btn-sm" id="btnSyncRoutes">
+            <i class="fa-solid fa-rotate"></i>
+            노선 동기화
+          </button>
         </div>
       </div>
 
@@ -284,7 +294,42 @@
 $(document).ready(function() {
   loadStats();
   loadMembers();
+  loadRoutes();
   loadReservationHistory();
+
+  document.getElementById('btnSyncRoutes').addEventListener('click', function() {
+    if (!confirm('노선 동기화를 시작합니다. 외부 시스템(buseezy)에 로그인 후 노선 정보를 가져옵니다. 진행할까요?')) {
+      return;
+    }
+
+    const btn = this;
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = '동기화 중...';
+
+    sendFormRequest('/api/somansa-bus/route/sync', {},
+      function(data) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        alert('동기화 완료\n'
+          + '신규: +' + (data.syncCreatedCount || 0) + '\n'
+          + '변경: ' + (data.syncUpdatedCount || 0) + '\n'
+          + '비활성: ' + (data.syncDeactivatedCount || 0) + '\n'
+          + '총: ' + (data.syncTotalCount || 0) + '건\n'
+          + '트리거: ' + (data.syncTriggerLoginId || ''));
+        loadRoutes();
+      },
+      function(xhr) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        let errorMessage = '알 수 없는 오류';
+        if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        alert('동기화 실패: ' + errorMessage);
+      }
+    );
+  });
 
   // 테이블 row 클릭 이벤트 (이벤트 위임)
   $(document).on('click', '#memberTable tr', function(e) {
@@ -486,6 +531,51 @@ function deleteMember(memberId) {
       showToast('멤버 삭제 중 오류가 발생했습니다.', 'negative');
     }
   );
+}
+
+function loadRoutes() {
+  sendFormRequest('/api/somansa-bus/route/list', {},
+    function(response) {
+      $('#routeTotalCount').text(response.totalCount != null ? response.totalCount : (response.routes ? response.routes.length : 0));
+      $('#lastSyncedAt').text(response.lastSyncedAt ? response.lastSyncedAt : '없음');
+      displayRoutes(response.routes || []);
+    },
+    function(xhr) {
+      console.error('노선 목록 로드 실패');
+      $('#routeTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">노선 목록을 불러오는데 실패했습니다.</td></tr>');
+    }
+  );
+}
+
+function displayRoutes(routes) {
+  const tableBody = $('#routeTable');
+  tableBody.empty();
+
+  if (!routes || routes.length === 0) {
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-gray-500">등록된 노선이 없습니다.</td></tr>');
+    return;
+  }
+
+  routes.forEach(function(route) {
+    const row = $('<tr>');
+
+    const typeCell = $('<td>');
+    if (route.caralias === '출근') {
+      typeCell.html('<span class="badge badge-soft badge-info badge-sm">출근</span>');
+    } else if (route.caralias === '퇴근') {
+      typeCell.html('<span class="badge badge-soft badge-warning badge-sm">퇴근</span>');
+    } else {
+      typeCell.text(route.caralias || '-');
+    }
+    row.append(typeCell);
+
+    row.append($('<td>').text(route.departureTime || '-'));
+    row.append($('<td>').text(route.station || '-'));
+    row.append($('<td>').text(route.busNumber ? route.busNumber + '호' : '-'));
+    row.append($('<td>').text(route.description || '-'));
+
+    tableBody.append(row);
+  });
 }
 
 function loadReservationHistory() {
