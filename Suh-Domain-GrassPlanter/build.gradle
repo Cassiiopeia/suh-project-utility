@@ -12,7 +12,7 @@ jar {
 }
 
 group = 'me.suhsaechan'
-version = '2.5.29'
+version = '2.5.30'
 
 java {
     toolchain {
