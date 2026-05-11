@@ -39,7 +39,4 @@ public class SomansaBusSchedule extends BasePostgresEntity {
 
   @Column(nullable = false)
   private Boolean isActive;
-
-  @Column
-  private Integer daysAhead;
 }
