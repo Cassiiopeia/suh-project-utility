@@ -1,11 +1,34 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-10T22:29:05Z",
-    "currentVersion": "2.5.27",
+    "lastUpdated": "2026-05-11T01:25:56Z",
+    "currentVersion": "2.5.28",
     "projectType": "spring",
-    "totalReleases": 50
+    "totalReleases": 51
   },
   "releases": [
+    {
+      "version": "2.5.28",
+      "project_type": "spring",
+      "date": "2026-05-11",
+      "pr_number": 193,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * DB 스키마 버전 관리를 위한 Flyway 마이그레이션 체계 도입\n  * 셔틀 버스 여부 구분 기능 추가 (somansa 버스 노선)\n\n* **개선**\n  * DB 완전 초기화 상태에서도 안전하게 서버 기동 가능",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "DB 스키마 버전 관리를 위한 Flyway 마이그레이션 체계 도입",
+            "셔틀 버스 여부 구분 기능 추가 (somansa 버스 노선)"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "DB 완전 초기화 상태에서도 안전하게 서버 기동 가능"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.27",
       "project_type": "spring",
