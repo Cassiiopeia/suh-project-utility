@@ -3685,6 +3685,7 @@ html:not([data-theme="dark"]) .collapse {
   line-height: 1.5;
 }
 
+
 .docker-logs-page .log-line {
   padding: 1px 0;
   white-space: pre-wrap;

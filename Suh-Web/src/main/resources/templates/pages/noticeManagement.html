@@ -2,21 +2,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='공지사항 관리-SAECHAN-LAB')}"></head>
-<body class="notice-management-page bg-gray-50">
+<body class="notice-management-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
   <!-- 페이지 헤더 -->
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-solid fa-bullhorn text-blue-500"></i>
       공지사항 관리
     </h2>
-    <p class="text-gray-500 mt-1">대시보드에 표시되는 공지사항을 관리합니다.</p>
+    <p class="text-base-content/60 mt-1">대시보드에 표시되는 공지사항을 관리합니다.</p>
   </div>
 
   <!-- 공지사항 관리 툴바 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body p-4">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <!-- 검색 영역 -->
@@ -47,7 +47,7 @@
   </div>
 
   <!-- 공지사항 목록 테이블 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
+  <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body p-4">
       <div id="loading-indicator" class="flex justify-center py-8">
         <span class="loading loading-spinner loading-lg text-primary"></span>
@@ -168,31 +168,31 @@
       <h3 class="font-bold text-xl mb-4" id="detail-title"></h3>
 
       <!-- 메타 정보 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-lg p-4 mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-base-200 rounded-lg p-4 mb-4">
         <div class="space-y-2">
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-user text-blue-500"></i>
             <strong>작성자:</strong>
             <span id="detail-author"></span>
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-calendar text-blue-500"></i>
             <strong>작성일:</strong>
             <span id="detail-created-date"></span>
           </p>
         </div>
         <div class="space-y-2">
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-eye text-blue-500"></i>
             <strong>조회수:</strong>
             <span id="detail-view-count"></span>
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-clock text-blue-500"></i>
             <strong>게시 기간:</strong>
             <span id="detail-period"></span>
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-circle-check text-blue-500"></i>
             <strong>상태:</strong>
             <span id="detail-status"></span>
@@ -225,7 +225,7 @@
       </div>
 
       <!-- 댓글 작성 폼 -->
-      <div class="bg-gray-50 rounded-lg p-4">
+      <div class="bg-base-200 rounded-lg p-4">
         <div class="form-control mb-3">
           <input type="text" id="comment-author" class="input input-sm w-full max-w-xs" placeholder="이름을 입력하세요">
         </div>
@@ -779,18 +779,18 @@
     function createCommentHtml(comment) {
       const date = formatDateTime(comment.createdDate);
       return `
-        <div class="comment-item bg-white border border-gray-200 rounded-lg p-4">
+        <div class="comment-item bg-base-100 border border-base-300 rounded-lg p-4">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
               <i class="fa-solid fa-user text-blue-500"></i>
             </div>
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
-                <span class="font-semibold text-gray-800">${escapeHtml(comment.author)}</span>
-                ${comment.anonymizedIp ? `<span class="text-xs text-gray-400">(${escapeHtml(comment.anonymizedIp)})</span>` : ''}
-                <span class="text-xs text-gray-400">${date}</span>
+                <span class="font-semibold text-base-content">${escapeHtml(comment.author)}</span>
+                ${comment.anonymizedIp ? `<span class="text-xs text-base-content/50">(${escapeHtml(comment.anonymizedIp)})</span>` : ''}
+                <span class="text-xs text-base-content/50">${date}</span>
               </div>
-              <p class="text-gray-700">${escapeHtml(comment.content)}</p>
+              <p class="text-base-content/80">${escapeHtml(comment.content)}</p>
               <div class="mt-2">
                 <button class="btn btn-xs btn-error delete-comment-btn" data-id="${comment.noticeCommentId}">
                   <i class="fa-solid fa-trash"></i>
