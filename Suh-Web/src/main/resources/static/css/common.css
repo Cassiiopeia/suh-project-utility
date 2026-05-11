@@ -8,182 +8,18 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 
 /*
 ===========================
-   DaisyUI 5 Primary 색상 오버라이드 (파란색 #3b82f6)
+   DaisyUI 5 CSS 변수 커스터마이징 (버튼 오버라이드 없음)
 ===========================
 */
 :root,
-[data-theme="light"],
+[data-theme="light"] {
+  --color-primary: oklch(0.623 0.214 255.1);
+  --color-primary-content: oklch(1 0 0);
+}
+
 [data-theme="dark"] {
-  --p: 217.2 91.2% 59.8%;
-  --pc: 0 0% 100%;
-  --pf: 217.2 91.2% 52.8%;
-}
-
-.btn-primary {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-.btn-primary:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
-}
-
-[data-theme="dark"] .btn-primary:hover {
-  background-color: #60a5fa;
-  border-color: #60a5fa;
-}
-
-/* btn-error 색상 - 밝은 파스텔 빨강 */
-:root:not([data-theme="dark"]) .btn-error,
-html:not([data-theme="dark"]) .btn-error,
-[data-theme="light"] .btn-error {
-  background-color: #FFB3BA !important;
-  border-color: #FFB3BA !important;
-  color: #991b1b !important;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-:root:not([data-theme="dark"]) .btn-error:hover,
-html:not([data-theme="dark"]) .btn-error:hover,
-[data-theme="light"] .btn-error:hover {
-  background-color: #FF9CA5 !important;
-  border-color: #FF9CA5 !important;
-}
-
-[data-theme="dark"] .btn-error {
-  background-color: #fca5a5 !important;
-  border-color: #fca5a5 !important;
-  color: #7f1d1d !important;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-[data-theme="dark"] .btn-error:hover {
-  background-color: #f87171 !important;
-  border-color: #f87171 !important;
-}
-
-/* btn-info 색상 */
-.btn-info {
-  background-color: #06b6d4;
-  border-color: #06b6d4;
-  color: #ffffff;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-.btn-info:hover {
-  background-color: #0891b2;
-  border-color: #0891b2;
-}
-
-[data-theme="dark"] .btn-info:hover {
-  background-color: #22d3ee;
-  border-color: #22d3ee;
-}
-
-/* btn-success 색상 - 밝은 파스텔 초록 */
-:root:not([data-theme="dark"]) .btn-success,
-html:not([data-theme="dark"]) .btn-success,
-[data-theme="light"] .btn-success {
-  background-color: #B8E6B8 !important;
-  border-color: #B8E6B8 !important;
-  color: #166534 !important;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-:root:not([data-theme="dark"]) .btn-success:hover,
-html:not([data-theme="dark"]) .btn-success:hover,
-[data-theme="light"] .btn-success:hover {
-  background-color: #A8E0A8 !important;
-  border-color: #A8E0A8 !important;
-}
-
-[data-theme="dark"] .btn-success {
-  background-color: #86efac !important;
-  border-color: #86efac !important;
-  color: #14532d !important;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-[data-theme="dark"] .btn-success:hover {
-  background-color: #4ade80 !important;
-  border-color: #4ade80 !important;
-}
-
-/* Light 모드 - btn-outline */
-:root:not([data-theme="dark"]) .btn-outline,
-html:not([data-theme="dark"]) .btn-outline,
-[data-theme="light"] .btn-outline {
-  background-color: transparent;
-  border-color: #9ca3af;
-  color: #374151;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-:root:not([data-theme="dark"]) .btn-outline:hover,
-html:not([data-theme="dark"]) .btn-outline:hover,
-[data-theme="light"] .btn-outline:hover {
-  background-color: #f3f4f6;
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-/* Light 모드 - btn-outline btn-secondary */
-:root:not([data-theme="dark"]) .btn-outline.btn-secondary,
-html:not([data-theme="dark"]) .btn-outline.btn-secondary,
-[data-theme="light"] .btn-outline.btn-secondary {
-  background-color: transparent;
-  border-color: #4b5563;
-  color: #4b5563;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-:root:not([data-theme="dark"]) .btn-outline.btn-secondary:hover,
-html:not([data-theme="dark"]) .btn-outline.btn-secondary:hover,
-[data-theme="light"] .btn-outline.btn-secondary:hover {
-  background-color: #f3f4f6;
-  border-color: #4b5563;
-  color: #4b5563;
-}
-
-/* Dark 모드 - btn-outline btn-secondary */
-[data-theme="dark"] .btn-outline.btn-secondary {
-  border-color: #6b7280;
-  color: #9ca3af;
-}
-
-[data-theme="dark"] .btn-outline.btn-secondary:hover {
-  background-color: #374151;
-  border-color: #9ca3af;
-  color: #e5e7eb;
-}
-
-/* Light 모드 - btn-ghost (일반) */
-:root:not([data-theme="dark"]) .btn-ghost,
-html:not([data-theme="dark"]) .btn-ghost,
-[data-theme="light"] .btn-ghost {
-  background-color: transparent;
-  border-color: transparent;
-  color: #374151;
-  border-radius: 0.3rem;
-  padding: 10px;
-}
-
-:root:not([data-theme="dark"]) .btn-ghost:hover,
-html:not([data-theme="dark"]) .btn-ghost:hover,
-[data-theme="light"] .btn-ghost:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: #1f2937;
+  --color-primary: oklch(0.707 0.165 254.6);
+  --color-primary-content: oklch(1 0 0);
 }
 
 /*
@@ -1153,12 +989,7 @@ html:not([data-theme="dark"]) .alert-info,
 ===========================
 */
 
-/* Input focus 스타일 */
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  border: 2px solid #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+/* Input focus — DaisyUI 기본 스타일 사용 (오버라이드 없음) */
 
 /*
 ===========================
