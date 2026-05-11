@@ -58,7 +58,7 @@ public class SomansaBusApiService {
   private static final Pattern GO_PAGE_PATTERN = Pattern.compile("goPage\\((\\d+),\\s*'([^']+)'\\s*,\\s*'(True|False)'\\)");
   private static final Pattern LABEL_PATTERN = Pattern.compile("^\\s*(\\d{2}:\\d{2})\\s+(.+?)(?:\\s+(\\d+)호)?\\s*-.*$");
 
-  private final OkHttpClient client = SomansaBusHttpClient.getClient();
+  private final OkHttpClient client = SomansaBusHttpClient.newClient();
 
   public int login(String loginId) {
     log.info("버스 예약 로그인 시작: {}", loginId);
@@ -191,8 +191,20 @@ public class SomansaBusApiService {
 
       String responseBody = response.body() != null ? response.body().string() : "";
       log.debug("예약 응답: {}", responseBody);
-      log.info("예약 성공 - 버스: {}, 예약일: {}", route.getDescription(), formattedDate);
 
+      ObjectMapper mapper = new ObjectMapper();
+      JsonNode root = mapper.readTree(responseBody);
+      int resultCode = root.path("d").asInt(0);
+
+      if (resultCode == -1) {
+        log.warn("예약 정원 초과 - 버스: {}, 예약일: {}", route.getDescription(), formattedDate);
+        return false;
+      } else if (resultCode == -2) {
+        log.warn("예약 등록 오류 - 버스: {}, 예약일: {}", route.getDescription(), formattedDate);
+        return false;
+      }
+
+      log.info("예약 성공 - 버스: {}, 예약일: {}, 결과코드: {}", route.getDescription(), formattedDate, resultCode);
       return true;
     } catch (IOException e) {
       log.error("예약 중 예외 발생", e);

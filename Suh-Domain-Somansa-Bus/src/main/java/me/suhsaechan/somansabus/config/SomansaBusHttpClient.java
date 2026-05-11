@@ -13,7 +13,6 @@ import java.util.List;
 @Slf4j
 public class SomansaBusHttpClient {
 
-  private static final SimpleCookieJar cookieJar = new SimpleCookieJar();
   private static final Dispatcher dispatcher = new Dispatcher();
 
   static {
@@ -22,13 +21,12 @@ public class SomansaBusHttpClient {
     log.debug("OkHttpClient Dispatcher 설정: MaxRequests=100, MaxRequestsPerHost=10");
   }
 
-  private static final OkHttpClient client = new OkHttpClient.Builder()
-      .cookieJar(cookieJar)
-      .dispatcher(dispatcher)
-      .build();
-
-  public static OkHttpClient getClient() {
-    return client;
+  // 요청마다 독립 쿠키 저장소를 가진 클라이언트 생성 — 멤버 간 세션 혼용 방지
+  public static OkHttpClient newClient() {
+    return new OkHttpClient.Builder()
+        .cookieJar(new SimpleCookieJar())
+        .dispatcher(dispatcher)
+        .build();
   }
 
   @Slf4j

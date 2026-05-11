@@ -1,11 +1,36 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-11T01:25:56Z",
-    "currentVersion": "2.5.28",
+    "lastUpdated": "2026-05-11T02:12:12Z",
+    "currentVersion": "2.5.29",
     "projectType": "spring",
-    "totalReleases": 51
+    "totalReleases": 52
   },
   "releases": [
+    {
+      "version": "2.5.29",
+      "project_type": "spring",
+      "date": "2026-05-11",
+      "pr_number": 195,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 버스 예약 시 멤버 간 세션이 혼용되던 문제 해결\n  * 버스 예약 결과가 실패임에도 성공으로 표시되던 문제 해결\n  * 버스 노선 목록에서 호수가 null로 표시되던 문제 해결\n  * 자동 예약 스케줄에 무기한 옵션이 없던 문제 해결\n\n* **개선**\n  * 다크모드 전환 시 전체 화면이 정상적으로 어두운 테마로 표시되도록 개선",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "버스 예약 시 멤버 간 세션이 혼용되던 문제 해결",
+            "버스 예약 결과가 실패임에도 성공으로 표시되던 문제 해결",
+            "버스 노선 목록에서 호수가 null로 표시되던 문제 해결",
+            "자동 예약 스케줄에 무기한 옵션이 없던 문제 해결"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "다크모드 전환 시 전체 화면이 정상적으로 어두운 테마로 표시되도록 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.28",
       "project_type": "spring",

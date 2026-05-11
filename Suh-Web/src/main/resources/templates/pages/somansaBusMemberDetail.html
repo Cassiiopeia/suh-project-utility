@@ -77,11 +77,11 @@
           <div class="space-y-2" id="commuteRoutes">
             <label th:each="route : ${routes}"
                    th:if="${route.caralias == '출근'}"
-                   class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                   class="flex items-center gap-3 p-3 border border-base-300 rounded-lg cursor-pointer hover:bg-base-200 transition-colors">
               <input type="radio" name="selectedRoute"
                      th:value="${route.somansaBusRouteId}"
                      class="radio radio-primary radio-sm">
-              <span th:text="${route.departureTime + ' ' + route.station + ' ' + route.busNumber + '호'}">
+              <span th:text="${route.departureTime + ' ' + route.station + (route.busNumber != null ? ' ' + route.busNumber + '호' : '')}">
                 06:55 당산역 1호
               </span>
             </label>
@@ -95,11 +95,11 @@
           <div class="space-y-2" id="offworkRoutes">
             <label th:each="route : ${routes}"
                    th:if="${route.caralias == '퇴근'}"
-                   class="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                   class="flex items-center gap-3 p-3 border border-base-300 rounded-lg cursor-pointer hover:bg-base-200 transition-colors">
               <input type="radio" name="selectedRoute"
                      th:value="${route.somansaBusRouteId}"
                      class="radio radio-primary radio-sm">
-              <span th:text="${route.departureTime + ' ' + route.station + ' ' + route.busNumber + '호'}">
+              <span th:text="${route.departureTime + ' ' + route.station + (route.busNumber != null ? ' ' + route.busNumber + '호' : '')}">
                 18:00 당산역 1호
               </span>
             </label>
@@ -225,6 +225,12 @@
           </select>
         </div>
         <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input type="checkbox" id="isIndefinite" class="checkbox checkbox-primary" onchange="toggleDaysAhead(this)">
+            <span class="label-text font-medium">무기한 (그만둘 때까지 매일 D+1 자동 예약)</span>
+          </label>
+        </div>
+        <div class="form-control" id="daysAheadWrapper">
           <label class="label">
             <span class="label-text font-medium">예약 일수 (D+N)</span>
           </label>
@@ -329,7 +335,7 @@ function displaySchedules(schedules) {
     row.append(routeCell);
 
     const daysCell = $('<td>');
-    daysCell.text('D+' + (schedule.daysAhead || 3));
+    daysCell.text(schedule.daysAhead != null ? 'D+' + schedule.daysAhead : '무기한');
     row.append(daysCell);
 
     const statusCell = $('<td>');
@@ -357,26 +363,36 @@ function displaySchedules(schedules) {
   });
 }
 
+function toggleDaysAhead(checkbox) {
+  if (checkbox.checked) {
+    $('#daysAheadWrapper').hide();
+  } else {
+    $('#daysAheadWrapper').show();
+  }
+}
+
 function showAddScheduleModal() {
   $('#scheduleForm')[0].reset();
   $('#daysAhead').val(3);
+  $('#isIndefinite').prop('checked', false);
+  $('#daysAheadWrapper').show();
   document.getElementById('scheduleModal').showModal();
 }
 
 function createSchedule() {
   const routeId = $('#scheduleRouteId').val();
-  const daysAhead = $('#daysAhead').val();
+  const isIndefinite = $('#isIndefinite').is(':checked');
+  const daysAhead = isIndefinite ? null : $('#daysAhead').val();
 
   if (!routeId) {
     showToast('노선을 선택해주세요.', 'negative');
     return;
   }
 
-  sendFormRequest('/api/somansa-bus/schedule/create', {
-    somansaBusMemberId: memberId,
-    somansaBusRouteId: routeId,
-    daysAhead: daysAhead
-  },
+  const payload = { somansaBusMemberId: memberId, somansaBusRouteId: routeId };
+  if (daysAhead !== null) payload.daysAhead = daysAhead;
+
+  sendFormRequest('/api/somansa-bus/schedule/create', payload,
   function(response) {
     showToast('스케줄이 추가되었습니다.', 'positive');
     document.getElementById('scheduleModal').close();

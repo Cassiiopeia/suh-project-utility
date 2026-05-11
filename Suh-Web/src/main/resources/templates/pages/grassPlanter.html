@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='Grass Planter - GitHub 자동 커밋 관리')}"></head>
-<body class="grass-planter-page bg-gray-50">
+<body class="grass-planter-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grass-planter-dashboard" id="main-content">
   <!-- 페이지 헤더 -->
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-brands fa-github text-blue-500"></i>
       Grass Planter
     </h2>
-    <p class="text-gray-500 mt-1">GitHub 자동 커밋 관리 시스템</p>
+    <p class="text-base-content/60 mt-1">GitHub 자동 커밋 관리 시스템</p>
   </div>
 
   <!-- 프로필 카드 섹션 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-brands fa-github text-blue-500"></i>
             프로필 목록
           </h3>
-          <p class="text-gray-500 text-sm">등록된 GitHub 프로필 관리</p>
+          <p class="text-base-content/60 text-sm">등록된 GitHub 프로필 관리</p>
         </div>
         <button class="btn btn-primary" onclick="showAddProfileModal()">
           <i class="fa-solid fa-plus"></i>
@@ -33,32 +33,32 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- 프로필 카드들 -->
-        <div th:each="profile : ${profiles}" class="card bg-base-100 border border-gray-200 hover:shadow-md transition-shadow">
+        <div th:each="profile : ${profiles}" class="card bg-base-100 border border-base-300 hover:shadow-md transition-shadow">
           <div class="card-body p-4">
             <!-- 프로필 헤더 -->
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
-                <i class="fa-brands fa-github text-xl text-gray-700"></i>
-                <span class="font-semibold text-gray-800" th:text="${profile.githubUsername}">username</span>
+                <i class="fa-brands fa-github text-xl text-base-content/80"></i>
+                <span class="font-semibold text-base-content" th:text="${profile.githubUsername}">username</span>
               </div>
               <div th:if="${profile.isActive}" class="badge badge-success badge-sm">활성</div>
               <div th:unless="${profile.isActive}" class="badge badge-ghost badge-sm">비활성</div>
             </div>
 
             <!-- 저장소 이름 -->
-            <div class="text-sm text-gray-500 mb-3" th:text="${profile.defaultRepositoryName ?: 'No repository'}">repository</div>
+            <div class="text-sm text-base-content/60 mb-3" th:text="${profile.defaultRepositoryName ?: 'No repository'}">repository</div>
 
             <!-- 주요 정보 영역 -->
             <div class="space-y-2 mb-4">
-              <div class="flex items-center gap-2 text-sm text-gray-600">
+              <div class="flex items-center gap-2 text-sm text-base-content/70">
                 <i class="fa-solid fa-clock text-blue-500"></i>
                 <span th:text="${profile.isAutoCommitEnabled ? '자동 커밋' : '수동 커밋'}">자동 커밋</span>
               </div>
               <div class="flex items-center gap-2 text-sm">
                 <span class="contribution-level" th:classappend="'level-' + ${profile.targetCommitLevel ?: 0}"></span>
-                <span class="text-gray-600">레벨 <span th:text="${profile.targetCommitLevel ?: 0}">1</span></span>
+                <span class="text-base-content/70">레벨 <span th:text="${profile.targetCommitLevel ?: 0}">1</span></span>
               </div>
-              <div class="flex items-center gap-2 text-sm text-gray-600">
+              <div class="flex items-center gap-2 text-sm text-base-content/70">
                 <i class="fa-solid fa-user text-blue-500"></i>
                 <span th:text="${profile.ownerNickname ?: '미지정'}">Cassiopeia</span>
               </div>
@@ -92,15 +92,15 @@
   </div>
 
   <!-- 커밋 로그 섹션 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
+  <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
             커밋 로그
           </h3>
-          <p class="text-gray-500 text-sm">최근 커밋 기록</p>
+          <p class="text-base-content/60 text-sm">최근 커밋 기록</p>
         </div>
         <button class="btn btn-outline btn-sm" onclick="loadCommitLogs()">
           <i class="fa-solid fa-rotate"></i>
@@ -124,7 +124,7 @@
             <tr>
               <td colspan="6" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
-                <span class="ml-2 text-gray-500">로그 로딩 중...</span>
+                <span class="ml-2 text-base-content/60">로그 로딩 중...</span>
               </td>
             </tr>
           </tbody>
@@ -198,7 +198,7 @@
             <label class="label">
               <span class="label-text font-medium">설정</span>
             </label>
-            <div class="flex flex-col gap-3 p-3 bg-gray-50 rounded-lg">
+            <div class="flex flex-col gap-3 p-3 bg-base-200 rounded-lg">
               <label class="label cursor-pointer justify-start gap-3">
                 <input type="checkbox" id="isActive" name="isActive" class="checkbox checkbox-primary" checked>
                 <span class="label-text">프로필 활성화</span>
@@ -436,12 +436,12 @@ function loadCommitLogs() {
       if (response.commitLogs && Array.isArray(response.commitLogs)) {
         displayCommitLogs(response.commitLogs);
       } else {
-        $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">로그를 불러올 수 없습니다.</td></tr>');
+        $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">로그를 불러올 수 없습니다.</td></tr>');
       }
     },
     function(xhr, status, error) {
       console.error('커밋 로그 로드 실패:', error);
-      $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">로그 로드 중 오류가 발생했습니다.</td></tr>');
+      $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">로그 로드 중 오류가 발생했습니다.</td></tr>');
     }
   );
 }
@@ -453,7 +453,7 @@ function displayCommitLogs(logs) {
   const tableBody = $('#commitLogTable');
 
   if (!logs || logs.length === 0) {
-    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-gray-500">커밋 로그가 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">커밋 로그가 없습니다.</td></tr>');
     return;
   }
 

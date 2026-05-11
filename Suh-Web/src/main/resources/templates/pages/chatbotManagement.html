@@ -2,17 +2,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='챗봇 관리-SAECHAN-LAB')}"></head>
-<body class="chatbot-management-page bg-gray-50">
+<body class="chatbot-management-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
   <!-- 페이지 헤더 -->
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-solid fa-robot text-purple-500"></i>
       챗봇 관리
     </h2>
-    <p class="text-gray-500 mt-1">챗봇 문서 및 모델 설정을 관리합니다.</p>
+    <p class="text-base-content/60 mt-1">챗봇 문서 및 모델 설정을 관리합니다.</p>
   </div>
 
   <!-- 2단 레이아웃 컨테이너 -->
@@ -27,53 +27,53 @@
 
       <!-- 통계 카드 -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-        <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body p-3">
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
                 <i class="fa-solid fa-file-lines text-blue-600"></i>
               </div>
               <div>
-                <p class="text-gray-500 text-xs">총 문서</p>
+                <p class="text-base-content/60 text-xs">총 문서</p>
                 <p class="text-xl font-bold" id="stat-total-docs">0</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body p-3">
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
                 <i class="fa-solid fa-check-circle text-green-600"></i>
               </div>
               <div>
-                <p class="text-gray-500 text-xs">활성</p>
+                <p class="text-base-content/60 text-xs">활성</p>
                 <p class="text-xl font-bold" id="stat-active-docs">0</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body p-3">
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
                 <i class="fa-solid fa-puzzle-piece text-purple-600"></i>
               </div>
               <div>
-                <p class="text-gray-500 text-xs">청크</p>
+                <p class="text-base-content/60 text-xs">청크</p>
                 <p class="text-xl font-bold" id="stat-total-chunks">0</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="card bg-base-100 shadow-sm border border-gray-100">
+        <div class="card bg-base-100 shadow-sm border border-base-300">
           <div class="card-body p-3">
             <div class="flex items-center gap-2">
               <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
                 <i class="fa-solid fa-tags text-amber-600"></i>
               </div>
               <div>
-                <p class="text-gray-500 text-xs">카테고리</p>
+                <p class="text-base-content/60 text-xs">카테고리</p>
                 <p class="text-xl font-bold" id="stat-categories">0</p>
               </div>
             </div>
@@ -82,7 +82,7 @@
       </div>
 
       <!-- 문서 관리 툴바 -->
-      <div class="card bg-base-100 shadow-sm border border-gray-100 mb-4">
+      <div class="card bg-base-100 shadow-sm border border-base-300 mb-4">
         <div class="card-body p-3">
           <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <!-- 검색 영역 -->
@@ -113,7 +113,7 @@
       </div>
 
       <!-- 문서 목록 테이블 -->
-      <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body p-4">
           <div id="loading-indicator" class="flex justify-center py-8">
             <span class="loading loading-spinner loading-lg text-primary"></span>
@@ -189,7 +189,7 @@
         <fieldset class="fieldset">
           <legend class="fieldset-legend">내용 (Markdown) *</legend>
           <textarea id="document-content" class="textarea h-64 w-full font-mono text-sm" placeholder="문서 내용을 마크다운 형식으로 입력하세요..."></textarea>
-          <p class="label text-gray-500">마크다운 문법을 지원합니다.</p>
+          <p class="label text-base-content/60">마크다운 문법을 지원합니다.</p>
         </fieldset>
       </form>
       <div class="modal-action">
@@ -218,36 +218,36 @@
       <h3 class="font-bold text-xl mb-4" id="detail-title"></h3>
 
       <!-- 메타 정보 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-lg p-4 mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-base-200 rounded-lg p-4 mb-4">
         <div class="space-y-2">
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-tag text-purple-500"></i>
             <strong>카테고리:</strong>
             <span id="detail-category" class="badge badge-primary"></span>
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-calendar text-purple-500"></i>
             <strong>생성일:</strong>
             <span id="detail-created-date"></span>
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-clock text-purple-500"></i>
             <strong>수정일:</strong>
             <span id="detail-updated-date"></span>
           </p>
         </div>
         <div class="space-y-2">
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-puzzle-piece text-purple-500"></i>
             <strong>청크 수:</strong>
             <span id="detail-chunk-count"></span>개
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-circle-check text-purple-500"></i>
             <strong>처리 상태:</strong>
             <span id="detail-processed"></span>
           </p>
-          <p class="flex items-center gap-2 text-gray-600">
+          <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-power-off text-purple-500"></i>
             <strong>활성화:</strong>
             <span id="detail-active"></span>
@@ -257,15 +257,15 @@
 
       <!-- 설명 -->
       <div id="detail-description-section" class="mb-4">
-        <h4 class="font-semibold text-gray-700 mb-2">설명</h4>
-        <p id="detail-description" class="text-gray-600 bg-gray-50 rounded p-3"></p>
+        <h4 class="font-semibold text-base-content/80 mb-2">설명</h4>
+        <p id="detail-description" class="text-base-content/70 bg-base-200 rounded p-3"></p>
       </div>
 
       <div class="divider"></div>
 
       <!-- 내용 미리보기 -->
-      <h4 class="font-semibold text-gray-700 mb-2">내용 미리보기</h4>
-      <div class="prose max-w-none bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto" id="detail-content"></div>
+      <h4 class="font-semibold text-base-content/80 mb-2">내용 미리보기</h4>
+      <div class="prose max-w-none bg-base-200 rounded-lg p-4 max-h-64 overflow-y-auto" id="detail-content"></div>
 
       <div class="modal-action">
         <button class="btn btn-info" id="reprocess-btn">
@@ -302,9 +302,9 @@
         <h3 class="text-lg font-semibold">모델 관리</h3>
       </div>
 
-      <div class="card bg-base-100 shadow-sm border border-gray-100">
+      <div class="card bg-base-100 shadow-sm border border-base-300">
         <div class="card-body p-4">
-          <p class="text-gray-500 text-sm mb-4">챗봇의 각 단계에서 사용할 AI 모델을 선택합니다.</p>
+          <p class="text-base-content/60 text-sm mb-4">챗봇의 각 단계에서 사용할 AI 모델을 선택합니다.</p>
 
           <div class="space-y-4">
             <!-- Step 1: 의도 분류 모델 -->
@@ -316,7 +316,7 @@
                 <option value="">로딩 중...</option>
               </select>
               <label class="label py-1">
-                <span class="label-text-alt text-gray-500 text-xs">경량 모델 권장 (예: gemma3:1b)</span>
+                <span class="label-text-alt text-base-content/60 text-xs">경량 모델 권장 (예: gemma3:1b)</span>
               </label>
             </div>
 
@@ -329,7 +329,7 @@
                 <option value="">로딩 중...</option>
               </select>
               <label class="label py-1">
-                <span class="label-text-alt text-gray-500 text-xs">고품질 모델 권장 (예: rnj-1:8b)</span>
+                <span class="label-text-alt text-base-content/60 text-xs">고품질 모델 권장 (예: rnj-1:8b)</span>
               </label>
             </div>
 
@@ -355,7 +355,7 @@
       </div>
 
       <!-- 청크 설정 카드 -->
-      <div class="card bg-base-100 shadow-sm border border-gray-100 mt-4">
+      <div class="card bg-base-100 shadow-sm border border-base-300 mt-4">
         <div class="card-body p-4">
           <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
             <i class="fa-solid fa-gear text-blue-500"></i>
@@ -366,7 +366,7 @@
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-sm">청크 크기</span>
-                <span class="label-text-alt text-gray-500 text-xs">기본: 500</span>
+                <span class="label-text-alt text-base-content/60 text-xs">기본: 500</span>
               </label>
               <input type="number" id="chunk-size-input" class="input input-bordered input-sm"
                      min="100" max="10000" step="100" placeholder="500">
@@ -375,7 +375,7 @@
             <div class="form-control">
               <label class="label py-1">
                 <span class="label-text text-sm">청크 중첩</span>
-                <span class="label-text-alt text-gray-500 text-xs">기본: 100</span>
+                <span class="label-text-alt text-base-content/60 text-xs">기본: 100</span>
               </label>
               <input type="number" id="chunk-overlap-input" class="input input-bordered input-sm"
                      min="0" max="1000" step="50" placeholder="100">
@@ -760,7 +760,7 @@
       pageData.forEach(function(doc) {
         const icon = doc.isActive
           ? '<i class="fa-solid fa-file-lines text-blue-500 mr-1"></i>'
-          : '<i class="fa-solid fa-file-lines text-gray-400 mr-1"></i>';
+          : '<i class="fa-solid fa-file-lines text-base-content/50 mr-1"></i>';
 
         const titleText = doc.title.length > 25 ? doc.title.substring(0, 25) + '...' : doc.title;
         const titleHtml = icon + escapeHtml(titleText);
