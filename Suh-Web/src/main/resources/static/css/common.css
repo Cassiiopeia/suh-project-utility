@@ -8,18 +8,16 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 
 /*
 ===========================
-   DaisyUI 5 CSS 변수 커스터마이징 (버튼 오버라이드 없음)
+   DaisyUI 5 테마 커스터마이징
+   primary: 파란색 (#3b82f6)
 ===========================
 */
-:root,
-[data-theme="light"] {
-  --color-primary: oklch(0.623 0.214 255.1);
+[data-theme="light"],
+[data-theme="dark"],
+:root {
+  --color-primary: oklch(0.6232 0.1888 255.09);
   --color-primary-content: oklch(1 0 0);
-}
-
-[data-theme="dark"] {
-  --color-primary: oklch(0.707 0.165 254.6);
-  --color-primary-content: oklch(1 0 0);
+  --color-primary-focus: oklch(0.5706 0.1888 255.09);
 }
 
 /*

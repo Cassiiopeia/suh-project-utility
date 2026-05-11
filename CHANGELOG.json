@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-11T05:10:35Z",
-    "currentVersion": "2.5.32",
+    "lastUpdated": "2026-05-11T05:24:28Z",
+    "currentVersion": "2.5.33",
     "projectType": "spring",
-    "totalReleases": 54
+    "totalReleases": 55
   },
   "releases": [
+    {
+      "version": "2.5.33",
+      "project_type": "spring",
+      "date": "2026-05-11",
+      "pr_number": 199,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 버튼 색상이 흰색으로 표시되던 문제 수정\n\n* **개선**\n  * DaisyUI CDN 버전 고정으로 예기치 않은 스타일 변경 방지",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "버튼 색상이 흰색으로 표시되던 문제 수정"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "DaisyUI CDN 버전 고정으로 예기치 않은 스타일 변경 방지"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.32",
       "project_type": "spring",
