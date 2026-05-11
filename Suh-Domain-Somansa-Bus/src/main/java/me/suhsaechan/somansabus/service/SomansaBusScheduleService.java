@@ -43,7 +43,8 @@ public class SomansaBusScheduleService {
     SomansaBusRoute route = routeRepository.findById(request.getSomansaBusRouteId())
         .orElseThrow(() -> new CustomException(ErrorCode.SOMANSA_BUS_ROUTE_NOT_FOUND));
 
-    Integer daysAhead = request.getDaysAhead() != null ? request.getDaysAhead() : 3;
+    // null = 무기한 (스케줄러에서 매일 D+1로 처리)
+    Integer daysAhead = request.getDaysAhead();
 
     SomansaBusSchedule schedule = SomansaBusSchedule.builder()
         .somansaBusMember(member)

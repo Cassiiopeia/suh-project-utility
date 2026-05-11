@@ -72,7 +72,8 @@ public class SomansaBusReservationService {
         continue;
       }
 
-      int daysAhead = schedule.getDaysAhead() != null ? schedule.getDaysAhead() : 3;
+      // daysAhead=null 이면 무기한(매일 D+1 자동 예약)
+      int daysAhead = schedule.getDaysAhead() != null ? schedule.getDaysAhead() : 1;
       LocalDate reservationDate = LocalDate.now().plusDays(daysAhead);
 
       log.info("자동 예약 실행 - 멤버: {}, 노선: {}, 예약일: {}",
