@@ -39,7 +39,7 @@
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <span class="text-sm text-base-content/60">멤버 활성</span>
-            <input type="checkbox" class="toggle toggle-success"
+            <input type="checkbox" class="toggle toggle-info"
                    th:checked="${member.isActive}"
                    th:data-member-id="${member.somansaBusMemberId}"
                    onchange="toggleMemberActive(this.getAttribute('data-member-id'))"/>
@@ -128,7 +128,7 @@
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-2">
             <span class="text-sm text-base-content/60">전체</span>
-            <input type="checkbox" class="toggle toggle-success" id="allScheduleToggle"
+            <input type="checkbox" class="toggle toggle-info" id="allScheduleToggle"
                    onchange="toggleAllSchedules(this.checked)"/>
           </div>
           <button class="btn btn-primary btn-sm" onclick="showAddScheduleModal()">
@@ -317,7 +317,7 @@ function displaySchedules(schedules) {
     const row = $('<tr>');
 
     const toggleCell = $('<td>');
-    toggleCell.html(`<input type="checkbox" class="toggle toggle-success toggle-sm" ${schedule.isActive ? 'checked' : ''} onchange="toggleScheduleActive('${schedule.somansaBusScheduleId}')">`);
+    toggleCell.html(`<input type="checkbox" class="toggle toggle-info toggle-sm" ${schedule.isActive ? 'checked' : ''} onchange="toggleScheduleActive('${schedule.somansaBusScheduleId}')">`);
     row.append(toggleCell);
 
     const routeCell = $('<td>');
