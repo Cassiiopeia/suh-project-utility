@@ -26,7 +26,6 @@ public class SomansaBusRequest {
 
     // 스케줄 관련
     private UUID somansaBusScheduleId;
-    private Integer daysAhead;
 
     // 예약 관련
     private LocalDate reservationDate;

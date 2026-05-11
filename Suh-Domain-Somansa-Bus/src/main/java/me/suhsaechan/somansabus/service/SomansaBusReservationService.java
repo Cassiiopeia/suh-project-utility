@@ -14,7 +14,6 @@ import me.suhsaechan.somansabus.repository.SomansaBusMemberRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusReservationHistoryRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusRouteRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusScheduleRepository;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +54,6 @@ public class SomansaBusReservationService {
         .build();
   }
 
-  @Scheduled(cron = "0 13 0 * * ?")
   @Transactional
   public void scheduledAutoReservation() {
     log.info("자동 예약 스케줄러 실행 시작");
@@ -72,8 +70,7 @@ public class SomansaBusReservationService {
         continue;
       }
 
-      // daysAhead=null 이면 무기한(매일 D+1 자동 예약)
-      int daysAhead = schedule.getDaysAhead() != null ? schedule.getDaysAhead() : 1;
+      int daysAhead = 1;
       LocalDate reservationDate = LocalDate.now().plusDays(daysAhead);
 
       log.info("자동 예약 실행 - 멤버: {}, 노선: {}, 예약일: {}",

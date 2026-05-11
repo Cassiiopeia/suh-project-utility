@@ -192,7 +192,6 @@ public class SomansaBusApiService {
       String responseBody = response.body() != null ? response.body().string() : "";
       log.debug("예약 응답: {}", responseBody);
 
-      ObjectMapper mapper = new ObjectMapper();
       JsonNode root = mapper.readTree(responseBody);
       int resultCode = root.path("d").asInt(0);
 

@@ -8,10 +8,13 @@ import me.suhsaechan.somansabus.dto.SomansaBusRequest;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.entity.SomansaBusMember;
 import me.suhsaechan.somansabus.repository.SomansaBusMemberRepository;
+import me.suhsaechan.somansabus.repository.SomansaBusScheduleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -20,6 +23,7 @@ import java.util.UUID;
 public class SomansaBusMemberService {
 
   private final SomansaBusMemberRepository memberRepository;
+  private final SomansaBusScheduleRepository scheduleRepository;
   private final SomansaBusApiService apiService;
 
   @Transactional
@@ -62,9 +66,17 @@ public class SomansaBusMemberService {
   public SomansaBusResponse getAllMembers() {
     log.info("전체 멤버 목록 조회");
     List<SomansaBusMember> members = memberRepository.findAll();
+
+    Map<UUID, Integer> scheduleCounts = new HashMap<>();
+    for (SomansaBusMember member : members) {
+      int count = scheduleRepository.findBySomansaBusMemberSomansaBusMemberIdAndIsActiveTrue(member.getSomansaBusMemberId()).size();
+      scheduleCounts.put(member.getSomansaBusMemberId(), count);
+    }
+
     return SomansaBusResponse.builder()
         .members(members)
         .totalCount((long) members.size())
+        .memberScheduleCounts(scheduleCounts)
         .build();
   }
 

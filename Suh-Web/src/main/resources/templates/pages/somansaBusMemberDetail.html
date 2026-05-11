@@ -36,22 +36,15 @@
             </div>
           </div>
         </div>
-        <div class="flex gap-2">
-          <button th:if="${member.isActive}"
-                  class="btn btn-error btn-sm"
-                  th:data-member-id="${member.somansaBusMemberId}"
-                  onclick="toggleMemberActive(this.getAttribute('data-member-id'))">
-            <i class="fa-solid fa-toggle-off"></i>
-            비활성화하기
-          </button>
-          <button th:unless="${member.isActive}"
-                  class="btn btn-success btn-sm"
-                  th:data-member-id="${member.somansaBusMemberId}"
-                  onclick="toggleMemberActive(this.getAttribute('data-member-id'))">
-            <i class="fa-solid fa-toggle-on"></i>
-            활성화하기
-          </button>
-          <button class="btn btn-error btn-sm"
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-base-content/60">멤버 활성</span>
+            <input type="checkbox" class="toggle toggle-success"
+                   th:checked="${member.isActive}"
+                   th:data-member-id="${member.somansaBusMemberId}"
+                   onchange="toggleMemberActive(this.getAttribute('data-member-id'))"/>
+          </div>
+          <button class="btn btn-outline btn-error btn-sm"
                   th:data-member-id="${member.somansaBusMemberId}"
                   onclick="deleteMember(this.getAttribute('data-member-id'))">
             <i class="fa-solid fa-trash"></i>
@@ -126,33 +119,39 @@
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <h3 class="text-lg font-semibold flex items-center gap-2">
             <i class="fa-solid fa-calendar text-blue-500"></i>
             자동 예약 스케줄
           </h3>
-          <p class="text-gray-500 text-sm">등록된 자동 예약 스케줄</p>
+          <p class="text-base-content/60 text-sm">등록된 자동 예약 스케줄</p>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="showAddScheduleModal()">
-          <i class="fa-solid fa-plus"></i>
-          스케줄 추가
-        </button>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-base-content/60">전체</span>
+            <input type="checkbox" class="toggle toggle-success" id="allScheduleToggle"
+                   onchange="toggleAllSchedules(this.checked)"/>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showAddScheduleModal()">
+            <i class="fa-solid fa-plus"></i>
+            스케줄 추가
+          </button>
+        </div>
       </div>
 
       <div class="overflow-x-auto">
         <table class="table table-zebra">
           <thead>
             <tr>
+              <th>활성</th>
               <th>노선</th>
-              <th>예약 일수</th>
-              <th>상태</th>
-              <th>액션</th>
+              <th>삭제</th>
             </tr>
           </thead>
           <tbody id="scheduleTable">
             <tr>
-              <td colspan="4" class="text-center py-8">
+              <td colspan="3" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
-                <span class="ml-2 text-gray-500">스케줄 로딩 중...</span>
+                <span class="ml-2 text-base-content/60">스케줄 로딩 중...</span>
               </td>
             </tr>
           </tbody>
@@ -224,21 +223,7 @@
                     th:text="${route.description}">노선</option>
           </select>
         </div>
-        <div class="form-control">
-          <label class="label cursor-pointer justify-start gap-3">
-            <input type="checkbox" id="isIndefinite" class="checkbox checkbox-primary" onchange="toggleDaysAhead(this)">
-            <span class="label-text font-medium">무기한 (그만둘 때까지 매일 D+1 자동 예약)</span>
-          </label>
-        </div>
-        <div class="form-control" id="daysAheadWrapper">
-          <label class="label">
-            <span class="label-text font-medium">예약 일수 (D+N)</span>
-          </label>
-          <input type="number" id="daysAhead" class="input input-bordered w-full" value="3" min="1" max="7">
-          <label class="label">
-            <span class="label-text-alt text-gray-500">오늘 기준 며칠 후 예약할지 설정</span>
-          </label>
-        </div>
+        <p class="text-sm text-base-content/60">매일 전날 밤 자동으로 D+1 예약이 실행됩니다.</p>
       </form>
       <div class="modal-action">
         <form method="dialog">
@@ -313,7 +298,7 @@ function loadMemberSchedules() {
     },
     function(xhr) {
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#scheduleTable').html('<tr><td colspan="4" class="text-center py-8 text-gray-500">스케줄 로드 실패</td></tr>');
+      $('#scheduleTable').html('<tr><td colspan="3" class="text-center py-8 text-base-content/60">스케줄 로드 실패</td></tr>');
     }
   );
 }
@@ -322,7 +307,8 @@ function displaySchedules(schedules) {
   const tableBody = $('#scheduleTable');
 
   if (!schedules || schedules.length === 0) {
-    tableBody.html('<tr><td colspan="4" class="text-center py-8 text-gray-500">등록된 스케줄이 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="3" class="text-center py-8 text-base-content/60">등록된 스케줄이 없습니다.</td></tr>');
+    updateAllScheduleToggle(schedules);
     return;
   }
 
@@ -330,69 +316,56 @@ function displaySchedules(schedules) {
   schedules.forEach(function(schedule) {
     const row = $('<tr>');
 
+    const toggleCell = $('<td>');
+    toggleCell.html(`<input type="checkbox" class="toggle toggle-success toggle-sm" ${schedule.isActive ? 'checked' : ''} onchange="toggleScheduleActive('${schedule.somansaBusScheduleId}')">`);
+    row.append(toggleCell);
+
     const routeCell = $('<td>');
     routeCell.text(schedule.somansaBusRoute ? schedule.somansaBusRoute.description : '-');
+    if (!schedule.isActive) routeCell.addClass('text-base-content/40');
     row.append(routeCell);
 
-    const daysCell = $('<td>');
-    daysCell.text(schedule.daysAhead != null ? 'D+' + schedule.daysAhead : '무기한');
-    row.append(daysCell);
-
-    const statusCell = $('<td>');
-    if (schedule.isActive) {
-      statusCell.html('<span class="badge badge-success badge-sm">활성</span>');
-    } else {
-      statusCell.html('<span class="badge badge-ghost badge-sm">비활성</span>');
-    }
-    row.append(statusCell);
-
-    const actionCell = $('<td>');
-    actionCell.html(`
-      <div class="flex gap-1">
-        <button class="btn btn-circle btn-sm btn-warning" onclick="toggleScheduleActive('${schedule.somansaBusScheduleId}')" title="상태 변경">
-          <i class="fa-solid fa-toggle-on text-xs"></i>
-        </button>
-        <button class="btn btn-circle btn-sm btn-error" onclick="deleteSchedule('${schedule.somansaBusScheduleId}')" title="삭제">
-          <i class="fa-solid fa-trash text-xs"></i>
-        </button>
-      </div>
-    `);
-    row.append(actionCell);
+    const deleteCell = $('<td>');
+    deleteCell.html(`<button class="btn btn-outline btn-error btn-xs" onclick="deleteSchedule('${schedule.somansaBusScheduleId}')"><i class="fa-solid fa-trash"></i></button>`);
+    row.append(deleteCell);
 
     tableBody.append(row);
   });
+
+  updateAllScheduleToggle(schedules);
 }
 
-function toggleDaysAhead(checkbox) {
-  if (checkbox.checked) {
-    $('#daysAheadWrapper').hide();
-  } else {
-    $('#daysAheadWrapper').show();
-  }
+function updateAllScheduleToggle(schedules) {
+  const allActive = schedules && schedules.length > 0 && schedules.every(s => s.isActive);
+  $('#allScheduleToggle').prop('checked', allActive);
+}
+
+function toggleAllSchedules(checked) {
+  const rows = $('#scheduleTable tr');
+  rows.find('input[type="checkbox"]').each(function() {
+    const isCurrentlyChecked = $(this).is(':checked');
+    if (isCurrentlyChecked !== checked) {
+      const onclick = $(this).attr('onchange');
+      const scheduleId = onclick.match(/'([^']+)'/)?.[1];
+      if (scheduleId) toggleScheduleActive(scheduleId);
+    }
+  });
 }
 
 function showAddScheduleModal() {
   $('#scheduleForm')[0].reset();
-  $('#daysAhead').val(3);
-  $('#isIndefinite').prop('checked', false);
-  $('#daysAheadWrapper').show();
   document.getElementById('scheduleModal').showModal();
 }
 
 function createSchedule() {
   const routeId = $('#scheduleRouteId').val();
-  const isIndefinite = $('#isIndefinite').is(':checked');
-  const daysAhead = isIndefinite ? null : $('#daysAhead').val();
 
   if (!routeId) {
     showToast('노선을 선택해주세요.', 'negative');
     return;
   }
 
-  const payload = { somansaBusMemberId: memberId, somansaBusRouteId: routeId };
-  if (daysAhead !== null) payload.daysAhead = daysAhead;
-
-  sendFormRequest('/api/somansa-bus/schedule/create', payload,
+  sendFormRequest('/api/somansa-bus/schedule/create', { somansaBusMemberId: memberId, somansaBusRouteId: routeId },
   function(response) {
     showToast('스케줄이 추가되었습니다.', 'positive');
     document.getElementById('scheduleModal').close();
