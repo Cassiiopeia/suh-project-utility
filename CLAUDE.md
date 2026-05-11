@@ -510,6 +510,38 @@ public class SomansaBusRouteService {
 - **Web 모듈**: 핵심 Spring Boot 의존성만 유지 (`spring-boot-starter`, `spring-boot-starter-web`, `spring-boot-starter-validation`)
 - **중복 선언 금지**: Common에 있는 외부 라이브러리를 다른 모듈에서 다시 선언하지 않음
 
+### Flyway 마이그레이션 규칙 ⚠️ 필수 준수
+
+**Entity 스키마 변경 시 반드시 Flyway 마이그레이션 파일을 함께 작성한다.**
+
+#### 기본 원칙
+- `hibernate.ddl-auto: update` 유지 — Flyway는 보조 수단, Hibernate가 실제 스키마 관리
+- Flyway는 `ddl-auto`보다 먼저 실행되므로 스키마 변경을 선제적으로 적용 가능
+- 기존 마이그레이션 파일은 절대 수정 금지 — 새 버전 파일로 추가
+
+#### 파일 위치 및 네이밍
+- **위치**: `Suh-Web/src/main/resources/db/migration/`
+- **네이밍**: `V{version}__{설명}.sql` — `version.yml`의 `version` 값 사용, 점(`.`)은 언더스코어(`_`)로 치환
+  - 예: `version: "2.5.27"` → `V2_5_27__add_is_shuttle_to_somansa_bus_route.sql`
+- **버전당 파일 1개 원칙**: 같은 버전 prefix 파일 2개 생성 금지 (Flyway 에러 발생)
+- **마이그레이션 전 반드시 `version.yml` 읽어 현재 버전 확인**
+
+#### 초기화 안전 전략 ⚠️ 필수 준수
+**DB가 완전 초기 상태(테이블 없음)에서 jar를 실행하는 경우에도 반드시 동작해야 한다.**
+
+- **신규 테이블 추가**: `CREATE TABLE IF NOT EXISTS`로 전체 스키마 정의
+- **기존 테이블 컬럼 추가**: `CREATE TABLE IF NOT EXISTS` + `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` 둘 다 작성
+  - 이유: 기존 DB엔 테이블 있고 컬럼만 없는 경우 / 완전 초기화 상태 둘 다 커버해야 함
+- **컬럼 삭제**: `ALTER TABLE ... DROP COLUMN IF EXISTS`
+- **인덱스**: `CREATE INDEX IF NOT EXISTS` / `DROP INDEX IF EXISTS`
+- **절대 금지**: 조건 없는 `ALTER TABLE ADD COLUMN`, `CREATE TABLE`, `DROP TABLE`
+
+#### 작업 체크리스트
+- [ ] Entity 추가/변경 시 Flyway 마이그레이션 파일도 함께 작성했는가?
+- [ ] 마이그레이션 파일 작성 전 `version.yml`을 읽어 현재 버전을 확인했는가?
+- [ ] 동일 버전으로 파일이 2개 이상 생성되지 않았는가?
+- [ ] `CREATE TABLE IF NOT EXISTS` + `ADD COLUMN IF NOT EXISTS` 둘 다 작성해 완전 초기화 상태도 커버했는가?
+
 ### 테스트 의존성 규칙 ⚠️ 필수 준수
 - **통합 테스트**: 도메인 모듈에서 `@SpringBootTest` 사용 시 메인 애플리케이션 클래스 필요
 - **테스트 의존성**: `testImplementation project(':{메인이 존재하는 모듈}')` 추가 필수
