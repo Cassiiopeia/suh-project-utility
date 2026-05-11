@@ -88,18 +88,23 @@
         <table class="table table-zebra">
           <thead>
             <tr>
+              <th>활성</th>
               <th>이름</th>
               <th>이메일</th>
-              <th>상태</th>
               <th>인증</th>
               <th>스케줄</th>
-              <th>액션</th>
+              <th>삭제</th>
             </tr>
           </thead>
           <tbody id="memberTable">
             <tr th:each="member : ${members}"
                 th:data-member-id="${member.somansaBusMemberId}"
                 class="hover:bg-base-300 cursor-pointer">
+              <td onclick="event.stopPropagation()">
+                <input type="checkbox" class="toggle toggle-success toggle-sm toggle-member-active-btn"
+                       th:checked="${member.isActive}"
+                       th:data-member-id="${member.somansaBusMemberId}"/>
+              </td>
               <td>
                 <div class="flex items-center gap-2">
                   <div class="avatar placeholder">
@@ -110,40 +115,20 @@
                   <span class="font-medium" th:text="${member.displayName ?: '-'}">이름</span>
                 </div>
               </td>
-              <td class="text-sm text-gray-500" th:text="${member.loginId}">email@somansa.com</td>
-              <td>
-                <span th:if="${member.isActive}" class="badge badge-success badge-sm">활성</span>
-                <span th:unless="${member.isActive}" class="badge badge-ghost badge-sm">비활성</span>
-              </td>
+              <td class="text-sm text-base-content/60" th:text="${member.loginId}">email@somansa.com</td>
               <td>
                 <span th:if="${member.isVerified}" class="badge badge-info badge-sm">인증됨</span>
                 <span th:unless="${member.isVerified}" class="badge badge-warning badge-sm">미인증</span>
               </td>
               <td>
-                <span class="text-sm text-gray-500">-</span>
+                <span class="badge badge-ghost badge-sm">-</span>
               </td>
-              <td>
-                <div class="flex gap-1">
-                  <button th:if="${member.isActive}"
-                          class="btn btn-sm btn-error toggle-member-active-btn"
-                          th:data-member-id="${member.somansaBusMemberId}"
-                          title="멤버 비활성화">
-                    <i class="fa-solid fa-toggle-off text-xs"></i>
-                    <span class="hidden sm:inline">비활성화</span>
-                  </button>
-                  <button th:unless="${member.isActive}"
-                          class="btn btn-sm btn-success toggle-member-active-btn"
-                          th:data-member-id="${member.somansaBusMemberId}"
-                          title="멤버 활성화">
-                    <i class="fa-solid fa-toggle-on text-xs"></i>
-                    <span class="hidden sm:inline">활성화</span>
-                  </button>
-                  <button class="btn btn-circle btn-sm btn-error delete-member-btn"
-                          th:data-member-id="${member.somansaBusMemberId}"
-                          title="멤버 삭제">
-                    <i class="fa-solid fa-trash text-xs"></i>
-                  </button>
-                </div>
+              <td onclick="event.stopPropagation()">
+                <button class="btn btn-outline btn-error btn-xs delete-member-btn"
+                        th:data-member-id="${member.somansaBusMemberId}"
+                        title="멤버 삭제">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -343,8 +328,8 @@ $(document).ready(function() {
     }
   });
 
-  // 액션 버튼 클릭 이벤트 (이벤트 위임)
-  $(document).on('click', '.toggle-member-active-btn', function(e) {
+  // 활성 토글 체크박스 change 이벤트 (이벤트 위임)
+  $(document).on('change', '.toggle-member-active-btn', function(e) {
     e.stopPropagation();
     const memberId = $(this).data('member-id');
     toggleMemberActive(memberId);
@@ -375,7 +360,7 @@ function loadStats() {
 function loadMembers() {
   sendFormRequest('/api/somansa-bus/member/list', {},
     function(response) {
-      displayMembers(response.members || []);
+      displayMembers(response.members || [], response.memberScheduleCounts || {});
     },
     function(xhr) {
       console.error('멤버 목록 로드 실패');
@@ -385,12 +370,12 @@ function loadMembers() {
   );
 }
 
-function displayMembers(members) {
+function displayMembers(members, scheduleCounts) {
   const tableBody = $('#memberTable');
   tableBody.empty();
 
   if (!members || members.length === 0) {
-    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-gray-500">등록된 멤버가 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">등록된 멤버가 없습니다.</td></tr>');
     return;
   }
 
@@ -399,74 +384,40 @@ function displayMembers(members) {
       .attr('data-member-id', member.somansaBusMemberId)
       .addClass('hover:bg-base-300 cursor-pointer');
 
-    // 이름 컬럼
+    // 활성 toggle
+    const activeCell = $('<td>').attr('onclick', 'event.stopPropagation()');
+    activeCell.html(`<input type="checkbox" class="toggle toggle-success toggle-sm toggle-member-active-btn" ${member.isActive ? 'checked' : ''} data-member-id="${member.somansaBusMemberId}">`);
+    row.append(activeCell);
+
+    // 이름
     const nameCell = $('<td>');
-    const nameDiv = $('<div>').addClass('flex items-center gap-2');
-    const avatarDiv = $('<div>').addClass('avatar placeholder');
-    const avatarInner = $('<div>').addClass('bg-neutral text-neutral-content rounded-full w-8');
-    const avatarText = $('<span>').addClass('text-xs').text(member.displayName ? member.displayName.substring(0, 1) : '?');
-    avatarInner.append(avatarText);
-    avatarDiv.append(avatarInner);
-    const nameSpan = $('<span>').addClass('font-medium').text(member.displayName || '-');
-    nameDiv.append(avatarDiv, nameSpan);
-    nameCell.append(nameDiv);
+    nameCell.html(`<div class="flex items-center gap-2"><div class="avatar placeholder"><div class="bg-neutral text-neutral-content rounded-full w-8"><span class="text-xs">${member.displayName ? member.displayName.substring(0,1) : '?'}</span></div></div><span class="font-medium">${member.displayName || '-'}</span></div>`);
     row.append(nameCell);
 
-    // 이메일 컬럼
-    const emailCell = $('<td>').addClass('text-sm text-gray-500').text(member.loginId);
+    // 이메일
+    const emailCell = $('<td>').addClass('text-sm text-base-content/60').text(member.loginId);
     row.append(emailCell);
 
-    // 상태 컬럼
-    const statusCell = $('<td>');
-    if (member.isActive) {
-      statusCell.html('<span class="badge badge-success badge-sm">활성</span>');
-    } else {
-      statusCell.html('<span class="badge badge-ghost badge-sm">비활성</span>');
-    }
-    row.append(statusCell);
-
-    // 인증 컬럼
+    // 인증
     const verifiedCell = $('<td>');
-    if (member.isVerified) {
-      verifiedCell.html('<span class="badge badge-info badge-sm">인증됨</span>');
-    } else {
-      verifiedCell.html('<span class="badge badge-warning badge-sm">미인증</span>');
-    }
+    verifiedCell.html(member.isVerified
+      ? '<span class="badge badge-info badge-sm">인증됨</span>'
+      : '<span class="badge badge-warning badge-sm">미인증</span>');
     row.append(verifiedCell);
 
-    // 스케줄 컬럼
+    // 스케줄 수
     const scheduleCell = $('<td>');
-    scheduleCell.html('<span class="text-sm text-gray-500">-</span>');
+    const count = scheduleCounts && scheduleCounts[member.somansaBusMemberId] != null
+      ? scheduleCounts[member.somansaBusMemberId] : 0;
+    scheduleCell.html(count > 0
+      ? `<span class="badge badge-success badge-sm">${count}개</span>`
+      : '<span class="badge badge-ghost badge-sm">없음</span>');
     row.append(scheduleCell);
 
-    // 액션 컬럼
-    const actionCell = $('<td>');
-    const actionDiv = $('<div>').addClass('flex gap-1');
-
-    let toggleBtn;
-    if (member.isActive) {
-      toggleBtn = $('<button>')
-        .addClass('btn btn-sm btn-error toggle-member-active-btn')
-        .attr('data-member-id', member.somansaBusMemberId)
-        .attr('title', '멤버 비활성화')
-        .html('<i class="fa-solid fa-toggle-off text-xs"></i> <span class="hidden sm:inline">비활성화</span>');
-    } else {
-      toggleBtn = $('<button>')
-        .addClass('btn btn-sm btn-success toggle-member-active-btn')
-        .attr('data-member-id', member.somansaBusMemberId)
-        .attr('title', '멤버 활성화')
-        .html('<i class="fa-solid fa-toggle-on text-xs"></i> <span class="hidden sm:inline">활성화</span>');
-    }
-
-    const deleteBtn = $('<button>')
-      .addClass('btn btn-circle btn-sm btn-error delete-member-btn')
-      .attr('data-member-id', member.somansaBusMemberId)
-      .attr('title', '멤버 삭제')
-      .html('<i class="fa-solid fa-trash text-xs"></i>');
-
-    actionDiv.append(toggleBtn, deleteBtn);
-    actionCell.append(actionDiv);
-    row.append(actionCell);
+    // 삭제
+    const deleteCell = $('<td>').attr('onclick', 'event.stopPropagation()');
+    deleteCell.html(`<button class="btn btn-outline btn-error btn-xs delete-member-btn" data-member-id="${member.somansaBusMemberId}" title="멤버 삭제"><i class="fa-solid fa-trash"></i></button>`);
+    row.append(deleteCell);
 
     tableBody.append(row);
   });

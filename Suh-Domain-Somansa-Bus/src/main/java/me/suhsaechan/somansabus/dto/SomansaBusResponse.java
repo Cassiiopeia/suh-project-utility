@@ -13,6 +13,8 @@ import me.suhsaechan.somansabus.entity.SomansaBusSchedule;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -68,4 +70,7 @@ public class SomansaBusResponse {
     // 노선 list 조회 시 마지막 동기화 시각
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime lastSyncedAt;
+
+    // 멤버별 스케줄 수 (memberId → activeScheduleCount)
+    private Map<UUID, Integer> memberScheduleCounts;
 }
