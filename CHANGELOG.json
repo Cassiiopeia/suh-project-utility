@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-11T04:56:45Z",
-    "currentVersion": "2.5.31",
+    "lastUpdated": "2026-05-11T05:10:35Z",
+    "currentVersion": "2.5.32",
     "projectType": "spring",
-    "totalReleases": 53
+    "totalReleases": 54
   },
   "releases": [
+    {
+      "version": "2.5.32",
+      "project_type": "spring",
+      "date": "2026-05-11",
+      "pr_number": 198,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **개선**\n  * 버튼 스타일이 DaisyUI 기본 디자인으로 통일되어 다크모드에서 일관성 향상\n  * toggle, checkbox 등 폼 요소가 DaisyUI 기본 스타일대로 정상 표시됨",
+      "parsed_changes": {
+        "개선": {
+          "title": "개선",
+          "items": [
+            "버튼 스타일이 DaisyUI 기본 디자인으로 통일되어 다크모드에서 일관성 향상",
+            "toggle, checkbox 등 폼 요소가 DaisyUI 기본 스타일대로 정상 표시됨"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.31",
       "project_type": "spring",
