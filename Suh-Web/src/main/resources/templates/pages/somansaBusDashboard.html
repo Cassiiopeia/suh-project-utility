@@ -101,7 +101,7 @@
                 th:data-member-id="${member.somansaBusMemberId}"
                 class="hover:bg-base-300 cursor-pointer">
               <td onclick="event.stopPropagation()">
-                <input type="checkbox" class="toggle toggle-success toggle-sm toggle-member-active-btn"
+                <input type="checkbox" class="toggle toggle-info toggle-sm toggle-member-active-btn"
                        th:checked="${member.isActive}"
                        th:data-member-id="${member.somansaBusMemberId}"/>
               </td>
@@ -386,7 +386,7 @@ function displayMembers(members, scheduleCounts) {
 
     // 활성 toggle
     const activeCell = $('<td>').attr('onclick', 'event.stopPropagation()');
-    activeCell.html(`<input type="checkbox" class="toggle toggle-success toggle-sm toggle-member-active-btn" ${member.isActive ? 'checked' : ''} data-member-id="${member.somansaBusMemberId}">`);
+    activeCell.html(`<input type="checkbox" class="toggle toggle-info toggle-sm toggle-member-active-btn" ${member.isActive ? 'checked' : ''} data-member-id="${member.somansaBusMemberId}">`);
     row.append(activeCell);
 
     // 이름
