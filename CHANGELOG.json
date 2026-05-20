@@ -1,11 +1,34 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-11T05:24:28Z",
-    "currentVersion": "2.5.33",
+    "lastUpdated": "2026-05-20T08:02:07Z",
+    "currentVersion": "2.5.35",
     "projectType": "spring",
-    "totalReleases": 55
+    "totalReleases": 56
   },
   "releases": [
+    {
+      "version": "2.5.35",
+      "project_type": "spring",
+      "date": "2026-05-20",
+      "pr_number": 203,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 포트폴리오 대시보드에 passQL, PickerPicker 프로젝트 카드 추가\n  * ROM ROM 앱 Google Play / App Store 스토어 링크 추가\n\n* **개선**\n  * 다크모드 토글 버튼 색상 오류 수정",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "포트폴리오 대시보드에 passQL, PickerPicker 프로젝트 카드 추가",
+            "ROM ROM 앱 Google Play / App Store 스토어 링크 추가"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "다크모드 토글 버튼 색상 오류 수정"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.33",
       "project_type": "spring",
