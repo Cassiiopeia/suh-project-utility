@@ -1,11 +1,41 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-20T08:02:07Z",
-    "currentVersion": "2.5.35",
+    "lastUpdated": "2026-05-21T08:38:54Z",
+    "currentVersion": "2.5.36",
     "projectType": "spring",
-    "totalReleases": 56
+    "totalReleases": 57
   },
   "releases": [
+    {
+      "version": "2.5.36",
+      "project_type": "spring",
+      "date": "2026-05-21",
+      "pr_number": 204,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **New Features**\n  * 버스 자동예약 스케줄러 동작 방식이 개선되었습니다.\n\n* **Chores**\n  * 버전이 v2.5.35에서 v2.5.36으로 업데이트되었습니다.\n  * 스케줄링 구성이 최적화되었습니다.\n  * 불필요한 의존성이 제거되었습니다.\n\n* **Tests**\n  * 스케줄러 동작을 검증하는 테스트가 추가되었습니다.\n\n[![Review Change Stack](https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg)](https://app.coderabbit.ai/change-stack/Cassiiopeia/suh-project-utility/pull/204?utm_source=github_walkthrough&utm_medium=github&utm_campaign=change_stack)",
+      "parsed_changes": {
+        "new_features": {
+          "title": "New Features",
+          "items": [
+            "버스 자동예약 스케줄러 동작 방식이 개선되었습니다."
+          ]
+        },
+        "chores": {
+          "title": "Chores",
+          "items": [
+            "버전이 v2.5.35에서 v2.5.36으로 업데이트되었습니다.",
+            "스케줄링 구성이 최적화되었습니다.",
+            "불필요한 의존성이 제거되었습니다."
+          ]
+        },
+        "tests": {
+          "title": "Tests",
+          "items": [
+            "스케줄러 동작을 검증하는 테스트가 추가되었습니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.35",
       "project_type": "spring",
