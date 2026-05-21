@@ -30,9 +30,6 @@ dependencies {
     // Cache - API로 제공
     api 'org.springframework.boot:spring-boot-starter-cache'
 
-    // Quartz Scheduler
-    api 'org.springframework.boot:spring-boot-starter-quartz'
-
     // Swagger - API로 제공
     api 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
 
