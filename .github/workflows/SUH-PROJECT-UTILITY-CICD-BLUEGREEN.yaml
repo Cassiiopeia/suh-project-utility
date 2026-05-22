@@ -176,6 +176,8 @@ jobs:
             echo $PW | sudo -S docker network connect "${SELENIUM_NETWORK}" "${NEW_NAME}" 2>/dev/null || true
 
             # 5. 헬스체크 (최대 120초, 24회 × 5초)
+            #    NAS 호스트에서 컨테이너 내부 IP 로 직접 curl — 컨테이너에 wget/curl 불필요
+            #    Spring Boot Actuator /actuator/health 가 200 + {"status":"UP"} 응답하면 통과
             echo "⏳ 헬스체크 시작 (최대 120초)"
             MAX_RETRIES=24
             RETRY_COUNT=0
@@ -197,12 +199,22 @@ jobs:
               fi
 
               if [ "$STATUS" = "running" ]; then
-                HEALTH=$(echo $PW | sudo -S docker exec "${NEW_NAME}" wget -qO- "http://localhost:${INTERNAL_PORT}${HEALTH_PATH}" 2>/dev/null || echo "")
-                if echo "$HEALTH" | grep -q '"status":"UP"'; then
-                  echo "✅ HTTP 헬스체크 통과 (${RETRY_COUNT}/${MAX_RETRIES})"
-                  HEALTH_OK=true
-                  break
+                # 컨테이너 IP (traefik-network) 추출
+                CONTAINER_IP=$(echo $PW | sudo -S docker inspect \
+                  -f "{{(index .NetworkSettings.Networks \"${TRAEFIK_NETWORK}\").IPAddress}}" \
+                  "${NEW_NAME}" 2>/dev/null || echo "")
+
+                if [ -n "$CONTAINER_IP" ]; then
+                  # 호스트의 curl 로 직접 컨테이너 IP 접근 (wget 의존성 없음)
+                  HEALTH=$(curl -sm 3 "http://${CONTAINER_IP}:${INTERNAL_PORT}${HEALTH_PATH}" 2>/dev/null || echo "")
+                  if echo "$HEALTH" | grep -q '"status":"UP"'; then
+                    echo "✅ HTTP 헬스체크 통과 (${RETRY_COUNT}/${MAX_RETRIES}) ip=${CONTAINER_IP}"
+                    HEALTH_OK=true
+                    break
+                  fi
                 fi
+
+                # HTTP 헬스체크 안 되면 로그 패턴 폴백
                 STARTED=$(echo $PW | sudo -S docker logs --tail 50 "${NEW_NAME}" 2>&1 | grep -E "$LOG_PATTERN" || echo "")
                 if [ -n "$STARTED" ]; then
                   echo "✅ 로그 패턴 헬스체크 통과 (${RETRY_COUNT}/${MAX_RETRIES})"
