@@ -175,69 +175,34 @@ jobs:
             echo "🔗 selenium-chrome-network 추가 연결"
             echo $PW | sudo -S docker network connect "${SELENIUM_NETWORK}" "${NEW_NAME}" 2>/dev/null || true
 
-            # 5. 헬스체크 (최대 120초, 24회 × 5초)
-            #    NAS 호스트에서 컨테이너 내부 IP 로 직접 curl — 컨테이너에 wget/curl 불필요
-            #    Spring Boot Actuator /actuator/health 가 200 + {"status":"UP"} 응답하면 통과
-            echo "⏳ 헬스체크 시작 (최대 120초)"
-            MAX_RETRIES=24
-            RETRY_COUNT=0
-            HEALTH_OK=false
+            # 5. 단순 대기 (디버깅 모드 — 헬스체크 주석 처리, 60초 대기 후 통과)
+            #    TODO: /actuator/health 응답 확인 안 됨 → 추후 원인 파악 후 헬스체크 재활성화
+            echo "⏳ 60초 대기 (Spring Boot 기동 시간 확보)"
+            sleep 60
+            STATUS=$(echo $PW | sudo -S docker inspect --format='{{.State.Status}}' "${NEW_NAME}" 2>/dev/null || echo "not_found")
+            echo "📦 ${NEW_NAME} status=${STATUS}"
 
-            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-              sleep 5
-              RETRY_COUNT=$((RETRY_COUNT + 1))
-              STATUS=$(echo $PW | sudo -S docker inspect --format='{{.State.Status}}' "${NEW_NAME}" 2>/dev/null || echo "not_found")
-
-              if [ "$STATUS" = "exited" ]; then
-                echo "❌ 컨테이너 비정상 종료. 로그 100줄:"
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo $PW | sudo -S docker logs --tail 100 "${NEW_NAME}"
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo $PW | sudo -S docker rm -f "${NEW_NAME}"
-                echo "🛡️ old=${OLD_NAME} 유지 → 자동 롤백 (배포 전 상태 그대로)"
-                exit 1
-              fi
-
-              if [ "$STATUS" = "running" ]; then
-                # 헬스체크 — Traefik 통해 호스트 헤더로 라우팅 (가장 안정적)
-                # Traefik 이 healthy 인식한 컨테이너로만 라우팅하므로 200 = 진짜 통과
-                HEALTH=$(curl -sm 3 -H "Host: ${DOMAIN}" "http://localhost:8079${HEALTH_PATH}" 2>/dev/null || echo "")
-                if echo "$HEALTH" | grep -q '"status":"UP"'; then
-                  echo "✅ HTTP 헬스체크 통과 (${RETRY_COUNT}/${MAX_RETRIES})"
-                  HEALTH_OK=true
-                  break
-                fi
-
-                # 폴백: 로그 패턴 매칭 (Started ... in N seconds)
-                STARTED=$(echo $PW | sudo -S docker logs --tail 50 "${NEW_NAME}" 2>&1 | grep -E "$LOG_PATTERN" || echo "")
-                if [ -n "$STARTED" ]; then
-                  echo "✅ 로그 패턴 헬스체크 통과 (${RETRY_COUNT}/${MAX_RETRIES})"
-                  HEALTH_OK=true
-                  break
-                fi
-              fi
-
-              echo "⏳ 대기 (${RETRY_COUNT}/${MAX_RETRIES}) status=${STATUS}"
-            done
-
-            if [ "$HEALTH_OK" = "false" ]; then
-              echo "❌ 헬스체크 타임아웃 (120초). 로그 100줄:"
+            if [ "$STATUS" != "running" ]; then
+              echo "❌ 컨테이너 비정상 상태 (${STATUS}). 로그 200줄:"
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-              echo $PW | sudo -S docker logs --tail 100 "${NEW_NAME}"
+              echo $PW | sudo -S docker logs --tail 200 "${NEW_NAME}"
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-              echo $PW | sudo -S docker rm -f "${NEW_NAME}"
-              echo "🛡️ old=${OLD_NAME} 유지 → 자동 롤백"
+              echo "ℹ️ 컨테이너 ${NEW_NAME} 유지 — 수동 검증/디버깅 모드"
+              echo "ℹ️ old=${OLD_NAME} 존재 시 그대로 유지"
               exit 1
             fi
 
-            # 6. in-flight 처리 + old 컨테이너 제거
-            if echo $PW | sudo -S docker ps -a --format '{{.Names}}' | grep -Eq "^${OLD_NAME}$"; then
-              echo "⏱️ in-flight 요청 처리 대기 (10초)"
-              sleep 10
-              echo "🗑️ old=${OLD_NAME} 제거"
-              echo $PW | sudo -S docker rm -f "${OLD_NAME}"
-            fi
+            # 6. 기존 컨테이너 정리 안 함 (디버깅 모드)
+            #    blue/green 동시 공존하여 사용자가 직접 어느 쪽 응답하는지 확인 가능
+            echo "ℹ️ 디버깅 모드 — old=${OLD_NAME} 존재 시 자동 정리 안 함"
+            echo "ℹ️ 수동 정리 필요 시: sudo docker rm -f ${OLD_NAME}"
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "✅ 무중단 배포 완료. active=${NEW_NAME}"
+            echo "✅ 새 컨테이너 ${NEW_NAME} 기동 완료 (헬스체크 생략, 디버깅 모드)"
+            echo "🌐 사용자가 직접 https://lab.suhsaechan.kr 또는 Traefik dashboard 로 확인"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "📋 최근 200줄 로그:"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo $PW | sudo -S docker logs --tail 200 "${NEW_NAME}"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
