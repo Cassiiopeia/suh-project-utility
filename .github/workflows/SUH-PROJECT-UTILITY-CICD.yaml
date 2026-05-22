@@ -1,10 +1,18 @@
 name: SUH-PROJECT-UTILITY-CICD
 
+# ===================================================================
+# ⚠️ Phase A (2026-05-22 ~): 무중단 배포 검증 단계
+# 신규 워크플로우 SUH-PROJECT-UTILITY-CICD-BLUEGREEN.yaml 와 동시 자동 트리거 충돌
+# 방지 위해 push 자동 트리거 임시 제거. workflow_dispatch 로 비상 롤백만 가능.
+#
+# Phase B (1주일 검증 완료 후): 본 워크플로우 폐기 또는 영구 dispatch-only 유지
+# 관련 이슈: https://github.com/Cassiiopeia/suh-project-utility/issues/205
+# ===================================================================
 on:
-  push:
-    branches:
-      - main
-      - deploy
+  # push:
+  #   branches:
+  #     - main
+  #     - deploy
   workflow_dispatch:
 
 jobs:
