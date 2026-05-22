@@ -1,26 +1,93 @@
+# ===================================================================
+# Spring Boot + Synology Blue-Green 무중단 배포 워크플로우
+# ===================================================================
+#
+# 🔑 필수 GitHub Secrets
+# ===================================================================
+# APPLICATION_YML (필수): application.yml 내용
+# DOCKERHUB_USERNAME: DockerHub 사용자명
+# DOCKERHUB_TOKEN: DockerHub 액세스 토큰
+# SERVER_HOST: 배포 서버 주소
+# SERVER_USER: SSH 사용자명
+# SERVER_PASSWORD: SSH 비밀번호
+# ===================================================================
+#
+# 🚀 동작 흐름:
+#   1. Gradle 빌드 + Docker 이미지 빌드 & DockerHub Push
+#   2. SSH 로 Synology 접속 → active 컨테이너 색(blue/green) 판별
+#   3. 반대 색으로 새 컨테이너 기동 (Traefik 라벨 + selenium-chrome-network 추가 연결)
+#   4. 헬스체크 — Traefik 통한 GET / 호출, HTTP 200/301/302/308 응답 시 통과
+#      실패 시 new 컨테이너 유지 (수동 디버깅) + old 그대로 → 자동 롤백 효과
+#   5. 10초 in-flight 처리 후 old 컨테이너 자동 제거
+#
+# 📊 리소스 네이밍 규칙:
+#   - 컨테이너: {PROJECT_NAME}-blue / {PROJECT_NAME}-green
+#   - 이미지: {DOCKERHUB_USERNAME}/{PROJECT_NAME}-container:{ref_name}
+#   - Traefik router/service 이름: {PROJECT_NAME}
+#
+# ===================================================================
+
 name: SUH-PROJECT-UTILITY-CICD-BLUEGREEN
 
 # ===================================================================
-# Blue-Green 무중단 배포 워크플로우 (Traefik 라벨 기반)
-#
-# 동작 흐름:
-#  1. 최신 이미지 Pull
-#  2. 현재 active 컨테이너 색(blue/green) 판별 → 반대 색으로 new 결정
-#  3. 새 컨테이너 기동 (Traefik 라벨 + healthcheck 포함, selenium-chrome-network 추가 연결)
-#  4. 헬스체크 (최대 120초). 실패 시 new 만 삭제, old 유지 → 자동 롤백
-#  5. 10초 in-flight 처리 후 old 컨테이너 제거
-#
-# 전제:
-#  - Traefik 컨테이너가 traefik-network 에 가동 중, web entrypoint=:8079
-#  - Synology 역방향 프록시 lab.suhsaechan.kr:443 → localhost:8079 설정 완료
-#  - 기존 suh-project-utility (8090) 컨테이너 제거 완료
-#
-# 트리거 정책 (점진 전환):
-#  - Phase A (현재, 검증 단계): workflow_dispatch 만 — 수동 발동으로 검증
+# ⚠️ [영역 1] 프로젝트별 설정 - 다른 프로젝트에서 사용 시 이 섹션만 수정하세요
+# ===================================================================
+env:
+  # 프로젝트 고유 식별자 (컨테이너명, 이미지명, Traefik router 이름에 사용) (프로젝트별 수정 필요)
+  PROJECT_NAME: suh-project-utility
+
+  # 외부 진입 도메인 (Synology 역방향 프록시가 lab.suhsaechan.kr:443 → localhost:8079 매핑 가정) (프로젝트별 수정 필요)
+  PRODUCTION_DOMAIN: lab.suhsaechan.kr
+
+  # Docker 이미지 태그 (Dockerhub 이미지명: {DOCKERHUB_USERNAME}/{IMAGE_NAME}) (프로젝트별 수정 필요)
+  IMAGE_NAME: suh-project-utility-container
+
+  # Spring Boot 빌드 설정 (프로젝트별 수정 필요)
+  JAVA_VERSION: '17'
+  GRADLE_BUILD_CMD: './gradlew clean build -x test -Dspring.profiles.active=prod'
+  APPLICATION_YML_PATH: 'Suh-Web/src/main/resources/application.yml'
+
+  # Docker 설정 (프로젝트별 수정 필요)
+  DOCKERFILE_PATH: './Dockerfile'
+  INTERNAL_PORT: '8080'   # 컨테이너 내부 Spring Boot 포트
+
+  # 🗂️ 볼륨 마운트 (프로젝트별 수정 필요, 빈값이면 마운트 안 함)
+  # 형식: HOST_PATH:CONTAINER_PATH 를 ; 로 구분하여 한 줄로 작성
+  # 예: '/etc/localtime:/etc/localtime:ro;/volume1/projects/myapp:/mnt/myapp'
+  VOLUME_MOUNTS: '/etc/localtime:/etc/localtime:ro;/volume1/projects/suh-project-utility:/mnt/suh-project-utility;/volume1/web/suh-project-utility/upload:/app/uploads'
+
+  # 🔗 추가 Docker 네트워크 (프로젝트별 수정 필요, 빈값이면 traefik-network 만 연결)
+  # 예: selenium 사용 시 selenium-chrome-network
+  EXTRA_NETWORKS: 'selenium-chrome-network'
+
+  # Traefik 설정 (환경 구축 후 수정 금지)
+  TRAEFIK_NETWORK: 'traefik-network'
+  TRAEFIK_ENTRYPOINT: 'web'
+  TRAEFIK_INTERNAL_PORT: '8079'  # NAS 호스트에서 Traefik 으로 접근하는 포트
+
+  # SSH 포트 (시놀로지 포트 환경 구축 후 수정 금지)
+  SSH_PORT: '2022'
+
+  # Health Check 설정 (프로젝트별 수정 필요)
+  # - HEALTH_CHECK_PATH: GET 호출할 path (기본 '/'. Spring Security 로그인 페이지 redirect 도 OK)
+  # - HEALTH_CHECK_ACCEPT_CODES: 통과로 인정할 HTTP 응답 코드 (| 구분)
+  # - HEALTH_CHECK_MAX_RETRIES: 최대 시도 횟수
+  # - HEALTH_CHECK_INTERVAL: 시도 간격 (초)
+  HEALTH_CHECK_PATH: '/'
+  HEALTH_CHECK_ACCEPT_CODES: '200|301|302|308'
+  HEALTH_CHECK_MAX_RETRIES: '36'
+  HEALTH_CHECK_INTERVAL: '5'
+
+  # In-flight 처리 대기 시간 (초) — old 컨테이너 제거 전 기존 요청 처리 여유
+  IN_FLIGHT_WAIT: '10'
+
+# ===================================================================
+# 트리거 정책 (점진 전환)
+# ===================================================================
+#  - Phase A (검증 단계): workflow_dispatch 만 — 수동 발동으로 검증
 #  - Phase B (검증 완료 후): push: branches: [main] 추가
 #                              + 기존 SUH-PROJECT-UTILITY-CICD.yaml 의 push 트리거 제거
 # ===================================================================
-
 on:
   workflow_dispatch:
   # Phase B 진입 시 아래 주석 해제:
@@ -28,104 +95,163 @@ on:
   #   branches:
   #     - main
 
+# ===================================================================
+# Jobs
+# ===================================================================
 jobs:
+  # -----------------------------------------------------------------
+  # Job 1: Gradle 빌드 + Docker 이미지 빌드 & Push
+  # -----------------------------------------------------------------
   build:
+    name: 빌드 & 이미지 Push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: JDK 설정
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
           cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
+      - name: Gradle 권한 부여
         run: chmod +x gradlew
 
-      - name: Create application.yml from secret
+      # =================================================================
+      # ⚠️ [영역 2] 프로젝트별 Secret 파일 생성
+      # =================================================================
+      #
+      # 📋 필수 (모든 Spring Boot 프로젝트):
+      #   - application.yml (또는 application-prod.yml)
+      #
+      # 📋 선택 (프로젝트에 따라 추가/제거):
+      #   - Firebase: firebase-admin-sdk.json
+      #   - Vertex AI: vertex-ai-key.json
+      #   - 기타 설정 파일: admin.yml, prompt.yml 등
+      #
+      # ⚠️ 다른 프로젝트에서 사용 시:
+      #   1. 필요 없는 step 은 삭제
+      #   2. 필요한 step 추가
+      #   3. 파일 경로를 프로젝트에 맞게 수정
+      # =================================================================
+
+      - name: "[필수] application.yml 생성"
         run: |
-          mkdir -p Suh-Web/src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > Suh-Web/src/main/resources/application.yml
+          mkdir -p $(dirname ${{ env.APPLICATION_YML_PATH }})
+          cat << 'EOF' > ${{ env.APPLICATION_YML_PATH }}
+          ${{ secrets.APPLICATION_YML }}
+          EOF
 
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test -Dspring.profiles.active=prod
+      # [선택] 추가 Secret 파일이 있을 경우 아래 패턴으로 추가:
+      # - name: "[선택] Vertex AI Service Account Key 생성"
+      #   env:
+      #     VERTEX_SA_KEY: ${{ secrets.VERTEX_SA_KEY }}
+      #   run: |
+      #     echo "$VERTEX_SA_KEY" | sed 's/\\n/\n/g' > ./Suh-Web/src/main/resources/vertex-ai-key.json
 
-      - name: Docker setup
+      # =================================================================
+      # ⚠️ [영역 2 끝]
+      # =================================================================
+
+      - name: Gradle 빌드
+        run: ${{ env.GRADLE_BUILD_CMD }}
+
+      - name: Docker Buildx 설정
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker login
+      - name: Docker 로그인
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Cache Docker layers
+      - name: Docker 레이어 캐시
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile') }}
+          key: ${{ runner.os }}-buildx-${{ hashFiles(env.DOCKERFILE_PATH) }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build and push Docker image
+      - name: Docker 이미지 빌드 & Push
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ${{ env.DOCKERFILE_PATH }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/suh-project-utility-container:${{ github.ref_name }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
-      - name: Move Docker cache
+      - name: Docker 캐시 정리
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+  # -----------------------------------------------------------------
+  # Job 2: Blue-Green 무중단 배포
+  # -----------------------------------------------------------------
   deploy:
+    name: Blue-Green 배포
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Blue-Green 무중단 배포
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          PRODUCTION_DOMAIN: ${{ env.PRODUCTION_DOMAIN }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          INTERNAL_PORT: ${{ env.INTERNAL_PORT }}
+          TRAEFIK_NETWORK: ${{ env.TRAEFIK_NETWORK }}
+          TRAEFIK_ENTRYPOINT: ${{ env.TRAEFIK_ENTRYPOINT }}
+          TRAEFIK_INTERNAL_PORT: ${{ env.TRAEFIK_INTERNAL_PORT }}
+          VOLUME_MOUNTS: ${{ env.VOLUME_MOUNTS }}
+          EXTRA_NETWORKS: ${{ env.EXTRA_NETWORKS }}
+          HEALTH_CHECK_PATH: ${{ env.HEALTH_CHECK_PATH }}
+          HEALTH_CHECK_ACCEPT_CODES: ${{ env.HEALTH_CHECK_ACCEPT_CODES }}
+          HEALTH_CHECK_MAX_RETRIES: ${{ env.HEALTH_CHECK_MAX_RETRIES }}
+          HEALTH_CHECK_INTERVAL: ${{ env.HEALTH_CHECK_INTERVAL }}
+          IN_FLIGHT_WAIT: ${{ env.IN_FLIGHT_WAIT }}
+          REF_NAME: ${{ github.ref_name }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          port: 2022
-          command_timeout: 10m
+          port: ${{ env.SSH_PORT }}
+          command_timeout: 15m
+          envs: PROJECT_NAME,PRODUCTION_DOMAIN,IMAGE_NAME,INTERNAL_PORT,TRAEFIK_NETWORK,TRAEFIK_ENTRYPOINT,TRAEFIK_INTERNAL_PORT,VOLUME_MOUNTS,EXTRA_NETWORKS,HEALTH_CHECK_PATH,HEALTH_CHECK_ACCEPT_CODES,HEALTH_CHECK_MAX_RETRIES,HEALTH_CHECK_INTERVAL,IN_FLIGHT_WAIT,REF_NAME,DOCKERHUB_USERNAME,SERVER_PASSWORD
           script: |
             set -e
 
             export PATH=$PATH:/usr/local/bin
-            export PW="${{ secrets.SERVER_PASSWORD }}"
+            export PW="${SERVER_PASSWORD}"
 
-            PROJECT_NAME="suh-project-utility"
-            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${PROJECT_NAME}-container:${{ github.ref_name }}"
-            DOMAIN="lab.suhsaechan.kr"
-            INTERNAL_PORT="8080"
-            TRAEFIK_NETWORK="traefik-network"
-            SELENIUM_NETWORK="selenium-chrome-network"
+            IMAGE="${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${REF_NAME}"
             ROUTER_NAME="${PROJECT_NAME}"
-            HEALTH_PATH="/actuator/health"
-            LOG_PATTERN="Started .* in [0-9.]+ seconds"
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "🚀 Blue-Green 무중단 배포 시작"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "📦 프로젝트: ${PROJECT_NAME}"
-            echo "🌐 도메인: ${DOMAIN}"
+            echo "🌐 도메인: ${PRODUCTION_DOMAIN}"
             echo "🖼️ 이미지: ${IMAGE}"
+            echo "🔧 Traefik 진입: localhost:${TRAEFIK_INTERNAL_PORT} (entrypoint=${TRAEFIK_ENTRYPOINT})"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
+            # ============================================================
             # 1. 최신 이미지 Pull
+            # ============================================================
             echo "📥 이미지 Pull"
             echo $PW | sudo -S docker pull "${IMAGE}"
 
-            # 2. 현재 active 컨테이너 판별 (Traefik 라벨 부착된 쪽)
+            # ============================================================
+            # 2. 현재 active 컨테이너 색 판별 (Traefik 라벨 부착 여부 기준)
+            # ============================================================
             ACTIVE=$(echo $PW | sudo -S docker ps \
               --filter "label=traefik.http.routers.${ROUTER_NAME}.rule" \
               --filter "name=${PROJECT_NAME}-" \
@@ -138,6 +264,7 @@ jobs:
               NEW_COLOR="blue"
               OLD_COLOR="green"
             else
+              # 최초 배포 또는 active 없음 → blue 부터 시작
               NEW_COLOR="blue"
               OLD_COLOR="green"
             fi
@@ -147,62 +274,114 @@ jobs:
 
             echo "🎨 active=${ACTIVE:-none} → new=${NEW_NAME}, old=${OLD_NAME}"
 
-            # 3. 기존 동명 (idle 쪽) 컨테이너 정리 — 이전 실패 잔존물 제거
+            # ============================================================
+            # 3. 동일 슬롯(idle 쪽) 잔존 컨테이너 정리
+            # ============================================================
             echo "🗑️ idle 슬롯 정리: ${NEW_NAME}"
             echo $PW | sudo -S docker rm -f "${NEW_NAME}" 2>/dev/null || true
 
-            # 4. 새 컨테이너 기동 — Traefik 라벨 + healthcheck 라벨 포함
-            #    Traefik healthcheck 통과 전엔 트래픽 안 보냄 → 502 방지
+            # ============================================================
+            # 4. 볼륨 마운트 옵션 구성 (VOLUME_MOUNTS 의 ; 구분 파싱)
+            # ============================================================
+            VOLUME_OPTS=""
+            IFS=';' read -ra MOUNTS <<< "${VOLUME_MOUNTS}"
+            for m in "${MOUNTS[@]}"; do
+              m=$(echo "$m" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+              if [ -n "$m" ]; then
+                VOLUME_OPTS="${VOLUME_OPTS} -v ${m}"
+              fi
+            done
+
+            # ============================================================
+            # 5. 새 컨테이너 기동 (Traefik 라벨 포함)
+            # ============================================================
             echo "🐳 새 컨테이너 기동: ${NEW_NAME}"
             echo $PW | sudo -S docker run -d \
               --name "${NEW_NAME}" \
               --network "${TRAEFIK_NETWORK}" \
               --label "traefik.enable=true" \
-              --label "traefik.http.routers.${ROUTER_NAME}.rule=Host(\`${DOMAIN}\`)" \
-              --label "traefik.http.routers.${ROUTER_NAME}.entrypoints=web" \
+              --label "traefik.http.routers.${ROUTER_NAME}.rule=Host(\`${PRODUCTION_DOMAIN}\`)" \
+              --label "traefik.http.routers.${ROUTER_NAME}.entrypoints=${TRAEFIK_ENTRYPOINT}" \
               --label "traefik.http.services.${ROUTER_NAME}.loadbalancer.server.port=${INTERNAL_PORT}" \
-              --label "traefik.http.services.${ROUTER_NAME}.loadbalancer.healthcheck.path=${HEALTH_PATH}" \
-              --label "traefik.http.services.${ROUTER_NAME}.loadbalancer.healthcheck.interval=5s" \
-              --label "traefik.http.services.${ROUTER_NAME}.loadbalancer.healthcheck.timeout=3s" \
               -e TZ=Asia/Seoul \
               -e SPRING_PROFILES_ACTIVE=prod \
-              -v /etc/localtime:/etc/localtime:ro \
-              -v /volume1/projects/suh-project-utility:/mnt/suh-project-utility \
-              -v /volume1/web/suh-project-utility/upload:/app/uploads \
+              ${VOLUME_OPTS} \
               "${IMAGE}"
 
-            # 4-b. selenium-chrome-network 추가 연결 (Selenium WebDriver 사용)
-            echo "🔗 selenium-chrome-network 추가 연결"
-            echo $PW | sudo -S docker network connect "${SELENIUM_NETWORK}" "${NEW_NAME}" 2>/dev/null || true
+            # ============================================================
+            # 6. 추가 네트워크 연결 (EXTRA_NETWORKS, 공백 구분)
+            # ============================================================
+            if [ -n "${EXTRA_NETWORKS}" ]; then
+              for net in ${EXTRA_NETWORKS}; do
+                echo "🔗 추가 네트워크 연결: ${net}"
+                echo $PW | sudo -S docker network connect "${net}" "${NEW_NAME}" 2>/dev/null || true
+              done
+            fi
 
-            # 5. 단순 대기 (디버깅 모드 — 헬스체크 주석 처리, 60초 대기 후 통과)
-            #    TODO: /actuator/health 응답 확인 안 됨 → 추후 원인 파악 후 헬스체크 재활성화
-            echo "⏳ 60초 대기 (Spring Boot 기동 시간 확보)"
-            sleep 60
-            STATUS=$(echo $PW | sudo -S docker inspect --format='{{.State.Status}}' "${NEW_NAME}" 2>/dev/null || echo "not_found")
-            echo "📦 ${NEW_NAME} status=${STATUS}"
+            # ============================================================
+            # 7. 헬스체크 — Traefik 통한 라우팅 확인
+            # ============================================================
+            MAX_WAIT=$((HEALTH_CHECK_MAX_RETRIES * HEALTH_CHECK_INTERVAL))
+            echo "⏳ 헬스체크 시작 (최대 ${MAX_WAIT}초, ${HEALTH_CHECK_MAX_RETRIES}회 × ${HEALTH_CHECK_INTERVAL}초)"
 
-            if [ "$STATUS" != "running" ]; then
-              echo "❌ 컨테이너 비정상 상태 (${STATUS}). 로그 200줄:"
+            RETRY_COUNT=0
+            HEALTH_OK=false
+
+            while [ $RETRY_COUNT -lt $HEALTH_CHECK_MAX_RETRIES ]; do
+              sleep ${HEALTH_CHECK_INTERVAL}
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+
+              STATUS=$(echo $PW | sudo -S docker inspect --format='{{.State.Status}}' "${NEW_NAME}" 2>/dev/null || echo "not_found")
+
+              if [ "$STATUS" = "exited" ]; then
+                echo "❌ 컨테이너 비정상 종료 (exited). 로그 200줄:"
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo $PW | sudo -S docker logs --tail 200 "${NEW_NAME}"
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo "ℹ️ 컨테이너 ${NEW_NAME} 유지 (자동 삭제 안 함) — 수동 검증/디버깅"
+                echo "ℹ️ old=${OLD_NAME} 존재 시 그대로 유지 → 사실상 자동 롤백"
+                exit 1
+              fi
+
+              if [ "$STATUS" = "running" ]; then
+                HTTP_CODE=$(curl -sm 5 -o /dev/null -w "%{http_code}" \
+                  -H "Host: ${PRODUCTION_DOMAIN}" \
+                  "http://localhost:${TRAEFIK_INTERNAL_PORT}${HEALTH_CHECK_PATH}" 2>/dev/null || echo "000")
+
+                if echo "$HTTP_CODE" | grep -Eq "^(${HEALTH_CHECK_ACCEPT_CODES})$"; then
+                  echo "✅ 헬스체크 통과 (${RETRY_COUNT}/${HEALTH_CHECK_MAX_RETRIES}) HTTP=${HTTP_CODE}"
+                  HEALTH_OK=true
+                  break
+                fi
+              fi
+
+              echo "⏳ 대기 (${RETRY_COUNT}/${HEALTH_CHECK_MAX_RETRIES}) status=${STATUS} http=${HTTP_CODE:-?}"
+            done
+
+            if [ "$HEALTH_OK" = "false" ]; then
+              echo "❌ 헬스체크 타임아웃 (${MAX_WAIT}초)"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo "🔍 ${NEW_NAME} 최근 200줄 로그:"
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
               echo $PW | sudo -S docker logs --tail 200 "${NEW_NAME}"
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-              echo "ℹ️ 컨테이너 ${NEW_NAME} 유지 — 수동 검증/디버깅 모드"
-              echo "ℹ️ old=${OLD_NAME} 존재 시 그대로 유지"
+              echo "ℹ️ 컨테이너 ${NEW_NAME} 유지 (자동 삭제 안 함) — 수동 검증/디버깅"
+              echo "ℹ️ old=${OLD_NAME} 존재 시 그대로 유지 → 사실상 자동 롤백"
               exit 1
             fi
 
-            # 6. 기존 컨테이너 정리 안 함 (디버깅 모드)
-            #    blue/green 동시 공존하여 사용자가 직접 어느 쪽 응답하는지 확인 가능
-            echo "ℹ️ 디버깅 모드 — old=${OLD_NAME} 존재 시 자동 정리 안 함"
-            echo "ℹ️ 수동 정리 필요 시: sudo docker rm -f ${OLD_NAME}"
+            # ============================================================
+            # 8. in-flight 처리 + old 컨테이너 자동 제거
+            # ============================================================
+            if echo $PW | sudo -S docker ps -a --format '{{.Names}}' | grep -Eq "^${OLD_NAME}$"; then
+              echo "⏱️ in-flight 요청 처리 대기 (${IN_FLIGHT_WAIT}초)"
+              sleep ${IN_FLIGHT_WAIT}
+              echo "🗑️ old=${OLD_NAME} 제거"
+              echo $PW | sudo -S docker rm -f "${OLD_NAME}"
+            else
+              echo "ℹ️ old=${OLD_NAME} 없음 — 정리 생략"
+            fi
 
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "✅ 새 컨테이너 ${NEW_NAME} 기동 완료 (헬스체크 생략, 디버깅 모드)"
-            echo "🌐 사용자가 직접 https://lab.suhsaechan.kr 또는 Traefik dashboard 로 확인"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo ""
-            echo "📋 최근 200줄 로그:"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo $PW | sudo -S docker logs --tail 200 "${NEW_NAME}"
+            echo "✅ 무중단 배포 완료. active=${NEW_NAME}"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
