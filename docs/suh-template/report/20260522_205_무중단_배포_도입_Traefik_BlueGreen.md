@@ -200,10 +200,62 @@ Phase B 작업:
 - 자동 롤백 메커니즘 강화: 헬스체크 실패 시 이전 commit 으로 자동 재배포
 - Traefik dashboard 의 production 라우터 가시성 점검
 
-## 12. 참고
+## 12. 실제 검증 결과 (2026-05-22)
+
+### 시도 이력
+
+| Run | 변경점 | 결과 | 원인 |
+|-----|--------|------|------|
+| #1 | 초기 설계 (`docker exec wget`) | 실패 | 컨테이너 내부 wget 의존, silent fail |
+| #2 | 호스트 `curl + 컨테이너 IP` 추출 방식 | 실패 | `docker inspect` 의 `\"escape\"` 문제 또는 sudo password 무한 대기 |
+| #3 | Traefik 통한 `curl -H Host: ...` 방식 | 실패 | `/actuator/health` 가 응답 안 함 (Actuator path 설정 또는 미노출) |
+| #4 | 헬스체크 임시 주석 처리, 60초 sleep 후 status=running 만 확인 | **성공** | Spring Boot 정상 기동 + Traefik 자동 라우팅 합류 |
+
+### 인프라 변경 (사용자 수동 작업, 2026-05-22 완료)
+- DSM 역방향 프록시 `SUH-LAB 443→8090` → `SUH-LAB 443→8079` 변경
+- 변경 후 한동안 lab.suhsaechan.kr 404 (라우터 등록 안 된 컨테이너로 인해)
+- Run #4 성공 후 정상화 — `https://lab.suhsaechan.kr` 200 응답 확인
+
+### 현재 상태 (디버깅 모드)
+- 워크플로우 헬스체크 임시 비활성화 (`sleep 60` + `status=running` 확인만)
+- 컨테이너 자동 정리 비활성화 (blue/green 동시 공존 허용)
+- 사용자 직접 모니터링 및 수동 정리 필요
+
+### 추가 발견 사항 — Mixed Content 경고
+브라우저 콘솔에 다음 경고 출력:
+```
+Mixed Content: The page at 'https://lab.suhsaechan.kr/' was loaded over HTTPS,
+but requested an insecure XMLHttpRequest endpoint 'http://lab.suhsaechan.kr/login'.
+```
+- 무중단 배포 자체와 무관 — Spring Boot 코드 안에 `http://` baseUrl 하드코딩 또는 Cloudflare/시놀로지 HTTPS 강제 redirect 로 동작은 하지만 콘솔 경고 발생
+- 별도 이슈로 분리하여 해결 권장 (HTTPS 강제, baseUrl 동적 결정, 또는 Spring `server.forward-headers-strategy` 설정 검토)
+
+## 13. 미해결 항목 & 후속 작업
+
+### 즉시 필요한 후속 작업
+- **`/actuator/health` 응답 원인 진단** — 헬스체크 재활성화 위해 필수
+  - 가설 1: `application.yml` 에 `management.endpoints.web.exposure.include` 에 `health` 미포함
+  - 가설 2: Actuator path 가 `/actuator/health` 가 아닌 다른 경로 (예: `/api/health`)
+  - 가설 3: Spring Security 가 `/actuator/**` 인증 요구
+  - 진단 방법: 현재 가동 중인 `suh-project-utility-blue` 안에서 직접 확인
+    ```
+    sudo docker exec suh-project-utility-blue sh -c "curl -sv http://localhost:8080/actuator/health"
+    ```
+- **헬스체크 재활성화** — 위 진단 결과 반영하여 워크플로우 수정
+- **자동 컨테이너 정리 재활성화** — Blue-Green 토글 완성
+
+### 중장기 후속 작업
+- Phase B 진입 (검증 완료 후)
+- 로그 영속화 (logback 파일 appender + 볼륨 마운트)
+- Slack/Discord 배포 알림 통합
+- 자동 롤백 메커니즘 (헬스체크 실패 시 이전 commit 으로 자동 재배포)
+- Mixed Content 경고 해결 (별도 이슈)
+
+## 14. 참고
 
 - 설계 spec: [`docs/superpowers/specs/2026-05-22-zero-downtime-deployment-design.md`](../../superpowers/specs/2026-05-22-zero-downtime-deployment-design.md)
 - 구현 plan: [`docs/superpowers/plans/2026-05-22-zero-downtime-deployment.md`](../../superpowers/plans/2026-05-22-zero-downtime-deployment.md)
-- 기존 워크플로우: `.github/workflows/SUH-PROJECT-UTILITY-CICD.yaml`
-- 신규 워크플로우: `.github/workflows/SUH-PROJECT-UTILITY-CICD-BLUEGREEN.yaml`
+- 기존 워크플로우: `.github/workflows/SUH-PROJECT-UTILITY-CICD.yaml` (push 트리거 주석 처리, `workflow_dispatch` 만 활성화)
+- 신규 워크플로우: `.github/workflows/SUH-PROJECT-UTILITY-CICD-BLUEGREEN.yaml` (헬스체크 임시 주석 처리, 디버깅 모드)
 - Traefik healthcheck 공식 문서: https://doc.traefik.io/traefik/routing/services/#health-check
+- 성공한 run: https://github.com/Cassiiopeia/suh-project-utility/actions/runs/26273212314
