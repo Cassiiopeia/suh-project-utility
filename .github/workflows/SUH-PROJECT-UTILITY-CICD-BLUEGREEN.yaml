@@ -319,6 +319,12 @@ jobs:
             fi
 
             # ============================================================
+            # 디버그: 새 컨테이너의 Traefik 라벨 출력 (escape 검증용)
+            # ============================================================
+            echo "🔍 Traefik 라벨 확인:"
+            echo $PW | sudo -S docker inspect "${NEW_NAME}" --format '{{range $k, $v := .Config.Labels}}  {{$k}} = {{$v}}{{"\n"}}{{end}}' | grep traefik || true
+
+            # ============================================================
             # 7. 헬스체크 — Traefik 통한 라우팅 확인
             # ============================================================
             MAX_WAIT=$((HEALTH_CHECK_MAX_RETRIES * HEALTH_CHECK_INTERVAL))
