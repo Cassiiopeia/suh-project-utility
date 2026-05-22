@@ -41,7 +41,6 @@ A collection of **experimental utilities** I build when I have an idea at 2am.
 | **Grass Planter** | Auto-commit to keep GitHub green |
 | **AI Translator** | Custom translation with OpenAI |
 | **Issue Helper** | Branch names & commits from GitHub issues |
-| **Study Plan** | Markdown notes with style |
 | **Docker Logs** | Real-time container monitoring |
 
 ---

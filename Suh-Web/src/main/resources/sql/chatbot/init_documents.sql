@@ -370,12 +370,6 @@ INSERT INTO chat_document (
 - **기능**: 커스텀 API 번역 서비스
 - **기술**: OpenAI, Translation
 
-#### 스터디 플랜
-- **경로**: `/study-management`
-- **설명**: 마크다운을 지원하는 스터디 노트 관리 시스템입니다.
-- **기능**: 마크다운 지원 스터디 노트
-- **기술**: Markdown, Notes
-
 #### Grass Planter
 - **경로**: `/grass`
 - **설명**: GitHub 기여 그래프를 자동으로 관리하는 커밋 스케줄러입니다.
