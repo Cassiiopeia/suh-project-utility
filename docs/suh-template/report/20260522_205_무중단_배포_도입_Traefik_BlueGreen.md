@@ -208,18 +208,37 @@ Phase B 작업:
 |-----|--------|------|------|
 | #1 | 초기 설계 (`docker exec wget`) | 실패 | 컨테이너 내부 wget 의존, silent fail |
 | #2 | 호스트 `curl + 컨테이너 IP` 추출 방식 | 실패 | `docker inspect` 의 `\"escape\"` 문제 또는 sudo password 무한 대기 |
-| #3 | Traefik 통한 `curl -H Host: ...` 방식 | 실패 | `/actuator/health` 가 응답 안 함 (Actuator path 설정 또는 미노출) |
-| #4 | 헬스체크 임시 주석 처리, 60초 sleep 후 status=running 만 확인 | **성공** | Spring Boot 정상 기동 + Traefik 자동 라우팅 합류 |
+| #3 | Traefik 통한 `curl -H Host: ...` + `/actuator/health` | 실패 | `/actuator/health` 가 응답 안 함 (Actuator 미노출 또는 path 불일치) |
+| #4 | 헬스체크 임시 주석 처리, 60초 sleep + `status=running` 만 확인 | ✅ 성공 | Spring Boot 정상 기동 + Traefik 자동 라우팅 합류 확인 |
+| #5 | 동일 워크플로우 dispatch (blue↔green 토글 검증) | ✅ 성공 | 토글 정상, Traefik dashboard 에 servers=2 확인 |
+| #6 | 템플릿화 + 헬스체크 재활성화 (Traefik 통한 `GET /` + HTTP 200/301/302/308) | 실패 | 일시적 404 (Traefik 라우터 재등록 race condition) |
+| #7 | Traefik 라벨 출력 디버그 추가 (escape 검증) | ✅ **성공** | 라벨 정상 escape 확인 `Host(\`lab.suhsaechan.kr\`)`, 헬스체크 1회 만에 HTTP 200 통과, old=blue 자동 제거 |
 
 ### 인프라 변경 (사용자 수동 작업, 2026-05-22 완료)
 - DSM 역방향 프록시 `SUH-LAB 443→8090` → `SUH-LAB 443→8079` 변경
 - 변경 후 한동안 lab.suhsaechan.kr 404 (라우터 등록 안 된 컨테이너로 인해)
 - Run #4 성공 후 정상화 — `https://lab.suhsaechan.kr` 200 응답 확인
 
-### 현재 상태 (디버깅 모드)
-- 워크플로우 헬스체크 임시 비활성화 (`sleep 60` + `status=running` 확인만)
-- 컨테이너 자동 정리 비활성화 (blue/green 동시 공존 허용)
-- 사용자 직접 모니터링 및 수동 정리 필요
+### 최종 상태 (Phase B 진입, 2026-05-22)
+- **헬스체크 활성화**: Traefik 통한 `GET /` 호출 + HTTP `200|301|302|308` 코드 매칭
+- **자동 컨테이너 정리 활성화**: 헬스체크 통과 → 10초 in-flight 대기 → old 자동 제거
+- **자동 롤백 활성화**: 헬스체크 실패 시 new 컨테이너 유지 (수동 디버깅) + old 그대로 → 사실상 자동 롤백
+- **Traefik 라벨 디버그 출력 유지**: 미래 디버깅을 위해 의도적으로 보존 (`🔍 Traefik 라벨 확인:` 단계)
+- **Push 자동 트리거 활성화**: `main` 에 push 하면 무중단 배포 자동 발동
+- **기존 워크플로우** `SUH-PROJECT-UTILITY-CICD.yaml`: `workflow_dispatch` 만 유지 (비상 롤백 전용, deprecated)
+
+### 템플릿화 구조
+워크플로우는 두 영역으로 분리되어 다른 Spring Boot 프로젝트에 즉시 이식 가능:
+
+- **[영역 1] `env:` 블록**: 프로젝트별 설정 (`PROJECT_NAME`, `PRODUCTION_DOMAIN`, `IMAGE_NAME`, `VOLUME_MOUNTS`, `EXTRA_NETWORKS`, 헬스체크 옵션 등)
+- **[영역 2] secret 파일 생성**: `application.yml` 외 추가 secret 파일 패턴 (Firebase, Vertex AI 예시 주석 포함)
+- **공통 로직**: env 변수만 참조. 코드 자체 수정 불필요
+
+이식 절차:
+1. `[영역 1]` 의 `PROJECT_NAME`, `PRODUCTION_DOMAIN`, `IMAGE_NAME`, `VOLUME_MOUNTS`, `EXTRA_NETWORKS` 수정
+2. `[영역 2]` 에서 필요한 secret 파일 step 추가/삭제
+3. GitHub Secrets 등록 (`APPLICATION_YML`, `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `SERVER_HOST`, `SERVER_USER`, `SERVER_PASSWORD`)
+4. Synology DSM 역방향 프록시 `${PRODUCTION_DOMAIN}:443 → localhost:8079` 매핑 추가
 
 ### 추가 발견 사항 — Mixed Content 경고
 브라우저 콘솔에 다음 경고 출력:
@@ -230,26 +249,28 @@ but requested an insecure XMLHttpRequest endpoint 'http://lab.suhsaechan.kr/logi
 - 무중단 배포 자체와 무관 — Spring Boot 코드 안에 `http://` baseUrl 하드코딩 또는 Cloudflare/시놀로지 HTTPS 강제 redirect 로 동작은 하지만 콘솔 경고 발생
 - 별도 이슈로 분리하여 해결 권장 (HTTPS 강제, baseUrl 동적 결정, 또는 Spring `server.forward-headers-strategy` 설정 검토)
 
-## 13. 미해결 항목 & 후속 작업
+## 13. 후속 작업 (별도 이슈 권장)
 
-### 즉시 필요한 후속 작업
-- **`/actuator/health` 응답 원인 진단** — 헬스체크 재활성화 위해 필수
-  - 가설 1: `application.yml` 에 `management.endpoints.web.exposure.include` 에 `health` 미포함
-  - 가설 2: Actuator path 가 `/actuator/health` 가 아닌 다른 경로 (예: `/api/health`)
-  - 가설 3: Spring Security 가 `/actuator/**` 인증 요구
-  - 진단 방법: 현재 가동 중인 `suh-project-utility-blue` 안에서 직접 확인
-    ```
-    sudo docker exec suh-project-utility-blue sh -c "curl -sv http://localhost:8080/actuator/health"
-    ```
-- **헬스체크 재활성화** — 위 진단 결과 반영하여 워크플로우 수정
-- **자동 컨테이너 정리 재활성화** — Blue-Green 토글 완성
+### 헬스체크 path 개선 (선택)
+현재는 `GET /` 호출하여 HTTP 응답 코드 (`200|301|302|308`) 매칭. Spring Security 로그인 redirect 경로라 정상 작동하지만 더 명확한 헬스체크 endpoint 도입 가능:
+- `/actuator/health` 응답 보정: `application.yml` 에 `management.endpoints.web.exposure.include` 에 `health` 추가
+- Spring Security 설정에서 `/actuator/health` permitAll 허용
+- 워크플로우 `HEALTH_CHECK_PATH` 를 `/actuator/health` 로 변경 + `HEALTH_CHECK_ACCEPT_CODES` 를 `200` 으로 좁힘
+
+### Mixed Content 경고 해결 (별도 이슈)
+브라우저 콘솔 경고:
+```
+Mixed Content: The page at 'https://lab.suhsaechan.kr/' was loaded over HTTPS,
+but requested an insecure XMLHttpRequest endpoint 'http://lab.suhsaechan.kr/login'.
+```
+- 무중단 배포 자체와 무관, 동작은 정상
+- 해결책: `application.yml` 에 `server.forward-headers-strategy: framework` 추가 또는 코드 baseUrl 동적 결정
 
 ### 중장기 후속 작업
-- Phase B 진입 (검증 완료 후)
-- 로그 영속화 (logback 파일 appender + 볼륨 마운트)
+- 로그 영속화 (logback 파일 appender + 볼륨 마운트 + log rotation)
 - Slack/Discord 배포 알림 통합
-- 자동 롤백 메커니즘 (헬스체크 실패 시 이전 commit 으로 자동 재배포)
-- Mixed Content 경고 해결 (별도 이슈)
+- 자동 롤백 메커니즘 강화 (헬스체크 실패 시 이전 commit 으로 자동 재배포)
+- Traefik dashboard 의 production 라우터 가시성 점검 — Run #7 기준 정상
 
 ## 14. 참고
 

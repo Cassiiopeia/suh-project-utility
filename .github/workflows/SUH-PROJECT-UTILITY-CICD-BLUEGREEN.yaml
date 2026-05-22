@@ -82,18 +82,17 @@ env:
   IN_FLIGHT_WAIT: '10'
 
 # ===================================================================
-# 트리거 정책 (점진 전환)
+# 트리거 정책 (Phase B 진입 — 2026-05-22)
 # ===================================================================
-#  - Phase A (검증 단계): workflow_dispatch 만 — 수동 발동으로 검증
-#  - Phase B (검증 완료 후): push: branches: [main] 추가
-#                              + 기존 SUH-PROJECT-UTILITY-CICD.yaml 의 push 트리거 제거
+#  - Phase A 완료: workflow_dispatch 로 Run #4, #5, #7 검증 (헬스체크 + 토글 + 자동 정리 모두 통과)
+#  - Phase B 현재: push: main 자동 트리거 활성화
+#                   기존 SUH-PROJECT-UTILITY-CICD.yaml 은 workflow_dispatch 만 (비상 롤백 전용)
 # ===================================================================
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
-  # Phase B 진입 시 아래 주석 해제:
-  # push:
-  #   branches:
-  #     - main
 
 # ===================================================================
 # Jobs
