@@ -1,10 +1,23 @@
 name: SUH-PROJECT-UTILITY-CICD
 
+# ===================================================================
+# ⚠️ DEPRECATED — 비상 롤백 전용 (Phase B 진입 2026-05-22)
+#
+# 무중단 배포는 SUH-PROJECT-UTILITY-CICD-BLUEGREEN.yaml 로 일원화됨.
+# 본 워크플로우는 신규 워크플로우 장애 시 즉시 옛 방식 (docker rm -f + docker run -p 8090) 로
+# 복귀 가능하도록 workflow_dispatch 만 유지. push 자동 트리거 제거.
+#
+# 비상 롤백 절차:
+#   1. Synology DSM 역방향 프록시 lab.suhsaechan.kr 대상 포트 8079 → 8090 으로 변경
+#   2. 본 워크플로우 workflow_dispatch 수동 실행 → 옛 컨테이너 (suh-project-utility, 8090) 기동
+#
+# 관련 이슈: https://github.com/Cassiiopeia/suh-project-utility/issues/205
+# ===================================================================
 on:
-  push:
-    branches:
-      - main
-      - deploy
+  # push:
+  #   branches:
+  #     - main
+  #     - deploy
   workflow_dispatch:
 
 jobs:

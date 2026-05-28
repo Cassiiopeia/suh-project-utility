@@ -153,7 +153,7 @@ main context 를 깨끗하게 유지하기 위해 서브에이전트 활용. 좋
 ---
 
 ## 프로젝트 개요
-SUH 프로젝트 유틸리티는 Spring Boot 3.4.2 기반의 멀티모듈 웹 애플리케이션입니다. 다양한 도메인 기능(Docker, GitHub, Notice, Study 등)을 제공하며, PostgreSQL과 Redis를 데이터 저장소로 사용합니다.
+SUH 프로젝트 유틸리티는 Spring Boot 3.4.2 기반의 멀티모듈 웹 애플리케이션입니다. 다양한 도메인 기능(Docker, GitHub, Notice 등)을 제공하며, PostgreSQL과 Redis를 데이터 저장소로 사용합니다.
 
 ## 프로젝트 구조
 ```
@@ -163,7 +163,6 @@ suh-project-utility/
 ├── Suh-Domain-Github/    # GitHub 이슈 헬퍼 기능
 ├── Suh-Domain-Notice/    # 공지사항 및 댓글 기능
 ├── Suh-Domain-Module/    # 모듈 버전 관리
-├── Suh-Domain-Study/     # 스터디 노트 관리
 ├── Suh-Module-Translate/ # 번역 서비스
 ├── Suh-Application/      # 애플리케이션 서비스
 └── Suh-Web/             # 웹 컨트롤러 및 UI (Config 포함)
@@ -269,10 +268,10 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 ```
 
 ### 네이밍 규칙
-- **Controller**: `{도메인}Controller` (예: `StudyManagementController`)
-- **Service**: `{도메인}Service` (예: `StudyPostService`)
-- **Repository**: `{도메인}Repository` (예: `StudyPostRepository`)
-- **Entity**: 도메인 객체명 (예: `StudyPost`, `NoticeComment`)
+- **Controller**: `{도메인}Controller` (예: `NoticeController`)
+- **Service**: `{도메인}Service` (예: `NoticeService`)
+- **Repository**: `{도메인}Repository` (예: `NoticeCommentRepository`)
+- **Entity**: 도메인 객체명 (예: `NoticeComment`, `SuhProjectUtilityNotice`)
 - **Boolean 필드**: 반드시 `is` 접두사 사용 (예: `isActive`, `isPublic`)
 
 ### 폴더 구조 규칙
@@ -282,8 +281,8 @@ public interface CommentRepository extends JpaRepository<Comment, UUID> {
 ```
 me/suhsaechan/{domain}/
 ├── dto/                    # 모든 DTO 클래스
-│   ├── StudyRequest.java   # API 요청 DTO
-│   ├── StudyResponse.java  # API 응답 DTO
+│   ├── NoticeRequest.java  # API 요청 DTO
+│   ├── NoticeResponse.java # API 응답 DTO
 │   ├── CategoryDto.java    # 세부 데이터 DTO (독립 클래스)
 │   ├── PostDto.java        # 세부 데이터 DTO (독립 클래스)
 │   └── AttachmentDto.java  # 세부 데이터 DTO (독립 클래스)
@@ -311,18 +310,18 @@ public class PostDto {
     private Boolean isPublic;  // Boolean은 is 접두사
 }
 
-// dto/StudyResponse.java
+// dto/NoticeResponse.java
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudyResponse {
+public class NoticeResponse {
     private List<PostDto> posts;  // 독립 DTO 참조
     private PostDto post;
 }
 
 // Service에서 Builder 패턴 사용
-return StudyResponse.builder()
+return NoticeResponse.builder()
     .posts(postDtoList)
     .totalPosts(totalCount)
     .build();
@@ -331,7 +330,7 @@ return StudyResponse.builder()
 ### API 설계 원칙
 - **기본 HTTP Method**: POST (파일 업로드 지원을 위해)
 - **Content-Type**: `MediaType.MULTIPART_FORM_DATA_VALUE`
-- **엔드포인트**: `/api/{도메인}/{기능}` (예: `/api/study/post/create`)
+- **엔드포인트**: `/api/{도메인}/{기능}` (예: `/api/notice/comment/create`)
 - **응답**: `ResponseEntity<T>` 사용
 - **상태 코드**: HTTP 상태 코드로만 표현
 
@@ -426,8 +425,8 @@ public enum ErrorCode {
     GITHUB_ISSUE_NOT_FOUND(HttpStatus.NOT_FOUND, "GitHub 이슈를 찾을 수 없습니다."),
     GITHUB_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GitHub API 호출 중 오류가 발생했습니다."),
     
-    // STUDY - Study 도메인 오류
-    STUDY_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "포스트를 찾을 수 없습니다.");
+    // NOTICE - Notice 도메인 오류
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "공지사항을 찾을 수 없습니다.");
     
     private final HttpStatus httpStatus;
     private final String message;  // 한글 메시지 사용
@@ -555,9 +554,9 @@ public class SomansaBusRouteService {
 ```java
 @Service
 @RequiredArgsConstructor
-public class StudyPostService {
-    private final StudyPostRepository postRepository;
-    private final StudyCategoryService categoryService;
+public class NoticeService {
+    private final SuhProjectUtilityNoticeRepository noticeRepository;
+    private final NoticeCommentRepository commentRepository;
 }
 ```
 
@@ -595,15 +594,6 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 
 ## 주요 도메인 모듈
 
-### Study 모듈
-- **기능**: 마크다운 기반 스터디 노트 관리
-- **엔티티**: StudyPost, StudyCategory, StudyAttachment
-- **특징**: 
-  - 계층형 카테고리 구조
-  - 파일 첨부 지원
-  - 조회수 관리
-  - 태그 기능
-
 ### Notice 모듈
 - **기능**: 공지사항 및 댓글 관리
 - **엔티티**: SuhProjectUtilityNotice, NoticeComment
@@ -635,7 +625,7 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 - **클래스 기반 스타일링**: 모든 스타일은 CSS 클래스로 정의하고 JavaScript에서 `classList.add()` / `classList.remove()` 사용
 - **Tailwind CSS 우선 사용**: 간단한 스타일은 Tailwind 유틸리티 클래스 활용
 - **커스텀 클래스**: Tailwind로 불가능한 복잡한 스타일만 `common.css`에 정의
-- **클래스 명명 규칙**: `{페이지}-{컴포넌트}` (예: `study-page`, `dashboard-section-header`, `version-badge`)
+- **클래스 명명 규칙**: `{페이지}-{컴포넌트}` (예: `notice-page`, `dashboard-section-header`, `version-badge`)
 - **유틸리티 클래스**:
   - 숨김: `.hide` (display: none)
   - JavaScript 사용: `element.classList.add('hide')` / `element.classList.remove('hide')`

@@ -7,7 +7,7 @@
 
 <!-- 수정하지마세요 자동으로 동기화 됩니다 -->
 <!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
-## Version: v2.5.35 (2026-05-20)
+## Version: v2.5.36 (2026-05-21)
 
 [View Changelog (Korean)](CHANGELOG.md)
 
@@ -41,7 +41,6 @@ A collection of **experimental utilities** I build when I have an idea at 2am.
 | **Grass Planter** | Auto-commit to keep GitHub green |
 | **AI Translator** | Custom translation with OpenAI |
 | **Issue Helper** | Branch names & commits from GitHub issues |
-| **Study Plan** | Markdown notes with style |
 | **Docker Logs** | Real-time container monitoring |
 
 ---

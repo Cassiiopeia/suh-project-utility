@@ -59,7 +59,6 @@ public class FeatureUsageLog extends BasePostgresEntity {
         CHATBOT,
         GITHUB_ISSUE_HELPER,
         AI_TRANSLATOR,
-        STUDY_VIEW,
         NOTICE_VIEW,
         CONTAINER_LOG,
         GRASS_PLANTER,
