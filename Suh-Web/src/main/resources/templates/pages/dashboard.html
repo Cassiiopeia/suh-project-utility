@@ -509,7 +509,7 @@
               </div>
             </div>
           </a>
-          <a href="https://github.com/TEAM-Tripgether" target="_blank" class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+          <a href="https://tripgether.app/" target="_blank" class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
             <div class="card-body p-5">
               <div class="flex items-center gap-3 mb-3">
                 <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
@@ -534,6 +534,8 @@
               <div class="card-actions justify-end mt-3">
                 <span onclick="event.preventDefault(); window.open('https://github.com/TEAM-Tripgether', '_blank')" class="btn btn-outline btn-xs"><i class="fa-brands fa-github"></i> GitHub</span>
                 <span onclick="event.preventDefault(); window.open('https://www.instagram.com/tripgether_official', '_blank')" class="btn btn-outline btn-xs"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                <span onclick="event.preventDefault(); window.open('https://apps.apple.com/app/tripgether/id6746592757', '_blank')" class="btn btn-outline btn-xs"><i class="fa-brands fa-app-store-ios"></i> iOS</span>
+                <span onclick="event.preventDefault(); window.open('https://play.google.com/store/apps/details?id=app.tripgether', '_blank')" class="btn btn-outline btn-xs"><i class="fa-brands fa-google-play"></i> Android</span>
               </div>
             </div>
           </a>
@@ -1843,6 +1845,83 @@
           Projects
         </h2>
         <p class="text-base-content/60 text-sm mb-6">진행 중인 프로젝트 및 관련 리소스</p>
+
+        <!-- Tripgether -->
+        <div class="bg-base-200 rounded-xl p-5 mb-6">
+          <h3 class="font-semibold text-base-content mb-4 flex items-center gap-2 border-l-4 border-cyan-500 pl-3">
+            <img src="/images/tripgetherLogo.png" alt="트립게더" class="w-5 h-5" onerror="this.outerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500\'></i>'">
+            Tripgether
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 앱 메인 -->
+            <a href="https://tripgether.app/" target="_blank" rel="noopener noreferrer"
+               class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                    <i class="fa-solid fa-globe text-cyan-600 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base-content">앱 메인</h3>
+                    <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  </div>
+                </div>
+                <p class="text-base-content/60 text-sm mt-3">Tripgether 앱 메인 페이지</p>
+              </div>
+            </a>
+            <!-- BE 레포 -->
+            <a href="https://github.com/Cassiiopeia/Tripgether-BE" target="_blank" rel="noopener noreferrer"
+               class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                    <i class="fa-brands fa-github text-cyan-600 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base-content">BE 레포</h3>
+                    <span class="badge badge-soft badge-success badge-xs">BE</span>
+                  </div>
+                </div>
+                <p class="text-base-content/60 text-sm mt-3">Tripgether Backend</p>
+              </div>
+            </a>
+            <!-- FE 레포 -->
+            <a href="https://github.com/Cassiiopeia/tripgether-FE" target="_blank" rel="noopener noreferrer"
+               class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                    <i class="fa-brands fa-github text-cyan-600 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base-content">FE 레포</h3>
+                    <span class="badge badge-soft badge-info badge-xs">FE</span>
+                  </div>
+                </div>
+                <p class="text-base-content/60 text-sm mt-3">Tripgether Frontend</p>
+              </div>
+            </a>
+            <!-- AI 레포 -->
+            <a href="https://github.com/TEAM-Tripgether/tripgether-python" target="_blank" rel="noopener noreferrer"
+               class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg bg-cyan-100 flex items-center justify-center">
+                    <i class="fa-solid fa-brain text-cyan-600 text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base-content">AI 레포</h3>
+                    <div class="flex gap-1 mt-1">
+                      <span class="badge badge-soft badge-secondary badge-xs">AI</span>
+                      <span class="badge badge-soft badge-warning badge-xs">Private</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-base-content/60 text-sm mt-3">Tripgether AI (비공개)</p>
+              </div>
+            </a>
+          </div>
+        </div>
 
         <!-- Mapsy -->
         <div class="bg-base-200 rounded-xl p-5 mb-6">
