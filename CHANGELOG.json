@@ -1,11 +1,34 @@
 {
   "metadata": {
-    "lastUpdated": "2026-05-28T08:19:20Z",
-    "currentVersion": "2.5.47",
+    "lastUpdated": "2026-06-05T00:36:11Z",
+    "currentVersion": "2.5.49",
     "projectType": "spring",
-    "totalReleases": 58
+    "totalReleases": 59
   },
   "releases": [
+    {
+      "version": "2.5.49",
+      "project_type": "spring",
+      "date": "2026-06-05",
+      "pr_number": 211,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 컨테이너 로그 화면에서 로그가 표시되지 않던 문제 해결\n  * 로그 화면이 계속 끊겼다 연결되는 현상 개선\n\n* **개선**\n  * 로그 줄 수 선택 항목에 200줄 옵션 추가",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "컨테이너 로그 화면에서 로그가 표시되지 않던 문제 해결",
+            "로그 화면이 계속 끊겼다 연결되는 현상 개선"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "로그 줄 수 선택 항목에 200줄 옵션 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.47",
       "project_type": "spring",

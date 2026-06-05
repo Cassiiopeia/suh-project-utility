@@ -40,44 +40,72 @@ public class DockerLogService {
     private static final int STREAM_READ_TIMEOUT = 100;
 
     /**
-     * Docker 컨테이너 로그 조회 (폴링용)
-     * 
+     * Docker 컨테이너 로그 조회 (폴링용, sudo 없이)
+     *
      * @param request 로그 요청 정보
      * @return 로그 응답
      */
     public DockerLogResponse getContainerLogs(DockerRequest request) {
         String containerName = Optional.ofNullable(request.getContainerName()).orElse("sejong-malsami-back");
         Integer lineLimit = Optional.ofNullable(request.getLineLimit()).orElse(100);
-        
+
+        log.info("Docker 로그 조회 요청 (sudo 없음) - 컨테이너: {}, 라인 제한: {}", containerName, lineLimit);
+
+        String command = String.format(
+            "export PATH=$PATH:/usr/local/bin && docker logs --tail=%d %s 2>&1",
+            lineLimit, containerName
+        );
+
+        String logs = sshCommandExecutor.executeCommand(command);
+        int totalLines = logs.isEmpty() ? 0 : logs.split("\n").length;
+
+        log.info("로그 조회 완료 - 컨테이너: {}, 총 {} 줄", containerName, totalLines);
+
+        return DockerLogResponse.builder()
+                .logs(logs)
+                .totalLines(totalLines)
+                .build();
+    }
+
+    /**
+     * Docker 컨테이너 로그 조회 (폴링용, sudo 사용)
+     *
+     * @param request 로그 요청 정보
+     * @return 로그 응답
+     */
+    public DockerLogResponse getContainerLogsWithSudo(DockerRequest request) {
+        String containerName = Optional.ofNullable(request.getContainerName()).orElse("sejong-malsami-back");
+        Integer lineLimit = Optional.ofNullable(request.getLineLimit()).orElse(100);
+
         log.info("Docker 로그 조회 요청 - 컨테이너: {}, 라인 제한: {}", containerName, lineLimit);
-        
+
         Session session = null;
         ChannelExec channel = null;
-        
+
         try {
             // SSH 연결 정보 가져오기
             String host = sshProps.getHost();
             String username = sshProps.getUsername();
             String password = sshProps.getPassword();
             int port = sshProps.getPort();
-            
+
             log.debug("SSH 연결 정보 - 호스트: {}, 포트: {}, 사용자: {}", host, port, username);
-            
+
             // JSch 초기화
             JSch jsch = new JSch();
             session = jsch.getSession(username, host, port);
             session.setPassword(password);
-            
+
             // 호스트 키 검사 비활성화
             Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
-            
+
             // 세션 연결
             log.info("SSH 세션 연결 시도 - 호스트: {}:{}, 사용자: {}", host, port, username);
             session.connect(10000);
             log.info("SSH 세션 연결 성공 - 컨테이너: {}", containerName);
-            
+
             // 로그 조회 명령 실행
             channel = (ChannelExec) session.openChannel("exec");
             String command = String.format(
@@ -86,20 +114,20 @@ public class DockerLogService {
             );
             channel.setCommand(command);
             channel.setPty(true);
-            
+
             InputStream in = channel.getInputStream();
             OutputStream out = channel.getOutputStream();
             channel.connect(10000);
-            
+
             // sudo 비밀번호 전달
             out.write((password + "\n").getBytes(StandardCharsets.UTF_8));
             out.flush();
-            
+
             // 로그 읽기
             StringBuilder logBuilder = new StringBuilder();
             byte[] buffer = new byte[1024];
             int totalLines = 0;
-            
+
             while (!channel.isClosed()) {
                 int bytesRead = in.read(buffer);
                 if (bytesRead < 0) {
@@ -112,15 +140,15 @@ public class DockerLogService {
                     totalLines = logBuilder.toString().split("\n").length;
                 }
             }
-            
+
             String logs = logBuilder.toString();
             log.info("로그 조회 완료 - 컨테이너: {}, 총 {} 줄", containerName, totalLines);
-            
+
             return DockerLogResponse.builder()
                     .logs(logs)
                     .totalLines(totalLines)
                     .build();
-                    
+
         } catch (JSchException e) {
             log.error("SSH 연결 실패 - 호스트: {}:{}, 에러: {}", sshProps.getHost(), sshProps.getPort(), e.getMessage());
             
@@ -156,7 +184,7 @@ public class DockerLogService {
     }
 
     /**
-     * Docker 컨테이너 로그 실시간 스트리밍 (SSE용)
+     * Docker 컨테이너 로그 실시간 스트리밍 (SSE용, sudo 없이)
      * docker logs -f 명령어를 사용하여 실시간으로 로그를 전송
      *
      * @param containerName 컨테이너 이름
@@ -165,6 +193,92 @@ public class DockerLogService {
      * @param isRunning 스트리밍 실행 상태 플래그
      */
     public void streamContainerLogs(String containerName, int tailLines, SseEmitter emitter, AtomicBoolean isRunning) {
+        Session session = null;
+        ChannelExec channel = null;
+
+        try {
+            String host = sshProps.getHost();
+            String username = sshProps.getUsername();
+            String password = sshProps.getPassword();
+            int port = sshProps.getPort();
+
+            JSch jsch = new JSch();
+            session = jsch.getSession(username, host, port);
+            session.setPassword(password);
+
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+
+            log.info("SSE 스트리밍 시작 (sudo 없음) - 컨테이너: {}, tail: {}", containerName, tailLines);
+            session.connect(SSH_CONNECT_TIMEOUT);
+
+            channel = (ChannelExec) session.openChannel("exec");
+            String command = String.format(
+                "export PATH=$PATH:/usr/local/bin && docker logs -f --tail=%d %s 2>&1",
+                tailLines, containerName
+            );
+            channel.setCommand(command);
+
+            InputStream inputStream = channel.getInputStream();
+            channel.connect(SSH_CONNECT_TIMEOUT);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            String line;
+
+            while (isRunning.get() && !channel.isClosed()) {
+                if (reader.ready()) {
+                    line = reader.readLine();
+                    if (line != null) {
+                        try {
+                            emitter.send(SseEmitter.event()
+                                .name("log")
+                                .data(line));
+                        } catch (IOException e) {
+                            log.debug("SSE 전송 실패 (클라이언트 연결 종료): {}", e.getMessage());
+                            break;
+                        }
+                    }
+                } else {
+                    Thread.sleep(STREAM_READ_TIMEOUT);
+                }
+            }
+
+            log.info("SSE 스트리밍 종료 - 컨테이너: {}", containerName);
+
+        } catch (JSchException e) {
+            log.error("SSE 스트리밍 SSH 연결 실패: {}", e.getMessage());
+            sendErrorEvent(emitter, "SSH 연결 실패: " + e.getMessage());
+        } catch (IOException e) {
+            log.error("SSE 스트리밍 IO 오류: {}", e.getMessage());
+            sendErrorEvent(emitter, "로그 읽기 오류: " + e.getMessage());
+        } catch (InterruptedException e) {
+            log.debug("SSE 스트리밍 인터럽트: {}", e.getMessage());
+            Thread.currentThread().interrupt();
+        } finally {
+            if (channel != null && channel.isConnected()) {
+                channel.disconnect();
+            }
+            if (session != null && session.isConnected()) {
+                session.disconnect();
+            }
+            try {
+                emitter.complete();
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /**
+     * Docker 컨테이너 로그 실시간 스트리밍 (SSE용, sudo 사용)
+     * docker logs -f 명령어를 사용하여 실시간으로 로그를 전송
+     *
+     * @param containerName 컨테이너 이름
+     * @param tailLines 초기 로드할 라인 수
+     * @param emitter SSE 이미터
+     * @param isRunning 스트리밍 실행 상태 플래그
+     */
+    public void streamContainerLogsWithSudo(String containerName, int tailLines, SseEmitter emitter, AtomicBoolean isRunning) {
         Session session = null;
         ChannelExec channel = null;
 
@@ -259,8 +373,8 @@ public class DockerLogService {
      * 서버의 모든 Docker 컨테이너 목록 조회 (ps -a)
      */
     public List<ContainerInfoDto> listContainers() {
-        String result = sshCommandExecutor.executeCommandWithSudoStdin(
-                "docker ps -a --format \\\"{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}\\\"" );
+        String result = sshCommandExecutor.executeCommand(
+                "export PATH=$PATH:/usr/local/bin && docker ps -a --format \"{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}\"" );
         List<ContainerInfoDto> list = new ArrayList<>();
         if (result != null && !result.isEmpty()) {
             for (String line : result.split("\n")) {
