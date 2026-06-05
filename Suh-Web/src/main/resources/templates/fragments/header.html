@@ -17,13 +17,14 @@
     })();
   </script>
 
-  <!-- Tailwind CSS v4 + DaisyUI 5 -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @import "tailwindcss";
-    @plugin "daisyui";
-    @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-  </style>
+  <!-- Tailwind CSS + DaisyUI 5 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5.4.2/daisyui.css" rel="stylesheet" type="text/css"/>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]']
+    }
+  </script>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
@@ -193,7 +194,7 @@
     <div class="modal-box max-w-lg bg-base-100">
       <!-- 모달 헤더 -->
       <div class="flex items-start gap-4 mb-4">
-        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
           <i class="fa-solid fa-code-branch text-primary text-xl"></i>
         </div>
         <div class="flex-1">
