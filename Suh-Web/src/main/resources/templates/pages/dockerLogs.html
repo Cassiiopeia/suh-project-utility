@@ -154,7 +154,10 @@
     let logLineCount = 0;
     let reconnectAttempts = 0;
     const MAX_RECONNECT_ATTEMPTS = 5;
+    const MAX_DOM_LINES = 500;
     let currentContainerName = 'sejong-malsami-back';
+
+    let scrollScheduled = false;
 
     const logOutput = document.getElementById('logOutput');
     const logOutputContainer = document.getElementById('logOutputContainer');
@@ -280,11 +283,27 @@
       lineElement.textContent = line;
       logOutput.appendChild(lineElement);
       logLineCount++;
+
+      while (logOutput.childElementCount > MAX_DOM_LINES) {
+        logOutput.removeChild(logOutput.firstElementChild);
+      }
+
       updateLineCount();
 
       if ($('#autoScroll').is(':checked')) {
-        logOutputContainer.scrollTop = logOutputContainer.scrollHeight;
+        scheduleScroll();
       }
+    }
+
+    function scheduleScroll() {
+      if (scrollScheduled) {
+        return;
+      }
+      scrollScheduled = true;
+      requestAnimationFrame(function() {
+        logOutputContainer.scrollTop = logOutputContainer.scrollHeight;
+        scrollScheduled = false;
+      });
     }
 
     function getLogLineClass(line, type) {
