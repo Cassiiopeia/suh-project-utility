@@ -22,6 +22,85 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 
 /*
 ===========================
+   DaisyUI 5 버튼 색상 보강
+   (v3 CDN 환경에서 색 토큰이 버튼에 자동 적용되지 않아 최소 룰로 보강)
+===========================
+*/
+.btn-primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+.btn-primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+.btn-error {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+}
+.btn-error:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+.btn-success {
+  background-color: #22c55e;
+  border-color: #22c55e;
+  color: #ffffff;
+}
+.btn-success:hover {
+  background-color: #16a34a;
+  border-color: #16a34a;
+}
+.btn-info {
+  background-color: #06b6d4;
+  border-color: #06b6d4;
+  color: #ffffff;
+}
+.btn-info:hover {
+  background-color: #0891b2;
+  border-color: #0891b2;
+}
+.btn-warning {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  color: #ffffff;
+}
+.btn-warning:hover {
+  background-color: #d97706;
+  border-color: #d97706;
+}
+.btn-secondary {
+  background-color: #8b5cf6;
+  border-color: #8b5cf6;
+  color: #ffffff;
+}
+.btn-secondary:hover {
+  background-color: #7c3aed;
+  border-color: #7c3aed;
+}
+.btn-neutral {
+  background-color: #374151;
+  border-color: #374151;
+  color: #ffffff;
+}
+.btn-neutral:hover {
+  background-color: #1f2937;
+  border-color: #1f2937;
+}
+.btn-outline {
+  background-color: transparent;
+  border-color: #9ca3af;
+  color: inherit;
+}
+.btn-outline:hover {
+  background-color: rgba(156, 163, 175, 0.12);
+  border-color: #9ca3af;
+}
+
+/*
+===========================
    테마 토글 버튼 (swap) 배경 투명
 ===========================
 */
