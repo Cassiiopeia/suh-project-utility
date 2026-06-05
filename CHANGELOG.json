@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-05T00:36:11Z",
-    "currentVersion": "2.5.49",
+    "lastUpdated": "2026-06-05T00:45:22Z",
+    "currentVersion": "2.5.50",
     "projectType": "spring",
-    "totalReleases": 59
+    "totalReleases": 60
   },
   "releases": [
+    {
+      "version": "2.5.50",
+      "project_type": "spring",
+      "date": "2026-06-05",
+      "pr_number": 212,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **개선**\n  * 로그 화면을 오래 켜둬도 느려지지 않도록 성능을 개선했습니다",
+      "parsed_changes": {
+        "개선": {
+          "title": "개선",
+          "items": [
+            "로그 화면을 오래 켜둬도 느려지지 않도록 성능을 개선했습니다"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.49",
       "project_type": "spring",
