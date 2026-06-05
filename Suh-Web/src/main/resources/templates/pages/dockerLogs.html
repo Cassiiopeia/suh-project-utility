@@ -184,7 +184,7 @@
           const imageInfo = (c.image && c.image !== 'null') ? c.image.split(':')[0] : 'Unknown';
           const item = $(`
             <a class="container-item flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-base-200 transition-colors" data-name="${c.name}">
-              <div class="w-2 h-2 rounded-full ${statusClass} flex-shrink-0"></div>
+              <div class="w-2 h-2 rounded-full ${statusClass} shrink-0"></div>
               <div class="min-w-0 flex-1">
                 <div class="font-medium text-base-content truncate text-xs">${c.name}</div>
                 <div class="text-xs text-base-content/50 truncate">${c.status}</div>
