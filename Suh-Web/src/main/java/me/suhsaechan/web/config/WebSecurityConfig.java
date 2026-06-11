@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.filter.ForwardedHeaderFilter;
 
 /**
  * 웹 보안 설정 클래스
@@ -30,10 +29,10 @@ public class WebSecurityConfig {
   private final AESUtil aesUtil;
   private final UserAuthority userAuthority;
 
-  @Bean
-  public ForwardedHeaderFilter forwardedHeaderFilter() {
-    return new ForwardedHeaderFilter();
-  }
+  // ForwardedHeaderFilter는 application.yml의 forward-headers-strategy: framework로
+  // Spring Boot가 최고 우선순위(Security 필터보다 먼저)로 자동 등록한다.
+  // 수동 @Bean 등록 시 order가 LOWEST_PRECEDENCE가 되어 Security 필터 뒤로 밀리고,
+  // 리버스 프록시 뒤 HTTPS 환경에서 X-Forwarded-Proto가 리다이렉트에 반영되지 않는다.
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
