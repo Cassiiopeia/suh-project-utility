@@ -5,83 +5,136 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grass-planter-dashboard" id="main-content">
+
   <!-- 페이지 헤더 -->
-  <div class="mb-6">
-    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
-      <i class="fa-brands fa-github text-blue-500"></i>
-      Grass Planter
-    </h2>
-    <p class="text-base-content/60 mt-1">GitHub 자동 커밋 관리 시스템</p>
+  <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+        <i class="fa-solid fa-seedling text-success"></i>
+        Grass Planter
+      </h2>
+      <p class="text-base-content/60 mt-1">GitHub 잔디를 자동으로 심어주는 커밋 관리 시스템</p>
+    </div>
+    <button class="btn btn-primary" onclick="showAddProfileModal()">
+      <i class="fa-solid fa-plus"></i>
+      프로필 추가
+    </button>
   </div>
 
-  <!-- 프로필 카드 섹션 -->
+  <!-- 요약 통계 -->
+  <div class="stats stats-vertical sm:stats-horizontal shadow-sm border border-base-300 bg-base-100 w-full mb-6">
+    <div class="stat">
+      <div class="stat-figure text-primary"><i class="fa-solid fa-users text-2xl"></i></div>
+      <div class="stat-title">전체 프로필</div>
+      <div class="stat-value text-primary" id="statTotalProfiles">0</div>
+      <div class="stat-desc">등록된 GitHub 계정</div>
+    </div>
+    <div class="stat">
+      <div class="stat-figure text-success"><i class="fa-solid fa-circle-check text-2xl"></i></div>
+      <div class="stat-title">활성 프로필</div>
+      <div class="stat-value text-success" id="statActiveProfiles">0</div>
+      <div class="stat-desc">현재 사용 중</div>
+    </div>
+    <div class="stat">
+      <div class="stat-figure text-info"><i class="fa-solid fa-robot text-2xl"></i></div>
+      <div class="stat-title">자동 커밋</div>
+      <div class="stat-value text-info" id="statAutoProfiles">0</div>
+      <div class="stat-desc">스케줄러가 관리</div>
+    </div>
+  </div>
+
+  <!-- 프로필 목록 -->
   <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
-            <i class="fa-brands fa-github text-blue-500"></i>
-            프로필 목록
-          </h3>
-          <p class="text-base-content/60 text-sm">등록된 GitHub 프로필 관리</p>
-        </div>
-        <button class="btn btn-primary" onclick="showAddProfileModal()">
+      <h3 class="card-title text-base-content">
+        <i class="fa-brands fa-github"></i>
+        프로필 목록
+      </h3>
+
+      <!-- 빈 상태 -->
+      <div th:if="${#lists.isEmpty(profiles)}" class="flex flex-col items-center justify-center py-16 text-center gap-3">
+        <i class="fa-solid fa-seedling text-5xl text-base-content/20"></i>
+        <p class="text-base-content/60">아직 등록된 프로필이 없습니다.</p>
+        <button class="btn btn-primary btn-sm" onclick="showAddProfileModal()">
           <i class="fa-solid fa-plus"></i>
-          프로필 추가
+          첫 프로필 추가하기
         </button>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- 프로필 카드들 -->
-        <div th:each="profile : ${profiles}" class="card bg-base-100 border border-base-300 hover:shadow-md transition-shadow">
+      <!-- 프로필 카드 그리드 -->
+      <div th:unless="${#lists.isEmpty(profiles)}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+        <div th:each="profile : ${profiles}"
+             class="card bg-base-100 border border-base-300 hover:shadow-md transition-shadow profile-card"
+             th:attr="data-profile-id=${profile.grassProfileId},
+                      data-github-username=${profile.githubUsername},
+                      data-repository-name=${profile.defaultRepositoryName},
+                      data-commit-template=${profile.commitMessageTemplate},
+                      data-daily-goal=${profile.dailyCommitGoal},
+                      data-target-level=${profile.targetCommitLevel},
+                      data-owner-nickname=${profile.ownerNickname},
+                      data-is-active=${profile.isActive},
+                      data-is-auto=${profile.isAutoCommitEnabled}">
           <div class="card-body p-4">
-            <!-- 프로필 헤더 -->
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
+            <!-- 헤더 -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 min-w-0">
                 <i class="fa-brands fa-github text-xl text-base-content/80"></i>
-                <span class="font-semibold text-base-content" th:text="${profile.githubUsername}">username</span>
+                <span class="font-semibold text-base-content truncate" th:text="${profile.githubUsername}">username</span>
               </div>
               <div th:if="${profile.isActive}" class="badge badge-success badge-sm">활성</div>
               <div th:unless="${profile.isActive}" class="badge badge-ghost badge-sm">비활성</div>
             </div>
 
-            <!-- 저장소 이름 -->
-            <div class="text-sm text-base-content/60 mb-3" th:text="${profile.defaultRepositoryName ?: 'No repository'}">repository</div>
-
-            <!-- 주요 정보 영역 -->
-            <div class="space-y-2 mb-4">
-              <div class="flex items-center gap-2 text-sm text-base-content/70">
-                <i class="fa-solid fa-clock text-blue-500"></i>
-                <span th:text="${profile.isAutoCommitEnabled ? '자동 커밋' : '수동 커밋'}">자동 커밋</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm">
-                <span class="contribution-level" th:classappend="'level-' + ${profile.targetCommitLevel ?: 0}"></span>
-                <span class="text-base-content/70">레벨 <span th:text="${profile.targetCommitLevel ?: 0}">1</span></span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-base-content/70">
-                <i class="fa-solid fa-user text-blue-500"></i>
-                <span th:text="${profile.ownerNickname ?: '미지정'}">Cassiopeia</span>
-              </div>
+            <!-- 저장소 -->
+            <div class="text-sm text-base-content/60 truncate">
+              <i class="fa-solid fa-folder-open mr-1"></i>
+              <span th:text="${profile.defaultRepositoryName ?: '저장소 미지정'}">repository</span>
             </div>
 
-            <!-- 버튼 영역 -->
-            <div class="flex gap-2 justify-end">
-              <button class="btn btn-circle btn-sm btn-success"
-                      th:data-profile-id="${profile.grassProfileId}"
+            <!-- 잔디 레벨 시각화 -->
+            <div class="flex items-center gap-2 my-2">
+              <span class="text-xs text-base-content/60">목표 레벨</span>
+              <div class="flex items-center gap-1">
+                <span th:each="lv : ${#numbers.sequence(1,4)}"
+                      class="grass-cell"
+                      th:classappend="${lv le (profile.targetCommitLevel ?: 0)} ? 'grass-cell-on grass-lv-' + ${lv} : 'grass-cell-off'"></span>
+              </div>
+              <span class="text-xs font-medium text-base-content/70" th:text="'Lv.' + ${profile.targetCommitLevel ?: 0}">Lv.1</span>
+            </div>
+
+            <!-- 메타 정보 -->
+            <div class="flex flex-wrap gap-2 text-xs">
+              <span class="badge badge-ghost gap-1">
+                <i th:class="${profile.isAutoCommitEnabled} ? 'fa-solid fa-robot' : 'fa-solid fa-hand-pointer'"></i>
+                <span th:text="${profile.isAutoCommitEnabled} ? '자동' : '수동'">자동</span>
+              </span>
+              <span class="badge badge-ghost gap-1">
+                <i class="fa-solid fa-user"></i>
+                <span th:text="${profile.ownerNickname ?: '미지정'}">담당자</span>
+              </span>
+              <span th:if="${profile.dailyCommitGoal != null}" class="badge badge-ghost gap-1">
+                <i class="fa-solid fa-bullseye"></i>
+                <span th:text="'하루 ' + ${profile.dailyCommitGoal} + '회'">하루 1회</span>
+              </span>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="flex gap-2 justify-end mt-3">
+              <button class="btn btn-sm btn-success btn-outline gap-1"
+                      th:attr="data-profile-id=${profile.grassProfileId}"
                       onclick="executeCommit(this.getAttribute('data-profile-id'))"
-                      title="커밋 실행">
-                <i class="fa-solid fa-play text-xs"></i>
+                      title="지금 커밋">
+                <i class="fa-solid fa-play text-xs"></i>커밋
               </button>
-              <button class="btn btn-circle btn-sm btn-info"
-                      th:data-profile-id="${profile.grassProfileId}"
-                      onclick="editProfile(this.getAttribute('data-profile-id'))"
-                      title="프로필 수정">
+              <button class="btn btn-sm btn-info btn-circle btn-outline"
+                      onclick="editProfile(this)"
+                      title="수정">
                 <i class="fa-solid fa-pen text-xs"></i>
               </button>
-              <button class="btn btn-circle btn-sm btn-error"
-                      th:data-profile-id="${profile.grassProfileId}"
+              <button class="btn btn-sm btn-error btn-circle btn-outline"
+                      th:attr="data-profile-id=${profile.grassProfileId}"
                       onclick="deleteProfile(this.getAttribute('data-profile-id'))"
-                      title="프로필 삭제">
+                      title="삭제">
                 <i class="fa-solid fa-trash text-xs"></i>
               </button>
             </div>
@@ -91,38 +144,36 @@
     </div>
   </div>
 
-  <!-- 커밋 로그 섹션 -->
+  <!-- 커밋 로그 -->
   <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
-            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
-            커밋 로그
-          </h3>
-          <p class="text-base-content/60 text-sm">최근 커밋 기록</p>
-        </div>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h3 class="card-title text-base-content">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          커밋 로그
+        </h3>
         <button class="btn btn-outline btn-sm" onclick="loadCommitLogs()">
           <i class="fa-solid fa-rotate"></i>
           새로고침
         </button>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="table table-zebra">
+      <div class="overflow-x-auto mt-2">
+        <table class="table table-zebra table-sm">
           <thead>
             <tr>
               <th>시간</th>
               <th>프로필</th>
               <th>저장소</th>
               <th>메시지</th>
+              <th>유형</th>
               <th>상태</th>
               <th>레벨</th>
             </tr>
           </thead>
           <tbody id="commitLogTable">
             <tr>
-              <td colspan="6" class="text-center py-8">
+              <td colspan="7" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
                 <span class="ml-2 text-base-content/60">로그 로딩 중...</span>
               </td>
@@ -141,89 +192,88 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </form>
-      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
-        <i class="fa-brands fa-github text-blue-500"></i>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-4" id="profileModalTitle">
+        <i class="fa-brands fa-github"></i>
         GitHub 프로필 설정
       </h3>
-      <form id="profileForm" class="space-y-4">
+      <form id="profileForm" class="space-y-3">
         <input type="hidden" id="profileId" name="profileId">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">GitHub 사용자명</span>
-            </label>
+            <label class="label"><span class="label-text font-medium">GitHub 사용자명</span></label>
             <input type="text" id="githubUsername" name="githubUsername"
-                   class="input w-full" placeholder="예: octocat" required>
+                   class="input input-bordered w-full" placeholder="예: octocat" required>
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">Personal Access Token (PAT)</span>
+              <span class="label-text font-medium">Personal Access Token</span>
+              <span class="label-text-alt text-base-content/50" id="patHint">필수</span>
             </label>
             <input type="password" id="personalAccessToken" name="personalAccessToken"
-                   class="input w-full" placeholder="ghp_xxxxxxxxxxxx">
+                   class="input input-bordered w-full" placeholder="ghp_xxxxxxxxxxxx">
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">저장소 전체 이름</span>
-            </label>
+            <label class="label"><span class="label-text font-medium">저장소 전체 이름</span></label>
             <input type="text" id="repositoryFullName" name="repositoryFullName"
-                   class="input w-full" placeholder="예: username/repository">
+                   class="input input-bordered w-full" placeholder="예: username/repository">
           </div>
           <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">목표 커밋 레벨</span>
-            </label>
-            <select class="select w-full" id="targetCommitLevel" name="targetCommitLevel">
+            <label class="label"><span class="label-text font-medium">목표 잔디 레벨</span></label>
+            <select class="select select-bordered w-full" id="targetCommitLevel" name="targetCommitLevel">
               <option value="1">레벨 1 (연한 녹색)</option>
               <option value="2">레벨 2 (녹색)</option>
               <option value="3">레벨 3 (진한 녹색)</option>
-              <option value="4">레벨 4 (매우 진한 녹색)</option>
+              <option value="4">레벨 4 (가장 진한 녹색)</option>
             </select>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">담당자 닉네임</span>
-            </label>
+            <label class="label"><span class="label-text font-medium">담당자 닉네임</span></label>
             <input type="text" id="ownerNickname" name="ownerNickname"
-                   class="input w-full" placeholder="담당자 이름">
+                   class="input input-bordered w-full" placeholder="담당자 이름">
           </div>
           <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">설정</span>
-            </label>
-            <div class="flex flex-col gap-3 p-3 bg-base-200 rounded-lg">
-              <label class="label cursor-pointer justify-start gap-3">
-                <input type="checkbox" id="isActive" name="isActive" class="checkbox checkbox-primary" checked>
-                <span class="label-text">프로필 활성화</span>
-              </label>
-              <label class="label cursor-pointer justify-start gap-3">
-                <input type="checkbox" id="isAutoCommitEnabled" name="isAutoCommitEnabled" class="checkbox checkbox-primary">
-                <span class="label-text">자동 커밋 활성화</span>
-              </label>
-            </div>
+            <label class="label"><span class="label-text font-medium">하루 커밋 목표 (회)</span></label>
+            <input type="number" id="dailyCommitGoal" name="dailyCommitGoal" min="1" max="50"
+                   class="input input-bordered w-full" placeholder="예: 1">
           </div>
+        </div>
+
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">커밋 메시지 템플릿</span>
+            <span class="label-text-alt text-base-content/50">비우면 기본값 사용</span>
+          </label>
+          <input type="text" id="commitMessageTemplate" name="commitMessageTemplate"
+                 class="input input-bordered w-full" placeholder="예: chore: daily grass commit">
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 p-3 bg-base-200 rounded-lg">
+          <label class="label cursor-pointer justify-start gap-3">
+            <input type="checkbox" id="isActive" name="isActive" class="toggle toggle-success" checked>
+            <span class="label-text">프로필 활성화</span>
+          </label>
+          <label class="label cursor-pointer justify-start gap-3">
+            <input type="checkbox" id="isAutoCommitEnabled" name="isAutoCommitEnabled" class="toggle toggle-info">
+            <span class="label-text">자동 커밋 활성화</span>
+          </label>
         </div>
       </form>
       <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-ghost">취소</button>
-        </form>
+        <form method="dialog"><button class="btn btn-ghost">취소</button></form>
         <button class="btn btn-primary" onclick="saveProfile()">
           <i class="fa-solid fa-check"></i>
           저장
         </button>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 
   <!-- 커밋 실행 모달 -->
@@ -234,287 +284,216 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </form>
-      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
-        <i class="fa-solid fa-play text-blue-500"></i>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-play text-success"></i>
         수동 커밋 실행
       </h3>
       <form id="commitForm">
         <input type="hidden" id="commitProfileId" name="profileId">
         <div class="form-control">
-          <label class="label">
-            <span class="label-text font-medium">커밋 메시지</span>
-          </label>
+          <label class="label"><span class="label-text font-medium">커밋 메시지</span></label>
           <textarea id="commitMessage" name="commitMessage"
-                    class="textarea h-24"
-                    placeholder="커밋 메시지를 입력하세요..."></textarea>
+                    class="textarea textarea-bordered h-24"
+                    placeholder="비우면 프로필 템플릿/기본 메시지가 사용됩니다."></textarea>
         </div>
       </form>
       <div class="modal-action">
-        <form method="dialog">
-          <button class="btn btn-ghost">취소</button>
-        </form>
+        <form method="dialog"><button class="btn btn-ghost">취소</button></form>
         <button class="btn btn-primary" onclick="confirmCommit()">
           <i class="fa-solid fa-play"></i>
           실행
         </button>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
-    </form>
+    <form method="dialog" class="modal-backdrop"><button>close</button></form>
   </dialog>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- Grass Planter 전용 JavaScript -->
 <script>
 $(document).ready(function() {
-  // 페이지 로드 시 커밋 로그 로드
+  updateSummaryStats();
   loadCommitLogs();
 });
 
-/**
- * UUID 생성 헬퍼
- */
-function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
+// 카드 data 속성으로 요약 통계 계산
+function updateSummaryStats() {
+  const cards = document.querySelectorAll('.profile-card');
+  let total = cards.length, active = 0, auto = 0;
+  cards.forEach(function(c) {
+    if (c.getAttribute('data-is-active') === 'true') active++;
+    if (c.getAttribute('data-is-auto') === 'true') auto++;
   });
+  $('#statTotalProfiles').text(total);
+  $('#statActiveProfiles').text(active);
+  $('#statAutoProfiles').text(auto);
 }
 
-/**
- * 프로필 추가 모달 표시
- */
+// 프로필 추가 모달
 function showAddProfileModal() {
   $('#profileForm')[0].reset();
   $('#profileId').val('');
+  $('#profileModalTitle').html('<i class="fa-brands fa-github"></i> 프로필 추가');
+  // 생성 시 PAT 필수
+  $('#personalAccessToken').attr('required', true);
+  $('#patHint').text('필수');
+  $('#githubUsername').attr('readonly', false);
   document.getElementById('profileModal').showModal();
 }
 
-/**
- * 프로필 수정
- */
-function editProfile(profileId) {
-  $('#profileId').val(profileId);
+// 프로필 수정 — 카드의 data 속성으로 폼을 채운다 (별도 조회 API 없이)
+function editProfile(btn) {
+  const card = btn.closest('.profile-card');
+  $('#profileForm')[0].reset();
+
+  $('#profileId').val(card.getAttribute('data-profile-id'));
+  $('#githubUsername').val(card.getAttribute('data-github-username'));
+  $('#repositoryFullName').val(textOrEmpty(card.getAttribute('data-repository-name')));
+  $('#commitMessageTemplate').val(textOrEmpty(card.getAttribute('data-commit-template')));
+  $('#dailyCommitGoal').val(textOrEmpty(card.getAttribute('data-daily-goal')));
+  $('#targetCommitLevel').val(card.getAttribute('data-target-level') || '1');
+  $('#ownerNickname').val(textOrEmpty(card.getAttribute('data-owner-nickname')));
+  $('#isActive').prop('checked', card.getAttribute('data-is-active') === 'true');
+  $('#isAutoCommitEnabled').prop('checked', card.getAttribute('data-is-auto') === 'true');
+
+  // 수정 시 PAT는 비워두면 기존값 유지 → 선택값
+  $('#personalAccessToken').attr('required', false).val('');
+  $('#patHint').text('변경 시에만 입력');
+  $('#githubUsername').attr('readonly', true);
+
+  $('#profileModalTitle').html('<i class="fa-brands fa-github"></i> 프로필 수정');
   document.getElementById('profileModal').showModal();
 }
 
-/**
- * 프로필 저장
- */
+// 'null' 문자열·null 방어
+function textOrEmpty(v) {
+  return (!v || v === 'null') ? '' : v;
+}
+
+// 프로필 저장
 function saveProfile() {
-  const formData = new FormData($('#profileForm')[0]);
+  const formEl = $('#profileForm')[0];
+  if (!formEl.checkValidity()) { formEl.reportValidity(); return; }
 
-  // 체크박스 값들을 명시적으로 설정
+  const formData = new FormData(formEl);
   formData.set('isActive', $('#isActive').is(':checked'));
   formData.set('isAutoCommitEnabled', $('#isAutoCommitEnabled').is(':checked'));
 
-  // 프로필 ID가 있으면 수정, 없으면 생성
+  // 빈 PAT는 전송하지 않음 (수정 시 기존값 유지)
+  if (!$('#personalAccessToken').val()) formData.delete('personalAccessToken');
+
   const profileId = $('#profileId').val();
   const url = profileId ? '/api/grass/profile/update' : '/api/grass/profile/create';
 
   sendFormRequest(url, Object.fromEntries(formData),
-    function(response) {
-      if (typeof showToast === 'function') {
-        showToast(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.', 'positive');
-      } else {
-        alert(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.');
-      }
+    function() {
+      notify(profileId ? '프로필이 수정되었습니다.' : '프로필이 생성되었습니다.', 'positive');
       document.getElementById('profileModal').close();
       location.reload();
     },
-    function(xhr, status, error) {
-      let errorMessage = '프로필 저장 중 오류가 발생했습니다.';
-      if (xhr.responseJSON && xhr.responseJSON.message) {
-        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-      }
-
-      if (typeof showToast === 'function') {
-        showToast(errorMessage, 'negative');
-      } else {
-        alert(errorMessage);
-      }
-      console.error('Profile save error:', error);
+    function(xhr) {
+      notify('프로필 저장 실패' + extractError(xhr), 'negative');
     }
   );
 }
 
-/**
- * 프로필 삭제
- */
+// 프로필 삭제
 function deleteProfile(profileId) {
-  if (!confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
-    return;
-  }
-
-  const params = {
-    profileId: profileId
-  };
-
-  sendFormRequest('/api/grass/profile/delete', params,
-    function(response) {
-      if (typeof showToast === 'function') {
-        showToast('프로필이 삭제되었습니다.', 'positive');
-      } else {
-        alert('프로필이 삭제되었습니다.');
-      }
-      location.reload();
-    },
-    function(xhr, status, error) {
-      let errorMessage = '프로필 삭제 중 오류가 발생했습니다.';
-      if (xhr.responseJSON && xhr.responseJSON.message) {
-        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-      }
-
-      if (typeof showToast === 'function') {
-        showToast(errorMessage, 'negative');
-      } else {
-        alert(errorMessage);
-      }
-      console.error('Profile delete error:', error);
-    }
+  if (!confirm('정말로 이 프로필을 삭제하시겠습니까?')) return;
+  sendFormRequest('/api/grass/profile/delete', { profileId: profileId },
+    function() { notify('프로필이 삭제되었습니다.', 'positive'); location.reload(); },
+    function(xhr) { notify('프로필 삭제 실패' + extractError(xhr), 'negative'); }
   );
 }
 
-/**
- * 커밋 실행 모달 표시
- */
+// 커밋 실행 모달
 function executeCommit(profileId) {
   $('#commitProfileId').val(profileId);
   $('#commitMessage').val('');
   document.getElementById('commitModal').showModal();
 }
 
-/**
- * 커밋 실행 확인
- */
 function confirmCommit() {
-  const params = {
-    profileId: $('#commitProfileId').val(),
-    commitMessage: $('#commitMessage').val()
-  };
-
-  sendFormRequest('/api/grass/commit/execute', params,
-    function(response) {
-      if (typeof showToast === 'function') {
-        showToast('커밋이 성공적으로 실행되었습니다.', 'positive');
-      } else {
-        alert('커밋이 성공적으로 실행되었습니다.');
-      }
+  sendFormRequest('/api/grass/commit/execute',
+    { profileId: $('#commitProfileId').val(), commitMessage: $('#commitMessage').val() },
+    function() {
+      notify('커밋이 실행되었습니다.', 'positive');
       document.getElementById('commitModal').close();
       loadCommitLogs();
     },
-    function(xhr, status, error) {
-      let errorMessage = '커밋 실행 중 오류가 발생했습니다.';
-      if (xhr.responseJSON && xhr.responseJSON.message) {
-        errorMessage += ' (' + escapeHtml(xhr.responseJSON.message) + ')';
-      }
-
-      if (typeof showToast === 'function') {
-        showToast(errorMessage, 'negative');
-      } else {
-        alert(errorMessage);
-      }
-      console.error('Commit execute error:', error);
-    }
+    function(xhr) { notify('커밋 실행 실패' + extractError(xhr), 'negative'); }
   );
 }
 
-/**
- * 커밋 로그 로드
- */
+// 커밋 로그 로드
 function loadCommitLogs() {
-  const params = {
-    page: 0,
-    size: 20
-  };
-
-  sendFormRequest('/api/grass/commit/logs', params,
+  sendFormRequest('/api/grass/commit/logs', { page: 0, size: 20 },
     function(response) {
       if (response.commitLogs && Array.isArray(response.commitLogs)) {
         displayCommitLogs(response.commitLogs);
       } else {
-        $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">로그를 불러올 수 없습니다.</td></tr>');
+        emptyLogRow('로그를 불러올 수 없습니다.');
       }
     },
-    function(xhr, status, error) {
-      console.error('커밋 로그 로드 실패:', error);
-      $('#commitLogTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">로그 로드 중 오류가 발생했습니다.</td></tr>');
-    }
+    function() { emptyLogRow('로그 로드 중 오류가 발생했습니다.'); }
   );
 }
 
-/**
- * 커밋 로그 표시 (XSS 방지 적용)
- */
+function emptyLogRow(msg) {
+  $('#commitLogTable').html('<tr><td colspan="7" class="text-center py-8 text-base-content/60">' + escapeHtml(msg) + '</td></tr>');
+}
+
+// 커밋 로그 표시 (isSuccess / commitLevel 사용 — 버그 수정)
 function displayCommitLogs(logs) {
   const tableBody = $('#commitLogTable');
-
-  if (!logs || logs.length === 0) {
-    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">커밋 로그가 없습니다.</td></tr>');
-    return;
-  }
-
+  if (!logs || logs.length === 0) { emptyLogRow('커밋 로그가 없습니다.'); return; }
   tableBody.empty();
 
   logs.forEach(function(log) {
     const row = $('<tr>');
 
-    // 시간
-    const timeCell = $('<td>');
-    const commitTime = log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-';
-    timeCell.text(commitTime);
-    row.append(timeCell);
+    row.append($('<td>').text(log.commitTime ? new Date(log.commitTime).toLocaleString('ko-KR') : '-'));
+    row.append($('<td>').text(log.githubUsername || '-'));
+    row.append($('<td>').text(log.repositoryName || '-'));
+    row.append($('<td>').text(log.commitMessage || '-'));
 
-    // GitHub 사용자명
-    const usernameCell = $('<td>');
-    usernameCell.text(log.githubUsername || '-');
-    row.append(usernameCell);
+    // 유형 (자동/수동)
+    const typeCell = $('<td>');
+    typeCell.html(log.isAutoCommit
+      ? '<span class="badge badge-info badge-sm">자동</span>'
+      : '<span class="badge badge-ghost badge-sm">수동</span>');
+    row.append(typeCell);
 
-    // 저장소명
-    const repoCell = $('<td>');
-    repoCell.text(log.repositoryName || '-');
-    row.append(repoCell);
-
-    // 커밋 메시지
-    const messageCell = $('<td>');
-    messageCell.text(log.commitMessage || '-');
-    row.append(messageCell);
-
-    // 상태 라벨
+    // 상태 — isSuccess 기준
     const statusCell = $('<td>');
-    if (log.httpStatus === 200 || log.httpStatus === 201) {
-      statusCell.html('<span class="badge badge-success badge-sm">성공</span>');
-    } else {
-      statusCell.html('<span class="badge badge-error badge-sm">실패</span>');
-    }
+    statusCell.html(log.isSuccess
+      ? '<span class="badge badge-success badge-sm">성공</span>'
+      : '<span class="badge badge-error badge-sm">실패</span>');
     row.append(statusCell);
 
-    // 레벨 표시
+    // 레벨 — commitLevel 기준
     const levelCell = $('<td>');
-    const level = log.targetCommitLevel || 0;
-    const levelSpan = $('<span class="contribution-level">').addClass('level-' + level);
-    levelCell.append(levelSpan);
+    const level = log.commitLevel || 0;
+    levelCell.html('<span class="grass-cell grass-cell-on grass-lv-' + level + '"></span><span class="text-xs ml-1">' + level + '</span>');
     row.append(levelCell);
 
     tableBody.append(row);
   });
 }
 
-/**
- * HTML 이스케이프 함수 (XSS 방지)
- */
+// 공통 헬퍼
+function notify(msg, type) {
+  if (typeof showToast === 'function') showToast(msg, type);
+  else alert(msg);
+}
+function extractError(xhr) {
+  if (xhr && xhr.responseJSON && xhr.responseJSON.message) return ' (' + xhr.responseJSON.message + ')';
+  return '';
+}
 function escapeHtml(text) {
   if (typeof text !== 'string') return text;
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
   return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 </script>
