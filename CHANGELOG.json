@@ -1,11 +1,35 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-11T14:32:45Z",
-    "currentVersion": "2.5.55",
+    "lastUpdated": "2026-06-11T15:43:31Z",
+    "currentVersion": "2.5.57",
     "projectType": "spring",
-    "totalReleases": 63
+    "totalReleases": 64
   },
   "releases": [
+    {
+      "version": "2.5.57",
+      "project_type": "spring",
+      "date": "2026-06-11",
+      "pr_number": 221,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **개선**\n  * GitHub 잔디 자동 커밋 화면을 새 디자인으로 개편했습니다\n  * 프로필별 커밋 설정을 화면에서 더 쉽게 관리할 수 있습니다\n\n* **버그 수정**\n  * 프로필 수정 시 기존 정보가 표시되지 않던 문제 해결\n  * 커밋 기록의 상태와 레벨이 잘못 표시되던 문제 해결",
+      "parsed_changes": {
+        "개선": {
+          "title": "개선",
+          "items": [
+            "GitHub 잔디 자동 커밋 화면을 새 디자인으로 개편했습니다",
+            "프로필별 커밋 설정을 화면에서 더 쉽게 관리할 수 있습니다"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "프로필 수정 시 기존 정보가 표시되지 않던 문제 해결",
+            "커밋 기록의 상태와 레벨이 잘못 표시되던 문제 해결"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.55",
       "project_type": "spring",
