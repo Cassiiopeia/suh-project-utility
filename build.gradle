@@ -6,7 +6,7 @@ plugins {
 
 allprojects {
     group = 'me.suhsaechan'
-    version = '2.5.55'
+    version = '2.5.56'
     
     repositories {
         mavenCentral()
