@@ -31,7 +31,8 @@ public class PublicEndpointConfig {
         "/api/suh-random/**",
         "/api/dashboard/summary",        // 대시보드 통계 (비로그인 공개)
         "/api/notice/get/active",         // 활성 공지사항 (비로그인 공개)
-        "/api/task/goal/list"             // Task D-Day 목록 (비로그인 공개)
+        "/api/task/goal/list",            // Task D-Day 목록 (비로그인 공개)
+        "/actuator/health"                // 무중단 배포 헬스체크 — Spring Security 302 가로채기 방지
     );
   }
 

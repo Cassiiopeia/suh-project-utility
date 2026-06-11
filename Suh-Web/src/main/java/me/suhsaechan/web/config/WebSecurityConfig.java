@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 /**
  * 웹 보안 설정 클래스
@@ -28,6 +29,11 @@ public class WebSecurityConfig {
   private final ServerInfo serverInfo;
   private final AESUtil aesUtil;
   private final UserAuthority userAuthority;
+
+  @Bean
+  public ForwardedHeaderFilter forwardedHeaderFilter() {
+    return new ForwardedHeaderFilter();
+  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

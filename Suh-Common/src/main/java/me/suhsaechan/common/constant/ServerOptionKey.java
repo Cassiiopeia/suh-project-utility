@@ -18,7 +18,7 @@ public enum ServerOptionKey {
   SOMANSA_BUS_SCHEDULER_ENABLED("소만사 버스 자동 예약 스케줄러 활성화 여부 (true/false)", "true"),
   SOMANSA_BUS_SCHEDULER_TIME_FROM("자동 예약 실행 시작 시간 (0~23)", "22"),
   SOMANSA_BUS_SCHEDULER_TIME_TO("자동 예약 실행 종료 시간 (0~23)", "23"),
-  SOMANSA_BUS_SCHEDULER_DAYS("자동 예약 실행 요일 (쉼표 구분, MON/TUE/WED/THU/FRI/SAT/SUN)", "MON,TUE,WED,THU,FRI");
+  SOMANSA_BUS_SCHEDULER_DAYS("자동 예약 실행 요일 (쉼표 구분, MONDAY/TUESDAY/WEDNESDAY/THURSDAY/FRIDAY/SATURDAY/SUNDAY)", "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
 
   private final String description;
   private final String defaultValue;

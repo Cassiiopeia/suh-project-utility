@@ -69,12 +69,12 @@ env:
   SSH_PORT: '2022'
 
   # Health Check 설정 (프로젝트별 수정 필요)
-  # - HEALTH_CHECK_PATH: GET 호출할 path (기본 '/'. Spring Security 로그인 페이지 redirect 도 OK)
-  # - HEALTH_CHECK_ACCEPT_CODES: 통과로 인정할 HTTP 응답 코드 (| 구분)
+  # - HEALTH_CHECK_PATH: GET 호출할 path (/actuator/health — 실제 App UP 상태 검증)
+  # - HEALTH_CHECK_ACCEPT_CODES: 통과로 인정할 HTTP 응답 코드 (| 구분, actuator는 200(UP)만 인정)
   # - HEALTH_CHECK_MAX_RETRIES: 최대 시도 횟수
   # - HEALTH_CHECK_INTERVAL: 시도 간격 (초)
-  HEALTH_CHECK_PATH: '/'
-  HEALTH_CHECK_ACCEPT_CODES: '200|301|302|308'
+  HEALTH_CHECK_PATH: '/actuator/health'
+  HEALTH_CHECK_ACCEPT_CODES: '200'
   HEALTH_CHECK_MAX_RETRIES: '36'
   HEALTH_CHECK_INTERVAL: '5'
 

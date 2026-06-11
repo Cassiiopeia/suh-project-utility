@@ -57,7 +57,7 @@ class SomansaBusSchedulerServiceTest {
 
     serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_ENABLED, "true");
     serverOptionService.setOptionValue(
-        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MON,TUE,WED,THU,FRI");
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
     serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_FROM, "22");
     serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_TO, "23");
 
@@ -136,14 +136,14 @@ class SomansaBusSchedulerServiceTest {
     assertThat(after.getNextFireAt()).isAfter(LocalDateTime.now(SEOUL));
 
     serverOptionService.setOptionValue(
-        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MON,TUE,WED,THU,FRI");
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
   }
 
   public void computeNextFireAt_허용요일_전진_테스트() {
     lineLog("허용 요일 전진 계산 테스트 실행중");
 
     serverOptionService.setOptionValue(
-        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MON");
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY");
     serverOptionService.setOptionValue(
         ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_FROM, "22");
     serverOptionService.setOptionValue(
@@ -157,7 +157,7 @@ class SomansaBusSchedulerServiceTest {
     log.info("계산된 nextFireAt: {} ({})", next, next.getDayOfWeek());
 
     serverOptionService.setOptionValue(
-        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MON,TUE,WED,THU,FRI");
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
   }
 
   private DayOfWeek oppositeDay(DayOfWeek day) {

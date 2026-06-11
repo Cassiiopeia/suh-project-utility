@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-05T01:57:02Z",
-    "currentVersion": "2.5.53",
+    "lastUpdated": "2026-06-11T14:32:45Z",
+    "currentVersion": "2.5.55",
     "projectType": "spring",
-    "totalReleases": 62
+    "totalReleases": 63
   },
   "releases": [
+    {
+      "version": "2.5.55",
+      "project_type": "spring",
+      "date": "2026-06-11",
+      "pr_number": 219,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 소만사 버스 자동예약이 매일 빠지던 문제를 해결했습니다\n\n* **개선**\n  * 무중단 배포 시 서버 상태 점검이 더 정확해졌습니다",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "소만사 버스 자동예약이 매일 빠지던 문제를 해결했습니다"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "무중단 배포 시 서버 상태 점검이 더 정확해졌습니다"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.53",
       "project_type": "spring",

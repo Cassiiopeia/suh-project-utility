@@ -158,6 +158,7 @@ public class SomansaBusSchedulerService {
     }
   }
 
+  // 요일 설정값은 DayOfWeek 정식명(MONDAY,TUESDAY,...)으로 통일한다.
   Set<DayOfWeek> parseDays(String daysStr) {
     Set<DayOfWeek> days = new HashSet<>();
     if (daysStr == null || daysStr.isBlank()) return days;
