@@ -59,8 +59,8 @@ public class GrassProfile extends BasePostgresEntity {
     @Column
     private Integer streakDays;
 
-    // 소유자 ID (Member 대신 UUID로 관리)
-    @Column(nullable = false)
+    // 소유자 ID (Member 대신 UUID로 관리, 시스템/개인 도구라 선택값)
+    @Column
     private UUID ownerId;
 
     // 소유자 닉네임 (캐싱용)

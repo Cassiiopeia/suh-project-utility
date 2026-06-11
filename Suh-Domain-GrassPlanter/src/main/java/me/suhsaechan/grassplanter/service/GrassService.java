@@ -88,7 +88,7 @@ public class GrassService {
                 .githubUsername(request.getGithubUsername())
                 .encryptedPat(encryptedPat)
                 .defaultRepository(githubRepository)
-                .isActive(true)
+                .isActive(request.getIsActive() != null ? request.getIsActive() : true)
                 .isAutoCommitEnabled(request.getIsAutoCommitEnabled() != null ? request.getIsAutoCommitEnabled() : false)
                 .targetCommitLevel(request.getTargetCommitLevel() != null ? request.getTargetCommitLevel() : 1)
                 .commitMessageTemplate(request.getCommitMessageTemplate())
@@ -125,6 +125,23 @@ public class GrassService {
         }
         if (request.getTargetCommitLevel() != null) {
             profile.setTargetCommitLevel(request.getTargetCommitLevel());
+        }
+        if (request.getOwnerNickname() != null) {
+            profile.setOwnerNickname(request.getOwnerNickname());
+        }
+        if (request.getCommitMessageTemplate() != null) {
+            profile.setCommitMessageTemplate(request.getCommitMessageTemplate());
+        }
+        if (request.getDailyCommitGoal() != null) {
+            profile.setDailyCommitGoal(request.getDailyCommitGoal());
+        }
+
+        // 저장소 변경 (DB에 없으면 스크래핑으로 자동 등록)
+        if (request.getRepositoryFullName() != null && !request.getRepositoryFullName().isEmpty()) {
+            GithubRepository githubRepository = githubRepositoryRepository
+                    .findByFullName(request.getRepositoryFullName())
+                    .orElseGet(() -> githubService.fetchAndSaveGithubRepository(request.getRepositoryFullName()));
+            profile.setDefaultRepository(githubRepository);
         }
 
         GrassProfile updated = grassProfileRepository.save(profile);
@@ -200,9 +217,10 @@ public class GrassService {
                     .commitMessage(request.getCommitMessage() != null ? 
                         request.getCommitMessage() : "Manual commit from GrassPlanter")
                     .isAutoCommit(false)  // 수동 커밋이므로 false
+                    .isSuccess(success)
                     .errorMessage(success ? null : "커밋 실행 실패")
                     .build();
-            
+
             GrassCommitLog savedLog = grassCommitLogRepository.save(commitLog);
             
             if (success) {
@@ -223,9 +241,10 @@ public class GrassService {
                     .commitTime(LocalDateTime.now())
                     .commitMessage(request.getCommitMessage())
                     .isAutoCommit(false)  // 수동 커밋이므로 false
+                    .isSuccess(false)
                     .errorMessage(e.getMessage())
                     .build();
-            
+
             grassCommitLogRepository.save(errorLog);
             
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -326,6 +345,7 @@ public class GrassService {
                             .commitTime(LocalDateTime.now())
                             .commitMessage("Auto-commit: Daily contribution")
                             .isAutoCommit(true)  // 자동 커밋이므로 true
+                            .isSuccess(success)
                             .commitLevel(currentLevel)
                             .build();
                     
@@ -459,6 +479,7 @@ public class GrassService {
                 .commitMessage(log.getCommitMessage())
                 .commitSha(log.getCommitSha())
                 .isSuccess(log.getIsSuccess())
+                .isAutoCommit(log.getIsAutoCommit())
                 .errorMessage(log.getErrorMessage())
                 .commitLevel(log.getCommitLevel())
                 .createdDate(log.getCreatedDate())
