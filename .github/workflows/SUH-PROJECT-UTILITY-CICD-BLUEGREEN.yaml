@@ -325,10 +325,18 @@ jobs:
             echo $PW | sudo -S docker inspect "${NEW_NAME}" --format '{{range $k, $v := .Config.Labels}}  {{$k}} = {{$v}}{{"\n"}}{{end}}' | grep traefik || true
 
             # ============================================================
-            # 7. 헬스체크 — Traefik 통한 라우팅 확인
+            # 7. 헬스체크 — NEW 컨테이너 직접 검증 (502 방지 핵심)
+            #
+            # ⚠️ Traefik 경유 헬스체크 금지 이유:
+            #   라우터명이 고정(${ROUTER_NAME})이라 old/new가 같은 LB 풀을 공유한다.
+            #   Traefik 경유로 헬스체크하면 아직 기동 안 된 new 대신 살아있는 old가
+            #   응답해 200을 반환 → new가 준비 안 됐는데도 통과 → old 제거 시 502.
+            #
+            # 해결: docker exec 로 NEW 컨테이너 내부에서 localhost 직접 호출.
+            #   new 가 진짜 기동 완료됐을 때만 통과하므로, old 제거 시점엔 new 가 확실히 살아있다.
             # ============================================================
             MAX_WAIT=$((HEALTH_CHECK_MAX_RETRIES * HEALTH_CHECK_INTERVAL))
-            echo "⏳ 헬스체크 시작 (최대 ${MAX_WAIT}초, ${HEALTH_CHECK_MAX_RETRIES}회 × ${HEALTH_CHECK_INTERVAL}초)"
+            echo "⏳ 헬스체크 시작 — NEW(${NEW_NAME}) 직접 검증 (최대 ${MAX_WAIT}초, ${HEALTH_CHECK_MAX_RETRIES}회 × ${HEALTH_CHECK_INTERVAL}초)"
 
             RETRY_COUNT=0
             HEALTH_OK=false
@@ -350,12 +358,13 @@ jobs:
               fi
 
               if [ "$STATUS" = "running" ]; then
-                HTTP_CODE=$(curl -sm 5 -o /dev/null -w "%{http_code}" \
-                  -H "Host: ${PRODUCTION_DOMAIN}" \
-                  "http://localhost:${TRAEFIK_INTERNAL_PORT}${HEALTH_CHECK_PATH}" 2>/dev/null || echo "000")
+                # NEW 컨테이너 내부에서 직접 호출 (Traefik LB 우회 → old 가 응답 가로채지 못함)
+                HTTP_CODE=$(echo $PW | sudo -S docker exec "${NEW_NAME}" \
+                  curl -sm 5 -o /dev/null -w "%{http_code}" \
+                  "http://localhost:${INTERNAL_PORT}${HEALTH_CHECK_PATH}" 2>/dev/null || echo "000")
 
                 if echo "$HTTP_CODE" | grep -Eq "^(${HEALTH_CHECK_ACCEPT_CODES})$"; then
-                  echo "✅ 헬스체크 통과 (${RETRY_COUNT}/${HEALTH_CHECK_MAX_RETRIES}) HTTP=${HTTP_CODE}"
+                  echo "✅ 헬스체크 통과 — NEW 직접 응답 (${RETRY_COUNT}/${HEALTH_CHECK_MAX_RETRIES}) HTTP=${HTTP_CODE}"
                   HEALTH_OK=true
                   break
                 fi
@@ -377,12 +386,30 @@ jobs:
             fi
 
             # ============================================================
-            # 8. in-flight 처리 + old 컨테이너 자동 제거
+            # 8. old 컨테이너 graceful 제거 (502 방지 핵심)
+            #
+            # 문제: old/new가 같은 Traefik 서비스명을 공유하므로 둘 다 LB 풀에 등록된다.
+            #       old를 docker rm -f(SIGKILL)로 즉시 죽이면, Traefik이 풀에서
+            #       제거를 감지하기 전까지 일부 요청이 죽은 old로 가서 502가 발생한다.
+            #       (DSM 역방향 프록시의 keep-alive 커넥션이 끊긴 백엔드를 재사용해 증폭)
+            #
+            # 해결: rm 전에 old를 Traefik 라우팅에서 먼저 빼낸다.
+            #   1) traefik-network 에서 disconnect → Traefik이 즉시 해당 서버를 풀에서 제거
+            #   2) 라우팅 반영 대기 → 더 이상 old 로 트래픽이 가지 않음
+            #   3) in-flight 처리 대기 후 graceful stop → 강제 SIGKILL 회피
             # ============================================================
             if echo $PW | sudo -S docker ps -a --format '{{.Names}}' | grep -Eq "^${OLD_NAME}$"; then
+              echo "🔌 old=${OLD_NAME} 를 Traefik 라우팅에서 제거 (${TRAEFIK_NETWORK} disconnect)"
+              echo $PW | sudo -S docker network disconnect -f "${TRAEFIK_NETWORK}" "${OLD_NAME}" 2>/dev/null || true
+
+              echo "⏳ Traefik 라우팅 반영 대기 (5초)"
+              sleep 5
+
               echo "⏱️ in-flight 요청 처리 대기 (${IN_FLIGHT_WAIT}초)"
               sleep ${IN_FLIGHT_WAIT}
-              echo "🗑️ old=${OLD_NAME} 제거"
+
+              echo "🛑 old=${OLD_NAME} graceful stop 후 제거"
+              echo $PW | sudo -S docker stop "${OLD_NAME}" 2>/dev/null || true
               echo $PW | sudo -S docker rm -f "${OLD_NAME}"
             else
               echo "ℹ️ old=${OLD_NAME} 없음 — 정리 생략"
