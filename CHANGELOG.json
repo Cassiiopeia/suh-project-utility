@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-13T14:52:22Z",
-    "currentVersion": "2.5.61",
+    "lastUpdated": "2026-06-13T14:54:40Z",
+    "currentVersion": "2.5.62",
     "projectType": "spring",
-    "totalReleases": 67
+    "totalReleases": 68
   },
   "releases": [
+    {
+      "version": "2.5.62",
+      "project_type": "spring",
+      "date": "2026-06-13",
+      "pr_number": 227,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **문서**\n  * 무중단 배포 안정화 작업 내역을 문서에 정리했습니다",
+      "parsed_changes": {
+        "문서": {
+          "title": "문서",
+          "items": [
+            "무중단 배포 안정화 작업 내역을 문서에 정리했습니다"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.61",
       "project_type": "spring",
