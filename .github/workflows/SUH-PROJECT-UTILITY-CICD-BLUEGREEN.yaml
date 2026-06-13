@@ -298,6 +298,7 @@ jobs:
             echo $PW | sudo -S docker run -d \
               --name "${NEW_NAME}" \
               --network "${TRAEFIK_NETWORK}" \
+              --no-healthcheck \
               --label "traefik.enable=true" \
               --label "traefik.http.routers.${ROUTER_NAME}.rule=Host(\`${PRODUCTION_DOMAIN}\`)" \
               --label "traefik.http.routers.${ROUTER_NAME}.entrypoints=${TRAEFIK_ENTRYPOINT}" \
