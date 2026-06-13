@@ -377,12 +377,30 @@ jobs:
             fi
 
             # ============================================================
-            # 8. in-flight 처리 + old 컨테이너 자동 제거
+            # 8. old 컨테이너 graceful 제거 (502 방지 핵심)
+            #
+            # 문제: old/new가 같은 Traefik 서비스명을 공유하므로 둘 다 LB 풀에 등록된다.
+            #       old를 docker rm -f(SIGKILL)로 즉시 죽이면, Traefik이 풀에서
+            #       제거를 감지하기 전까지 일부 요청이 죽은 old로 가서 502가 발생한다.
+            #       (DSM 역방향 프록시의 keep-alive 커넥션이 끊긴 백엔드를 재사용해 증폭)
+            #
+            # 해결: rm 전에 old를 Traefik 라우팅에서 먼저 빼낸다.
+            #   1) traefik-network 에서 disconnect → Traefik이 즉시 해당 서버를 풀에서 제거
+            #   2) 라우팅 반영 대기 → 더 이상 old 로 트래픽이 가지 않음
+            #   3) in-flight 처리 대기 후 graceful stop → 강제 SIGKILL 회피
             # ============================================================
             if echo $PW | sudo -S docker ps -a --format '{{.Names}}' | grep -Eq "^${OLD_NAME}$"; then
+              echo "🔌 old=${OLD_NAME} 를 Traefik 라우팅에서 제거 (${TRAEFIK_NETWORK} disconnect)"
+              echo $PW | sudo -S docker network disconnect -f "${TRAEFIK_NETWORK}" "${OLD_NAME}" 2>/dev/null || true
+
+              echo "⏳ Traefik 라우팅 반영 대기 (5초)"
+              sleep 5
+
               echo "⏱️ in-flight 요청 처리 대기 (${IN_FLIGHT_WAIT}초)"
               sleep ${IN_FLIGHT_WAIT}
-              echo "🗑️ old=${OLD_NAME} 제거"
+
+              echo "🛑 old=${OLD_NAME} graceful stop 후 제거"
+              echo $PW | sudo -S docker stop "${OLD_NAME}" 2>/dev/null || true
               echo $PW | sudo -S docker rm -f "${OLD_NAME}"
             else
               echo "ℹ️ old=${OLD_NAME} 없음 — 정리 생략"
