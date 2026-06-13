@@ -933,6 +933,14 @@ TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiRes
 - 긴급 버그는 worktree 생성 생략 가능
 - **메타성 / 문서성 변경** (CLAUDE.md, 리포트, plan/spec md, commands·skill 정리, 문서 오타 수정 등 앱 동작 영향 없는 변경)은 **Phase 5 생략** — `@suh-lab server build` 댓글 불필요, 테스트케이스 작성 불필요. Phase 4 commit/PR까지만 처리
 
+## Git 브랜치 규칙
+
+### ⛔ main 브랜치에서만 작업 (절대 규칙)
+- **이 프로젝트는 모든 작업을 `main` 브랜치에서 직접 한다.** 별도 작업 브랜치(`git checkout -b`)나 worktree를 만들지 않는다.
+- 커밋·푸시는 `main`에서 직접 수행한다.
+- 배포 흐름(main push → deploy PR → automerge)이 main 기준으로 동작하므로, 작업 브랜치를 만들면 흐름이 꼬인다.
+- 위 AgenticFlow의 worktree/브랜치 분리 단계는 이 프로젝트에서는 적용하지 않는다.
+
 ## Git 커밋 규칙
 
 ### ⛔ 절대 자동 커밋 금지 (가장 중요한 규칙)
