@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-11T16:05:40Z",
-    "currentVersion": "2.5.58",
+    "lastUpdated": "2026-06-13T14:18:00Z",
+    "currentVersion": "2.5.59",
     "projectType": "spring",
-    "totalReleases": 65
+    "totalReleases": 66
   },
   "releases": [
+    {
+      "version": "2.5.59",
+      "project_type": "spring",
+      "date": "2026-06-13",
+      "pr_number": 225,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 업데이트 배포 도중 잠깐 접속이 끊기던 문제를 해결했습니다\n  * 새 버전이 올라갈 때도 끊김 없이 이용할 수 있습니다",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "업데이트 배포 도중 잠깐 접속이 끊기던 문제를 해결했습니다",
+            "새 버전이 올라갈 때도 끊김 없이 이용할 수 있습니다"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.58",
       "project_type": "spring",
