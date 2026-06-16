@@ -17,14 +17,8 @@
     })();
   </script>
 
-  <!-- Tailwind CSS + DaisyUI 5 -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5.4.2/daisyui.css" rel="stylesheet" type="text/css"/>
-  <script>
-    tailwind.config = {
-      darkMode: ['class', '[data-theme="dark"]']
-    }
-  </script>
+  <!-- Tailwind v4 + DaisyUI 5 (빌드타임 생성, 자동 생성물 — frontend에서 npm run build:css로 재생성) -->
+  <link rel="stylesheet" type="text/css" th:href="@{/css/tailwind.generated.css}"/>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
@@ -82,6 +76,19 @@
           </svg>
         </label>
 
+        <!-- 언어 토글 (데스크탑) -->
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-sm hover:bg-base-200">
+            <i class="fa-solid fa-globe"></i>
+            <span th:text="#{lang.korean}" th:if="${#locale.language == 'ko'}">한국어</span>
+            <span th:text="#{lang.english}" th:unless="${#locale.language == 'ko'}">English</span>
+          </div>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-32 p-2 mt-2 border border-base-300">
+            <li><a th:href="@{''(lang='ko')}" th:text="#{lang.korean}">한국어</a></li>
+            <li><a th:href="@{''(lang='en')}" th:text="#{lang.english}">English</a></li>
+          </ul>
+        </div>
+
         <!-- About Me (항상 표시) -->
         <a href="/" class="btn btn-ghost btn-sm hover:bg-base-200">
           <i class="fa-solid fa-user"></i>
@@ -90,7 +97,7 @@
 
         <a href="/dashboard" sec:authorize="isAuthenticated()" class="btn btn-ghost btn-sm hover:bg-base-200">
           <i class="fa-solid fa-clipboard-list"></i>
-          대시보드
+          <span th:text="#{header.nav.dashboard}">대시보드</span>
         </a>
 
         <!-- Menu (항상 표시) -->
@@ -139,6 +146,17 @@
           </svg>
         </label>
 
+        <!-- 언어 토글 (모바일) -->
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <i class="fa-solid fa-globe text-base-content"></i>
+          </div>
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-32 p-2 mt-3 border border-base-300">
+            <li><a th:href="@{''(lang='ko')}" th:text="#{lang.korean}">한국어</a></li>
+            <li><a th:href="@{''(lang='en')}" th:text="#{lang.english}">English</a></li>
+          </ul>
+        </div>
+
         <!-- 프로필 (항상 표시) -->
         <a href="/" class="btn btn-ghost btn-circle">
           <i class="fa-solid fa-user text-base-content"></i>
@@ -150,7 +168,7 @@
             <i class="fa-solid fa-bars text-xl text-base-content"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-64 p-2 mt-3 border border-base-300">
-            <li class="menu-title text-base-content/60 text-xs font-semibold px-4 py-2">메뉴</li>
+            <li class="menu-title text-base-content/60 text-xs font-semibold px-4 py-2" th:text="#{header.menu.title}">메뉴</li>
             <li><a href="/dashboard" class="hover:bg-base-200"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
             <li><a href="/issue-helper" class="hover:bg-base-200"><i class="fa-brands fa-github w-5"></i>깃헙 이슈 도우미</a></li>
             <li><a href="/suh-devops-template" class="hover:bg-base-200"><i class="fa-solid fa-gears w-5"></i>DevOps 템플릿</a></li>
@@ -170,7 +188,7 @@
               <form th:action="@{/logout}" method="post" class="m-0">
                 <button type="submit" class="text-red-500 hover:bg-red-50 w-full text-left flex items-center gap-2">
                   <i class="fa-solid fa-right-from-bracket w-5"></i>
-                  로그아웃
+                  <span th:text="#{header.action.logout}">로그아웃</span>
                 </button>
               </form>
             </li>
@@ -178,7 +196,7 @@
             <li sec:authorize="!isAuthenticated()">
               <a href="/login" class="hover:bg-base-200">
                 <i class="fa-solid fa-right-to-bracket w-5"></i>
-                로그인
+                <span th:text="#{header.action.login}">로그인</span>
               </a>
             </li>
           </ul>

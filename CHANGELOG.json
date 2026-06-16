@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-16T00:49:34Z",
-    "currentVersion": "2.5.63",
+    "lastUpdated": "2026-06-16T01:04:33Z",
+    "currentVersion": "2.5.65",
     "projectType": "spring",
-    "totalReleases": 69
+    "totalReleases": 70
   },
   "releases": [
+    {
+      "version": "2.5.65",
+      "project_type": "spring",
+      "date": "2026-06-16",
+      "pr_number": 230,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 한국어/영어 언어 전환 기능이 추가되었습니다\n\n* **버그 수정**\n  * 챗봇 검색 설정 저장 시 오류가 발생하던 문제 해결",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "한국어/영어 언어 전환 기능이 추가되었습니다"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "챗봇 검색 설정 저장 시 오류가 발생하던 문제 해결"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.63",
       "project_type": "spring",

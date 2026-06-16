@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 /**
  * 웹 MVC 설정 클래스
@@ -18,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final PageVisitInterceptor pageVisitInterceptor;
     private final PublicEndpointConfig publicEndpointConfig;
+    private final LocaleChangeInterceptor localeChangeInterceptor;
 
     /**
      * 정적 리소스 핸들러 설정
@@ -45,5 +47,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(pageVisitInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(publicEndpointConfig.getInterceptorExcludedPaths());
+
+        registry.addInterceptor(localeChangeInterceptor);
     }
 }
