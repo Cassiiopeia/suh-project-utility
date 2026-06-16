@@ -30,13 +30,13 @@
             placeholder="https://github.com/owner/repo/issues/2"
             required>
           <label class="label">
-            <span class="label-text-alt text-base-content/60">GitHub 이슈 URL을 입력하면 브랜치명과 커밋 메시지를 자동 생성합니다.</span>
+            <span class="label-text-alt text-base-content/60" th:text="#{issueHelper.input.hint}">GitHub 이슈 URL을 입력하면 브랜치명과 커밋 메시지를 자동 생성합니다.</span>
           </label>
         </div>
         <input type="hidden" name="clientHash" id="clientHash">
         <button class="btn btn-primary mt-4" type="submit">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
-          생성하기
+          <span th:text="#{issueHelper.button.generate}">생성하기</span>
         </button>
       </form>
     </div>
@@ -47,13 +47,13 @@
     <div class="card-body">
       <h3 class="card-title text-lg font-semibold text-base-content mb-4">
         <i class="fa-solid fa-sparkles text-primary"></i>
-        추론 결과
+        <span th:text="#{issueHelper.result.title}">추론 결과</span>
       </h3>
 
       <!-- 브랜치명 -->
       <div class="form-control mb-4">
         <label class="label">
-          <span class="label-text font-medium">브랜치명</span>
+          <span class="label-text font-medium" th:text="#{issueHelper.label.branchName}">브랜치명</span>
         </label>
         <div class="join w-full">
           <textarea
@@ -62,7 +62,7 @@
             readonly></textarea>
           <button class="btn btn-outline join-item" id="copyBranch">
             <i class="fa-solid fa-copy"></i>
-            복사
+            <span th:text="#{issueHelper.button.copy}">복사</span>
           </button>
         </div>
       </div>
@@ -70,7 +70,7 @@
       <!-- 커밋 메시지 -->
       <div class="form-control">
         <label class="label">
-          <span class="label-text font-medium">커밋 메시지</span>
+          <span class="label-text font-medium" th:text="#{issueHelper.label.commitMessage}">커밋 메시지</span>
         </label>
         <div class="join w-full">
           <textarea
@@ -79,7 +79,7 @@
             readonly></textarea>
           <button class="btn btn-outline join-item" id="copyCommit">
             <i class="fa-solid fa-copy"></i>
-            복사
+            <span th:text="#{issueHelper.button.copy}">복사</span>
           </button>
         </div>
       </div>
@@ -97,7 +97,7 @@
       // 로딩 상태 표시
       const submitBtn = $(this).find('button[type="submit"]');
       const originalText = submitBtn.html();
-      submitBtn.html('<span class="loading loading-spinner loading-sm"></span> 생성 중...');
+      submitBtn.html('<span class="loading loading-spinner loading-sm"></span> ' + window.MSG['issueHelper.js.generating']);
       submitBtn.prop('disabled', true);
 
       try {
@@ -118,12 +118,12 @@
             $("#branchName").val(response.branchName);
             $("#commitMessage").val(response.commitMessage);
             $("#resultBox").removeClass('hidden');
-            showToast("브랜치명과 커밋 메시지가 생성되었습니다.", "positive");
+            showToast(window.MSG['issueHelper.js.generated'], "positive");
           },
           error: function (xhr, status, error) {
             // 오류 처리
             console.error("AJAX 오류:", status, error);
-            showToast("요청 처리에 실패했습니다.", "negative");
+            showToast(window.MSG['issueHelper.js.requestFailed'], "negative");
           },
           complete: function() {
             // 버튼 복원
@@ -142,12 +142,12 @@
 
     // 복사 기능 - 브랜치명
     $("#copyBranch").click(function () {
-      copyToClipboard($("#branchName").val(), "브랜치명이 복사되었습니다.");
+      copyToClipboard($("#branchName").val(), window.MSG['issueHelper.js.branchCopied']);
     });
 
     // 복사 기능 - 커밋 메시지
     $("#copyCommit").click(function () {
-      copyToClipboard($("#commitMessage").val(), "커밋 메시지가 복사되었습니다.");
+      copyToClipboard($("#commitMessage").val(), window.MSG['issueHelper.js.commitCopied']);
     });
 
     // 클립보드 복사 유틸

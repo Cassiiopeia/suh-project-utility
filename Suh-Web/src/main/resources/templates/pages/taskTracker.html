@@ -9,9 +9,9 @@
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-solid fa-bullseye text-primary"></i>
-      Task 트래커
+      <span th:text="#{taskTracker.title}">Task 트래커</span>
     </h2>
-    <p class="text-base-content/60 mt-1">D-Day 관리 및 일일 진행 기록</p>
+    <p class="text-base-content/60 mt-1" th:text="#{taskTracker.subtitle}">D-Day 관리 및 일일 진행 기록</p>
   </div>
 
   <!-- Task 목록 섹션 -->
@@ -21,18 +21,18 @@
         <div>
           <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-solid fa-list-check text-primary"></i>
-            Task 목록
+            <span th:text="#{taskTracker.section.taskList}">Task 목록</span>
           </h3>
-          <p class="text-base-content/60 text-sm">등록된 Task 및 D-Day 관리</p>
+          <p class="text-base-content/60 text-sm" th:text="#{taskTracker.section.taskListDesc}">등록된 Task 및 D-Day 관리</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <label class="label cursor-pointer gap-2 justify-start">
             <input type="checkbox" id="showCompleted" class="checkbox checkbox-sm checkbox-primary" onchange="loadGoals()">
-            <span class="label-text text-sm">완료된 Task 표시</span>
+            <span class="label-text text-sm" th:text="#{taskTracker.label.showCompleted}">완료된 Task 표시</span>
           </label>
           <button class="btn btn-primary btn-sm sm:btn-md w-full sm:w-auto" onclick="showAddGoalModal()">
             <i class="fa-solid fa-plus"></i>
-            Task 추가
+            <span th:text="#{taskTracker.button.addTask}">Task 추가</span>
           </button>
         </div>
       </div>
@@ -48,10 +48,10 @@
         </div>
         <div id="emptyGoalsMessage" class="hidden text-center py-12">
           <i class="fa-solid fa-clipboard-list text-6xl text-base-content/30 mb-4"></i>
-          <p class="text-base-content/60">등록된 Task가 없습니다.</p>
+          <p class="text-base-content/60" th:text="#{taskTracker.empty.noTasks}">등록된 Task가 없습니다.</p>
           <button class="btn btn-primary btn-sm mt-4" onclick="showAddGoalModal()">
             <i class="fa-solid fa-plus"></i>
-            첫 번째 Task 추가하기
+            <span th:text="#{taskTracker.button.addFirstTask}">첫 번째 Task 추가하기</span>
           </button>
         </div>
       </div>
@@ -65,17 +65,17 @@
         <div>
           <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-solid fa-clock-rotate-left text-primary"></i>
-            진행 기록
+            <span th:text="#{taskTracker.section.progress}">진행 기록</span>
           </h3>
-          <p class="text-base-content/60 text-sm">일일 학습/작업 기록</p>
+          <p class="text-base-content/60 text-sm" th:text="#{taskTracker.section.progressDesc}">일일 학습/작업 기록</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <select id="progressGoalFilter" class="select select-bordered select-sm w-full sm:w-auto" onchange="loadProgress()">
-            <option value="">전체 Task</option>
+            <option value="" th:text="#{taskTracker.filter.allTasks}">전체 Task</option>
           </select>
           <button class="btn btn-outline btn-sm w-full sm:w-auto" onclick="loadProgress()">
             <i class="fa-solid fa-rotate"></i>
-            새로고침
+            <span th:text="#{taskTracker.button.refresh}">새로고침</span>
           </button>
         </div>
       </div>
@@ -87,19 +87,19 @@
           <table class="table table-zebra">
             <thead>
               <tr>
-                <th>날짜</th>
-                <th>Task</th>
-                <th>내용</th>
-                <th>범위</th>
-                <th>메모</th>
-                <th>액션</th>
+                <th th:text="#{taskTracker.table.date}">날짜</th>
+                <th th:text="#{taskTracker.table.task}">Task</th>
+                <th th:text="#{taskTracker.table.content}">내용</th>
+                <th th:text="#{taskTracker.table.range}">범위</th>
+                <th th:text="#{taskTracker.table.memo}">메모</th>
+                <th th:text="#{taskTracker.table.action}">액션</th>
               </tr>
             </thead>
             <tbody id="progressTable">
               <tr>
                 <td colspan="6" class="text-center py-8">
                   <span class="loading loading-spinner loading-md text-primary"></span>
-                  <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
+                  <span class="ml-2 text-base-content/60" th:text="#{taskTracker.loading.records}">기록 로딩 중...</span>
                 </td>
               </tr>
             </tbody>
@@ -109,12 +109,12 @@
         <div class="md:hidden space-y-3" id="progressCards">
           <div class="flex justify-center py-8">
             <span class="loading loading-spinner loading-md text-primary"></span>
-            <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
+            <span class="ml-2 text-base-content/60" th:text="#{taskTracker.loading.records}">기록 로딩 중...</span>
           </div>
         </div>
         <div id="emptyProgressMessage" class="hidden text-center py-8">
           <i class="fa-solid fa-inbox text-4xl text-base-content/30 mb-4"></i>
-          <p class="text-base-content/60">진행 기록이 없습니다.</p>
+          <p class="text-base-content/60" th:text="#{taskTracker.empty.noProgress}">진행 기록이 없습니다.</p>
         </div>
       </div>
     </div>
@@ -130,7 +130,7 @@
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6" id="goalModalTitle">
         <i class="fa-solid fa-bullseye text-primary"></i>
-        Task 추가
+        <span th:text="#{taskTracker.button.addTask}">Task 추가</span>
       </h3>
       <form id="goalForm" class="space-y-4">
         <input type="hidden" id="goalId" name="taskGoalId">
@@ -138,48 +138,48 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control md:col-span-2">
             <label class="label">
-              <span class="label-text font-medium">Task 이름 <span class="text-error">*</span></span>
+              <span class="label-text font-medium"><span th:text="#{taskTracker.label.taskName}">Task 이름</span> <span class="text-error">*</span></span>
             </label>
             <input type="text" id="goalTitle" name="title"
-                   class="input w-full" placeholder="예: SQLD 자격증 준비" required>
+                   class="input w-full" th:placeholder="#{taskTracker.placeholder.taskName}" placeholder="예: SQLD 자격증 준비" required>
           </div>
         </div>
 
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">설명</span>
+            <span class="label-text font-medium" th:text="#{taskTracker.label.description}">설명</span>
           </label>
           <textarea id="goalDescription" name="description"
-                    class="textarea h-20" placeholder="Task에 대한 설명..."></textarea>
+                    class="textarea h-20" th:placeholder="#{taskTracker.placeholder.description}" placeholder="Task에 대한 설명..."></textarea>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">목표일 <span class="text-error">*</span></span>
+              <span class="label-text font-medium"><span th:text="#{taskTracker.label.targetDate}">목표일</span> <span class="text-error">*</span></span>
             </label>
             <input type="date" id="goalTargetDate" name="targetDate"
                    class="input w-full" required>
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">총 목표량</span>
+              <span class="label-text font-medium" th:text="#{taskTracker.label.totalAmount}">총 목표량</span>
             </label>
             <input type="number" id="goalTotalAmount" name="totalAmount"
-                   class="input w-full" placeholder="예: 500" min="0">
+                   class="input w-full" th:placeholder="#{taskTracker.placeholder.totalAmount}" placeholder="예: 500" min="0">
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">단위</span>
+              <span class="label-text font-medium" th:text="#{taskTracker.label.unit}">단위</span>
             </label>
             <select id="goalUnit" name="unit" class="select w-full">
-              <option value="페이지">페이지</option>
-              <option value="문제">문제</option>
-              <option value="장">장</option>
-              <option value="챕터">챕터</option>
-              <option value="시간">시간</option>
-              <option value="개">개</option>
-              <option value="회">회</option>
+              <option value="페이지" th:text="#{taskTracker.unit.page}">페이지</option>
+              <option value="문제" th:text="#{taskTracker.unit.problem}">문제</option>
+              <option value="장" th:text="#{taskTracker.unit.chapterShort}">장</option>
+              <option value="챕터" th:text="#{taskTracker.unit.chapter}">챕터</option>
+              <option value="시간" th:text="#{taskTracker.unit.hour}">시간</option>
+              <option value="개" th:text="#{taskTracker.unit.count}">개</option>
+              <option value="회" th:text="#{taskTracker.unit.times}">회</option>
             </select>
           </div>
         </div>
@@ -187,45 +187,45 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">아이콘</span>
+              <span class="label-text font-medium" th:text="#{taskTracker.label.icon}">아이콘</span>
             </label>
             <select id="goalIcon" name="icon" class="select w-full">
-              <option value="fa-solid fa-bullseye">🎯 목표</option>
-              <option value="fa-solid fa-book">📚 책/학습</option>
-              <option value="fa-solid fa-graduation-cap">🎓 시험</option>
-              <option value="fa-solid fa-code">💻 코딩</option>
-              <option value="fa-solid fa-dumbbell">💪 운동</option>
-              <option value="fa-solid fa-pen">✏️ 글쓰기</option>
-              <option value="fa-solid fa-briefcase">💼 프로젝트</option>
-              <option value="fa-solid fa-certificate">📜 자격증</option>
-              <option value="fa-solid fa-language">🌐 언어</option>
-              <option value="fa-solid fa-star">⭐ 기타</option>
+              <option value="fa-solid fa-bullseye" th:text="#{taskTracker.icon.goal}">🎯 목표</option>
+              <option value="fa-solid fa-book" th:text="#{taskTracker.icon.book}">📚 책/학습</option>
+              <option value="fa-solid fa-graduation-cap" th:text="#{taskTracker.icon.exam}">🎓 시험</option>
+              <option value="fa-solid fa-code" th:text="#{taskTracker.icon.coding}">💻 코딩</option>
+              <option value="fa-solid fa-dumbbell" th:text="#{taskTracker.icon.exercise}">💪 운동</option>
+              <option value="fa-solid fa-pen" th:text="#{taskTracker.icon.writing}">✏️ 글쓰기</option>
+              <option value="fa-solid fa-briefcase" th:text="#{taskTracker.icon.project}">💼 프로젝트</option>
+              <option value="fa-solid fa-certificate" th:text="#{taskTracker.icon.certificate}">📜 자격증</option>
+              <option value="fa-solid fa-language" th:text="#{taskTracker.icon.language}">🌐 언어</option>
+              <option value="fa-solid fa-star" th:text="#{taskTracker.icon.etc}">⭐ 기타</option>
             </select>
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">색상</span>
+              <span class="label-text font-medium" th:text="#{taskTracker.label.color}">색상</span>
             </label>
             <select id="goalColor" name="color" class="select w-full">
-              <option value="blue">파랑</option>
-              <option value="green">초록</option>
-              <option value="red">빨강</option>
-              <option value="yellow">노랑</option>
-              <option value="purple">보라</option>
-              <option value="pink">핑크</option>
-              <option value="orange">주황</option>
-              <option value="gray">회색</option>
+              <option value="blue" th:text="#{taskTracker.color.blue}">파랑</option>
+              <option value="green" th:text="#{taskTracker.color.green}">초록</option>
+              <option value="red" th:text="#{taskTracker.color.red}">빨강</option>
+              <option value="yellow" th:text="#{taskTracker.color.yellow}">노랑</option>
+              <option value="purple" th:text="#{taskTracker.color.purple}">보라</option>
+              <option value="pink" th:text="#{taskTracker.color.pink}">핑크</option>
+              <option value="orange" th:text="#{taskTracker.color.orange}">주황</option>
+              <option value="gray" th:text="#{taskTracker.color.gray}">회색</option>
             </select>
           </div>
         </div>
       </form>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-ghost">취소</button>
+          <button class="btn btn-ghost" th:text="#{taskTracker.button.cancel}">취소</button>
         </form>
         <button class="btn btn-primary" onclick="saveGoal()">
           <i class="fa-solid fa-check"></i>
-          저장
+          <span th:text="#{taskTracker.button.save}">저장</span>
         </button>
       </div>
     </div>
@@ -244,7 +244,7 @@
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6" id="progressModalTitle">
         <i class="fa-solid fa-clock text-primary"></i>
-        진행 기록 추가
+        <span th:text="#{taskTracker.progress.addTitle}">진행 기록 추가</span>
       </h3>
       <form id="progressForm" class="space-y-4">
         <input type="hidden" id="progressId" name="taskProgressId">
@@ -252,17 +252,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control md:col-span-2">
             <label class="label">
-              <span class="label-text font-medium">Task 선택 <span class="text-error">*</span></span>
+              <span class="label-text font-medium"><span th:text="#{taskTracker.label.selectTask}">Task 선택</span> <span class="text-error">*</span></span>
             </label>
             <select id="progressGoalId" name="taskGoalId" class="select w-full" required>
-              <option value="">Task를 선택하세요</option>
+              <option value="" th:text="#{taskTracker.placeholder.selectTask}">Task를 선택하세요</option>
             </select>
           </div>
         </div>
 
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">날짜 <span class="text-error">*</span></span>
+            <span class="label-text font-medium"><span th:text="#{taskTracker.label.date}">날짜</span> <span class="text-error">*</span></span>
           </label>
           <input type="date" id="progressDate" name="progressDate"
                  class="input w-full" required>
@@ -270,15 +270,15 @@
 
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">학습/작업 내용</span>
+            <span class="label-text font-medium" th:text="#{taskTracker.label.content}">학습/작업 내용</span>
           </label>
           <input type="text" id="progressContent" name="content"
-                 class="input w-full" placeholder="예: 1과목 데이터 모델링 학습">
+                 class="input w-full" th:placeholder="#{taskTracker.placeholder.content}" placeholder="예: 1과목 데이터 모델링 학습">
         </div>
 
         <div class="form-control" id="rangeSliderContainer">
           <label class="label">
-            <span class="label-text font-medium">진행 범위</span>
+            <span class="label-text font-medium" th:text="#{taskTracker.label.progressRange}">진행 범위</span>
             <span class="label-text-alt text-primary font-semibold" id="rangeDisplay">0 ~ 0</span>
           </label>
           <div class="relative pt-6 pb-2">
@@ -300,26 +300,26 @@
 
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">메모</span>
+            <span class="label-text font-medium" th:text="#{taskTracker.label.memo}">메모</span>
           </label>
           <textarea id="progressMemo" name="memo"
-                    class="textarea h-20" placeholder="오늘 학습 소감, 어려웠던 점 등..."></textarea>
+                    class="textarea h-20" th:placeholder="#{taskTracker.placeholder.memo}" placeholder="오늘 학습 소감, 어려웠던 점 등..."></textarea>
         </div>
 
         <div class="form-control">
           <label class="label cursor-pointer justify-start gap-3">
             <input type="checkbox" id="progressIsCompleted" name="isCompleted" class="checkbox checkbox-success">
-            <span class="label-text">오늘 목표 달성</span>
+            <span class="label-text" th:text="#{taskTracker.label.todayGoalAchieved}">오늘 목표 달성</span>
           </label>
         </div>
       </form>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-ghost">취소</button>
+          <button class="btn btn-ghost" th:text="#{taskTracker.button.cancel}">취소</button>
         </form>
         <button class="btn btn-primary" onclick="saveProgress()">
           <i class="fa-solid fa-check"></i>
-          저장
+          <span th:text="#{taskTracker.button.save}">저장</span>
         </button>
       </div>
     </div>
@@ -343,7 +343,7 @@
       </div>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-ghost">닫기</button>
+          <button class="btn btn-ghost" th:text="#{taskTracker.button.close}">닫기</button>
         </form>
       </div>
     </div>

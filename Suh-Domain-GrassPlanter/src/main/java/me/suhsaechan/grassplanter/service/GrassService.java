@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -319,25 +321,85 @@ public class GrassService {
         }
     }
 
-    @Scheduled(cron = "0 0 * * * *") // 매시간 실행
+    public int getTodayContributionCount(String githubUsername, LocalDate date, String pat) throws IOException {
+        log.info("GitHub 기여 수 확인(GraphQL) - 사용자: {}, 날짜: {}", githubUsername, date);
+
+        String from = date.atStartOfDay().atZone(ZoneId.of("Asia/Seoul")).toOffsetDateTime().toString();
+        String to = date.atTime(LocalTime.MAX).atZone(ZoneId.of("Asia/Seoul")).toOffsetDateTime().toString();
+
+        String query = "query($login:String!,$from:DateTime!,$to:DateTime!){"
+                + "user(login:$login){contributionsCollection(from:$from,to:$to){"
+                + "contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}";
+
+        String graphqlBody = String.format(
+                "{\"query\":\"%s\",\"variables\":{\"login\":\"%s\",\"from\":\"%s\",\"to\":\"%s\"}}",
+                query.replace("\"", "\\\""), githubUsername, from, to);
+
+        RequestBody body = RequestBody.create(graphqlBody, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url("https://api.github.com/graphql")
+                .header("Authorization", "Bearer " + pat)
+                .header("Accept", "application/vnd.github.v3+json")
+                .post(body)
+                .build();
+
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                log.error("GitHub GraphQL 응답 실패 - 상태 코드: {}", response.code());
+                throw new IOException("Unexpected code " + response);
+            }
+
+            String json = response.body().string();
+            int count = extractContributionCountForDate(json, date.toString());
+            log.info("기여 수 확인 완료 - 날짜: {}, 기여 수: {}", date, count);
+            return count;
+        }
+    }
+
+    int extractContributionCountForDate(String graphqlJson, String date) {
+        String dateMarker = "\"date\":\"" + date + "\"";
+        int dateIndex = graphqlJson.indexOf(dateMarker);
+        if (dateIndex == -1) {
+            return 0;
+        }
+
+        String countKey = "\"contributionCount\":";
+        int countIndex = graphqlJson.indexOf(countKey, dateIndex);
+        if (countIndex == -1) {
+            return 0;
+        }
+
+        int start = countIndex + countKey.length();
+        int end = start;
+        while (end < graphqlJson.length() && Character.isDigit(graphqlJson.charAt(end))) {
+            end++;
+        }
+        if (start == end) {
+            return 0;
+        }
+        return Integer.parseInt(graphqlJson.substring(start, end));
+    }
+
+    @Scheduled(cron = "0 0 23 * * *", zone = "Asia/Seoul") // 매일 23시 1회 실행
     @Transactional
     public void executeAutoCommits() {
         log.info("자동 커밋 스케줄 실행 시작");
 
         List<GrassProfile> activeProfiles = grassProfileRepository.findByIsAutoCommitEnabledTrue();
-        
+
         for (GrassProfile profile : activeProfiles) {
             try {
-                // 오늘의 기여도 확인
-                int currentLevel = checkContributionLevel(profile.getGithubUsername(), LocalDate.now());
-                
-                if (currentLevel < profile.getTargetCommitLevel()) {
-                    log.info("자동 커밋 실행 - 사용자: {}, 현재 레벨: {}, 목표 레벨: {}", 
-                        profile.getGithubUsername(), currentLevel, profile.getTargetCommitLevel());
-                    
-                    String pat = encryptionUtil.decrypt(profile.getEncryptedPat());
+                String pat = encryptionUtil.decrypt(profile.getEncryptedPat());
+
+                // 오늘 기여 수 확인 (GraphQL - private 기여 포함, 잔디와 동일)
+                int todayContributions = getTodayContributionCount(profile.getGithubUsername(), LocalDate.now(), pat);
+
+                if (todayContributions <= 0) {
+                    log.info("자동 커밋 실행 - 사용자: {}, 오늘 기여 없음(기여 수: {})",
+                        profile.getGithubUsername(), todayContributions);
+
                     boolean success = performGitHubCommit(profile, pat, "Auto-commit: Daily contribution");
-                    
+
                     // 로그 저장
                     GrassCommitLog commitLog = GrassCommitLog.builder()
                             .grassProfile(profile)
@@ -346,10 +408,13 @@ public class GrassService {
                             .commitMessage("Auto-commit: Daily contribution")
                             .isAutoCommit(true)  // 자동 커밋이므로 true
                             .isSuccess(success)
-                            .commitLevel(currentLevel)
+                            .commitLevel(todayContributions)
                             .build();
-                    
+
                     grassCommitLogRepository.save(commitLog);
+                } else {
+                    log.info("자동 커밋 생략 - 사용자: {}, 오늘 이미 기여 있음(기여 수: {})",
+                        profile.getGithubUsername(), todayContributions);
                 }
             } catch (Exception e) {
                 log.error("자동 커밋 실행 중 오류 - 사용자: {}, 오류: {}", 

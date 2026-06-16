@@ -8,9 +8,9 @@
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-solid fa-bus text-primary"></i>
-      소만사 버스 예약
+      <span th:text="#{busDashboard.header.title}">소만사 버스 예약</span>
     </h2>
-    <p class="text-base-content/60 mt-1">통근버스 자동 예약 관리 시스템</p>
+    <p class="text-base-content/60 mt-1" th:text="#{busDashboard.header.subtitle}">통근버스 자동 예약 관리 시스템</p>
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="statsContainer">
@@ -21,7 +21,7 @@
             <i class="fa-solid fa-users text-primary"></i>
           </div>
           <div>
-            <p class="text-xs text-base-content/60">전체 멤버</p>
+            <p class="text-xs text-base-content/60" th:text="#{busDashboard.stats.totalMembers}">전체 멤버</p>
             <p class="text-xl font-bold text-base-content" id="statTotalMembers">-</p>
           </div>
         </div>
@@ -34,7 +34,7 @@
             <i class="fa-solid fa-calendar-check text-success"></i>
           </div>
           <div>
-            <p class="text-xs text-base-content/60">활성 스케줄</p>
+            <p class="text-xs text-base-content/60" th:text="#{busDashboard.stats.activeSchedules}">활성 스케줄</p>
             <p class="text-xl font-bold text-base-content" id="statActiveSchedules">-</p>
           </div>
         </div>
@@ -47,7 +47,7 @@
             <i class="fa-solid fa-ticket text-secondary"></i>
           </div>
           <div>
-            <p class="text-xs text-base-content/60">이번주 예약</p>
+            <p class="text-xs text-base-content/60" th:text="#{busDashboard.stats.thisWeekReservations}">이번주 예약</p>
             <p class="text-xl font-bold text-base-content" id="statThisWeekReservations">-</p>
           </div>
         </div>
@@ -60,7 +60,7 @@
             <i class="fa-solid fa-circle-xmark text-error"></i>
           </div>
           <div>
-            <p class="text-xs text-base-content/60">이번주 실패</p>
+            <p class="text-xs text-base-content/60" th:text="#{busDashboard.stats.thisWeekFailed}">이번주 실패</p>
             <p class="text-xl font-bold text-base-content" id="statThisWeekFailed">-</p>
           </div>
         </div>
@@ -74,13 +74,13 @@
         <div>
           <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-solid fa-users text-primary"></i>
-            멤버 목록
+            <span th:text="#{busDashboard.member.listTitle}">멤버 목록</span>
           </h3>
-          <p class="text-base-content/60 text-sm">등록된 버스 예약 멤버 관리</p>
+          <p class="text-base-content/60 text-sm" th:text="#{busDashboard.member.listSubtitle}">등록된 버스 예약 멤버 관리</p>
         </div>
         <button class="btn btn-primary btn-sm" onclick="showAddMemberModal()">
           <i class="fa-solid fa-plus"></i>
-          멤버 추가
+          <span th:text="#{busDashboard.member.addButton}">멤버 추가</span>
         </button>
       </div>
 
@@ -88,12 +88,12 @@
         <table class="table table-zebra">
           <thead>
             <tr>
-              <th>활성</th>
-              <th>이름</th>
-              <th>이메일</th>
-              <th>인증</th>
-              <th>스케줄</th>
-              <th>삭제</th>
+              <th th:text="#{busDashboard.member.colActive}">활성</th>
+              <th th:text="#{busDashboard.member.colName}">이름</th>
+              <th th:text="#{busDashboard.member.colEmail}">이메일</th>
+              <th th:text="#{busDashboard.member.colVerified}">인증</th>
+              <th th:text="#{busDashboard.member.colSchedule}">스케줄</th>
+              <th th:text="#{busDashboard.member.colDelete}">삭제</th>
             </tr>
           </thead>
           <tbody id="memberTable">
@@ -117,8 +117,8 @@
               </td>
               <td class="text-sm text-base-content/60" th:text="${member.loginId}">email@somansa.com</td>
               <td>
-                <span th:if="${member.isVerified}" class="badge badge-info badge-sm">인증됨</span>
-                <span th:unless="${member.isVerified}" class="badge badge-warning badge-sm">미인증</span>
+                <span th:if="${member.isVerified}" class="badge badge-info badge-sm" th:text="#{busDashboard.member.verified}">인증됨</span>
+                <span th:unless="${member.isVerified}" class="badge badge-warning badge-sm" th:text="#{busDashboard.member.unverified}">미인증</span>
               </td>
               <td>
                 <span class="badge badge-ghost badge-sm">-</span>
@@ -126,7 +126,7 @@
               <td onclick="event.stopPropagation()">
                 <button class="btn btn-outline btn-error btn-xs delete-member-btn"
                         th:data-member-id="${member.somansaBusMemberId}"
-                        title="멤버 삭제">
+                        th:title="#{busDashboard.member.deleteTitle}">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
@@ -143,18 +143,18 @@
         <div>
           <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-solid fa-route text-primary"></i>
-            버스 노선
+            <span th:text="#{busDashboard.route.sectionTitle}">버스 노선</span>
             <span class="badge badge-ghost badge-sm" id="routeTotalCount">-</span>
           </h3>
-          <p class="text-base-content/60 text-sm">등록된 버스 노선 목록</p>
+          <p class="text-base-content/60 text-sm" th:text="#{busDashboard.route.sectionSubtitle}">등록된 버스 노선 목록</p>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-sm text-base-content/60">
-            마지막 동기화: <span id="lastSyncedAt">-</span>
+            <span th:text="#{busDashboard.route.lastSynced}">마지막 동기화</span>: <span id="lastSyncedAt">-</span>
           </span>
           <button class="btn btn-primary btn-sm" id="btnSyncRoutes">
             <i class="fa-solid fa-rotate"></i>
-            노선 동기화
+            <span th:text="#{busDashboard.route.syncButton}">노선 동기화</span>
           </button>
         </div>
       </div>
@@ -163,18 +163,18 @@
         <table class="table table-zebra">
           <thead>
             <tr>
-              <th>구분</th>
-              <th>출발시간</th>
-              <th>정류장</th>
-              <th>호차</th>
-              <th>설명</th>
+              <th th:text="#{busDashboard.route.colType}">구분</th>
+              <th th:text="#{busDashboard.route.colDepartureTime}">출발시간</th>
+              <th th:text="#{busDashboard.route.colStation}">정류장</th>
+              <th th:text="#{busDashboard.route.colBusNumber}">호차</th>
+              <th th:text="#{busDashboard.route.colDescription}">설명</th>
             </tr>
           </thead>
           <tbody id="routeTable">
             <tr th:each="route : ${routes}">
               <td>
-                <span th:if="${route.caralias == '출근'}" class="badge badge-soft badge-info badge-sm">출근</span>
-                <span th:if="${route.caralias == '퇴근'}" class="badge badge-soft badge-warning badge-sm">퇴근</span>
+                <span th:if="${route.caralias == '출근'}" class="badge badge-soft badge-info badge-sm" th:text="#{busDashboard.route.commute}">출근</span>
+                <span th:if="${route.caralias == '퇴근'}" class="badge badge-soft badge-warning badge-sm" th:text="#{busDashboard.route.leave}">퇴근</span>
               </td>
               <td th:text="${route.departureTime}">06:55</td>
               <td th:text="${route.station}">당산역</td>
@@ -193,13 +193,13 @@
         <div>
           <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
             <i class="fa-solid fa-clock-rotate-left text-primary"></i>
-            최근 예약 기록
+            <span th:text="#{busDashboard.history.sectionTitle}">최근 예약 기록</span>
           </h3>
-          <p class="text-base-content/60 text-sm">최근 예약 실행 기록</p>
+          <p class="text-base-content/60 text-sm" th:text="#{busDashboard.history.sectionSubtitle}">최근 예약 실행 기록</p>
         </div>
         <button class="btn btn-outline btn-sm" onclick="loadReservationHistory()">
           <i class="fa-solid fa-rotate"></i>
-          새로고침
+          <span th:text="#{busDashboard.history.refreshButton}">새로고침</span>
         </button>
       </div>
 
@@ -207,18 +207,18 @@
         <table class="table table-zebra">
           <thead>
             <tr>
-              <th>실행시간</th>
-              <th>멤버</th>
-              <th>노선</th>
-              <th>예약일</th>
-              <th>상태</th>
+              <th th:text="#{busDashboard.history.colExecutedAt}">실행시간</th>
+              <th th:text="#{busDashboard.history.colMember}">멤버</th>
+              <th th:text="#{busDashboard.history.colRoute}">노선</th>
+              <th th:text="#{busDashboard.history.colReservationDate}">예약일</th>
+              <th th:text="#{busDashboard.history.colStatus}">상태</th>
             </tr>
           </thead>
           <tbody id="historyTable">
             <tr>
               <td colspan="5" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
-                <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
+                <span class="ml-2 text-base-content/60" th:text="#{busDashboard.history.loading}">기록 로딩 중...</span>
               </td>
             </tr>
           </tbody>
@@ -236,34 +236,34 @@
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
         <i class="fa-solid fa-user-plus text-primary"></i>
-        멤버 등록
+        <span th:text="#{busDashboard.modal.registerTitle}">멤버 등록</span>
       </h3>
       <form id="memberForm" class="space-y-4">
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">소만사 아이디</span>
+            <span class="label-text font-medium" th:text="#{busDashboard.modal.loginIdLabel}">소만사 아이디</span>
           </label>
           <div class="join w-full">
             <input type="text" id="loginIdPrefix" name="loginIdPrefix"
-                   class="input input-bordered join-item flex-1" 
-                   placeholder="아이디 입력 (예: hong)" 
+                   class="input input-bordered join-item flex-1"
+                   th:placeholder="#{busDashboard.modal.loginIdPlaceholder}"
                    required>
             <span class="btn btn-ghost join-item no-animation pointer-events-none">
               @somansa.com
             </span>
           </div>
           <label class="label">
-            <span class="label-text-alt text-base-content/60">소만사 이메일로 인증됩니다</span>
+            <span class="label-text-alt text-base-content/60" th:text="#{busDashboard.modal.loginIdHint}">소만사 이메일로 인증됩니다</span>
           </label>
         </div>
       </form>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-ghost">취소</button>
+          <button class="btn btn-ghost" th:text="#{busDashboard.modal.cancel}">취소</button>
         </form>
         <button class="btn btn-primary" onclick="registerMember()">
           <i class="fa-solid fa-check"></i>
-          등록
+          <span th:text="#{busDashboard.modal.register}">등록</span>
         </button>
       </div>
     </div>
@@ -283,35 +283,35 @@ $(document).ready(function() {
   loadReservationHistory();
 
   document.getElementById('btnSyncRoutes').addEventListener('click', function() {
-    if (!confirm('노선 동기화를 시작합니다. 외부 시스템(buseezy)에 로그인 후 노선 정보를 가져옵니다. 진행할까요?')) {
+    if (!confirm(window.MSG['busDashboard.js.syncConfirm'])) {
       return;
     }
 
     const btn = this;
     btn.disabled = true;
     const originalText = btn.textContent;
-    btn.textContent = '동기화 중...';
+    btn.textContent = window.MSG['busDashboard.js.syncing'];
 
     sendFormRequest('/api/somansa-bus/route/sync', {},
       function(data) {
         btn.disabled = false;
         btn.textContent = originalText;
-        alert('동기화 완료\n'
-          + '신규: +' + (data.syncCreatedCount || 0) + '\n'
-          + '변경: ' + (data.syncUpdatedCount || 0) + '\n'
-          + '비활성: ' + (data.syncDeactivatedCount || 0) + '\n'
-          + '총: ' + (data.syncTotalCount || 0) + '건\n'
-          + '트리거: ' + (data.syncTriggerLoginId || ''));
+        alert(window.MSG['busDashboard.js.syncComplete'] + '\n'
+          + window.MSG['busDashboard.js.syncCreated'] + ': +' + (data.syncCreatedCount || 0) + '\n'
+          + window.MSG['busDashboard.js.syncUpdated'] + ': ' + (data.syncUpdatedCount || 0) + '\n'
+          + window.MSG['busDashboard.js.syncDeactivated'] + ': ' + (data.syncDeactivatedCount || 0) + '\n'
+          + window.MSG['busDashboard.js.syncTotal'] + ': ' + (data.syncTotalCount || 0) + window.MSG['busDashboard.js.syncCountUnit'] + '\n'
+          + window.MSG['busDashboard.js.syncTrigger'] + ': ' + (data.syncTriggerLoginId || ''));
         loadRoutes();
       },
       function(xhr) {
         btn.disabled = false;
         btn.textContent = originalText;
-        let errorMessage = '알 수 없는 오류';
+        let errorMessage = window.MSG['busDashboard.js.unknownError'];
         if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
           errorMessage = xhr.responseJSON.message;
         }
-        alert('동기화 실패: ' + errorMessage);
+        alert(window.MSG['busDashboard.js.syncFailed'] + ': ' + errorMessage);
       }
     );
   });
@@ -365,7 +365,7 @@ function loadMembers() {
     function(xhr) {
       console.error('멤버 목록 로드 실패');
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#memberTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">멤버 목록을 불러오는데 실패했습니다.</td></tr>');
+      $('#memberTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.memberLoadFailed'] + '</td></tr>');
     }
   );
 }
@@ -375,7 +375,7 @@ function displayMembers(members, scheduleCounts) {
   tableBody.empty();
 
   if (!members || members.length === 0) {
-    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">등록된 멤버가 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.noMembers'] + '</td></tr>');
     return;
   }
 
@@ -401,8 +401,8 @@ function displayMembers(members, scheduleCounts) {
     // 인증
     const verifiedCell = $('<td>');
     verifiedCell.html(member.isVerified
-      ? '<span class="badge badge-info badge-sm">인증됨</span>'
-      : '<span class="badge badge-warning badge-sm">미인증</span>');
+      ? '<span class="badge badge-info badge-sm">' + window.MSG['busDashboard.member.verified'] + '</span>'
+      : '<span class="badge badge-warning badge-sm">' + window.MSG['busDashboard.member.unverified'] + '</span>');
     row.append(verifiedCell);
 
     // 스케줄 수
@@ -410,13 +410,13 @@ function displayMembers(members, scheduleCounts) {
     const count = scheduleCounts && scheduleCounts[member.somansaBusMemberId] != null
       ? scheduleCounts[member.somansaBusMemberId] : 0;
     scheduleCell.html(count > 0
-      ? `<span class="badge badge-success badge-sm">${count}개</span>`
-      : '<span class="badge badge-ghost badge-sm">없음</span>');
+      ? `<span class="badge badge-success badge-sm">${count}${window.MSG['busDashboard.js.scheduleCountUnit']}</span>`
+      : '<span class="badge badge-ghost badge-sm">' + window.MSG['busDashboard.js.scheduleNone'] + '</span>');
     row.append(scheduleCell);
 
     // 삭제
     const deleteCell = $('<td>').attr('onclick', 'event.stopPropagation()');
-    deleteCell.html(`<button class="btn btn-outline btn-error btn-xs delete-member-btn" data-member-id="${member.somansaBusMemberId}" title="멤버 삭제"><i class="fa-solid fa-trash"></i></button>`);
+    deleteCell.html(`<button class="btn btn-outline btn-error btn-xs delete-member-btn" data-member-id="${member.somansaBusMemberId}" title="${window.MSG['busDashboard.member.deleteTitle']}"><i class="fa-solid fa-trash"></i></button>`);
     row.append(deleteCell);
 
     tableBody.append(row);
@@ -431,7 +431,7 @@ function showAddMemberModal() {
 function registerMember() {
   const loginIdPrefix = $('#loginIdPrefix').val();
   if (!loginIdPrefix) {
-    showToast('아이디를 입력해주세요.', 'negative');
+    showToast(window.MSG['busDashboard.js.loginIdRequired'], 'negative');
     return;
   }
 
@@ -439,13 +439,13 @@ function registerMember() {
 
   sendFormRequest('/api/somansa-bus/member/register', { loginId: loginId },
     function(response) {
-      showToast('멤버가 등록되었습니다.', 'positive');
+      showToast(window.MSG['busDashboard.js.memberRegistered'], 'positive');
       document.getElementById('memberModal').close();
       loadMembers();
       loadStats();
     },
     function(xhr) {
-      let errorMessage = '멤버 등록 중 오류가 발생했습니다.';
+      let errorMessage = window.MSG['busDashboard.js.memberRegisterError'];
       if (xhr.responseJSON && xhr.responseJSON.message) {
         errorMessage = xhr.responseJSON.message;
       }
@@ -457,29 +457,29 @@ function registerMember() {
 function toggleMemberActive(memberId) {
   sendFormRequest('/api/somansa-bus/member/toggle-active', { somansaBusMemberId: memberId },
     function(response) {
-      showToast('멤버 상태가 변경되었습니다.', 'positive');
+      showToast(window.MSG['busDashboard.js.memberStatusChanged'], 'positive');
       loadMembers();
       loadStats();
     },
     function(xhr) {
-      showToast('상태 변경 중 오류가 발생했습니다.', 'negative');
+      showToast(window.MSG['busDashboard.js.memberStatusError'], 'negative');
     }
   );
 }
 
 function deleteMember(memberId) {
-  if (!confirm('정말로 이 멤버를 삭제하시겠습니까?')) {
+  if (!confirm(window.MSG['busDashboard.js.memberDeleteConfirm'])) {
     return;
   }
 
   sendFormRequest('/api/somansa-bus/member/delete', { somansaBusMemberId: memberId },
     function(response) {
-      showToast('멤버가 삭제되었습니다.', 'positive');
+      showToast(window.MSG['busDashboard.js.memberDeleted'], 'positive');
       loadMembers();
       loadStats();
     },
     function(xhr) {
-      showToast('멤버 삭제 중 오류가 발생했습니다.', 'negative');
+      showToast(window.MSG['busDashboard.js.memberDeleteError'], 'negative');
     }
   );
 }
@@ -488,12 +488,12 @@ function loadRoutes() {
   sendFormRequest('/api/somansa-bus/route/list', {},
     function(response) {
       $('#routeTotalCount').text(response.totalCount != null ? response.totalCount : (response.routes ? response.routes.length : 0));
-      $('#lastSyncedAt').text(response.lastSyncedAt ? response.lastSyncedAt : '없음');
+      $('#lastSyncedAt').text(response.lastSyncedAt ? response.lastSyncedAt : window.MSG['busDashboard.js.lastSyncedNone']);
       displayRoutes(response.routes || []);
     },
     function(xhr) {
       console.error('노선 목록 로드 실패');
-      $('#routeTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">노선 목록을 불러오는데 실패했습니다.</td></tr>');
+      $('#routeTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.routeLoadFailed'] + '</td></tr>');
     }
   );
 }
@@ -503,7 +503,7 @@ function displayRoutes(routes) {
   tableBody.empty();
 
   if (!routes || routes.length === 0) {
-    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">등록된 노선이 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.noRoutes'] + '</td></tr>');
     return;
   }
 
@@ -512,9 +512,9 @@ function displayRoutes(routes) {
 
     const typeCell = $('<td>');
     if (route.caralias === '출근') {
-      typeCell.html('<span class="badge badge-soft badge-info badge-sm">출근</span>');
+      typeCell.html('<span class="badge badge-soft badge-info badge-sm">' + window.MSG['busDashboard.route.commute'] + '</span>');
     } else if (route.caralias === '퇴근') {
-      typeCell.html('<span class="badge badge-soft badge-warning badge-sm">퇴근</span>');
+      typeCell.html('<span class="badge badge-soft badge-warning badge-sm">' + window.MSG['busDashboard.route.leave'] + '</span>');
     } else {
       typeCell.text(route.caralias || '-');
     }
@@ -522,7 +522,7 @@ function displayRoutes(routes) {
 
     row.append($('<td>').text(route.departureTime || '-'));
     row.append($('<td>').text(route.station || '-'));
-    row.append($('<td>').text(route.busNumber ? route.busNumber + '호' : '-'));
+    row.append($('<td>').text(route.busNumber ? route.busNumber + window.MSG['busDashboard.js.busNumberUnit'] : '-'));
     row.append($('<td>').text(route.description || '-'));
 
     tableBody.append(row);
@@ -536,7 +536,7 @@ function loadReservationHistory() {
     },
     function(xhr) {
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">기록 로드 실패</td></tr>');
+      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.historyLoadFailed'] + '</td></tr>');
     }
   );
 }
@@ -545,7 +545,7 @@ function displayReservationHistory(histories) {
   const tableBody = $('#historyTable');
 
   if (!histories || histories.length === 0) {
-    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">예약 기록이 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.noHistory'] + '</td></tr>');
     return;
   }
 
@@ -571,9 +571,9 @@ function displayReservationHistory(histories) {
 
     const statusCell = $('<td>');
     if (history.isSuccess) {
-      statusCell.html('<span class="badge badge-success badge-sm">성공</span>');
+      statusCell.html('<span class="badge badge-success badge-sm">' + window.MSG['busDashboard.js.statusSuccess'] + '</span>');
     } else {
-      statusCell.html('<span class="badge badge-error badge-sm">실패</span>');
+      statusCell.html('<span class="badge badge-error badge-sm">' + window.MSG['busDashboard.js.statusFailed'] + '</span>');
     }
     row.append(statusCell);
 

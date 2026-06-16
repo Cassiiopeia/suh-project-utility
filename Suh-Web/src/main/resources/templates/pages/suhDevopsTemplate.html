@@ -20,7 +20,7 @@
           SUH-DEVOPS-TEMPLATE
         </h1>
         <p class="text-base-content/70 text-sm sm:text-base mb-5">
-          완전 자동화된 GitHub 프로젝트 관리 템플릿 — 버전 관리, AI 체인지로그, CI/CD, AI 스킬을 한 번에
+          <span th:text="#{devops.hero.subtitle}">완전 자동화된 GitHub 프로젝트 관리 템플릿 — 버전 관리, AI 체인지로그, CI/CD, AI 스킬을 한 번에</span>
         </p>
         <a href="https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE" target="_blank"
            class="btn btn-sm btn-neutral">
@@ -32,13 +32,13 @@
   </section>
 
   <div role="tablist" class="tabs tabs-lift mb-6" id="mainTabs">
-    <a role="tab" class="tab" data-tab="overview"><i class="fa-solid fa-star mr-1"></i> 개요</a>
-    <a role="tab" class="tab" data-tab="apply"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 적용</a>
-    <a role="tab" class="tab" data-tab="commands"><i class="fa-solid fa-comment mr-1"></i> 명령어</a>
-    <a role="tab" class="tab" data-tab="wizards"><i class="fa-solid fa-hat-wizard mr-1"></i> 마법사</a>
-    <a role="tab" class="tab" data-tab="workflows"><i class="fa-solid fa-diagram-project mr-1"></i> 워크플로우</a>
-    <a role="tab" class="tab" data-tab="skills"><i class="fa-solid fa-robot mr-1"></i> AI 스킬</a>
-    <a role="tab" class="tab" data-tab="settings"><i class="fa-solid fa-gear mr-1"></i> 설정</a>
+    <a role="tab" class="tab" data-tab="overview"><i class="fa-solid fa-star mr-1"></i> <span th:text="#{devops.tab.overview}">개요</span></a>
+    <a role="tab" class="tab" data-tab="apply"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> <span th:text="#{devops.tab.apply}">적용</span></a>
+    <a role="tab" class="tab" data-tab="commands"><i class="fa-solid fa-comment mr-1"></i> <span th:text="#{devops.tab.commands}">명령어</span></a>
+    <a role="tab" class="tab" data-tab="wizards"><i class="fa-solid fa-hat-wizard mr-1"></i> <span th:text="#{devops.tab.wizards}">마법사</span></a>
+    <a role="tab" class="tab" data-tab="workflows"><i class="fa-solid fa-diagram-project mr-1"></i> <span th:text="#{devops.tab.workflows}">워크플로우</span></a>
+    <a role="tab" class="tab" data-tab="skills"><i class="fa-solid fa-robot mr-1"></i> <span th:text="#{devops.tab.skills}">AI 스킬</span></a>
+    <a role="tab" class="tab" data-tab="settings"><i class="fa-solid fa-gear mr-1"></i> <span th:text="#{devops.tab.settings}">설정</span></a>
   </div>
 
   <section id="panel-overview" class="devops-panel"></section>
@@ -60,10 +60,10 @@
     <div id="modalContent" class="space-y-4"></div>
     <div class="modal-action">
       <a id="modalDocLink" href="#" target="_blank" class="btn btn-outline btn-sm">
-        <i class="fa-solid fa-book"></i> 상세 문서 보기
+        <i class="fa-solid fa-book"></i> <span th:text="#{devops.modal.viewDetailDoc}">상세 문서 보기</span>
       </a>
       <form method="dialog">
-        <button class="btn">닫기</button>
+        <button class="btn" th:text="#{devops.common.close}">닫기</button>
       </form>
     </div>
   </div>
@@ -83,67 +83,67 @@
     { id:'react',label:'React',versionFile:'package.json' },{ id:'next',label:'Next.js',versionFile:'package.json' },
     { id:'node',label:'Node.js',versionFile:'package.json' },{ id:'python',label:'Python',versionFile:'pyproject.toml' },
     { id:'react-native',label:'React Native',versionFile:'Info.plist + build.gradle' },{ id:'react-native-expo',label:'React Native (Expo)',versionFile:'app.json' },
-    { id:'basic',label:'Basic (범용)',versionFile:'version.yml' }
+    { id:'basic',label:window.MSG['devops.projectType.basic'],versionFile:'version.yml' }
   ];
   const commentCommands = [
-    { cmd:'@suh-lab server build',desc:'임시 서버 빌드/배포 (브랜치 지정 가능)',icon:'fa-server',types:['spring','python'] },
-    { cmd:'@suh-lab server destroy',desc:'Preview 서버 삭제',icon:'fa-trash',types:['spring','python'] },
-    { cmd:'@suh-lab server status',desc:'서버 상태 확인',icon:'fa-circle-info',types:['spring','python'] },
-    { cmd:'@suh-lab build app',desc:'iOS + Android 동시 빌드',icon:'fa-mobile',types:['flutter'] },
-    { cmd:'@suh-lab apk build',desc:'Android만 빌드',icon:'fa-android',types:['flutter'] },
-    { cmd:'@suh-lab ios build',desc:'iOS만 빌드',icon:'fa-apple',types:['flutter'] },
-    { cmd:'@suh-lab create qa',desc:'QA 이슈 자동 생성 (키워드 순서 무관)',icon:'fa-clipboard-check',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'] }
+    { cmd:'@suh-lab server build',desc:window.MSG['devops.command.serverBuild.desc'],icon:'fa-server',types:['spring','python'] },
+    { cmd:'@suh-lab server destroy',desc:window.MSG['devops.command.serverDestroy.desc'],icon:'fa-trash',types:['spring','python'] },
+    { cmd:'@suh-lab server status',desc:window.MSG['devops.command.serverStatus.desc'],icon:'fa-circle-info',types:['spring','python'] },
+    { cmd:'@suh-lab build app',desc:window.MSG['devops.command.buildApp.desc'],icon:'fa-mobile',types:['flutter'] },
+    { cmd:'@suh-lab apk build',desc:window.MSG['devops.command.apkBuild.desc'],icon:'fa-android',types:['flutter'] },
+    { cmd:'@suh-lab ios build',desc:window.MSG['devops.command.iosBuild.desc'],icon:'fa-apple',types:['flutter'] },
+    { cmd:'@suh-lab create qa',desc:window.MSG['devops.command.createQa.desc'],icon:'fa-clipboard-check',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'] }
   ];
   const wizards = [
-    { name:'iOS TestFlight 마법사',desc:'TestFlight 배포 설정(ExportOptions.plist, Fastfile) 생성',icon:'fa-apple',types:['flutter'],html:'.github/util/flutter/testflight-wizard/testflight-wizard.html',doc:'docs/FLUTTER-TESTFLIGHT-WIZARD.md' },
-    { name:'Android Play Store 마법사',desc:'Play Store 서명/Fastfile/build.gradle 설정 생성',icon:'fa-google-play',types:['flutter'],html:'.github/util/flutter/playstore-wizard/playstore-wizard.html',doc:'docs/FLUTTER-PLAYSTORE-WIZARD.md' },
-    { name:'Firebase 배포 마법사',desc:'Firebase App Distribution 설정 생성',icon:'fa-fire',types:['flutter'],html:'.github/util/flutter/firebase-wizard/firebase-wizard.html',doc:'docs/FLUTTER-CICD-OVERVIEW.md' },
-    { name:'GitHub Projects 동기화 마법사',desc:'Projects 자동 동기화 Cloudflare Worker 설정 생성',icon:'fa-diagram-project',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'],html:'.github/util/common/projects-sync-wizard/projects-sync-wizard.html',doc:'docs/GITHUB-PROJECTS-SYNC-WIZARD.md' },
-    { name:'GitHub Secrets 변환기',desc:'Actions Secret 일괄 변환/인코딩 도구',icon:'fa-key',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'],html:'.github/util/common/github-secrets-converter/secrets-converter.html',doc:'docs/TROUBLESHOOTING.md' },
-    { name:'Projects Sync Worker (소스)',desc:'Cloudflare Worker 소스 — 가이드 문서 참고',icon:'fa-cloud',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'],html:'',doc:'.github/util/common/github-projects-sync-worker/GITHUB_PROJECTS_SYNC_WORKER_GUIDE.md' }
+    { name:window.MSG['devops.wizard.iosTestflight.name'],desc:window.MSG['devops.wizard.iosTestflight.desc'],icon:'fa-apple',types:['flutter'],html:'.github/util/flutter/testflight-wizard/testflight-wizard.html',doc:'docs/FLUTTER-TESTFLIGHT-WIZARD.md' },
+    { name:window.MSG['devops.wizard.androidPlaystore.name'],desc:window.MSG['devops.wizard.androidPlaystore.desc'],icon:'fa-google-play',types:['flutter'],html:'.github/util/flutter/playstore-wizard/playstore-wizard.html',doc:'docs/FLUTTER-PLAYSTORE-WIZARD.md' },
+    { name:window.MSG['devops.wizard.firebase.name'],desc:window.MSG['devops.wizard.firebase.desc'],icon:'fa-fire',types:['flutter'],html:'.github/util/flutter/firebase-wizard/firebase-wizard.html',doc:'docs/FLUTTER-CICD-OVERVIEW.md' },
+    { name:window.MSG['devops.wizard.projectsSync.name'],desc:window.MSG['devops.wizard.projectsSync.desc'],icon:'fa-diagram-project',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'],html:'.github/util/common/projects-sync-wizard/projects-sync-wizard.html',doc:'docs/GITHUB-PROJECTS-SYNC-WIZARD.md' },
+    { name:window.MSG['devops.wizard.secretsConverter.name'],desc:window.MSG['devops.wizard.secretsConverter.desc'],icon:'fa-key',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'],html:'.github/util/common/github-secrets-converter/secrets-converter.html',doc:'docs/TROUBLESHOOTING.md' },
+    { name:window.MSG['devops.wizard.syncWorkerSource.name'],desc:window.MSG['devops.wizard.syncWorkerSource.desc'],icon:'fa-cloud',types:['spring','flutter','react','next','node','python','react-native','react-native-expo','basic'],html:'',doc:'.github/util/common/github-projects-sync-worker/GITHUB_PROJECTS_SYNC_WORKER_GUIDE.md' }
   ];
   const commonWorkflows = [
-    { name:'버전 자동 관리',wf:'PROJECT-COMMON-VERSION-CONTROL',desc:'main 푸시 시 patch 버전 증가 + 태그' },
-    { name:'README 버전 동기화',wf:'PROJECT-COMMON-README-VERSION-UPDATE',desc:'README 버전 섹션 자동 갱신' },
-    { name:'AI 체인지로그',wf:'PROJECT-COMMON-AUTO-CHANGELOG-CONTROL',desc:'CodeRabbit 기반 CHANGELOG 자동 생성/머지' },
-    { name:'QA 이슈 봇',wf:'PROJECT-COMMON-QA-ISSUE-CREATION-BOT',desc:'@suh-lab create qa 댓글로 QA 이슈 생성' },
-    { name:'Issue Helper (Module)',wf:'PROJECT-COMMON-SUH-ISSUE-HELPER-MODULE',desc:'브랜치명/커밋 메시지 자동 제안' },
-    { name:'Issue Helper (API)',wf:'PROJECT-COMMON-SUH-ISSUE-HELPER-API',desc:'lab 사이트 API 연동 이슈 헬퍼' },
-    { name:'이슈 라벨 동기화',wf:'PROJECT-COMMON-SYNC-ISSUE-LABELS',desc:'표준 라벨 세트 자동 동기화' },
-    { name:'Projects 동기화 매니저',wf:'PROJECT-COMMON-PROJECTS-SYNC-MANAGER',desc:'라벨↔Projects 상태 동기화' },
-    { name:'템플릿 Util 버전 동기화',wf:'PROJECT-COMMON-TEMPLATE-UTIL-VERSION-SYNC',desc:'util 모듈 버전 자동 동기화' }
+    { name:window.MSG['devops.cwf.versionControl.name'],wf:'PROJECT-COMMON-VERSION-CONTROL',desc:window.MSG['devops.cwf.versionControl.desc'] },
+    { name:window.MSG['devops.cwf.readmeVersion.name'],wf:'PROJECT-COMMON-README-VERSION-UPDATE',desc:window.MSG['devops.cwf.readmeVersion.desc'] },
+    { name:window.MSG['devops.cwf.aiChangelog.name'],wf:'PROJECT-COMMON-AUTO-CHANGELOG-CONTROL',desc:window.MSG['devops.cwf.aiChangelog.desc'] },
+    { name:window.MSG['devops.cwf.qaIssueBot.name'],wf:'PROJECT-COMMON-QA-ISSUE-CREATION-BOT',desc:window.MSG['devops.cwf.qaIssueBot.desc'] },
+    { name:window.MSG['devops.cwf.issueHelperModule.name'],wf:'PROJECT-COMMON-SUH-ISSUE-HELPER-MODULE',desc:window.MSG['devops.cwf.issueHelperModule.desc'] },
+    { name:window.MSG['devops.cwf.issueHelperApi.name'],wf:'PROJECT-COMMON-SUH-ISSUE-HELPER-API',desc:window.MSG['devops.cwf.issueHelperApi.desc'] },
+    { name:window.MSG['devops.cwf.syncLabels.name'],wf:'PROJECT-COMMON-SYNC-ISSUE-LABELS',desc:window.MSG['devops.cwf.syncLabels.desc'] },
+    { name:window.MSG['devops.cwf.projectsSyncManager.name'],wf:'PROJECT-COMMON-PROJECTS-SYNC-MANAGER',desc:window.MSG['devops.cwf.projectsSyncManager.desc'] },
+    { name:window.MSG['devops.cwf.templateUtilSync.name'],wf:'PROJECT-COMMON-TEMPLATE-UTIL-VERSION-SYNC',desc:window.MSG['devops.cwf.templateUtilSync.desc'] }
   ];
   const typeWorkflows = [
-    { name:'Spring Synology 무중단 (Nginx)',wf:'PROJECT-SPRING-SYNOLOGY-NONSTOP-NGINX-CICD',desc:'Nginx 기반 Blue-Green 무중단 배포',types:['spring'] },
-    { name:'Spring Synology 무중단 (Traefik)',wf:'PROJECT-SPRING-SYNOLOGY-NONSTOP-TRAEFIK-CICD',desc:'Traefik 기반 Blue-Green 무중단 배포',types:['spring'] },
-    { name:'Spring Synology Simple',wf:'PROJECT-SPRING-SYNOLOGY-SIMPLE-CICD',desc:'Synology 단순 배포',types:['spring'] },
-    { name:'Spring PR Preview',wf:'PROJECT-SPRING-SYNOLOGY-PR-PREVIEW',desc:'@suh-lab server 명령으로 임시 서버 배포',types:['spring'] },
-    { name:'Spring Nexus CI',wf:'PROJECT-SPRING-NEXUS-CI',desc:'Nexus 빌드 검증',types:['spring'] },
-    { name:'Spring Nexus Publish',wf:'PROJECT-SPRING-NEXUS-PUBLISH',desc:'Nexus 아티팩트 배포',types:['spring'] },
-    { name:'Spring GitHub Packages',wf:'PROJECT-SPRING-GITHUB-PACKAGES-PUBLISH',desc:'GitHub Packages 라이브러리 배포',types:['spring'] },
-    { name:'Flutter iOS TestFlight',wf:'PROJECT-FLUTTER-IOS-TESTFLIGHT',desc:'TestFlight 자동 업로드',types:['flutter'] },
-    { name:'Flutter iOS Test TestFlight',wf:'PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT',desc:'테스트 빌드 TestFlight 업로드',types:['flutter'] },
-    { name:'Flutter Play Store',wf:'PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD',desc:'Play Store 내부 테스트 배포',types:['flutter'] },
-    { name:'Flutter Firebase',wf:'PROJECT-FLUTTER-ANDROID-FIREBASE-CICD',desc:'Firebase App Distribution 배포',types:['flutter'] },
-    { name:'Flutter Android Test APK',wf:'PROJECT-FLUTTER-ANDROID-TEST-APK',desc:'테스트 APK 빌드/아티팩트',types:['flutter'] },
-    { name:'Flutter Android Synology',wf:'PROJECT-FLUTTER-ANDROID-SYNOLOGY-CICD',desc:'Synology APK 배포',types:['flutter'] },
-    { name:'Flutter App Build Trigger',wf:'PROJECT-FLUTTER-SUH-LAB-APP-BUILD-TRIGGER',desc:'@suh-lab build app 댓글 트리거',types:['flutter'] },
-    { name:'Flutter CI',wf:'PROJECT-FLUTTER-CI',desc:'PR 빌드 검증',types:['flutter'] },
-    { name:'React CI',wf:'PROJECT-REACT-CI',desc:'PR 빌드 검증',types:['react'] },
-    { name:'React CICD',wf:'PROJECT-REACT-CICD',desc:'Docker 빌드/배포',types:['react'] },
-    { name:'Next.js CI',wf:'PROJECT-NEXT-CI',desc:'PR 빌드 검증',types:['next'] },
-    { name:'Next.js CICD',wf:'PROJECT-NEXT-CICD',desc:'Docker 빌드/배포',types:['next'] },
-    { name:'Python CI',wf:'PROJECT-PYTHON-CI',desc:'PR 빌드 검증',types:['python'] },
-    { name:'Python Synology CICD',wf:'PROJECT-PYTHON-SYNOLOGY-CICD',desc:'Synology Docker 배포',types:['python'] },
-    { name:'Python PR Preview',wf:'PROJECT-PYTHON-SYNOLOGY-PR-PREVIEW',desc:'@suh-lab server 명령으로 임시 서버 배포',types:['python'] }
+    { name:window.MSG['devops.twf.springNonstopNginx.name'],wf:'PROJECT-SPRING-SYNOLOGY-NONSTOP-NGINX-CICD',desc:window.MSG['devops.twf.springNonstopNginx.desc'],types:['spring'] },
+    { name:window.MSG['devops.twf.springNonstopTraefik.name'],wf:'PROJECT-SPRING-SYNOLOGY-NONSTOP-TRAEFIK-CICD',desc:window.MSG['devops.twf.springNonstopTraefik.desc'],types:['spring'] },
+    { name:'Spring Synology Simple',wf:'PROJECT-SPRING-SYNOLOGY-SIMPLE-CICD',desc:window.MSG['devops.twf.springSimple.desc'],types:['spring'] },
+    { name:'Spring PR Preview',wf:'PROJECT-SPRING-SYNOLOGY-PR-PREVIEW',desc:window.MSG['devops.twf.springPrPreview.desc'],types:['spring'] },
+    { name:'Spring Nexus CI',wf:'PROJECT-SPRING-NEXUS-CI',desc:window.MSG['devops.twf.springNexusCi.desc'],types:['spring'] },
+    { name:'Spring Nexus Publish',wf:'PROJECT-SPRING-NEXUS-PUBLISH',desc:window.MSG['devops.twf.springNexusPublish.desc'],types:['spring'] },
+    { name:'Spring GitHub Packages',wf:'PROJECT-SPRING-GITHUB-PACKAGES-PUBLISH',desc:window.MSG['devops.twf.springGithubPackages.desc'],types:['spring'] },
+    { name:'Flutter iOS TestFlight',wf:'PROJECT-FLUTTER-IOS-TESTFLIGHT',desc:window.MSG['devops.twf.flutterIosTestflight.desc'],types:['flutter'] },
+    { name:'Flutter iOS Test TestFlight',wf:'PROJECT-FLUTTER-IOS-TEST-TESTFLIGHT',desc:window.MSG['devops.twf.flutterIosTestTestflight.desc'],types:['flutter'] },
+    { name:'Flutter Play Store',wf:'PROJECT-FLUTTER-ANDROID-PLAYSTORE-CICD',desc:window.MSG['devops.twf.flutterPlaystore.desc'],types:['flutter'] },
+    { name:'Flutter Firebase',wf:'PROJECT-FLUTTER-ANDROID-FIREBASE-CICD',desc:window.MSG['devops.twf.flutterFirebase.desc'],types:['flutter'] },
+    { name:'Flutter Android Test APK',wf:'PROJECT-FLUTTER-ANDROID-TEST-APK',desc:window.MSG['devops.twf.flutterAndroidTestApk.desc'],types:['flutter'] },
+    { name:'Flutter Android Synology',wf:'PROJECT-FLUTTER-ANDROID-SYNOLOGY-CICD',desc:window.MSG['devops.twf.flutterAndroidSynology.desc'],types:['flutter'] },
+    { name:'Flutter App Build Trigger',wf:'PROJECT-FLUTTER-SUH-LAB-APP-BUILD-TRIGGER',desc:window.MSG['devops.twf.flutterAppBuildTrigger.desc'],types:['flutter'] },
+    { name:'Flutter CI',wf:'PROJECT-FLUTTER-CI',desc:window.MSG['devops.twf.flutterCi.desc'],types:['flutter'] },
+    { name:'React CI',wf:'PROJECT-REACT-CI',desc:window.MSG['devops.twf.reactCi.desc'],types:['react'] },
+    { name:'React CICD',wf:'PROJECT-REACT-CICD',desc:window.MSG['devops.twf.reactCicd.desc'],types:['react'] },
+    { name:'Next.js CI',wf:'PROJECT-NEXT-CI',desc:window.MSG['devops.twf.nextCi.desc'],types:['next'] },
+    { name:'Next.js CICD',wf:'PROJECT-NEXT-CICD',desc:window.MSG['devops.twf.nextCicd.desc'],types:['next'] },
+    { name:'Python CI',wf:'PROJECT-PYTHON-CI',desc:window.MSG['devops.twf.pythonCi.desc'],types:['python'] },
+    { name:'Python Synology CICD',wf:'PROJECT-PYTHON-SYNOLOGY-CICD',desc:window.MSG['devops.twf.pythonSynologyCicd.desc'],types:['python'] },
+    { name:'Python PR Preview',wf:'PROJECT-PYTHON-SYNOLOGY-PR-PREVIEW',desc:window.MSG['devops.twf.pythonPrPreview.desc'],types:['python'] }
   ];
   const skills = [
-    {cmd:'analyze',desc:'코드 분석 (구현 없이 분석만)'},{cmd:'review',desc:'코드 리뷰 (버그/보안/개선점)'},{cmd:'implement',desc:'기능 구현 (코드 스타일 자동 감지)'},
-    {cmd:'plan',desc:'구현 계획 수립'},{cmd:'test',desc:'테스트 코드 생성'},{cmd:'refactor',desc:'리팩토링 적용'},{cmd:'refactor-analyze',desc:'리팩토링 분석 (Plan only)'},
-    {cmd:'troubleshoot',desc:'체계적 디버깅'},{cmd:'document',desc:'문서화'},{cmd:'report',desc:'구현 보고서 생성'},{cmd:'issue',desc:'GitHub 이슈 초안 작성'},
-    {cmd:'build',desc:'빌드 자동화'},{cmd:'design',desc:'시스템 설계 + 구현'},{cmd:'design-analyze',desc:'설계 분석 (Plan only)'},{cmd:'figma',desc:'Figma → 반응형 코드 변환'},
-    {cmd:'ppt',desc:'기술 발표 자료 작성'},{cmd:'testcase',desc:'QA 테스트케이스 생성'},{cmd:'suh-spring-test',desc:'Spring 테스트 코드 생성'},
-    {cmd:'init-worktree',desc:'Git worktree 자동 생성'},{cmd:'synology-expose',desc:'Synology 서비스 외부 노출 가이드'}
+    {cmd:'analyze',desc:window.MSG['devops.skill.analyze.desc']},{cmd:'review',desc:window.MSG['devops.skill.review.desc']},{cmd:'implement',desc:window.MSG['devops.skill.implement.desc']},
+    {cmd:'plan',desc:window.MSG['devops.skill.plan.desc']},{cmd:'test',desc:window.MSG['devops.skill.test.desc']},{cmd:'refactor',desc:window.MSG['devops.skill.refactor.desc']},{cmd:'refactor-analyze',desc:window.MSG['devops.skill.refactorAnalyze.desc']},
+    {cmd:'troubleshoot',desc:window.MSG['devops.skill.troubleshoot.desc']},{cmd:'document',desc:window.MSG['devops.skill.document.desc']},{cmd:'report',desc:window.MSG['devops.skill.report.desc']},{cmd:'issue',desc:window.MSG['devops.skill.issue.desc']},
+    {cmd:'build',desc:window.MSG['devops.skill.build.desc']},{cmd:'design',desc:window.MSG['devops.skill.design.desc']},{cmd:'design-analyze',desc:window.MSG['devops.skill.designAnalyze.desc']},{cmd:'figma',desc:window.MSG['devops.skill.figma.desc']},
+    {cmd:'ppt',desc:window.MSG['devops.skill.ppt.desc']},{cmd:'testcase',desc:window.MSG['devops.skill.testcase.desc']},{cmd:'suh-spring-test',desc:window.MSG['devops.skill.suhSpringTest.desc']},
+    {cmd:'init-worktree',desc:window.MSG['devops.skill.initWorktree.desc']},{cmd:'synology-expose',desc:window.MSG['devops.skill.synologyExpose.desc']}
   ];
   const installCommands = {
     claude:'claude plugin marketplace add Cassiiopeia/SUH-DEVOPS-TEMPLATE\nclaude plugin install cassiiopeia@cassiiopeia-marketplace --scope user',
@@ -156,12 +156,12 @@
     windows:'$wc=New-Object Net.WebClient;$wc.Encoding=[Text.Encoding]::UTF8;iex $wc.DownloadString("https://raw.githubusercontent.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/main/template_integrator.ps1")'
   };
   const featureDetails = {
-    version:{title:'버전 자동화',icon:'fa-tag',bgColor:'bg-primary',description:'main 브랜치에 푸시하면 patch 버전이 자동 증가하고 Git 태그가 생성됩니다.',details:['version.yml에서 현재 버전 관리','main 푸시 시 patch 자동 증가 (1.0.0 → 1.0.1)','Git 태그 자동 생성/푸시','deploy PR에 버전 정보 포함'],docLink:REPO_BASE+'docs/VERSION-CONTROL.md'},
-    changelog:{title:'AI 체인지로그',icon:'fa-robot',bgColor:'bg-secondary',description:'CodeRabbit AI가 PR 변경사항을 분석해 CHANGELOG.md를 자동 생성합니다.',details:['CodeRabbit 연동 AI 코드 리뷰','PR 머지 시 CHANGELOG 자동 업데이트','한국어 요약 생성','버전별 변경 이력 정리'],docLink:REPO_BASE+'docs/CHANGELOG-AUTOMATION.md'},
-    preview:{title:'PR Preview',icon:'fa-server',bgColor:'bg-success',description:'Issue/PR 댓글로 임시 서버를 배포하고, 닫으면 자동 삭제합니다.',details:['@suh-lab server build 댓글로 생성','Synology NAS Docker 배포','고유 포트 자동 할당','Issue/PR 닫히면 자동 삭제'],docLink:REPO_BASE+'docs/PR-PREVIEW.md'},
-    issue:{title:'이슈 자동화',icon:'fa-code-branch',bgColor:'bg-warning',description:'이슈 생성 시 브랜치명/커밋 메시지를 제안하고 QA 이슈를 생성합니다.',details:['Issue Helper 브랜치명 생성','커밋 메시지 형식 제안','@suh-lab create qa로 QA 이슈 생성','4종 이슈 템플릿 제공'],docLink:REPO_BASE+'docs/ISSUE-AUTOMATION.md'},
-    flutter:{title:'Flutter CI/CD',icon:'fa-mobile',bgColor:'bg-info',description:'Flutter 앱을 TestFlight/Play Store/Firebase에 자동 배포합니다.',details:['@suh-lab build app으로 iOS+Android 빌드','TestFlight 자동 업로드','Play Store 내부 테스트 배포','Firebase App Distribution / Test APK'],docLink:REPO_BASE+'docs/FLUTTER-CICD-OVERVIEW.md'},
-    synology:{title:'Synology 배포',icon:'fa-hard-drive',bgColor:'bg-accent',description:'Synology NAS에 Docker 기반 무중단 배포를 수행합니다.',details:['deploy PR 머지 시 자동 배포','Docker 이미지 빌드/푸시','Container Manager SSH 연동','Blue-Green 무중단 (Nginx/Traefik)'],docLink:REPO_BASE+'docs/SYNOLOGY-DEPLOYMENT-GUIDE.md'}
+    version:{title:window.MSG['devops.feature.version.title'],icon:'fa-tag',bgColor:'bg-primary',description:window.MSG['devops.feature.version.description'],details:[window.MSG['devops.feature.version.detail1'],window.MSG['devops.feature.version.detail2'],window.MSG['devops.feature.version.detail3'],window.MSG['devops.feature.version.detail4']],docLink:REPO_BASE+'docs/VERSION-CONTROL.md'},
+    changelog:{title:window.MSG['devops.feature.changelog.title'],icon:'fa-robot',bgColor:'bg-secondary',description:window.MSG['devops.feature.changelog.description'],details:[window.MSG['devops.feature.changelog.detail1'],window.MSG['devops.feature.changelog.detail2'],window.MSG['devops.feature.changelog.detail3'],window.MSG['devops.feature.changelog.detail4']],docLink:REPO_BASE+'docs/CHANGELOG-AUTOMATION.md'},
+    preview:{title:'PR Preview',icon:'fa-server',bgColor:'bg-success',description:window.MSG['devops.feature.preview.description'],details:[window.MSG['devops.feature.preview.detail1'],window.MSG['devops.feature.preview.detail2'],window.MSG['devops.feature.preview.detail3'],window.MSG['devops.feature.preview.detail4']],docLink:REPO_BASE+'docs/PR-PREVIEW.md'},
+    issue:{title:window.MSG['devops.feature.issue.title'],icon:'fa-code-branch',bgColor:'bg-warning',description:window.MSG['devops.feature.issue.description'],details:[window.MSG['devops.feature.issue.detail1'],window.MSG['devops.feature.issue.detail2'],window.MSG['devops.feature.issue.detail3'],window.MSG['devops.feature.issue.detail4']],docLink:REPO_BASE+'docs/ISSUE-AUTOMATION.md'},
+    flutter:{title:'Flutter CI/CD',icon:'fa-mobile',bgColor:'bg-info',description:window.MSG['devops.feature.flutter.description'],details:[window.MSG['devops.feature.flutter.detail1'],window.MSG['devops.feature.flutter.detail2'],window.MSG['devops.feature.flutter.detail3'],window.MSG['devops.feature.flutter.detail4']],docLink:REPO_BASE+'docs/FLUTTER-CICD-OVERVIEW.md'},
+    synology:{title:window.MSG['devops.feature.synology.title'],icon:'fa-hard-drive',bgColor:'bg-accent',description:window.MSG['devops.feature.synology.description'],details:[window.MSG['devops.feature.synology.detail1'],window.MSG['devops.feature.synology.detail2'],window.MSG['devops.feature.synology.detail3'],window.MSG['devops.feature.synology.detail4']],docLink:REPO_BASE+'docs/SYNOLOGY-DEPLOYMENT-GUIDE.md'}
   };
 
   const VALID_TABS = ['overview','apply','commands','wizards','workflows','skills','settings'];
@@ -185,9 +185,9 @@
 
   function copyText(text, label) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast((label || '명령어') + '가 복사되었습니다!', 'positive');
+      showToast((label || window.MSG['devops.label.command']) + window.MSG['devops.toast.copied'], 'positive');
     }).catch(() => {
-      showToast('복사에 실패했습니다.', 'negative');
+      showToast(window.MSG['devops.toast.copyFailed'], 'negative');
     });
   }
 
@@ -197,7 +197,7 @@
     ).join('');
     return `
       <label class="form-control mb-4 block">
-        <span class="label-text text-sm text-base-content/70 mb-1 block">프로젝트 타입 선택</span>
+        <span class="label-text text-sm text-base-content/70 mb-1 block">${window.MSG['devops.label.selectProjectType']}</span>
         <select class="select select-bordered select-sm devops-type-select">${options}</select>
       </label>`;
   }
@@ -261,7 +261,7 @@
             </div>
             <p class="text-sm text-base-content/70">${escapeHtml(f.description)}</p>
             <div class="text-right mt-2">
-              <span class="text-xs text-base-content/70">클릭하여 자세히 보기 →</span>
+              <span class="text-xs text-base-content/70">${window.MSG['devops.overview.clickForDetails']}</span>
             </div>
           </div>
         </div>`;
@@ -269,7 +269,7 @@
 
     el.innerHTML = `
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-star text-warning"></i> 핵심 기능
+        <i class="fa-solid fa-star text-warning"></i> ${window.MSG['devops.overview.coreFeatures']}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${cards}</div>`;
   }
@@ -278,15 +278,15 @@
     el.innerHTML = `
       <div class="alert alert-info mb-4">
         <i class="fa-solid fa-circle-info"></i>
-        <span>새 프로젝트는 GitHub에서 <strong>"Use this template"</strong>을 누르면 1분 내 자동 초기화됩니다. 기존 프로젝트는 아래 통합 스크립트를 실행하세요.</span>
+        <span>${window.MSG['devops.apply.newProjectGuide']}</span>
       </div>
       <div class="card bg-base-100 shadow">
         <div class="card-body">
           <h2 class="card-title text-lg mb-2">
-            <i class="fa-solid fa-wand-magic-sparkles text-warning"></i> 기존 프로젝트에 적용하기
+            <i class="fa-solid fa-wand-magic-sparkles text-warning"></i> ${window.MSG['devops.apply.applyToExisting']}
           </h2>
           <fieldset class="mb-4">
-            <legend class="text-sm font-medium text-base-content/70 mb-2">운영체제 선택</legend>
+            <legend class="text-sm font-medium text-base-content/70 mb-2">${window.MSG['devops.apply.selectOs']}</legend>
             <div class="flex gap-4 flex-wrap">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input type="radio" name="applyOs" value="unix" class="radio radio-primary" checked/>
@@ -304,7 +304,7 @@
               <pre data-prefix="$"><code>${escapeHtml(integratorCommand.unix)}</code></pre>
             </div>
             <button class="btn btn-primary btn-sm" id="applyCopyUnix">
-              <i class="fa-regular fa-copy"></i> 복사
+              <i class="fa-regular fa-copy"></i> ${window.MSG['devops.common.copy']}
             </button>
           </div>
 
@@ -313,11 +313,11 @@
               <pre data-prefix="PS>"><code>${escapeHtml(integratorCommand.windows)}</code></pre>
             </div>
             <button class="btn btn-primary btn-sm" id="applyCopyWindows">
-              <i class="fa-regular fa-copy"></i> 복사
+              <i class="fa-regular fa-copy"></i> ${window.MSG['devops.common.copy']}
             </button>
           </div>
 
-          <p class="text-xs text-base-content/70 mt-3">대화형 모드로 프로젝트 타입과 버전을 자동 감지합니다.</p>
+          <p class="text-xs text-base-content/70 mt-3">${window.MSG['devops.apply.autoDetectHint']}</p>
         </div>
       </div>`;
 
@@ -330,8 +330,8 @@
         winBox.classList.toggle('hide', isUnix);
       });
     });
-    el.querySelector('#applyCopyUnix').addEventListener('click', () => copyText(integratorCommand.unix, '명령어'));
-    el.querySelector('#applyCopyWindows').addEventListener('click', () => copyText(integratorCommand.windows, '명령어'));
+    el.querySelector('#applyCopyUnix').addEventListener('click', () => copyText(integratorCommand.unix, window.MSG['devops.label.command']));
+    el.querySelector('#applyCopyWindows').addEventListener('click', () => copyText(integratorCommand.windows, window.MSG['devops.label.command']));
   }
 
   function renderCommands(el) {
@@ -352,18 +352,18 @@
             </button>
           </div>
         </div>`).join('')
-      : `<div class="alert"><span>선택한 프로젝트 타입에는 사용 가능한 댓글 명령어가 없습니다.</span></div>`;
+      : `<div class="alert"><span>${window.MSG['devops.commands.emptyForType']}</span></div>`;
 
     el.innerHTML = `
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-comment text-info"></i> 댓글 명령어
+        <i class="fa-solid fa-comment text-info"></i> ${window.MSG['devops.commands.title']}
         <span class="badge badge-info badge-sm">Issue/PR</span>
       </h2>
       ${typeFilterSelectHtml()}
       <div class="grid grid-cols-1 gap-3">${list}</div>`;
 
     el.querySelectorAll('.devops-copy-cmd').forEach(btn => {
-      btn.addEventListener('click', () => copyText(btn.dataset.cmd, '명령어'));
+      btn.addEventListener('click', () => copyText(btn.dataset.cmd, window.MSG['devops.label.command']));
     });
     bindTypeSelects(el);
   }
@@ -374,7 +374,7 @@
       ? filtered.map(w => {
           const previewLink = w.html
             ? `<a href="${escapeHtml(PREVIEW_BASE + w.html)}" target="_blank" class="btn btn-primary btn-sm">
-                 <i class="fa-solid fa-up-right-from-square"></i> 마법사 열기
+                 <i class="fa-solid fa-up-right-from-square"></i> ${window.MSG['devops.wizards.openWizard']}
                </a>`
             : '';
           return `
@@ -390,17 +390,17 @@
                 <div class="flex flex-wrap gap-2">
                   ${previewLink}
                   <a href="${escapeHtml(REPO_BASE + w.doc)}" target="_blank" class="btn btn-outline btn-sm">
-                    <i class="fa-solid fa-book"></i> 가이드 문서
+                    <i class="fa-solid fa-book"></i> ${window.MSG['devops.wizards.guideDoc']}
                   </a>
                 </div>
               </div>
             </div>`;
         }).join('')
-      : `<div class="alert"><span>선택한 프로젝트 타입에는 사용 가능한 마법사가 없습니다.</span></div>`;
+      : `<div class="alert"><span>${window.MSG['devops.wizards.emptyForType']}</span></div>`;
 
     el.innerHTML = `
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-hat-wizard text-warning"></i> 설정 마법사
+        <i class="fa-solid fa-hat-wizard text-warning"></i> ${window.MSG['devops.wizards.title']}
       </h2>
       ${typeFilterSelectHtml()}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${list}</div>`;
@@ -424,24 +424,24 @@
           <td><code class="text-xs">${escapeHtml(w.wf)}</code></td>
           <td class="text-base-content/70">${escapeHtml(w.desc)}</td>
         </tr>`).join('')
-      : `<tr><td colspan="3" class="text-base-content/70">선택한 프로젝트 타입 전용 워크플로우가 없습니다.</td></tr>`;
+      : `<tr><td colspan="3" class="text-base-content/70">${window.MSG['devops.workflows.emptyForType']}</td></tr>`;
 
     el.innerHTML = `
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-diagram-project text-success"></i> GitHub Actions 워크플로우
+        <i class="fa-solid fa-diagram-project text-success"></i> ${window.MSG['devops.workflows.title']}
       </h2>
       ${typeFilterSelectHtml()}
-      <h3 class="font-bold mb-2 mt-2">공통 워크플로우</h3>
+      <h3 class="font-bold mb-2 mt-2">${window.MSG['devops.workflows.commonHeading']}</h3>
       <div class="overflow-x-auto mb-6">
         <table class="table table-zebra w-full text-sm">
-          <thead><tr><th>이름</th><th>워크플로우 파일</th><th>설명</th></tr></thead>
+          <thead><tr><th>${window.MSG['devops.table.name']}</th><th>${window.MSG['devops.table.workflowFile']}</th><th>${window.MSG['devops.table.description']}</th></tr></thead>
           <tbody>${commonRows}</tbody>
         </table>
       </div>
-      <h3 class="font-bold mb-2">타입별 워크플로우</h3>
+      <h3 class="font-bold mb-2">${window.MSG['devops.workflows.typeHeading']}</h3>
       <div class="overflow-x-auto">
         <table class="table table-zebra w-full text-sm">
-          <thead><tr><th>이름</th><th>워크플로우 파일</th><th>설명</th></tr></thead>
+          <thead><tr><th>${window.MSG['devops.table.name']}</th><th>${window.MSG['devops.table.workflowFile']}</th><th>${window.MSG['devops.table.description']}</th></tr></thead>
           <tbody>${typeRows}</tbody>
         </table>
       </div>`;
@@ -467,7 +467,7 @@
                 <i class="fa-solid ${p.icon} text-base-content/70"></i> ${escapeHtml(p.label)}
               </h3>
               <button class="btn btn-ghost btn-xs devops-copy-install" data-key="${p.key}">
-                <i class="fa-regular fa-copy"></i> 복사
+                <i class="fa-regular fa-copy"></i> ${window.MSG['devops.common.copy']}
               </button>
             </div>
             <div class="mockup-code text-sm">${lines}</div>
@@ -483,37 +483,37 @@
 
     el.innerHTML = `
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-robot text-secondary"></i> AI 스킬
+        <i class="fa-solid fa-robot text-secondary"></i> ${window.MSG['devops.skills.title']}
       </h2>
-      <h3 class="font-bold mb-2">플랫폼별 설치</h3>
+      <h3 class="font-bold mb-2">${window.MSG['devops.skills.platformInstall']}</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">${platformCards}</div>
-      <h3 class="font-bold mb-2">스킬 목록 (20종)</h3>
+      <h3 class="font-bold mb-2">${window.MSG['devops.skills.listHeading']}</h3>
       <div class="overflow-x-auto">
         <table class="table table-zebra w-full text-sm">
-          <thead><tr><th>스킬</th><th>설명</th></tr></thead>
+          <thead><tr><th>${window.MSG['devops.table.skill']}</th><th>${window.MSG['devops.table.description']}</th></tr></thead>
           <tbody>${skillRows}</tbody>
         </table>
       </div>`;
 
     el.querySelectorAll('.devops-copy-install').forEach(btn => {
-      btn.addEventListener('click', () => copyText(installCommands[btn.dataset.key], '설치 명령어'));
+      btn.addEventListener('click', () => copyText(installCommands[btn.dataset.key], window.MSG['devops.label.installCommand']));
     });
   }
 
   function renderSettings(el) {
     el.innerHTML = `
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <i class="fa-solid fa-gear text-base-content"></i> 필수 설정
+        <i class="fa-solid fa-gear text-base-content"></i> ${window.MSG['devops.settings.title']}
       </h2>
       <div class="alert alert-info mb-4">
         <i class="fa-solid fa-circle-info"></i>
-        <span>자동 체인지로그, PR 자동 머지 등을 사용하려면 아래 설정이 필요합니다.</span>
+        <span>${window.MSG['devops.settings.intro']}</span>
       </div>
 
       <div class="card bg-base-100 shadow mb-6">
         <div class="card-body">
           <h3 class="font-bold mb-2">
-            <i class="fa-solid fa-key text-warning"></i> _GITHUB_PAT_TOKEN 등록
+            <i class="fa-solid fa-key text-warning"></i> ${window.MSG['devops.settings.patTokenHeading']}
           </h3>
           <p class="text-sm text-base-content/70 mb-3">
             Repository <strong>Settings → Secrets and variables → Actions → New repository secret</strong>
@@ -528,16 +528,16 @@
       <div class="card bg-base-100 shadow">
         <div class="card-body">
           <h3 class="font-bold mb-2">
-            <i class="fa-solid fa-building text-base-content/70"></i> Organization 설정 (필요 시)
+            <i class="fa-solid fa-building text-base-content/70"></i> ${window.MSG['devops.settings.orgHeading']}
           </h3>
           <div class="alert alert-warning mb-3">
             <i class="fa-solid fa-triangle-exclamation"></i>
-            <span>Organization 레포라면 Actions 권한을 추가로 열어야 PR 자동 생성/머지가 동작합니다.</span>
+            <span>${window.MSG['devops.settings.orgWarning']}</span>
           </div>
           <p class="text-sm text-base-content/70 mb-2">Settings → Actions → General</p>
           <ul class="list-disc list-inside space-y-1 text-sm text-base-content">
-            <li>Allow GitHub Actions to create and approve pull requests 체크</li>
-            <li>Workflow permissions: Read and write permissions 선택</li>
+            <li>${window.MSG['devops.settings.orgCheckPr']}</li>
+            <li>${window.MSG['devops.settings.orgWritePerm']}</li>
           </ul>
         </div>
       </div>`;

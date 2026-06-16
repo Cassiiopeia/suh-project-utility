@@ -10,7 +10,7 @@
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-solid fa-language text-primary"></i>
-      SUH-AI 번역기
+      <span th:text="#{translator.title}">SUH-AI 번역기</span>
     </h2>
   </div>
 
@@ -22,24 +22,24 @@
         <!-- 원본 언어 선택 -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">원본 언어</span>
+            <span class="label-text font-medium" th:text="#{translator.label.sourceLang}">원본 언어</span>
           </label>
           <select id="sourceLanguage" class="select w-full">
-            <option value="AUTO" selected>🌐 언어 감지</option>
-            <option value="KO">🇰🇷 한국어</option>
-            <option value="EN">🇺🇸 영어</option>
-            <option value="JA">🇯🇵 일본어</option>
-            <option value="ZH_CN">🇨🇳 중국어 (간체)</option>
-            <option value="ZH_TW">🇹🇼 중국어 (번체)</option>
-            <option value="ES">🇪🇸 스페인어</option>
-            <option value="FR">🇫🇷 프랑스어</option>
-            <option value="DE">🇩🇪 독일어</option>
-            <option value="RU">🇷🇺 러시아어</option>
-            <option value="PT">🇵🇹 포르투갈어</option>
-            <option value="IT">🇮🇹 이탈리아어</option>
-            <option value="VI">🇻🇳 베트남어</option>
-            <option value="TH">🇹🇭 태국어</option>
-            <option value="ID">🇮🇩 인도네시아어</option>
+            <option value="AUTO" selected th:text="#{translator.lang.auto}">🌐 언어 감지</option>
+            <option value="KO" th:text="#{translator.lang.ko}">🇰🇷 한국어</option>
+            <option value="EN" th:text="#{translator.lang.en}">🇺🇸 영어</option>
+            <option value="JA" th:text="#{translator.lang.ja}">🇯🇵 일본어</option>
+            <option value="ZH_CN" th:text="#{translator.lang.zhCn}">🇨🇳 중국어 (간체)</option>
+            <option value="ZH_TW" th:text="#{translator.lang.zhTw}">🇹🇼 중국어 (번체)</option>
+            <option value="ES" th:text="#{translator.lang.es}">🇪🇸 스페인어</option>
+            <option value="FR" th:text="#{translator.lang.fr}">🇫🇷 프랑스어</option>
+            <option value="DE" th:text="#{translator.lang.de}">🇩🇪 독일어</option>
+            <option value="RU" th:text="#{translator.lang.ru}">🇷🇺 러시아어</option>
+            <option value="PT" th:text="#{translator.lang.pt}">🇵🇹 포르투갈어</option>
+            <option value="IT" th:text="#{translator.lang.it}">🇮🇹 이탈리아어</option>
+            <option value="VI" th:text="#{translator.lang.vi}">🇻🇳 베트남어</option>
+            <option value="TH" th:text="#{translator.lang.th}">🇹🇭 태국어</option>
+            <option value="ID" th:text="#{translator.lang.id}">🇮🇩 인도네시아어</option>
           </select>
         </div>
 
@@ -48,10 +48,11 @@
           <textarea
             id="sourceText"
             class="textarea h-48 resize-none"
+            th:placeholder="#{translator.placeholder.input}"
             placeholder="번역할 텍스트를 입력하세요..."></textarea>
           <label class="label">
             <span class="label-text-alt text-base-content/70">
-              <span id="charCount">0</span> 글자
+              <span id="charCount">0</span> <span th:text="#{translator.label.chars}">글자</span>
             </span>
           </label>
         </div>
@@ -64,23 +65,23 @@
         <!-- 대상 언어 선택 -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">대상 언어</span>
+            <span class="label-text font-medium" th:text="#{translator.label.targetLang}">대상 언어</span>
           </label>
           <select id="targetLanguage" class="select w-full">
-            <option value="KO" selected>🇰🇷 한국어</option>
-            <option value="EN">🇺🇸 영어</option>
-            <option value="JA">🇯🇵 일본어</option>
-            <option value="ZH_CN">🇨🇳 중국어 (간체)</option>
-            <option value="ZH_TW">🇹🇼 중국어 (번체)</option>
-            <option value="ES">🇪🇸 스페인어</option>
-            <option value="FR">🇫🇷 프랑스어</option>
-            <option value="DE">🇩🇪 독일어</option>
-            <option value="RU">🇷🇺 러시아어</option>
-            <option value="PT">🇵🇹 포르투갈어</option>
-            <option value="IT">🇮🇹 이탈리아어</option>
-            <option value="VI">🇻🇳 베트남어</option>
-            <option value="TH">🇹🇭 태국어</option>
-            <option value="ID">🇮🇩 인도네시아어</option>
+            <option value="KO" selected th:text="#{translator.lang.ko}">🇰🇷 한국어</option>
+            <option value="EN" th:text="#{translator.lang.en}">🇺🇸 영어</option>
+            <option value="JA" th:text="#{translator.lang.ja}">🇯🇵 일본어</option>
+            <option value="ZH_CN" th:text="#{translator.lang.zhCn}">🇨🇳 중국어 (간체)</option>
+            <option value="ZH_TW" th:text="#{translator.lang.zhTw}">🇹🇼 중국어 (번체)</option>
+            <option value="ES" th:text="#{translator.lang.es}">🇪🇸 스페인어</option>
+            <option value="FR" th:text="#{translator.lang.fr}">🇫🇷 프랑스어</option>
+            <option value="DE" th:text="#{translator.lang.de}">🇩🇪 독일어</option>
+            <option value="RU" th:text="#{translator.lang.ru}">🇷🇺 러시아어</option>
+            <option value="PT" th:text="#{translator.lang.pt}">🇵🇹 포르투갈어</option>
+            <option value="IT" th:text="#{translator.lang.it}">🇮🇹 이탈리아어</option>
+            <option value="VI" th:text="#{translator.lang.vi}">🇻🇳 베트남어</option>
+            <option value="TH" th:text="#{translator.lang.th}">🇹🇭 태국어</option>
+            <option value="ID" th:text="#{translator.lang.id}">🇮🇩 인도네시아어</option>
           </select>
         </div>
 
@@ -97,11 +98,11 @@
   <div class="flex justify-center gap-4 mt-6">
     <button id="translateBtn" class="btn btn-primary">
       <i class="fa-solid fa-language"></i>
-      번역하기
+      <span th:text="#{translator.button.translate}">번역하기</span>
     </button>
     <button id="copyBtn" class="btn btn-outline">
       <i class="fa-solid fa-copy"></i>
-      복사하기
+      <span th:text="#{translator.button.copy}">복사하기</span>
     </button>
   </div>
 </div>
@@ -167,7 +168,7 @@
     window.elements.targetText.innerHTML = `
       <div class="flex items-center justify-center h-full">
         <span class="loading loading-spinner loading-md text-primary"></span>
-        <span class="ml-2 text-base-content/70">번역 중...</span>
+        <span class="ml-2 text-base-content/70">${window.MSG['translator.js.translating']}</span>
       </div>
     `;
     var formData = new FormData();
@@ -183,24 +184,24 @@
       processData: false,
       contentType: false,
       success: function(response) {
-        window.elements.targetText.textContent = response.translatedText || '번역을 사용할 수 없습니다';
+        window.elements.targetText.textContent = response.translatedText || window.MSG['translator.js.unavailable'];
       },
       error: function(xhr, status, error) {
         console.error('Translation error:', error);
-        window.elements.targetText.textContent = '오류: 번역을 완료할 수 없습니다.';
-        showToast("번역 중 오류가 발생했습니다.", "negative");
+        window.elements.targetText.textContent = window.MSG['translator.js.errorResult'];
+        showToast(window.MSG['translator.js.translateError'], "negative");
       }
     });
   }
 
   function copyTranslatedText() {
     const text = window.elements.targetText.textContent;
-    if (!text || text.includes('번역을 사용할 수 없습니다') || text.includes('오류:')) {
-      showToast("복사할 번역 텍스트가 없습니다.", "warning");
+    if (!text || text.includes(window.MSG['translator.js.unavailable']) || text.includes(window.MSG['translator.js.errorPrefix'])) {
+      showToast(window.MSG['translator.js.nothingToCopy'], "warning");
       return;
     }
     navigator.clipboard.writeText(text).then(function() {
-      showToast("번역 결과가 클립보드에 복사되었습니다.", "positive");
+      showToast(window.MSG['translator.js.copySuccess'], "positive");
     }).catch(function() {
       // 폴백 방식
       const textarea = document.createElement('textarea');
@@ -209,12 +210,12 @@
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      showToast("번역 결과가 클립보드에 복사되었습니다.", "positive");
+      showToast(window.MSG['translator.js.copySuccess'], "positive");
     });
   }
 
   function updateTranslationPlaceholder() {
-    window.elements.targetText.innerHTML = '<span class="text-base-content/60">번역 결과가 여기에 표시됩니다...</span>';
+    window.elements.targetText.innerHTML = '<span class="text-base-content/60">' + window.MSG['translator.js.resultPlaceholder'] + '</span>';
   }
 
   function updateCharCount() {

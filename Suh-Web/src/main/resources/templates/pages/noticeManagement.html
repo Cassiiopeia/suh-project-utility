@@ -10,9 +10,9 @@
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
       <i class="fa-solid fa-bullhorn text-primary"></i>
-      공지사항 관리
+      <span th:text="#{notice.title}">공지사항 관리</span>
     </h2>
-    <p class="text-base-content/60 mt-1">대시보드에 표시되는 공지사항을 관리합니다.</p>
+    <p class="text-base-content/60 mt-1" th:text="#{notice.subtitle}">대시보드에 표시되는 공지사항을 관리합니다.</p>
   </div>
 
   <!-- 공지사항 관리 툴바 -->
@@ -21,25 +21,25 @@
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <!-- 검색 영역 -->
         <div class="join w-full lg:w-auto">
-          <input type="text" id="search-keyword" class="input join-item w-full lg:w-64" placeholder="검색어를 입력하세요...">
+          <input type="text" id="search-keyword" class="input join-item w-full lg:w-64" th:placeholder="#{notice.placeholder.search}" placeholder="검색어를 입력하세요...">
           <select class="select join-item" id="search-type">
-            <option value="title">제목</option>
-            <option value="content">내용</option>
+            <option value="title" th:text="#{notice.searchType.title}">제목</option>
+            <option value="content" th:text="#{notice.searchType.content}">내용</option>
           </select>
           <button class="btn btn-primary join-item" id="search-btn">
             <i class="fa-solid fa-search"></i>
-            검색
+            <span th:text="#{notice.btn.search}">검색</span>
           </button>
         </div>
         <!-- 버튼 영역 -->
         <div class="flex gap-2">
           <button class="btn btn-primary" id="create-btn">
             <i class="fa-solid fa-plus"></i>
-            새 공지사항
+            <span th:text="#{notice.btn.create}">새 공지사항</span>
           </button>
           <button class="btn btn-outline" id="refresh-btn">
             <i class="fa-solid fa-rotate"></i>
-            새로고침
+            <span th:text="#{notice.btn.refresh}">새로고침</span>
           </button>
         </div>
       </div>
@@ -55,15 +55,15 @@
       <div id="error-message" class="alert alert-error hidden">
         <i class="fa-solid fa-circle-exclamation"></i>
         <div>
-          <h3 class="font-bold">데이터 로드 실패</h3>
-          <span>공지사항을 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
+          <h3 class="font-bold" th:text="#{notice.error.loadTitle}">데이터 로드 실패</h3>
+          <span th:text="#{notice.error.loadDesc}">공지사항을 불러오는 중 오류가 발생했습니다. 새로고침을 시도해주세요.</span>
         </div>
       </div>
       <div id="empty-message" class="alert alert-info hidden">
         <i class="fa-solid fa-info-circle"></i>
         <div>
-          <h3 class="font-bold">공지사항이 없습니다</h3>
-          <span>새 공지사항을 추가해주세요.</span>
+          <h3 class="font-bold" th:text="#{notice.empty.title}">공지사항이 없습니다</h3>
+          <span th:text="#{notice.empty.desc}">새 공지사항을 추가해주세요.</span>
         </div>
       </div>
       <div id="table-container" class="hidden">
@@ -71,15 +71,15 @@
           <table class="table table-zebra">
             <thead>
               <tr>
-                <th>제목</th>
-                <th>중요</th>
-                <th>활성화</th>
-                <th>작성자</th>
-                <th>게시 시작일</th>
-                <th>게시 종료일</th>
-                <th>조회수</th>
-                <th>작성일</th>
-                <th>관리</th>
+                <th th:text="#{notice.th.title}">제목</th>
+                <th th:text="#{notice.th.important}">중요</th>
+                <th th:text="#{notice.th.active}">활성화</th>
+                <th th:text="#{notice.th.author}">작성자</th>
+                <th th:text="#{notice.th.startDate}">게시 시작일</th>
+                <th th:text="#{notice.th.endDate}">게시 종료일</th>
+                <th th:text="#{notice.th.viewCount}">조회수</th>
+                <th th:text="#{notice.th.createdDate}">작성일</th>
+                <th th:text="#{notice.th.manage}">관리</th>
               </tr>
             </thead>
             <tbody id="notice-table-body">
@@ -99,31 +99,31 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </form>
-      <h3 class="font-bold text-lg mb-4" id="modal-title">공지사항 등록</h3>
+      <h3 class="font-bold text-lg mb-4" id="modal-title" th:text="#{notice.modal.createTitle}">공지사항 등록</h3>
       <form id="notice-form" class="space-y-4">
         <input type="hidden" id="notice-id">
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">제목</span>
+            <span class="label-text font-medium" th:text="#{notice.field.title}">제목</span>
           </label>
-          <input type="text" id="notice-title" class="input w-full" placeholder="제목을 입력하세요">
+          <input type="text" id="notice-title" class="input w-full" th:placeholder="#{notice.placeholder.title}" placeholder="제목을 입력하세요">
         </div>
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">내용</span>
+            <span class="label-text font-medium" th:text="#{notice.field.content}">내용</span>
           </label>
-          <textarea id="notice-content" class="textarea h-40" placeholder="내용을 입력하세요"></textarea>
+          <textarea id="notice-content" class="textarea h-40" th:placeholder="#{notice.placeholder.content}" placeholder="내용을 입력하세요"></textarea>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">게시 시작일</span>
+              <span class="label-text font-medium" th:text="#{notice.th.startDate}">게시 시작일</span>
             </label>
             <input type="datetime-local" id="notice-start-date" class="input w-full">
           </div>
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">게시 종료일</span>
+              <span class="label-text font-medium" th:text="#{notice.th.endDate}">게시 종료일</span>
             </label>
             <input type="datetime-local" id="notice-end-date" class="input w-full">
           </div>
@@ -131,25 +131,25 @@
         <div class="flex flex-wrap gap-6">
           <label class="label cursor-pointer gap-2">
             <input type="checkbox" id="notice-important" class="checkbox checkbox-primary">
-            <span class="label-text">중요 공지</span>
+            <span class="label-text" th:text="#{notice.field.important}">중요 공지</span>
           </label>
           <label class="label cursor-pointer gap-2">
             <input type="checkbox" id="notice-active" class="checkbox checkbox-primary" checked>
-            <span class="label-text">활성화</span>
+            <span class="label-text" th:text="#{notice.status.active}">활성화</span>
           </label>
         </div>
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">작성자</span>
+            <span class="label-text font-medium" th:text="#{notice.th.author}">작성자</span>
           </label>
-          <input type="text" id="notice-author" class="input w-full" placeholder="작성자를 입력하세요">
+          <input type="text" id="notice-author" class="input w-full" th:placeholder="#{notice.placeholder.author}" placeholder="작성자를 입력하세요">
         </div>
       </form>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn btn-ghost">취소</button>
+          <button class="btn btn-ghost" th:text="#{notice.btn.cancel}">취소</button>
         </form>
-        <button class="btn btn-primary" id="save-btn">저장</button>
+        <button class="btn btn-primary" id="save-btn" th:text="#{notice.btn.save}">저장</button>
       </div>
     </div>
     <form method="dialog" class="modal-backdrop">
@@ -172,29 +172,29 @@
         <div class="space-y-2">
           <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-user text-primary"></i>
-            <strong>작성자:</strong>
+            <strong th:text="#{notice.detail.author}">작성자:</strong>
             <span id="detail-author"></span>
           </p>
           <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-calendar text-primary"></i>
-            <strong>작성일:</strong>
+            <strong th:text="#{notice.detail.createdDate}">작성일:</strong>
             <span id="detail-created-date"></span>
           </p>
         </div>
         <div class="space-y-2">
           <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-eye text-primary"></i>
-            <strong>조회수:</strong>
+            <strong th:text="#{notice.detail.viewCount}">조회수:</strong>
             <span id="detail-view-count"></span>
           </p>
           <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-clock text-primary"></i>
-            <strong>게시 기간:</strong>
+            <strong th:text="#{notice.detail.period}">게시 기간:</strong>
             <span id="detail-period"></span>
           </p>
           <p class="flex items-center gap-2 text-base-content/70">
             <i class="fa-solid fa-circle-check text-primary"></i>
-            <strong>상태:</strong>
+            <strong th:text="#{notice.detail.status}">상태:</strong>
             <span id="detail-status"></span>
           </p>
         </div>
@@ -210,7 +210,7 @@
       <!-- 댓글 섹션 -->
       <h4 class="font-bold text-lg flex items-center gap-2 mb-4">
         <i class="fa-solid fa-comments text-primary"></i>
-        댓글
+        <span th:text="#{notice.comment.title}">댓글</span>
       </h4>
 
       <!-- 댓글 목록 -->
@@ -220,39 +220,39 @@
         </div>
         <div id="no-comments-message" class="alert alert-info hidden">
           <i class="fa-solid fa-info-circle"></i>
-          <span>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</span>
+          <span th:text="#{notice.comment.empty}">아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</span>
         </div>
       </div>
 
       <!-- 댓글 작성 폼 -->
       <div class="bg-base-200 rounded-lg p-4">
         <div class="form-control mb-3">
-          <input type="text" id="comment-author" class="input input-sm w-full max-w-xs" placeholder="이름을 입력하세요">
+          <input type="text" id="comment-author" class="input input-sm w-full max-w-xs" th:placeholder="#{notice.placeholder.commentAuthor}" placeholder="이름을 입력하세요">
         </div>
         <div class="form-control mb-3">
-          <textarea id="comment-content" class="textarea" placeholder="댓글을 입력하세요"></textarea>
+          <textarea id="comment-content" class="textarea" th:placeholder="#{notice.placeholder.commentContent}" placeholder="댓글을 입력하세요"></textarea>
         </div>
         <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
           <i class="fa-solid fa-pen"></i>
-          댓글 작성
+          <span th:text="#{notice.comment.submit}">댓글 작성</span>
         </button>
       </div>
 
       <div class="modal-action">
         <button class="btn btn-primary" id="edit-btn">
           <i class="fa-solid fa-pen-to-square"></i>
-          수정
+          <span th:text="#{notice.btn.edit}">수정</span>
         </button>
         <button class="btn btn-error" id="delete-btn">
           <i class="fa-solid fa-trash"></i>
-          삭제
+          <span th:text="#{notice.btn.delete}">삭제</span>
         </button>
         <button class="btn btn-outline" id="toggle-active-btn">
           <i class="fa-solid fa-power-off"></i>
-          활성화/비활성화
+          <span th:text="#{notice.btn.toggleActive}">활성화/비활성화</span>
         </button>
         <form method="dialog">
-          <button class="btn btn-ghost">닫기</button>
+          <button class="btn btn-ghost" th:text="#{notice.btn.close}">닫기</button>
         </form>
       </div>
     </div>
@@ -302,7 +302,7 @@
     // 새 공지사항 버튼 클릭 이벤트
     $('#create-btn').click(function() {
       resetNoticeForm();
-      $('#modal-title').text('공지사항 등록');
+      $('#modal-title').text(window.MSG['notice.modal.createTitle']);
       document.getElementById('notice-modal').showModal();
     });
 
@@ -320,7 +320,7 @@
     // 삭제 버튼 클릭 이벤트
     $('#delete-btn').click(function() {
       const noticeId = $('#detail-title').data('id');
-      if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+      if (confirm(window.MSG['notice.confirm.delete'])) {
         deleteNotice(noticeId);
       }
     });
@@ -358,7 +358,7 @@
     $(document).on('click', '.delete-row-btn', function(e) {
       e.stopPropagation();
       const noticeId = $(this).closest('tr').data('notice-id');
-      if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+      if (confirm(window.MSG['notice.confirm.delete'])) {
         deleteNotice(noticeId);
       }
     });
@@ -465,7 +465,7 @@
           : '<i class="fa-solid fa-times text-error"></i>';
 
         const startDate = notice.startDate ? formatDateTime(notice.startDate) : '-';
-        const endDate = notice.endDate ? formatDateTime(notice.endDate) : '무기한';
+        const endDate = notice.endDate ? formatDateTime(notice.endDate) : window.MSG['notice.unlimited'];
         const createdDate = formatDateTime(notice.createdDate);
 
         html += `
@@ -473,17 +473,17 @@
             <td>${titleHtml}</td>
             <td class="text-center">${importantIcon}</td>
             <td class="text-center">${activeIcon}</td>
-            <td>${escapeHtml(notice.author || '익명')}</td>
+            <td>${escapeHtml(notice.author || window.MSG['notice.anonymous'])}</td>
             <td>${startDate}</td>
             <td>${endDate}</td>
             <td class="text-center">${notice.viewCount || 0}</td>
             <td>${createdDate}</td>
             <td>
               <div class="flex gap-1">
-                <button class="btn btn-xs btn-success edit-row-btn" title="수정">
+                <button class="btn btn-xs btn-success edit-row-btn" title="${window.MSG['notice.btn.edit']}">
                   <i class="fa-solid fa-pen"></i>
                 </button>
-                <button class="btn btn-xs btn-error delete-row-btn" title="삭제">
+                <button class="btn btn-xs btn-error delete-row-btn" title="${window.MSG['notice.btn.delete']}">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
@@ -562,7 +562,7 @@
 
       if (!title || !content) {
         if (typeof showToast === 'function') {
-          showToast('제목과 내용을 입력해주세요.', 'warning');
+          showToast(window.MSG['notice.toast.titleContentRequired'], 'warning');
         }
         return;
       }
@@ -582,13 +582,13 @@
         function(response) {
           if (response) {
             if (typeof showToast === 'function') {
-              showToast(response.message || '공지사항이 저장되었습니다.', 'positive');
+              showToast(response.message || window.MSG['notice.toast.saved'], 'positive');
             }
             document.getElementById('notice-modal').close();
             loadNotices();
           } else {
             if (typeof showToast === 'function') {
-              showToast('저장 실패: 알 수 없는 오류', 'negative');
+              showToast(window.MSG['notice.toast.saveFailed'], 'negative');
             }
           }
         },
@@ -601,22 +601,22 @@
     // 공지사항 상세 정보 표시 함수
     function showNoticeDetail(notice) {
       $('#detail-title').text(notice.title).data('id', notice.noticeId);
-      $('#detail-author').text(notice.author || '익명');
+      $('#detail-author').text(notice.author || window.MSG['notice.anonymous']);
       $('#detail-view-count').text(notice.viewCount || 0);
       $('#detail-created-date').text(formatDateTime(notice.createdDate));
 
       const startDate = notice.startDate ? formatDateTime(notice.startDate) : '-';
-      const endDate = notice.endDate ? formatDateTime(notice.endDate) : '무기한';
+      const endDate = notice.endDate ? formatDateTime(notice.endDate) : window.MSG['notice.unlimited'];
       $('#detail-period').text(startDate + ' ~ ' + endDate);
 
       const statusClass = notice.isActive ? 'badge-success' : 'badge-error';
-      const statusText = notice.isActive ? '활성화' : '비활성화';
+      const statusText = notice.isActive ? window.MSG['notice.status.active'] : window.MSG['notice.status.inactive'];
       $('#detail-status').html(`<span class="badge ${statusClass}">${statusText}</span>`);
 
       $('#detail-content').html(notice.content.replace(/\n/g, '<br>'));
 
       // 버튼 상태 업데이트
-      $('#toggle-active-btn').html(`<i class="fa-solid fa-power-off"></i> ${notice.isActive ? '비활성화' : '활성화'}`);
+      $('#toggle-active-btn').html(`<i class="fa-solid fa-power-off"></i> ${notice.isActive ? window.MSG['notice.status.inactive'] : window.MSG['notice.status.active']}`);
 
       // 댓글 목록 불러오기
       loadComments(notice.noticeId);
@@ -657,12 +657,12 @@
             $('#notice-active').prop('checked', notice.isActive);
             $('#notice-author').val(notice.author);
 
-            $('#modal-title').text('공지사항 수정');
+            $('#modal-title').text(window.MSG['notice.modal.editTitle']);
             document.getElementById('notice-detail-modal').close();
             document.getElementById('notice-modal').showModal();
           } else {
             if (typeof showToast === 'function') {
-              showToast('공지사항 정보를 불러올 수 없습니다.', 'negative');
+              showToast(window.MSG['notice.toast.loadDetailFailed'], 'negative');
             }
           }
         },
@@ -680,13 +680,13 @@
         function(response) {
           if (response) {
             if (typeof showToast === 'function') {
-              showToast(response.message || '공지사항이 삭제되었습니다.', 'positive');
+              showToast(response.message || window.MSG['notice.toast.deleted'], 'positive');
             }
             document.getElementById('notice-detail-modal').close();
             loadNotices();
           } else {
             if (typeof showToast === 'function') {
-              showToast('삭제 실패: 알 수 없는 오류', 'negative');
+              showToast(window.MSG['notice.toast.deleteFailed'], 'negative');
             }
           }
         },
@@ -704,13 +704,13 @@
         function(response) {
           if (response) {
             if (typeof showToast === 'function') {
-              showToast(response.message || '상태가 변경되었습니다.', 'positive');
+              showToast(response.message || window.MSG['notice.toast.statusChanged'], 'positive');
             }
             document.getElementById('notice-detail-modal').close();
             loadNotices();
           } else {
             if (typeof showToast === 'function') {
-              showToast('상태 변경 실패: 알 수 없는 오류', 'negative');
+              showToast(window.MSG['notice.toast.statusChangeFailed'], 'negative');
             }
           }
         },
@@ -758,7 +758,7 @@
 
             $('.delete-comment-btn').click(function() {
               const commentId = $(this).data('id');
-              if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+              if (confirm(window.MSG['notice.confirm.deleteComment'])) {
                 deleteComment(commentId);
               }
             });
@@ -770,7 +770,7 @@
           $('#comments-loading').hide();
           console.error('댓글 로드 오류:', error);
           $('#no-comments-message').removeClass('hidden').addClass('alert-error')
-            .html('<i class="fa-solid fa-circle-exclamation"></i><span>댓글을 불러오는 중 오류가 발생했습니다.</span>');
+            .html(`<i class="fa-solid fa-circle-exclamation"></i><span>${window.MSG['notice.comment.loadError']}</span>`);
         }
       );
     }
@@ -794,7 +794,7 @@
               <div class="mt-2">
                 <button class="btn btn-xs btn-error delete-comment-btn" data-id="${comment.noticeCommentId}">
                   <i class="fa-solid fa-trash"></i>
-                  삭제
+                  ${window.MSG['notice.btn.delete']}
                 </button>
               </div>
             </div>
@@ -806,12 +806,12 @@
     // 댓글 작성 이벤트
     $('#comment-submit').click(function() {
       const noticeId = $('#detail-title').data('id');
-      const authorName = $('#comment-author').val() || '익명';
+      const authorName = $('#comment-author').val() || window.MSG['notice.anonymous'];
       const content = $('#comment-content').val();
 
       if (!content) {
         if (typeof showToast === 'function') {
-          showToast('댓글 내용을 입력해주세요.', 'warning');
+          showToast(window.MSG['notice.toast.commentRequired'], 'warning');
         }
         return;
       }
@@ -829,7 +829,7 @@
             loadComments(noticeId);
           } else {
             if (typeof showToast === 'function') {
-              showToast('댓글 등록 실패', 'negative');
+              showToast(window.MSG['notice.toast.commentCreateFailed'], 'negative');
             }
           }
         },
@@ -851,7 +851,7 @@
             loadComments(noticeId);
           } else {
             if (typeof showToast === 'function') {
-              showToast('댓글 삭제 실패', 'negative');
+              showToast(window.MSG['notice.toast.commentDeleteFailed'], 'negative');
             }
           }
         },
