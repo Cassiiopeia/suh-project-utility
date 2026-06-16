@@ -116,13 +116,10 @@ public class ChatbotService {
         List<VectorSearchResult> searchResults = new ArrayList<>();
         if (Boolean.TRUE.equals(intent.getNeedsRagSearch())) {
             log.info("[Agent Step 2/3] RAG 검색 시작");
-            int topK = request.getTopK() != null ? request.getTopK() : chatbotProperties.getAgent().getRag().getTopK();
-            float minScore = request.getMinScore() != null ? request.getMinScore() : chatbotProperties.getAgent().getRag().getMinScore();
+            int topK = resolveTopK(request.getTopK());
+            float minScore = resolveMinScore(request.getMinScore());
 
-            // 검색 쿼리는 원본 메시지 또는 요약 사용
-            String searchQuery = intent.getSummary() != null && !intent.getSummary().isEmpty()
-                ? intent.getSummary()
-                : request.getMessage();
+            String searchQuery = getSearchQuery(intent, request.getMessage());
 
             searchResults = searchRelevantDocuments(searchQuery, topK, minScore);
             log.info("[Agent Step 2/3] RAG 검색 완료 - 결과 수: {}, 쿼리: {}", searchResults.size(), searchQuery);
@@ -230,8 +227,8 @@ public class ChatbotService {
                 sendThinkingEvent(thinkingCallback, 2, 3, "in_progress", "관련 문서 검색 중", "벡터 임베딩 생성 및 검색 중...", searchQuery);
                 log.info("[Agent Step 2/3] RAG 검색 시작 - 쿼리: {}", searchQuery);
 
-                int actualTopK = topK > 0 ? topK : chatbotProperties.getAgent().getRag().getTopK();
-                float actualMinScore = minScore > 0 ? minScore : chatbotProperties.getAgent().getRag().getMinScore();
+                int actualTopK = resolveTopK(topK > 0 ? topK : null);
+                float actualMinScore = resolveMinScore(minScore > 0 ? minScore : null);
 
                 searchResults = searchRelevantDocuments(searchQuery, actualTopK, actualMinScore);
 
@@ -345,16 +342,43 @@ public class ChatbotService {
     }
 
     /**
-     * 검색 쿼리 결정: searchQuery > summary > 원본 메시지
+     * 검색 쿼리 결정: 사용자 원본 질문을 사용한다.
+     *
+     * <p>의도 분류 LLM이 생성한 searchQuery로 원본 질문을 치환하면, 작은 모델이 질문을 잘못
+     * 해석할 때 사용자 의도가 검색에서 사라진다. 벡터 검색은 원본 질문 임베딩으로 수행한다.</p>
      */
     private String getSearchQuery(IntentClassificationDto intent, String originalMessage) {
-        if (intent.getSearchQuery() != null && !intent.getSearchQuery().isEmpty()) {
-            return intent.getSearchQuery();
-        }
-        if (intent.getSummary() != null && !intent.getSummary().isEmpty()) {
-            return intent.getSummary();
-        }
         return originalMessage;
+    }
+
+    /**
+     * ServerOption 값을 int로 조회. 파싱 실패 시 ChatbotProperties 기본값으로 폴백.
+     */
+    private int resolveTopK(Integer requestedTopK) {
+        if (requestedTopK != null && requestedTopK > 0) {
+            return requestedTopK;
+        }
+        try {
+            return Integer.parseInt(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RAG_TOP_K).trim());
+        } catch (Exception e) {
+            log.warn("CHATBOT_RAG_TOP_K 파싱 실패, 기본값 사용: {}", e.getMessage());
+            return chatbotProperties.getAgent().getRag().getTopK();
+        }
+    }
+
+    /**
+     * ServerOption 값을 float로 조회. 파싱 실패 시 ChatbotProperties 기본값으로 폴백.
+     */
+    private float resolveMinScore(Float requestedMinScore) {
+        if (requestedMinScore != null && requestedMinScore > 0) {
+            return requestedMinScore;
+        }
+        try {
+            return Float.parseFloat(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RAG_MIN_SCORE).trim());
+        } catch (Exception e) {
+            log.warn("CHATBOT_RAG_MIN_SCORE 파싱 실패, 기본값 사용: {}", e.getMessage());
+            return chatbotProperties.getAgent().getRag().getMinScore();
+        }
     }
 
     /**
