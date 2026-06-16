@@ -42,6 +42,17 @@ jobs:
           mkdir -p Suh-Web/src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" > Suh-Web/src/main/resources/application.yml
 
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Tailwind CSS 빌드 (DaisyUI 정적 생성)
+        run: |
+          cd Suh-Web/frontend
+          npm ci
+          npm run build:css
+
       - name: Build with Gradle
         run: ./gradlew clean build -x test -Dspring.profiles.active=prod
 

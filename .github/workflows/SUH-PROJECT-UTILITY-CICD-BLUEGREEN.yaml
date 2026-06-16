@@ -154,6 +154,17 @@ jobs:
       # ⚠️ [영역 2 끝]
       # =================================================================
 
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Tailwind CSS 빌드 (DaisyUI 정적 생성)
+        run: |
+          cd Suh-Web/frontend
+          npm ci
+          npm run build:css
+
       - name: Gradle 빌드
         run: ${{ env.GRADLE_BUILD_CMD }}
 

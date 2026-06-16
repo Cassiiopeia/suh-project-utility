@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@source inline("badge-{primary,secondary,info,success,warning,error,ghost,neutral}");
+@source inline("btn-{primary,secondary,info,success,warning,error,ghost,outline,neutral}");
+@source inline("bg-{primary,secondary,info,success,warning,error,neutral,accent}");
+@source inline("alert-{info,success,warning,error}");

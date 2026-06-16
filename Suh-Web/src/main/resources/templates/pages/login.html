@@ -12,7 +12,7 @@
     <div class="card-body">
       <!-- 타이핑 효과 텍스트 -->
       <div class="text-center mb-2">
-        <span id="typing-text" class="text-lg font-semibold text-gray-700"></span>
+        <span id="typing-text" class="text-lg font-semibold text-base-content"></span>
         <span id="typing-cursor" class="typing-cursor">|</span>
       </div>
 
@@ -68,14 +68,14 @@
             <input type="password" id="passwordInput" name="password" placeholder="Enter your password"
                    class="input w-full pr-12 validator" required />
             <span id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer hover:opacity-70 z-20">
-              <i class="fa-solid fa-eye text-gray-400" id="eyeIcon"></i>
+              <i class="fa-solid fa-eye text-base-content/60" id="eyeIcon"></i>
             </span>
           </div>
           <p class="validator-hint text-error text-xs mt-1">Password is required</p>
         </div>
 
         <!-- 에러 메시지 (로그인 실패 시 표시) -->
-        <div th:if="${param.error}" class="flex items-center gap-2 p-3 rounded-lg border border-red-300 bg-red-50 text-red-600 text-sm">
+        <div th:if="${param.error}" class="flex items-center gap-2 p-3 rounded-lg border border-error bg-error/10 text-error text-sm">
           <i class="fa-solid fa-circle-exclamation"></i>
           <span>Invalid username or password.</span>
         </div>

@@ -151,7 +151,7 @@ function initTheme() {
   if (isDark) {
     document.documentElement.setAttribute('data-theme', 'dark');
   } else {
-    document.documentElement.removeAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', 'light');
   }
 
   // 모든 테마 토글 체크박스 동기화
@@ -169,7 +169,7 @@ function initTheme() {
       if (this.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
       } else {
-        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.setAttribute('data-theme', 'light');
       }
 
       // 다른 토글 체크박스들도 동기화

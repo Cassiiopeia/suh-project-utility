@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='번역기-SAECHAN-LAB')}"></head>
-<body class="translator-page bg-gray-50">
+<body class="translator-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- 페이지 헤더 -->
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fa-solid fa-language text-blue-500"></i>
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="fa-solid fa-language text-primary"></i>
       SUH-AI 번역기
     </h2>
   </div>
@@ -17,7 +17,7 @@
   <!-- 번역 영역 -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
     <!-- 원본 텍스트 영역 -->
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-base-300">
       <div class="card-body">
         <!-- 원본 언어 선택 -->
         <div class="form-control">
@@ -50,7 +50,7 @@
             class="textarea h-48 resize-none"
             placeholder="번역할 텍스트를 입력하세요..."></textarea>
           <label class="label">
-            <span class="label-text-alt text-gray-500">
+            <span class="label-text-alt text-base-content/70">
               <span id="charCount">0</span> 글자
             </span>
           </label>
@@ -59,7 +59,7 @@
     </div>
 
     <!-- 번역 결과 영역 -->
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-base-300">
       <div class="card-body">
         <!-- 대상 언어 선택 -->
         <div class="form-control">
@@ -86,7 +86,7 @@
 
         <!-- 번역 결과 -->
         <div class="form-control mt-4">
-          <div id="targetText" class="bg-gray-50 border border-gray-200 rounded-lg p-4 h-48 overflow-y-auto text-gray-700">
+          <div id="targetText" class="bg-base-200 border border-base-300 rounded-lg p-4 h-48 overflow-y-auto text-base-content">
           </div>
         </div>
       </div>
@@ -167,7 +167,7 @@
     window.elements.targetText.innerHTML = `
       <div class="flex items-center justify-center h-full">
         <span class="loading loading-spinner loading-md text-primary"></span>
-        <span class="ml-2 text-gray-500">번역 중...</span>
+        <span class="ml-2 text-base-content/70">번역 중...</span>
       </div>
     `;
     var formData = new FormData();
@@ -214,7 +214,7 @@
   }
 
   function updateTranslationPlaceholder() {
-    window.elements.targetText.innerHTML = '<span class="text-gray-400">번역 결과가 여기에 표시됩니다...</span>';
+    window.elements.targetText.innerHTML = '<span class="text-base-content/60">번역 결과가 여기에 표시됩니다...</span>';
   }
 
   function updateCharCount() {
