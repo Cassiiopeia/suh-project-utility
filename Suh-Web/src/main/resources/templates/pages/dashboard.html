@@ -90,15 +90,15 @@
           About Me
         </h2>
         <div class="prose max-w-none text-base-content/70">
-          <p>
+          <p th:text="#{dashboard.about.p1}">
             Hi! I'm Saechan Suh, a backend developer who enjoys building experimental features and solving problems.
           </p>
-          <p class="mt-3">
+          <p class="mt-3" th:text="#{dashboard.about.p2}">
             I majored in Integrative Bioscience and Biotechnology at Sejong University, gaining a deep understanding of life sciences.
             Later, I dove into the world of development through the Zerobase Bootcamp.
             Currently, I'm working at SOMANSA, contributing to DLP solution development as a Server Module Team Researcher.
           </p>
-          <p class="mt-3">
+          <p class="mt-3" th:text="#{dashboard.about.p3}">
             This site serves as my personal lab — a space to test various technologies and build useful utilities.
           </p>
         </div>
@@ -392,7 +392,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Character-based social platform app</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.romrom.desc}">Character-based social platform app</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -420,7 +420,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">AI-powered SQLD/SQLP exam prep — execute SQL live in Oracle sandbox</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.passql.desc}">AI-powered SQLD/SQLP exam prep — execute SQL live in Oracle sandbox</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -447,7 +447,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Korean syllable survival rhythm game — 15 stages, real-time ranking</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.pickerpicker.desc}">Korean syllable survival rhythm game — 15 stages, real-time ranking</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">React</span>
                 <span class="badge badge-ghost badge-xs">TypeScript</span>
@@ -466,14 +466,14 @@
                   <img src="/images/bagelLogo.jpeg" alt="그녀를 구하라!" class="w-8 h-8 rounded" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-heart text-orange-500 text-xl\'></i>'" />
                 </div>
                 <div>
-                  <h3 class="font-bold text-base-content">그녀를 구하라!</h3>
+                  <h3 class="font-bold text-base-content" th:text="#{dashboard.project.bagel.title}">그녀를 구하라!</h3>
                   <div class="flex gap-1 mt-1">
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">20-hour hackathon visual novel game with time loop story</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.bagel.desc}">20-hour hackathon visual novel game with time loop story</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">React</span>
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
@@ -491,14 +491,14 @@
                   <img src="/images/sejongBalsamicLogo.png" alt="세종말싸미" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-graduation-cap text-blue-500 text-xl\'></i>'" />
                 </div>
                 <div>
-                  <h3 class="font-bold text-base-content">세종말싸미</h3>
+                  <h3 class="font-bold text-base-content" th:text="#{dashboard.project.malsami.title}">세종말싸미</h3>
                   <div class="flex gap-1 mt-1">
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">AI-powered learning platform for Sejong University students</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.malsami.desc}">AI-powered learning platform for Sejong University students</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">React</span>
@@ -516,7 +516,7 @@
                   <img src="/images/tripgetherLogo.png" alt="트립게더" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-map-location-dot text-cyan-500 text-xl\'></i>'" />
                 </div>
                 <div>
-                  <h3 class="font-bold text-base-content">트립게더</h3>
+                  <h3 class="font-bold text-base-content" th:text="#{dashboard.project.tripgether.title}">트립게더</h3>
                   <div class="flex gap-1 mt-1">
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
@@ -524,7 +524,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">AI-powered travel guide app - extracts places from SNS posts via OCR &amp; video analysis</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.tripgether.desc}">AI-powered travel guide app - extracts places from SNS posts via OCR &amp; video analysis</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -546,13 +546,13 @@
                   <img src="/images/SamCoMoLogo.png" alt="동반자 (DBZ)" class="w-10 h-10 object-contain" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-paw text-rose-500 text-xl\'></i>'" />
                 </div>
                 <div>
-                  <h3 class="font-bold text-base-content">동반자 (DBZ)</h3>
+                  <h3 class="font-bold text-base-content" th:text="#{dashboard.project.dbz.title}">동반자 (DBZ)</h3>
                   <div class="flex gap-1 mt-1">
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Lost pet finder app backend service</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.dbz.desc}">Lost pet finder app backend service</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -570,13 +570,13 @@
                   <img src="/images/sulGameWiki.png" alt="술겜위키" class="w-8 h-8" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-dice text-amber-500 text-xl\'></i>'" />
                 </div>
                 <div>
-                  <h3 class="font-bold text-base-content">술겜위키</h3>
+                  <h3 class="font-bold text-base-content" th:text="#{dashboard.project.sulgame.title}">술겜위키</h3>
                   <div class="flex gap-1 mt-1">
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">술자리 게임 백과사전 앱</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.sulgame.desc}">술자리 게임 백과사전 앱</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Android</span>
@@ -600,7 +600,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">항공 사고 검색기</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.planeblackbox.desc}">항공 사고 검색기</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Flutter</span>
@@ -638,7 +638,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Dev utility collection (This site!)</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.suhUtility.desc}">Dev utility collection (This site!)</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Thymeleaf</span>
@@ -659,7 +659,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Local AI server with Ollama, LLM &amp; embedding services</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.suhAiServer.desc}">Local AI server with Ollama, LLM &amp; embedding services</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Ollama</span>
                 <span class="badge badge-ghost badge-xs">Flask</span>
@@ -680,7 +680,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Fully automated GitHub DevOps template with AI-powered workflows</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.devopsTemplate.desc}">Fully automated GitHub DevOps template with AI-powered workflows</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">GitHub Actions</span>
                 <span class="badge badge-ghost badge-xs">CI/CD</span>
@@ -701,7 +701,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Auto-generate branch names and commit messages from issues</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.issueHelper.desc}">Auto-generate branch names and commit messages from issues</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">GitHub API</span>
                 <span class="badge badge-ghost badge-xs">Automation</span>
@@ -721,7 +721,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">OpenAI-powered custom translation service</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.translator.desc}">OpenAI-powered custom translation service</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">OpenAI API</span>
                 <span class="badge badge-ghost badge-xs">Translation</span>
@@ -741,7 +741,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">GitHub contribution graph auto-commit manager</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.grassPlanter.desc}">GitHub contribution graph auto-commit manager</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">GitHub API</span>
                 <span class="badge badge-ghost badge-xs">Scheduler</span>
@@ -761,7 +761,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">Automated bus reservation system</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.somansaBus.desc}">Automated bus reservation system</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Automation</span>
                 <span class="badge badge-ghost badge-xs">Reservation</span>
@@ -782,7 +782,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3">SQL file validation automation tool</p>
+              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.sqlValidator.desc}">SQL file validation automation tool</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">SQL</span>
                 <span class="badge badge-ghost badge-xs">Validation</span>
@@ -800,7 +800,7 @@
           <i class="fa-solid fa-cube text-orange-500"></i>
           Nexus Modules
         </h2>
-        <p class="text-base-content/60 text-sm mb-4">Open-source Java libraries published on my Nexus repository</p>
+        <p class="text-base-content/60 text-sm mb-4" th:text="#{dashboard.nexus.subtitle}">Open-source Java libraries published on my Nexus repository</p>
         <div class="bg-base-200 rounded-lg p-3 mb-6">
           <code class="text-xs text-base-content/70">maven { url "https://nexus.suhsaechan.me/repository/maven-releases/" }</code>
         </div>
@@ -813,7 +813,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">SUH-AIder</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3">AI helper library for Spring Boot</p>
+              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhAider.desc}">AI helper library for Spring Boot</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">OpenAI</span>
                 <span class="badge badge-ghost badge-xs">Claude</span>
@@ -828,7 +828,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">suh-logger</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3">Custom logging utility for Spring</p>
+              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhLogger.desc}">Custom logging utility for Spring</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Logging</span>
                 <span class="badge badge-ghost badge-xs">AOP</span>
@@ -843,7 +843,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">suh-api-log</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3">API request/response logging module</p>
+              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhApiLog.desc}">API request/response logging module</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">API</span>
                 <span class="badge badge-ghost badge-xs">Filter</span>
@@ -858,7 +858,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">suh-random-engine</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3">Weighted random &amp; gacha system</p>
+              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhRandomEngine.desc}">Weighted random &amp; gacha system</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Random</span>
                 <span class="badge badge-ghost badge-xs">Gacha</span>
@@ -873,7 +873,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">sejong-univ-auth</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3">Sejong University portal auth</p>
+              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.sejongAuth.desc}">Sejong University portal auth</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Auth</span>
                 <span class="badge badge-ghost badge-xs">Scraping</span>

@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-16T06:25:14Z",
-    "currentVersion": "2.5.75",
+    "lastUpdated": "2026-06-16T06:45:56Z",
+    "currentVersion": "2.5.76",
     "projectType": "spring",
-    "totalReleases": 75
+    "totalReleases": 76
   },
   "releases": [
+    {
+      "version": "2.5.76",
+      "project_type": "spring",
+      "date": "2026-06-16",
+      "pr_number": 240,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **개선**\n  * 상단·하단·로그인 화면의 About Me 링크를 정리했습니다 (자기소개는 대시보드에서 확인).\n  * 대시보드의 소개·프로젝트 영역이 한국어/영어 다국어를 지원합니다.",
+      "parsed_changes": {
+        "개선": {
+          "title": "개선",
+          "items": [
+            "상단·하단·로그인 화면의 About Me 링크를 정리했습니다 (자기소개는 대시보드에서 확인).",
+            "대시보드의 소개·프로젝트 영역이 한국어/영어 다국어를 지원합니다."
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.75",
       "project_type": "spring",

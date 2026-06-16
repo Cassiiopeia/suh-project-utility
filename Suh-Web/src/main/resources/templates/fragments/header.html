@@ -550,12 +550,6 @@
           </ul>
         </div>
 
-        <!-- About Me (항상 표시) -->
-        <a href="/" class="btn btn-ghost btn-sm hover:bg-base-200">
-          <i class="fa-solid fa-user"></i>
-          About Me
-        </a>
-
         <a href="/dashboard" sec:authorize="isAuthenticated()" class="btn btn-ghost btn-sm hover:bg-base-200">
           <i class="fa-solid fa-clipboard-list"></i>
           <span th:text="#{header.nav.dashboard}">대시보드</span>
@@ -617,11 +611,6 @@
             <li><a th:href="@{''(lang='en')}" th:text="#{lang.english}">English</a></li>
           </ul>
         </div>
-
-        <!-- 프로필 (항상 표시) -->
-        <a href="/" class="btn btn-ghost btn-circle">
-          <i class="fa-solid fa-user text-base-content"></i>
-        </a>
 
         <!-- 햄버거 메뉴 (항상 표시) -->
         <div class="dropdown dropdown-end">
