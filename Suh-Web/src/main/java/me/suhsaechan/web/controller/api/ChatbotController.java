@@ -64,8 +64,6 @@ public class ChatbotController {
   public SseEmitter chatStream(
           @RequestParam(required = false) String sessionToken,
           @RequestParam String message,
-          @RequestParam(defaultValue = "3") int topK,
-          @RequestParam(defaultValue = "0.5") float minScore,
           HttpServletRequest httpRequest) {
 
     log.info("스트리밍 채팅 요청 - message: {}, sessionToken: {}", message, sessionToken);
@@ -82,7 +80,7 @@ public class ChatbotController {
     emitter.onError(e -> log.error("SSE 오류: {}", e.getMessage()));
 
     // 스트리밍 응답 시작 (세션 토큰 콜백 + thinking 콜백 포함)
-    chatbotService.chatStream(sessionToken, message, topK, minScore, userIp, userAgent,
+    chatbotService.chatStream(sessionToken, message, userIp, userAgent,
         new StreamCallback() {
           @Override
           public void onNext(String chunk) {

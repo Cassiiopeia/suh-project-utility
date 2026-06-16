@@ -7,6 +7,7 @@ import me.suhsaechan.common.constant.ServerOptionKey;
 import me.suhsaechan.common.entity.ServerOption;
 import me.suhsaechan.common.repository.ServerOptionRepository;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,9 +54,12 @@ public class ServerOptionService {
 
   /**
    * 설정 값 저장 또는 업데이트
-   * 저장 시 해당 키의 캐시 무효화
+   * 저장 시 해당 키 캐시와 전체 목록('all') 캐시를 함께 무효화
    */
-  @CacheEvict(value = "serverOption", key = "#key.name()")
+  @Caching(evict = {
+      @CacheEvict(value = "serverOption", key = "#key.name()"),
+      @CacheEvict(value = "serverOption", key = "'all'")
+  })
   @Transactional
   public ServerOption setOptionValue(ServerOptionKey key, String value) {
     ServerOption option = serverOptionRepository.findByOptionKey(key)
