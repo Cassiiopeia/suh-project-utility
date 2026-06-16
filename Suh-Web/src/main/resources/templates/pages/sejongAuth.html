@@ -17,7 +17,7 @@
       </div>
       <h1 class="text-3xl sm:text-4xl font-bold mb-2 flex items-center justify-center gap-3 text-gray-800">
         <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
-        세종대학교 인증 모듈
+        <span th:text="#{sejongAuth.hero.title}">세종대학교 인증 모듈</span>
       </h1>
       <p class="font-mono text-gray-700 text-sm sm:text-base mb-1">SUH Sejong University Auth Module</p>
       <div class="mt-4 flex justify-center gap-2">
@@ -44,29 +44,29 @@
           <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
             <i class="fa-solid fa-key text-primary"></i>
           </div>
-          인증 정보 입력
+          <span th:text="#{sejongAuth.input.title}">인증 정보 입력</span>
           <span class="badge badge-soft badge-info text-xs ml-1">
             <i class="fa-solid fa-shield-halved"></i>
-            안심하세요! 데이터를 저장하지 않아요!
+            <span th:text="#{sejongAuth.input.privacyNotice}">안심하세요! 데이터를 저장하지 않아요!</span>
           </span>
         </h2>
 
         <!-- 학번 입력 -->
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">학번</span>
+            <span class="label-text font-medium" th:text="#{sejongAuth.input.studentId}">학번</span>
           </label>
-          <input type="text" id="studentId" placeholder="예: 18010561"
+          <input type="text" id="studentId" placeholder="예: 18010561" th:placeholder="#{sejongAuth.input.studentIdPlaceholder}"
                  class="input input-bordered w-full" autocomplete="off"/>
         </div>
 
         <!-- 비밀번호 입력 -->
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">비밀번호</span>
+            <span class="label-text font-medium" th:text="#{sejongAuth.input.password}">비밀번호</span>
           </label>
           <div class="relative">
-            <input type="password" id="password" placeholder="포털 비밀번호"
+            <input type="password" id="password" placeholder="포털 비밀번호" th:placeholder="#{sejongAuth.input.passwordPlaceholder}"
                    class="input input-bordered w-full pr-12"/>
             <button type="button" id="togglePassword"
                     class="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/50 hover:text-base-content/70">
@@ -77,42 +77,42 @@
 
         <!-- 인증 방식 선택 -->
         <fieldset class="fieldset mb-6">
-          <legend class="fieldset-legend text-sm font-medium text-base-content mb-3">인증 방식 선택</legend>
+          <legend class="fieldset-legend text-sm font-medium text-base-content mb-3" th:text="#{sejongAuth.authType.legend}">인증 방식 선택</legend>
           <div class="space-y-3">
             <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="authType" value="INTEGRATED" class="radio radio-primary" checked/>
               <div class="flex-1">
-                <span class="font-medium">통합 인증</span>
-                <span class="badge badge-sm badge-success ml-2">추천</span>
-                <p class="text-xs text-base-content/60 mt-1">DHC + SIS 모든 정보 조회</p>
+                <span class="font-medium" th:text="#{sejongAuth.authType.integrated}">통합 인증</span>
+                <span class="badge badge-sm badge-success ml-2" th:text="#{sejongAuth.authType.recommended}">추천</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{sejongAuth.authType.integratedDesc}">DHC + SIS 모든 정보 조회</p>
               </div>
             </label>
             <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="authType" value="DHC" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">DHC 전용</span>
-                <p class="text-xs text-base-content/60 mt-1">대양휴머니티칼리지 + 고전독서 정보</p>
+                <span class="font-medium" th:text="#{sejongAuth.authType.dhc}">DHC 전용</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{sejongAuth.authType.dhcDesc}">대양휴머니티칼리지 + 고전독서 정보</p>
               </div>
             </label>
             <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="authType" value="SIS" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">SIS 전용</span>
-                <p class="text-xs text-base-content/60 mt-1">학사정보시스템 + 연락처 정보</p>
+                <span class="font-medium" th:text="#{sejongAuth.authType.sis}">SIS 전용</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{sejongAuth.authType.sisDesc}">학사정보시스템 + 연락처 정보</p>
               </div>
             </label>
             <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="authType" value="DHC_RAW" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">DHC + Raw HTML</span>
-                <p class="text-xs text-base-content/60 mt-1">원본 HTML 응답 포함</p>
+                <span class="font-medium" th:text="#{sejongAuth.authType.dhcRaw}">DHC + Raw HTML</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{sejongAuth.authType.dhcRawDesc}">원본 HTML 응답 포함</p>
               </div>
             </label>
             <label class="sejong-auth-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="authType" value="SIS_RAW" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">SIS + Raw JSON</span>
-                <p class="text-xs text-base-content/60 mt-1">원본 JSON 응답 포함</p>
+                <span class="font-medium" th:text="#{sejongAuth.authType.sisRaw}">SIS + Raw JSON</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{sejongAuth.authType.sisRawDesc}">원본 JSON 응답 포함</p>
               </div>
             </label>
           </div>
@@ -121,7 +121,7 @@
         <!-- 인증 버튼 -->
         <button id="authBtn" class="btn btn-primary btn-lg w-full">
           <i class="fa-solid fa-right-to-bracket"></i>
-          인증하기
+          <span th:text="#{sejongAuth.btn.authenticate}">인증하기</span>
         </button>
       </div>
     </div>
@@ -133,16 +133,16 @@
           <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
             <i class="fa-solid fa-chart-simple text-success"></i>
           </div>
-          인증 결과
+          <span th:text="#{sejongAuth.result.title}">인증 결과</span>
         </h2>
 
         <!-- Tabs -->
         <div role="tablist" class="tabs tabs-border mb-4">
           <a role="tab" class="tab" data-tab="table">
-            <i class="fa-solid fa-table mr-1"></i> 테이블
+            <i class="fa-solid fa-table mr-1"></i> <span th:text="#{sejongAuth.result.tabTable}">테이블</span>
           </a>
           <a role="tab" class="tab" data-tab="json">
-            <i class="fa-solid fa-code mr-1"></i> JSON
+            <i class="fa-solid fa-code mr-1"></i> <span th:text="#{sejongAuth.result.tabJson}">JSON</span>
           </a>
         </div>
 
@@ -151,14 +151,14 @@
           <!-- 초기 상태 -->
           <div id="resultPlaceholder" class="text-center text-base-content/50 py-16">
             <i class="fa-solid fa-arrow-left text-5xl mb-4 opacity-50"></i>
-            <p class="text-sm">인증 정보를 입력하고<br/>인증하기 버튼을 눌러주세요</p>
+            <p class="text-sm"><span th:text="#{sejongAuth.result.placeholderLine1}">인증 정보를 입력하고</span><br/><span th:text="#{sejongAuth.result.placeholderLine2}">인증하기 버튼을 눌러주세요</span></p>
           </div>
 
           <!-- 로딩 상태 -->
           <div id="resultLoading" class="hidden py-8">
             <div class="flex flex-col items-center gap-4">
               <span class="loading loading-spinner loading-lg text-primary"></span>
-              <p class="text-base-content/60">세종대학교 포털에 인증 중...</p>
+              <p class="text-base-content/60" th:text="#{sejongAuth.result.loading}">세종대학교 포털에 인증 중...</p>
             </div>
           </div>
 
@@ -166,7 +166,7 @@
           <div id="resultJsonWrapper" class="hidden relative">
             <button type="button" id="copyJsonBtn"
                     class="absolute top-2 right-2 btn btn-ghost btn-xs text-base-content/60 hover:text-primary hover:bg-primary/10"
-                    title="JSON 복사">
+                    title="JSON 복사" th:title="#{sejongAuth.result.copyJson}">
               <i class="fa-regular fa-copy"></i>
             </button>
             <pre id="resultJson" class="text-sm whitespace-pre-wrap break-words pt-6"></pre>
@@ -191,7 +191,7 @@
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-code text-primary"></i>
-        API 사용법
+        <span th:text="#{sejongAuth.section.apiUsage}">API 사용법</span>
       </div>
       <div class="collapse-content">
         <div class="pt-4 space-y-4">
@@ -216,26 +216,26 @@
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-triangle-exclamation text-warning"></i>
-        에러 코드 설명
+        <span th:text="#{sejongAuth.section.errorCode}">에러 코드 설명</span>
       </div>
       <div class="collapse-content">
         <div class="pt-4">
           <table class="table table-zebra w-full text-sm">
             <thead>
               <tr>
-                <th>코드</th>
-                <th>설명</th>
+                <th th:text="#{sejongAuth.errorTable.code}">코드</th>
+                <th th:text="#{sejongAuth.errorTable.description}">설명</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td class="font-mono text-error">AUTHENTICATION_FAILED</td><td>학번 또는 비밀번호가 일치하지 않음</td></tr>
-              <tr><td class="font-mono text-error">INVALID_INPUT</td><td>입력값이 비어있거나 유효하지 않음</td></tr>
-              <tr><td class="font-mono text-error">CONNECTION_FAILED</td><td>세종대학교 포털 연결 실패</td></tr>
-              <tr><td class="font-mono text-error">CONNECTION_TIMEOUT</td><td>연결 시간 초과</td></tr>
-              <tr><td class="font-mono text-error">DATA_FETCH_FAILED</td><td>학생 정보 조회 실패</td></tr>
-              <tr><td class="font-mono text-error">PARSE_ERROR</td><td>HTML/JSON 파싱 오류</td></tr>
-              <tr><td class="font-mono text-error">SESSION_ERROR</td><td>세션 처리 오류</td></tr>
-              <tr><td class="font-mono text-error">SSL_CONFIGURATION_ERROR</td><td>SSL 설정 오류</td></tr>
+              <tr><td class="font-mono text-error">AUTHENTICATION_FAILED</td><td th:text="#{sejongAuth.error.authenticationFailed}">학번 또는 비밀번호가 일치하지 않음</td></tr>
+              <tr><td class="font-mono text-error">INVALID_INPUT</td><td th:text="#{sejongAuth.error.invalidInput}">입력값이 비어있거나 유효하지 않음</td></tr>
+              <tr><td class="font-mono text-error">CONNECTION_FAILED</td><td th:text="#{sejongAuth.error.connectionFailed}">세종대학교 포털 연결 실패</td></tr>
+              <tr><td class="font-mono text-error">CONNECTION_TIMEOUT</td><td th:text="#{sejongAuth.error.connectionTimeout}">연결 시간 초과</td></tr>
+              <tr><td class="font-mono text-error">DATA_FETCH_FAILED</td><td th:text="#{sejongAuth.error.dataFetchFailed}">학생 정보 조회 실패</td></tr>
+              <tr><td class="font-mono text-error">PARSE_ERROR</td><td th:text="#{sejongAuth.error.parseError}">HTML/JSON 파싱 오류</td></tr>
+              <tr><td class="font-mono text-error">SESSION_ERROR</td><td th:text="#{sejongAuth.error.sessionError}">세션 처리 오류</td></tr>
+              <tr><td class="font-mono text-error">SSL_CONFIGURATION_ERROR</td><td th:text="#{sejongAuth.error.sslConfigurationError}">SSL 설정 오류</td></tr>
             </tbody>
           </table>
         </div>
@@ -247,7 +247,7 @@
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-database text-primary"></i>
-        데이터 소스 설명
+        <span th:text="#{sejongAuth.section.dataSource}">데이터 소스 설명</span>
       </div>
       <div class="collapse-content">
         <div class="pt-4">
@@ -255,27 +255,27 @@
             <div class="sejong-auth-datasource-dhc card bg-info/10 border border-info/30">
               <div class="card-body p-4">
                 <h3 class="font-bold text-info flex items-center gap-2">
-                  <i class="fa-solid fa-book"></i> DHC (대양휴머니티칼리지)
+                  <i class="fa-solid fa-book"></i> <span th:text="#{sejongAuth.dataSource.dhcTitle}">DHC (대양휴머니티칼리지)</span>
                 </h3>
                 <p class="text-sm text-base-content/70 mt-2">classic.sejong.ac.kr</p>
                 <ul class="text-sm text-base-content/70 mt-2 space-y-1">
-                  <li>- 학생 기본 정보 (학번, 이름, 학과)</li>
-                  <li>- 학년, 재학 상태</li>
-                  <li>- 고전독서 인증 정보</li>
+                  <li th:text="#{sejongAuth.dataSource.dhcItem1}">- 학생 기본 정보 (학번, 이름, 학과)</li>
+                  <li th:text="#{sejongAuth.dataSource.dhcItem2}">- 학년, 재학 상태</li>
+                  <li th:text="#{sejongAuth.dataSource.dhcItem3}">- 고전독서 인증 정보</li>
                 </ul>
               </div>
             </div>
             <div class="sejong-auth-datasource-sis card bg-success/10 border border-success/30">
               <div class="card-body p-4">
                 <h3 class="font-bold text-success flex items-center gap-2">
-                  <i class="fa-solid fa-user"></i> SIS (학사정보시스템)
+                  <i class="fa-solid fa-user"></i> <span th:text="#{sejongAuth.dataSource.sisTitle}">SIS (학사정보시스템)</span>
                 </h3>
                 <p class="text-sm text-base-content/70 mt-2">sjpt.sejong.ac.kr</p>
                 <ul class="text-sm text-base-content/70 mt-2 space-y-1">
-                  <li>- 학생 기본 정보</li>
-                  <li>- 이메일 주소</li>
-                  <li>- 전화번호</li>
-                  <li>- 영어 이름</li>
+                  <li th:text="#{sejongAuth.dataSource.sisItem1}">- 학생 기본 정보</li>
+                  <li th:text="#{sejongAuth.dataSource.sisItem2}">- 이메일 주소</li>
+                  <li th:text="#{sejongAuth.dataSource.sisItem3}">- 전화번호</li>
+                  <li th:text="#{sejongAuth.dataSource.sisItem4}">- 영어 이름</li>
                 </ul>
               </div>
             </div>
@@ -344,9 +344,9 @@
   function copyJsonToClipboard() {
     const json = window.elements.resultJson.textContent;
     navigator.clipboard.writeText(json).then(() => {
-      showToast('JSON이 클립보드에 복사되었습니다!', 'positive');
+      showToast(window.MSG['sejongAuth.toast.jsonCopied'], 'positive');
     }).catch(() => {
-      showToast('복사에 실패했습니다.', 'negative');
+      showToast(window.MSG['sejongAuth.toast.copyFailed'], 'negative');
     });
   }
 
@@ -391,13 +391,13 @@
     const authType = document.querySelector('input[name="authType"]:checked').value;
 
     if (!studentId) {
-      showToast('학번을 입력해주세요.', 'warning');
+      showToast(window.MSG['sejongAuth.toast.studentIdRequired'], 'warning');
       window.elements.studentId.focus();
       return;
     }
 
     if (!password) {
-      showToast('비밀번호를 입력해주세요.', 'warning');
+      showToast(window.MSG['sejongAuth.toast.passwordRequired'], 'warning');
       window.elements.password.focus();
       return;
     }
@@ -420,15 +420,15 @@
         renderResult(response);
 
         if (response.isSuccess) {
-          showToast('인증에 성공했습니다!', 'positive');
+          showToast(window.MSG['sejongAuth.toast.authSuccess'], 'positive');
         } else {
-          showToast('인증에 실패했습니다: ' + (response.errorMessage || response.errorCode), 'negative');
+          showToast(window.MSG['sejongAuth.toast.authFailed'] + (response.errorMessage || response.errorCode), 'negative');
         }
       },
       error: function(xhr, status, error) {
         console.error('Authentication error:', error);
         hideLoading();
-        showToast('인증 요청 중 오류가 발생했습니다.', 'negative');
+        showToast(window.MSG['sejongAuth.toast.authRequestError'], 'negative');
       }
     });
   }
@@ -439,13 +439,13 @@
     window.elements.resultTable.classList.add('hidden');
     window.elements.resultLoading.classList.remove('hidden');
     window.elements.authBtn.disabled = true;
-    window.elements.authBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> 인증 중...';
+    window.elements.authBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> ' + window.MSG['sejongAuth.btn.authenticating'];
   }
 
   function hideLoading() {
     window.elements.resultLoading.classList.add('hidden');
     window.elements.authBtn.disabled = false;
-    window.elements.authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> 인증하기';
+    window.elements.authBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> ' + window.MSG['sejongAuth.btn.authenticate'];
   }
 
   function renderResult(result) {
@@ -467,19 +467,19 @@
     tbody.innerHTML = '';
 
     const fields = [
-      { key: 'isSuccess', label: '인증 성공', format: v => v ? '<span class="badge badge-success">성공</span>' : '<span class="badge badge-error">실패</span>' },
-      { key: 'authType', label: '인증 방식' },
-      { key: 'studentId', label: '학번' },
-      { key: 'name', label: '이름' },
-      { key: 'major', label: '학과' },
-      { key: 'grade', label: '학년' },
-      { key: 'status', label: '상태' },
-      { key: 'email', label: '이메일' },
-      { key: 'phoneNumber', label: '전화번호' },
-      { key: 'englishName', label: '영어 이름' },
-      { key: 'authenticatedAt', label: '인증 시간' },
-      { key: 'errorCode', label: '에러 코드', format: v => v ? `<span class="text-error font-mono">${v}</span>` : '-' },
-      { key: 'errorMessage', label: '에러 메시지', format: v => v ? `<span class="text-error">${v}</span>` : '-' }
+      { key: 'isSuccess', label: window.MSG['sejongAuth.field.isSuccess'], format: v => v ? `<span class="badge badge-success">${window.MSG['sejongAuth.field.success']}</span>` : `<span class="badge badge-error">${window.MSG['sejongAuth.field.failure']}</span>` },
+      { key: 'authType', label: window.MSG['sejongAuth.field.authType'] },
+      { key: 'studentId', label: window.MSG['sejongAuth.field.studentId'] },
+      { key: 'name', label: window.MSG['sejongAuth.field.name'] },
+      { key: 'major', label: window.MSG['sejongAuth.field.major'] },
+      { key: 'grade', label: window.MSG['sejongAuth.field.grade'] },
+      { key: 'status', label: window.MSG['sejongAuth.field.status'] },
+      { key: 'email', label: window.MSG['sejongAuth.field.email'] },
+      { key: 'phoneNumber', label: window.MSG['sejongAuth.field.phoneNumber'] },
+      { key: 'englishName', label: window.MSG['sejongAuth.field.englishName'] },
+      { key: 'authenticatedAt', label: window.MSG['sejongAuth.field.authenticatedAt'] },
+      { key: 'errorCode', label: window.MSG['sejongAuth.field.errorCode'], format: v => v ? `<span class="text-error font-mono">${v}</span>` : '-' },
+      { key: 'errorMessage', label: window.MSG['sejongAuth.field.errorMessage'], format: v => v ? `<span class="text-error">${v}</span>` : '-' }
     ];
 
     fields.forEach(field => {
@@ -497,7 +497,7 @@
     if (result.classicReading) {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <th class="font-medium text-base-content/70 w-32">고전독서</th>
+        <th class="font-medium text-base-content/70 w-32">${window.MSG['sejongAuth.field.classicReading']}</th>
         <td><pre class="text-xs whitespace-pre-wrap">${JSON.stringify(result.classicReading, null, 2)}</pre></td>
       `;
       tbody.appendChild(tr);
@@ -507,7 +507,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <th class="font-medium text-base-content/70 w-32">Raw HTML</th>
-        <td><details class="collapse collapse-arrow"><summary class="collapse-title text-sm p-0 min-h-0">HTML 보기 (클릭)</summary><pre class="text-xs whitespace-pre-wrap max-h-48 overflow-auto bg-base-200 p-2 rounded mt-2">${escapeHtml(result.rawHtml)}</pre></details></td>
+        <td><details class="collapse collapse-arrow"><summary class="collapse-title text-sm p-0 min-h-0">${window.MSG['sejongAuth.field.viewHtml']}</summary><pre class="text-xs whitespace-pre-wrap max-h-48 overflow-auto bg-base-200 p-2 rounded mt-2">${escapeHtml(result.rawHtml)}</pre></details></td>
       `;
       tbody.appendChild(tr);
     }
@@ -516,7 +516,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <th class="font-medium text-base-content/70 w-32">Raw JSON</th>
-        <td><details class="collapse collapse-arrow"><summary class="collapse-title text-sm p-0 min-h-0">JSON 보기 (클릭)</summary><pre class="text-xs whitespace-pre-wrap max-h-48 overflow-auto bg-base-200 p-2 rounded mt-2">${result.rawJson}</pre></details></td>
+        <td><details class="collapse collapse-arrow"><summary class="collapse-title text-sm p-0 min-h-0">${window.MSG['sejongAuth.field.viewJson']}</summary><pre class="text-xs whitespace-pre-wrap max-h-48 overflow-auto bg-base-200 p-2 rounded mt-2">${result.rawJson}</pre></details></td>
       `;
       tbody.appendChild(tr);
     }
