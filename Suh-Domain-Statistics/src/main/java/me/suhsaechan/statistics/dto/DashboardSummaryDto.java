@@ -47,6 +47,7 @@ public class DashboardSummaryDto {
     private Long todaySejongAuth;        // 세종대 인증 오늘 횟수
 
     // === 기능별 사용 통계 (확장용) ===
-    private Map<FeatureType, Long> featureUsageCounts;
-    private Map<FeatureType, Long> todayFeatureUsageCounts;
+    // Redis 캐시 역직렬화 시 작은 정수가 Integer로 복원되어도 직렬화가 깨지지 않도록 Number로 받는다
+    private Map<FeatureType, Number> featureUsageCounts;
+    private Map<FeatureType, Number> todayFeatureUsageCounts;
 }

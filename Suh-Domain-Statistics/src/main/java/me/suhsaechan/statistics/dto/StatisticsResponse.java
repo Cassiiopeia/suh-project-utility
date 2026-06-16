@@ -24,6 +24,6 @@ public class StatisticsResponse {
     private Long todayPageViews;
 
     // 기능별 사용 통계
-    private Map<FeatureType, Long> featureUsageCounts;
-    private Map<FeatureType, Long> todayFeatureUsageCounts;
+    private Map<FeatureType, Number> featureUsageCounts;
+    private Map<FeatureType, Number> todayFeatureUsageCounts;
 }
