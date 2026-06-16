@@ -171,8 +171,8 @@ suh-project-utility/
 ## 기술 스택
 - **Backend**: Java 17, Spring Boot 3.4.2, Spring Data JPA
 - **Database**: PostgreSQL, Redis
-- **Frontend**: Thymeleaf, Semantic UI, JavaScript
-- **Build**: Gradle 8.12.1
+- **Frontend**: Thymeleaf, Tailwind CSS v4 + DaisyUI 5 (빌드타임 정적 CSS), JavaScript
+- **Build**: Gradle 8.12.1 (백엔드), npm (frontend CSS 빌드)
 - **Deployment**: Docker, GitHub Actions CI/CD
 
 ## 개발 환경 설정
@@ -618,113 +618,59 @@ if (Boolean.FALSE.equals(repository.getIsActive())) {
 
 ## UI/UX 가이드라인
 
-### CSS 관리 및 CSP 보안 규칙 ⚠️ 필수 준수
-- **통합 CSS 파일**: `src/main/resources/static/css/common.css` 단일 파일만 사용
-- **경로 주의**: 빌드 후 `out/production/resources/static/css/common.css`에 위치하지만, 편집은 반드시 src 디렉토리에서 수행
-- **인라인 스타일 절대 금지**: CSP(Content Security Policy) 준수를 위해 `style=""` 속성 사용 금지
-- **클래스 기반 스타일링**: 모든 스타일은 CSS 클래스로 정의하고 JavaScript에서 `classList.add()` / `classList.remove()` 사용
-- **Tailwind CSS 우선 사용**: 간단한 스타일은 Tailwind 유틸리티 클래스 활용
-- **커스텀 클래스**: Tailwind로 불가능한 복잡한 스타일만 `common.css`에 정의
-- **클래스 명명 규칙**: `{페이지}-{컴포넌트}` (예: `notice-page`, `dashboard-section-header`, `version-badge`)
-- **유틸리티 클래스**:
-  - 숨김: `.hide` (display: none)
-  - JavaScript 사용: `element.classList.add('hide')` / `element.classList.remove('hide')`
-- **새 페이지 스타일 추가 시**: 페이지별 섹션 주석 추가 (예: `/* Grass Planter Styles */`)
-- **다크모드 지원**: `[data-theme="dark"]` 셀렉터로 다크모드 스타일 오버라이드
+### CSS / DaisyUI 아키텍처 ⚠️⚠️⚠️ 필수 준수 (이슈 #216 전환 완료)
 
-### Tailwind CSS 사용 규칙 ⚠️ 중요
-- **하드코딩 값 금지**: `mb-[5px]`, `min-h-[70vh]`, `w-[10px]` 등 대괄호를 사용한 하드코딩 값 사용 금지
-- **표준 클래스 사용**: Tailwind에서 제공하는 표준 유틸리티 클래스 사용
-  - 간격: `mb-1` (4px), `mb-2` (8px), `mb-3` (12px), `mb-4` (16px) 등
-  - 크기: `w-4` (16px), `w-8` (32px), `h-12` (48px) 등
-  - 최소/최대 높이: `min-h-screen`, `max-h-full` 등
-- **예외 상황**: 표준 클래스로 불가능한 경우에만 인라인 스타일 또는 common.css에 커스텀 클래스 정의
-- **잘못된 예시**: `<div class="mb-[5px] min-h-[70vh]">` ❌
-- **올바른 예시**: `<div class="mb-1 min-h-screen">` ✅ 또는 `<div style="min-height: 70vh;">` ✅
+이 프로젝트는 **Tailwind v4 + DaisyUI 5를 빌드타임에 정적 CSS로 컴파일**한다. 다크모드는 DaisyUI 네이티브 테마로 자동 적응한다. 과거의 "CDN 런타임 + common.css 수동 다크 오버라이드" 방식은 **폐기됐다.** 상세 가이드: `docs/suh-template/report/20260616_216_UI_다크모드_DaisyUI_네이티브_테마_전환.md`.
 
-#### 스타일 적용 우선순위
-1. Tailwind CSS 유틸리티 클래스 (예: `hidden`, `ml-6`, `max-h-12`)
-2. common.css 커스텀 클래스 (예: `.hide`, `.version-badge`)
-3. 동적 스타일은 Thymeleaf `th:style` 속성만 허용 (정적 인라인 style은 금지)
+#### 파일 구조 (역할 분리)
+| 파일 | 역할 | 편집 가능? |
+|------|------|-----------|
+| `Suh-Web/frontend/tailwind.input.css` | Tailwind/DaisyUI 진입점 (`@import`, `@plugin`, `@source`, safelist) | ✅ 여기서 설정 |
+| `Suh-Web/frontend/package.json` | `build:css` 스크립트 + 의존성 | ✅ |
+| `static/css/tailwind.generated.css` | **빌드 산출물 (자동 생성, 커밋함)** | ❌ **직접 편집 절대 금지** — `npm run build:css`로만 재생성 |
+| `static/css/common.css` | 순수 커스텀 스타일만 (DaisyUI/Tailwind로 불가능한 것) | ✅ 제한적 |
+| `static/js/common.js` | `initTheme()` 테마 토글 | ✅ |
 
-### 컴포넌트 규칙
-- **카드**: `ui fluid card equal-height-card` 사용
-- **버튼**: `ui blue fluid button shortcut-btn` 사용
-- **그리드**: 4열 기본, 반응형 (doubling stackable)
-- **로딩**: 스켈레톤 UI 제공
+#### ⛔ 절대 금지 (서브에이전트 포함)
+1. **DaisyUI 컴포넌트 색을 `common.css`에서 오버라이드 금지.** `.btn-primary { background-color: ... }`, `[data-theme="dark"] .btn { ... }` 같은 룰을 **새로 만들지 않는다.** DaisyUI 네이티브가 테마별로 알아서 칠한다.
+2. **하드코딩 색상 클래스 금지**: `bg-white`, `bg-gray-50`, `text-gray-700`, `bg-blue-500`, `border-gray-200` 등. 다크모드에서 안 바뀐다. → **시맨틱 토큰 사용** (아래 표).
+3. **`[data-theme="dark"] .xxx { ... !important }` 수동 다크 오버라이드 금지.** 이게 과거 악순환의 원인이었다.
+4. **인라인 `style=""` 금지** (CSP). 동적 스타일이 꼭 필요하면 Thymeleaf `th:style`만.
+5. **Tailwind 대괄호 하드코딩 금지**: `mb-[5px]`, `min-h-[70vh]` → 표준 클래스(`mb-1`, `min-h-screen`).
+6. **`tailwind.generated.css` 직접 편집 금지** (자동 생성물).
+
+#### ✅ 올바른 방식 — 시맨틱 토큰 + DaisyUI 컴포넌트
+| 하드코딩 (금지) | 시맨틱 토큰 (사용) |
+|---|---|
+| `bg-white`, `bg-gray-50/100` | `bg-base-100`, `bg-base-200` |
+| `bg-gray-800/900` | `bg-base-300`, `bg-neutral` |
+| `text-gray-500/600` | `text-base-content/60`, `/70` |
+| `text-gray-700/800/900`, `text-black` | `text-base-content` |
+| `border-gray-200/300` | `border-base-300` |
+| `bg-blue-*`, `text-blue-*` | `bg-primary`, `text-primary` |
+| `bg-green-*` | `bg-success` |
+| `bg-red-*` | `bg-error` |
+| `bg-amber/yellow-*` | `bg-warning` |
+| `bg-cyan/sky-*` | `bg-info` |
+
+DaisyUI 컴포넌트(테마 자동 적응): `card`, `btn btn-primary/error/success/info/warning/ghost/outline`, `badge badge-*`, `alert alert-*`, `tabs tabs-lift`, `table table-zebra`, `select select-bordered`, `modal modal-box`, `mockup-code`, `collapse`, `navbar`, `dropdown`, `skeleton`.
+
+#### common.css 에 커스텀을 써도 되는 유일한 경우
+DaisyUI 컴포넌트로도, Tailwind 유틸리티로도, 시맨틱 토큰으로도 **불가능한** 진짜 커스텀 (예: `.hide`, `.version-badge`, 복잡한 애니메이션·키프레임, 페이지 전용 레이아웃). 색은 가능하면 `var(--color-base-content)` 등 DaisyUI 테마 변수를 참조해 다크모드 단일 출처를 유지한다. **"DaisyUI가 이미 주는 걸 다시 만드는 것"이면 멈춰라.**
+
+#### 새 클래스 추가 후 필수
+HTML/JS에 새 클래스를 쓰면 **`cd Suh-Web/frontend && npm run build:css`로 재생성**해야 반영된다 (안 하면 `tailwind.generated.css`에 누락). CI(BLUEGREEN/CICD/PR-PREVIEW)에도 빌드 스텝이 있어 커밋만 해도 재생성되지만, 로컬 확인 시엔 직접 빌드.
+- **검증**: 빌드 후 파일 크기 ~140KB면 정상. **13KB대면 `@source` 누락 → 유틸리티 0개 생성 (레이아웃 깨짐).** `grep -c '\.grid' tailwind.generated.css`가 0이면 `tailwind.input.css`의 `@source` 경로 확인.
+
+#### 테마 전환 시스템 (유지)
+- 속성: `data-theme="dark"` / `data-theme="light"` (light도 명시)
+- 저장소: `localStorage` `theme` 키
+- 초기화: `common.js`의 `initTheme()` + header.html 최상단 FOUC 방지 인라인 스크립트
+- 토글: DaisyUI `theme-controller` 체크박스
 
 ### 반응형 디자인
 - **분기점**: 모바일(~767px), 태블릿(768px~991px), 데스크탑(992px~)
 - **미디어 쿼리**: 화면 크기별 최적화
-
-### 다크모드/라이트모드 CSS 관리 ⚠️ 중요
-
-#### common.css 파일 구조
-```
-1-175      : CSS 변수, badge-soft (Light/Dark 함께)
-176-828    : 컴포넌트별 스타일
-829-974    : Light Mode Override Styles
-975-1012   : Validator, Print Styles
-1013-끝    : Dark Mode Override Styles
-```
-
-#### 새 컴포넌트 스타일 추가 시
-1. **컴포넌트 섹션에 기본 스타일 추가** (176-828줄 사이)
-2. **라이트모드 오버라이드 필요시** → "Light Mode Override Styles" 섹션에 추가
-3. **다크모드 오버라이드** → "Dark Mode Override Styles" 섹션에 추가
-
-#### 셀렉터 패턴
-```css
-/* 라이트모드 (3가지 셀렉터 사용) */
-:root:not([data-theme="dark"]) .my-component,
-html:not([data-theme="dark"]) .my-component,
-[data-theme="light"] .my-component {
-  background-color: #ffffff !important;
-}
-
-/* 다크모드 */
-[data-theme="dark"] .my-component {
-  background-color: #1f2937 !important;
-}
-```
-
-#### 충돌 방지 규칙
-- **같은 속성을 여러 곳에 정의하지 말 것** (중복 정의 금지)
-- **badge-soft 등 색상별 스타일**: 파일 상단에 Light/Dark 함께 정의
-- **Tailwind 배경색 (`bg-white`, `bg-gray-50`)**: 다크모드에서 자동 변환 안 됨 → CSS 오버라이드 필수
-
-#### 테마 전환 시스템
-- **속성**: `data-theme="dark"` / `data-theme="light"`
-- **저장소**: `localStorage.getItem('theme')` / `localStorage.setItem('theme', 'dark'|'light')`
-- **초기화**: `common.js`의 `initTheme()` 함수
-
-### DaisyUI 5 버튼 스타일 오버라이드 ⚠️ 중요
-
-#### 배경
-- **CDN 버전**: DaisyUI 5 사용 중
-- **문제**: DaisyUI 5 기본 스타일만으로는 색상이 제대로 표시되지 않음
-- **해결**: `common.css`에서 주요 버튼 스타일을 직접 오버라이드
-
-#### 오버라이드된 버튼 클래스
-```css
-.btn-primary   /* 파란색 #3b82f6 */
-.btn-error     /* 빨간색 #ef4444 */
-.btn-info      /* 청록색 #06b6d4 */
-.btn-success   /* 녹색 #22c55e */
-.btn-outline   /* 투명 배경 + 회색 테두리 #9ca3af */
-.btn-ghost     /* 투명 (호버 시에만 배경) */
-```
-
-#### 공통 스타일 패턴
-- **패딩**: `10px` 통일
-- **border-radius**: `0.3rem` 통일
-- **다크모드**: 모든 버튼에 hover 스타일 정의
-- **위치**: `common.css` 22-145줄
-
-#### 새 버튼 추가 시
-1. `common.css`에 직접 배경색/테두리색 정의 필수
-2. 기존 패턴 따라 hover 및 다크모드 스타일 추가
-3. 패딩 `10px`, border-radius `0.3rem` 유지
 
 ## 빌드 및 실행
 
