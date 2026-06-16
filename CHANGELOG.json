@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-16T02:22:27Z",
-    "currentVersion": "2.5.68",
+    "lastUpdated": "2026-06-16T02:25:33Z",
+    "currentVersion": "2.5.70",
     "projectType": "spring",
-    "totalReleases": 71
+    "totalReleases": 72
   },
   "releases": [
+    {
+      "version": "2.5.70",
+      "project_type": "spring",
+      "date": "2026-06-16",
+      "pr_number": 232,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 챗봇 검색 설정을 바꿔도 즉시 반영되지 않던 문제 해결",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "챗봇 검색 설정을 바꿔도 즉시 반영되지 않던 문제 해결"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.68",
       "project_type": "spring",

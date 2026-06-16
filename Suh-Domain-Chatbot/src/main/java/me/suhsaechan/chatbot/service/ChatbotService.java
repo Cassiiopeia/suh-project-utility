@@ -116,8 +116,8 @@ public class ChatbotService {
         List<VectorSearchResult> searchResults = new ArrayList<>();
         if (Boolean.TRUE.equals(intent.getNeedsRagSearch())) {
             log.info("[Agent Step 2/3] RAG 검색 시작");
-            int topK = resolveTopK(request.getTopK());
-            float minScore = resolveMinScore(request.getMinScore());
+            int topK = resolveTopK();
+            float minScore = resolveMinScore();
 
             String searchQuery = getSearchQuery(intent, request.getMessage());
 
@@ -175,10 +175,10 @@ public class ChatbotService {
     /**
      * 스트리밍 채팅 메시지 처리 (Agent-LLM) - 기존 호환성 유지
      */
-    public void chatStream(String sessionToken, String message, int topK, float minScore,
+    public void chatStream(String sessionToken, String message,
                            String userIp, String userAgent, StreamCallback callback,
                            Consumer<String> sessionTokenCallback) {
-        chatStream(sessionToken, message, topK, minScore, userIp, userAgent, callback, sessionTokenCallback, null);
+        chatStream(sessionToken, message, userIp, userAgent, callback, sessionTokenCallback, null);
     }
 
     /**
@@ -194,7 +194,7 @@ public class ChatbotService {
      * @param sessionTokenCallback 세션 토큰을 받을 콜백 (null 가능)
      * @param thinkingCallback 생각 과정을 받을 콜백 (null 가능)
      */
-    public void chatStream(String sessionToken, String message, int topK, float minScore,
+    public void chatStream(String sessionToken, String message,
                            String userIp, String userAgent, StreamCallback callback,
                            Consumer<String> sessionTokenCallback, ThinkingCallback thinkingCallback) {
         log.info("[Agent-LLM Stream] 스트리밍 채팅 요청 처리 시작 - message: {}", message);
@@ -227,8 +227,8 @@ public class ChatbotService {
                 sendThinkingEvent(thinkingCallback, 2, 3, "in_progress", "관련 문서 검색 중", "벡터 임베딩 생성 및 검색 중...", searchQuery);
                 log.info("[Agent Step 2/3] RAG 검색 시작 - 쿼리: {}", searchQuery);
 
-                int actualTopK = resolveTopK(topK > 0 ? topK : null);
-                float actualMinScore = resolveMinScore(minScore > 0 ? minScore : null);
+                int actualTopK = resolveTopK();
+                float actualMinScore = resolveMinScore();
 
                 searchResults = searchRelevantDocuments(searchQuery, actualTopK, actualMinScore);
 
@@ -352,12 +352,9 @@ public class ChatbotService {
     }
 
     /**
-     * ServerOption 값을 int로 조회. 파싱 실패 시 ChatbotProperties 기본값으로 폴백.
+     * RAG topK를 ServerOption에서 조회. 파싱 실패 시 ChatbotProperties 기본값으로 폴백.
      */
-    private int resolveTopK(Integer requestedTopK) {
-        if (requestedTopK != null && requestedTopK > 0) {
-            return requestedTopK;
-        }
+    private int resolveTopK() {
         try {
             return Integer.parseInt(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RAG_TOP_K).trim());
         } catch (Exception e) {
@@ -367,12 +364,9 @@ public class ChatbotService {
     }
 
     /**
-     * ServerOption 값을 float로 조회. 파싱 실패 시 ChatbotProperties 기본값으로 폴백.
+     * RAG minScore를 ServerOption에서 조회. 파싱 실패 시 ChatbotProperties 기본값으로 폴백.
      */
-    private float resolveMinScore(Float requestedMinScore) {
-        if (requestedMinScore != null && requestedMinScore > 0) {
-            return requestedMinScore;
-        }
+    private float resolveMinScore() {
         try {
             return Float.parseFloat(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_RAG_MIN_SCORE).trim());
         } catch (Exception e) {
