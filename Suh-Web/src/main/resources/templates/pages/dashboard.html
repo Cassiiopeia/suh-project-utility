@@ -887,17 +887,17 @@
     <!-- 웰컴 + 공지사항 통합 섹션 -->
     <!-- 헤더 섹션 -->
     <section id="header-section" class="mb-6">
-      <h1 class="text-3xl font-bold text-base-content mb-2">새찬 서버 실험실</h1>
-      <p class="text-sm text-base-content/70">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
+      <h1 class="text-3xl font-bold text-base-content mb-2" th:text="#{dashboard.header.title}">새찬 서버 실험실</h1>
+      <p class="text-sm text-base-content/70" th:text="#{dashboard.header.subtitle}">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
     </section>
 
     <!-- 공지사항 섹션 -->
     <section id="notice-section" class="mb-8">
       <!-- 고정 헤더 (레이블 + 전체보기) -->
       <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-base-content/80">공지사항</h2>
+        <h2 class="text-lg font-semibold text-base-content/80" th:text="#{dashboard.notice.title}">공지사항</h2>
         <a href="/notice" class="text-sm text-base-content/60 hover:text-primary transition-colors">
-          전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+          <span th:text="#{dashboard.notice.viewAll}">전체보기</span> <i class="fa-solid fa-chevron-right text-xs"></i>
         </a>
       </div>
 
@@ -907,7 +907,7 @@
           <!-- 로딩 상태 -->
           <div class="absolute inset-0 flex items-center justify-center">
             <span class="loading loading-spinner loading-sm text-primary mr-2"></span>
-            <span class="text-base-content/50 text-sm">로딩중...</span>
+            <span class="text-base-content/50 text-sm" th:text="#{dashboard.notice.loading}">로딩중...</span>
           </div>
         </div>
       </div>
@@ -917,7 +917,7 @@
     <section id="summary-section" class="mb-8">
       <!-- Summary 헤더 (새로고침 버튼 포함) -->
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-base-content">서버 통계</h2>
+        <h2 class="text-lg font-semibold text-base-content" th:text="#{dashboard.summary.title}">서버 통계</h2>
         <button id="refresh-summary-btn" onclick="refreshDashboardSummary()" class="btn btn-sm btn-ghost btn-circle" title="통계 새로고침">
           <i class="fa-solid fa-arrows-rotate text-base-content/60"></i>
         </button>
