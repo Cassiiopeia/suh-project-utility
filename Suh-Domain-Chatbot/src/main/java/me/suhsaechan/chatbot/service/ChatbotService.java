@@ -464,6 +464,24 @@ public class ChatbotService {
     }
 
     /**
+     * LLM 응답에서 JSON 객체만 추출한다.
+     *
+     * <p>경량 모델이 JSON을 마크다운 펜스(```json ... ```)로 감싸거나 앞뒤에 설명을 덧붙이는 경우가
+     * 많아, 첫 '{'부터 마지막 '}'까지를 잘라내 파싱 실패를 줄인다. 추출 불가 시 원본을 그대로 반환한다.</p>
+     */
+    private String extractJsonObject(String raw) {
+        if (raw == null) {
+            return "";
+        }
+        int start = raw.indexOf('{');
+        int end = raw.lastIndexOf('}');
+        if (start >= 0 && end > start) {
+            return raw.substring(start, end + 1);
+        }
+        return raw;
+    }
+
+    /**
      * 의도 분류 결과가 유효한지 검증
      */
     private boolean isValidIntentResult(IntentClassificationDto intent) {
@@ -592,7 +610,7 @@ public class ChatbotService {
             SuhAiderResponse response = suhAiderEngine.generate(request);
 
             IntentClassificationDto intent = objectMapper.readValue(
-                response.getResponse(),
+                extractJsonObject(response.getResponse()),
                 IntentClassificationDto.class
             );
 
