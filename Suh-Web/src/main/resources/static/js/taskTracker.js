@@ -55,7 +55,7 @@ function loadGoals() {
     },
     function(xhr, status, error) {
       console.error('Goal 목록 로드 실패:', error);
-      $('#taskGoalsGrid').html('<div class="col-span-full text-center py-8 text-gray-500">데이터를 불러올 수 없습니다.</div>');
+      $('#taskGoalsGrid').html('<div class="col-span-full text-center py-8 text-gray-500">' + window.MSG['taskTracker.toast.loadFailed'] + '</div>');
     }
   );
 }
@@ -134,7 +134,7 @@ function renderGoalCard(goal) {
   if (goal.totalAmount > 0) {
     const progressDiv = $('<div class="mb-3">');
     const progressInfo = $('<div class="flex justify-between text-xs text-gray-500 mb-1">');
-    progressInfo.append($('<span>').text('진행률'));
+    progressInfo.append($('<span>').text(window.MSG['taskTracker.label.progressRate']));
     progressInfo.append($('<span>').text(progressPercentage + '%'));
     progressDiv.append(progressInfo);
 
@@ -166,29 +166,29 @@ function renderGoalCard(goal) {
 
   const buttonDiv = $('<div class="flex gap-1 justify-end flex-wrap">');
 
-  const progressBtn = $('<button class="btn btn-circle btn-sm btn-success" title="진행 기록 추가">');
+  const progressBtn = $('<button class="btn btn-circle btn-sm btn-success">').attr('title', window.MSG['taskTracker.progress.addTitle']);
   progressBtn.append($('<i class="fa-solid fa-plus text-xs">'));
   progressBtn.attr('onclick', 'showAddProgressModal("' + goal.taskGoalId + '")');
   buttonDiv.append(progressBtn);
 
-  const editBtn = $('<button class="btn btn-circle btn-sm btn-info" title="수정">');
+  const editBtn = $('<button class="btn btn-circle btn-sm btn-info">').attr('title', window.MSG['taskTracker.button.edit']);
   editBtn.append($('<i class="fa-solid fa-pen text-xs">'));
   editBtn.attr('onclick', 'editGoal("' + goal.taskGoalId + '")');
   buttonDiv.append(editBtn);
 
   if (!goal.isCompleted) {
-    const completeBtn = $('<button class="btn btn-circle btn-sm btn-primary" title="완료">');
+    const completeBtn = $('<button class="btn btn-circle btn-sm btn-primary">').attr('title', window.MSG['taskTracker.button.complete']);
     completeBtn.append($('<i class="fa-solid fa-check text-xs">'));
     completeBtn.attr('onclick', 'completeGoal("' + goal.taskGoalId + '")');
     buttonDiv.append(completeBtn);
 
-    const cancelBtn = $('<button class="btn btn-circle btn-sm btn-warning" title="취소">');
+    const cancelBtn = $('<button class="btn btn-circle btn-sm btn-warning">').attr('title', window.MSG['taskTracker.button.cancel']);
     cancelBtn.append($('<i class="fa-solid fa-ban text-xs">'));
     cancelBtn.attr('onclick', 'cancelGoal("' + goal.taskGoalId + '")');
     buttonDiv.append(cancelBtn);
   }
 
-  const deleteBtn = $('<button class="btn btn-circle btn-sm btn-error" title="삭제">');
+  const deleteBtn = $('<button class="btn btn-circle btn-sm btn-error">').attr('title', window.MSG['taskTracker.button.delete']);
   deleteBtn.append($('<i class="fa-solid fa-trash text-xs">'));
   deleteBtn.attr('onclick', 'deleteGoal("' + goal.taskGoalId + '")');
   buttonDiv.append(deleteBtn);
@@ -246,7 +246,7 @@ function updateGoalSelects(goals) {
 function showAddGoalModal() {
   $('#goalForm')[0].reset();
   $('#goalId').val('');
-  $('#goalModalTitle').html('<i class="fa-solid fa-bullseye text-blue-500"></i> Task 추가');
+  $('#goalModalTitle').html('<i class="fa-solid fa-bullseye text-blue-500"></i> ' + window.MSG['taskTracker.button.addTask']);
   setDefaultDate();
   document.getElementById('goalModal').showModal();
 }
@@ -257,7 +257,7 @@ function showAddGoalModal() {
 function editGoal(goalId) {
   const goal = goals.find(g => g.taskGoalId === goalId);
   if (!goal) {
-    showToast('Task를 찾을 수 없습니다.', 'negative');
+    showToast(window.MSG['taskTracker.toast.taskNotFound'], 'negative');
     return;
   }
 
@@ -275,7 +275,7 @@ function editGoal(goalId) {
   $('#goalIcon').val(goal.icon || 'fa-solid fa-bullseye');
   $('#goalColor').val(goal.color || 'blue');
 
-  $('#goalModalTitle').html('<i class="fa-solid fa-pen text-blue-500"></i> Task 수정');
+  $('#goalModalTitle').html('<i class="fa-solid fa-pen text-blue-500"></i> ' + window.MSG['taskTracker.goal.editTitle']);
   document.getElementById('goalModal').showModal();
 }
 
@@ -290,12 +290,12 @@ function saveGoal() {
 
   sendFormRequest(url, Object.fromEntries(formData),
     function(response) {
-      showToast(goalId ? 'Task가 수정되었습니다.' : 'Task가 생성되었습니다.', 'positive');
+      showToast(goalId ? window.MSG['taskTracker.toast.taskUpdated'] : window.MSG['taskTracker.toast.taskCreated'], 'positive');
       document.getElementById('goalModal').close();
       loadGoals();
     },
     function(xhr, status, error) {
-      let errorMessage = 'Task 저장 중 오류가 발생했습니다.';
+      let errorMessage = window.MSG['taskTracker.toast.taskSaveFailed'];
       if (xhr.responseJSON && xhr.responseJSON.message) {
         errorMessage = xhr.responseJSON.message;
       }
@@ -308,17 +308,17 @@ function saveGoal() {
  * Goal 완료 처리
  */
 function completeGoal(goalId) {
-  if (!confirm('이 Task를 완료 처리하시겠습니까?')) {
+  if (!confirm(window.MSG['taskTracker.confirm.complete'])) {
     return;
   }
 
   sendFormRequest('/api/task/goal/complete', { taskGoalId: goalId },
     function(response) {
-      showToast('Task가 완료 처리되었습니다.', 'positive');
+      showToast(window.MSG['taskTracker.toast.taskCompleted'], 'positive');
       loadGoals();
     },
     function(xhr, status, error) {
-      showToast('완료 처리 중 오류가 발생했습니다.', 'negative');
+      showToast(window.MSG['taskTracker.toast.completeFailed'], 'negative');
     }
   );
 }
@@ -327,17 +327,17 @@ function completeGoal(goalId) {
  * Goal 취소 처리
  */
 function cancelGoal(goalId) {
-  if (!confirm('이 Task를 취소하시겠습니까? (목록에서 숨겨집니다)')) {
+  if (!confirm(window.MSG['taskTracker.confirm.cancel'])) {
     return;
   }
 
   sendFormRequest('/api/task/goal/cancel', { taskGoalId: goalId },
     function(response) {
-      showToast('Task가 취소되었습니다.', 'positive');
+      showToast(window.MSG['taskTracker.toast.taskCancelled'], 'positive');
       loadGoals();
     },
     function(xhr, status, error) {
-      showToast('취소 처리 중 오류가 발생했습니다.', 'negative');
+      showToast(window.MSG['taskTracker.toast.cancelFailed'], 'negative');
     }
   );
 }
@@ -346,18 +346,18 @@ function cancelGoal(goalId) {
  * Goal 삭제
  */
 function deleteGoal(goalId) {
-  if (!confirm('이 Task를 삭제하시겠습니까? 관련된 모든 진행 기록도 함께 삭제됩니다.')) {
+  if (!confirm(window.MSG['taskTracker.confirm.deleteTask'])) {
     return;
   }
 
   sendFormRequest('/api/task/goal/delete', { taskGoalId: goalId },
     function(response) {
-      showToast('Task가 삭제되었습니다.', 'positive');
+      showToast(window.MSG['taskTracker.toast.taskDeleted'], 'positive');
       loadGoals();
       loadProgress();
     },
     function(xhr, status, error) {
-      showToast('삭제 중 오류가 발생했습니다.', 'negative');
+      showToast(window.MSG['taskTracker.toast.deleteFailed'], 'negative');
     }
   );
 }
@@ -374,14 +374,14 @@ function showGoalDetail(goalId) {
     function(response) {
       const goal = response.goal;
       if (!goal) {
-        detailContent.html('<p class="text-center text-gray-500">Task를 찾을 수 없습니다.</p>');
+        detailContent.html('<p class="text-center text-gray-500">' + window.MSG['taskTracker.toast.taskNotFound'] + '</p>');
         return;
       }
 
       renderGoalDetail(goal, response.progressList || []);
     },
     function(xhr, status, error) {
-      detailContent.html('<p class="text-center text-red-500">데이터를 불러올 수 없습니다.</p>');
+      detailContent.html('<p class="text-center text-red-500">' + window.MSG['taskTracker.toast.loadFailed'] + '</p>');
     }
   );
 }
@@ -411,15 +411,15 @@ function renderGoalDetail(goal, progressList) {
   html += `
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
       <div class="stat bg-base-200 rounded-lg p-4">
-        <div class="stat-title text-xs">목표일</div>
+        <div class="stat-title text-xs">${window.MSG['taskTracker.label.targetDate']}</div>
         <div class="stat-value text-lg">${goal.targetDate ? new Date(goal.targetDate).toLocaleDateString('ko-KR') : '-'}</div>
       </div>
       <div class="stat bg-base-200 rounded-lg p-4">
-        <div class="stat-title text-xs">진행률</div>
+        <div class="stat-title text-xs">${window.MSG['taskTracker.label.progressRate']}</div>
         <div class="stat-value text-lg">${goal.progressPercentage || 0}%</div>
       </div>
       <div class="stat bg-base-200 rounded-lg p-4">
-        <div class="stat-title text-xs">목표량</div>
+        <div class="stat-title text-xs">${window.MSG['taskTracker.label.totalAmount']}</div>
         <div class="stat-value text-lg">${goal.currentAmount || 0}/${goal.totalAmount || 0}</div>
         <div class="stat-desc">${goal.unit || ''}</div>
       </div>
@@ -437,14 +437,14 @@ function renderGoalDetail(goal, progressList) {
 
   if (progressList && progressList.length > 0) {
     html += `
-      <div class="divider">최근 진행 기록</div>
+      <div class="divider">${window.MSG['taskTracker.detail.recentProgress']}</div>
       <div class="overflow-x-auto max-h-64">
         <table class="table table-sm">
           <thead>
             <tr>
-              <th>날짜</th>
-              <th>내용</th>
-              <th>범위</th>
+              <th>${window.MSG['taskTracker.table.date']}</th>
+              <th>${window.MSG['taskTracker.table.content']}</th>
+              <th>${window.MSG['taskTracker.table.range']}</th>
             </tr>
           </thead>
           <tbody>
@@ -485,7 +485,7 @@ function loadProgress() {
     },
     function(xhr, status, error) {
       console.error('진행 기록 로드 실패:', error);
-      $('#progressTable').html('<tr><td colspan="7" class="text-center py-8 text-gray-500">데이터를 불러올 수 없습니다.</td></tr>');
+      $('#progressTable').html('<tr><td colspan="7" class="text-center py-8 text-gray-500">' + window.MSG['taskTracker.toast.loadFailed'] + '</td></tr>');
     }
   );
 }
@@ -500,7 +500,7 @@ function renderProgress(progressList) {
 
   if (!progressList || progressList.length === 0) {
     tableBody.closest('table').addClass('hidden');
-    cardContainer.html('<div class="text-center py-8 text-gray-500">진행 기록이 없습니다.</div>');
+    cardContainer.html('<div class="text-center py-8 text-gray-500">' + window.MSG['taskTracker.empty.noProgress'] + '</div>');
     emptyMessage.removeClass('hidden');
     return;
   }
@@ -533,7 +533,7 @@ function renderProgress(progressList) {
     row.append(memoCell);
 
     const actionCell = $('<td>');
-    const deleteBtn = $('<button class="btn btn-xs btn-ghost text-red-500" title="삭제">');
+    const deleteBtn = $('<button class="btn btn-xs btn-ghost text-red-500">').attr('title', window.MSG['taskTracker.button.delete']);
     deleteBtn.append($('<i class="fa-solid fa-trash">'));
     deleteBtn.attr('onclick', 'deleteProgress("' + progress.taskProgressId + '")');
     actionCell.append(deleteBtn);
@@ -556,7 +556,7 @@ function renderProgress(progressList) {
 
     const infoRow = $('<div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-2">');
     if (range !== '-') {
-      infoRow.append($('<span class="badge badge-outline badge-xs">').text('범위: ' + range));
+      infoRow.append($('<span class="badge badge-outline badge-xs">').text(window.MSG['taskTracker.label.rangePrefix'] + range));
     }
     cardBody.append(infoRow);
 
@@ -567,7 +567,7 @@ function renderProgress(progressList) {
     const actionRow = $('<div class="flex justify-end mt-2">');
     const mobileDeleteBtn = $('<button class="btn btn-xs btn-ghost text-red-500">');
     mobileDeleteBtn.append($('<i class="fa-solid fa-trash">'));
-    mobileDeleteBtn.append(' 삭제');
+    mobileDeleteBtn.append(' ' + window.MSG['taskTracker.button.delete']);
     mobileDeleteBtn.attr('onclick', 'deleteProgress("' + progress.taskProgressId + '")');
     actionRow.append(mobileDeleteBtn);
     cardBody.append(actionRow);
@@ -583,7 +583,7 @@ function renderProgress(progressList) {
 function showAddProgressModal(goalId) {
   $('#progressForm')[0].reset();
   $('#progressId').val('');
-  $('#progressModalTitle').html('<i class="fa-solid fa-clock text-blue-500"></i> 진행 기록 추가');
+  $('#progressModalTitle').html('<i class="fa-solid fa-clock text-blue-500"></i> ' + window.MSG['taskTracker.progress.addTitle']);
 
   const today = new Date().toISOString().split('T')[0];
   $('#progressDate').val(today);
@@ -613,13 +613,13 @@ function saveProgress() {
 
   sendFormRequest('/api/task/progress/save', Object.fromEntries(formData),
     function(response) {
-      showToast('진행 기록이 저장되었습니다.', 'positive');
+      showToast(window.MSG['taskTracker.toast.progressSaved'], 'positive');
       document.getElementById('progressModal').close();
       loadGoals();
       loadProgress();
     },
     function(xhr, status, error) {
-      let errorMessage = '저장 중 오류가 발생했습니다.';
+      let errorMessage = window.MSG['taskTracker.toast.saveFailed'];
       if (xhr.responseJSON && xhr.responseJSON.message) {
         errorMessage = xhr.responseJSON.message;
       }
@@ -632,18 +632,18 @@ function saveProgress() {
  * 진행 기록 삭제
  */
 function deleteProgress(progressId) {
-  if (!confirm('이 진행 기록을 삭제하시겠습니까?')) {
+  if (!confirm(window.MSG['taskTracker.confirm.deleteProgress'])) {
     return;
   }
 
   sendFormRequest('/api/task/progress/delete', { taskProgressId: progressId },
     function(response) {
-      showToast('진행 기록이 삭제되었습니다.', 'positive');
+      showToast(window.MSG['taskTracker.toast.progressDeleted'], 'positive');
       loadGoals();
       loadProgress();
     },
     function(xhr, status, error) {
-      showToast('삭제 중 오류가 발생했습니다.', 'negative');
+      showToast(window.MSG['taskTracker.toast.deleteFailed'], 'negative');
     }
   );
 }

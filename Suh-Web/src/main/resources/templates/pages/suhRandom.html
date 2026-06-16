@@ -18,7 +18,7 @@
         <i class="fa-solid fa-dice text-teal-600"></i>
         SUH Random Nickname Generator
       </h1>
-      <p class="font-mono text-base-content/80 text-sm sm:text-base mb-1">96만 조합의 개성 있는 닉네임 생성기</p>
+      <p class="font-mono text-base-content/80 text-sm sm:text-base mb-1" th:text="#{suhRandom.hero.subtitle}">96만 조합의 개성 있는 닉네임 생성기</p>
       <div class="mt-4 flex justify-center gap-2">
         <a href="https://github.com/Cassiiopeia/suh-random-engine" target="_blank"
            class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-gray-900">
@@ -43,96 +43,96 @@
           <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
             <i class="fa-solid fa-wand-magic-sparkles text-success"></i>
           </div>
-          닉네임 생성 옵션
+          <span th:text="#{suhRandom.option.title}">닉네임 생성 옵션</span>
         </h2>
 
         <!-- 언어 선택 -->
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">언어</span>
+            <span class="label-text font-medium" th:text="#{suhRandom.label.language}">언어</span>
           </label>
           <select id="locale" class="select select-bordered w-full">
-            <option value="ko" selected>한국어 (ko)</option>
-            <option value="en">영어 (en)</option>
+            <option value="ko" selected th:text="#{suhRandom.locale.ko}">한국어 (ko)</option>
+            <option value="en" th:text="#{suhRandom.locale.en}">영어 (en)</option>
           </select>
         </div>
 
         <!-- 닉네임 타입 선택 -->
         <fieldset class="fieldset mb-4">
-          <legend class="fieldset-legend text-sm font-medium text-base-content/80 mb-3">닉네임 타입 선택</legend>
+          <legend class="fieldset-legend text-sm font-medium text-base-content/80 mb-3" th:text="#{suhRandom.fieldset.typeLegend}">닉네임 타입 선택</legend>
           <div class="space-y-3">
             <!-- 기본 닉네임 -->
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="nicknameType" value="SIMPLE" class="radio radio-primary" checked/>
               <div class="flex-1">
-                <span class="font-medium">기본 닉네임</span>
-                <span class="badge badge-sm badge-success ml-2">추천</span>
-                <p class="text-xs text-base-content/60 mt-1">형용사 + 명사 조합 (예: 멋진고양이)</p>
+                <span class="font-medium" th:text="#{suhRandom.type.simple.title}">기본 닉네임</span>
+                <span class="badge badge-sm badge-success ml-2" th:text="#{suhRandom.badge.recommended}">추천</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.simple.desc}">형용사 + 명사 조합 (예: 멋진고양이)</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="nicknameType" value="NUMBER" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">숫자 접미사</span>
-                <p class="text-xs text-base-content/60 mt-1">닉네임 + 숫자 (예: 멋진고양이-1234)</p>
+                <span class="font-medium" th:text="#{suhRandom.type.number.title}">숫자 접미사</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.number.desc}">닉네임 + 숫자 (예: 멋진고양이-1234)</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="nicknameType" value="UUID" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">UUID 접미사</span>
-                <p class="text-xs text-base-content/60 mt-1">닉네임 + UUID (예: 멋진고양이-abcd)</p>
+                <span class="font-medium" th:text="#{suhRandom.type.uuid.title}">UUID 접미사</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.uuid.desc}">닉네임 + UUID (예: 멋진고양이-abcd)</p>
               </div>
             </label>
 
             <!-- 정치인 닉네임 -->
-            <div class="divider text-xs text-base-content/50 my-2">정치인 닉네임</div>
+            <div class="divider text-xs text-base-content/50 my-2" th:text="#{suhRandom.divider.politician}">정치인 닉네임</div>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="nicknameType" value="POLITICIAN" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">정치인 닉네임</span>
-                <p class="text-xs text-base-content/60 mt-1">형용사 + 정치인 이름 (예: 멋진윤석열)</p>
+                <span class="font-medium" th:text="#{suhRandom.type.politician.title}">정치인 닉네임</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.politician.desc}">형용사 + 정치인 이름 (예: 멋진윤석열)</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="nicknameType" value="POLITICIAN_NUMBER" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">정치인 + 숫자</span>
-                <p class="text-xs text-base-content/60 mt-1">정치인 닉네임 + 숫자 (예: 빛나는이재명-1234)</p>
+                <span class="font-medium" th:text="#{suhRandom.type.politicianNumber.title}">정치인 + 숫자</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.politicianNumber.desc}">정치인 닉네임 + 숫자 (예: 빛나는이재명-1234)</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-base-300 transition-colors">
               <input type="radio" name="nicknameType" value="POLITICIAN_UUID" class="radio radio-primary"/>
               <div class="flex-1">
-                <span class="font-medium">정치인 + UUID</span>
-                <p class="text-xs text-base-content/60 mt-1">정치인 닉네임 + UUID (예: 멋진이준석-abcd)</p>
+                <span class="font-medium" th:text="#{suhRandom.type.politicianUuid.title}">정치인 + UUID</span>
+                <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.politicianUuid.desc}">정치인 닉네임 + UUID (예: 멋진이준석-abcd)</p>
               </div>
             </label>
 
             <!-- 성인용 닉네임 -->
-            <div class="divider text-xs text-base-content/50 my-2">성인용 닉네임 (19+)</div>
+            <div class="divider text-xs text-base-content/50 my-2" th:text="#{suhRandom.divider.mature}">성인용 닉네임 (19+)</div>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-warning">성인용 닉네임</span>
+                <span class="font-medium text-warning" th:text="#{suhRandom.type.mature.title}">성인용 닉네임</span>
                 <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-warning/80 mt-1">성인용 형용사 + 명사 조합</p>
+                <p class="text-xs text-warning/80 mt-1" th:text="#{suhRandom.type.mature.desc}">성인용 형용사 + 명사 조합</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE_NUMBER" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-warning">성인용 + 숫자</span>
+                <span class="font-medium text-warning" th:text="#{suhRandom.type.matureNumber.title}">성인용 + 숫자</span>
                 <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-warning/80 mt-1">성인용 닉네임 + 숫자</p>
+                <p class="text-xs text-warning/80 mt-1" th:text="#{suhRandom.type.matureNumber.desc}">성인용 닉네임 + 숫자</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE_UUID" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-warning">성인용 + UUID</span>
+                <span class="font-medium text-warning" th:text="#{suhRandom.type.matureUuid.title}">성인용 + UUID</span>
                 <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-warning/80 mt-1">성인용 닉네임 + UUID</p>
+                <p class="text-xs text-warning/80 mt-1" th:text="#{suhRandom.type.matureUuid.desc}">성인용 닉네임 + UUID</p>
               </div>
             </label>
           </div>
@@ -143,14 +143,14 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="form-control" id="numberLengthControl">
               <label class="label">
-                <span class="label-text font-medium">숫자 길이</span>
+                <span class="label-text font-medium" th:text="#{suhRandom.label.numberLength}">숫자 길이</span>
               </label>
               <input type="number" id="numberLength" min="1" max="10" value="4"
                      class="input input-bordered w-full"/>
             </div>
             <div class="form-control" id="uuidLengthControl">
               <label class="label">
-                <span class="label-text font-medium">UUID 길이</span>
+                <span class="label-text font-medium" th:text="#{suhRandom.label.uuidLength}">UUID 길이</span>
               </label>
               <input type="number" id="uuidLength" min="1" max="10" value="4"
                      class="input input-bordered w-full"/>
@@ -162,20 +162,20 @@
         <div id="adultConsentSection" class="hidden mb-4">
           <div class="alert alert-warning mb-4">
             <i class="fa-solid fa-triangle-exclamation"></i>
-            <span>성인용 콘텐츠는 만 19세 이상만 사용할 수 있습니다.</span>
+            <span th:text="#{suhRandom.adult.warning}">성인용 콘텐츠는 만 19세 이상만 사용할 수 있습니다.</span>
           </div>
           <div class="space-y-2">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="ageConsent" class="checkbox checkbox-warning"/>
-              <span class="text-sm">본인은 만 19세 이상임을 확인합니다.</span>
+              <span class="text-sm" th:text="#{suhRandom.consent.age}">본인은 만 19세 이상임을 확인합니다.</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="responsibilityConsent" class="checkbox checkbox-warning"/>
-              <span class="text-sm">성인용 콘텐츠 사용에 대한 책임은 본인에게 있음을 동의합니다.</span>
+              <span class="text-sm" th:text="#{suhRandom.consent.responsibility}">성인용 콘텐츠 사용에 대한 책임은 본인에게 있음을 동의합니다.</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" id="illegalConsent" class="checkbox checkbox-warning"/>
-              <span class="text-sm">생성된 콘텐츠를 불법적인 용도로 사용하지 않을 것을 동의합니다.</span>
+              <span class="text-sm" th:text="#{suhRandom.consent.illegal}">생성된 콘텐츠를 불법적인 용도로 사용하지 않을 것을 동의합니다.</span>
             </label>
           </div>
         </div>
@@ -183,7 +183,7 @@
         <!-- 생성 버튼 -->
         <button id="generateBtn" class="btn btn-primary btn-lg w-full">
           <i class="fa-solid fa-dice"></i>
-          닉네임 생성하기
+          <span th:text="#{suhRandom.button.generate}">닉네임 생성하기</span>
         </button>
       </div>
     </div>
@@ -195,19 +195,19 @@
           <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
             <i class="fa-solid fa-star text-success"></i>
           </div>
-          생성 결과
+          <span th:text="#{suhRandom.result.title}">생성 결과</span>
         </h2>
 
         <!-- Tabs -->
         <div role="tablist" class="tabs tabs-border mb-4">
           <a role="tab" class="tab" data-tab="result">
-            <i class="fa-solid fa-font mr-1"></i> 결과
+            <i class="fa-solid fa-font mr-1"></i> <span th:text="#{suhRandom.tab.result}">결과</span>
           </a>
           <a role="tab" class="tab" data-tab="json">
             <i class="fa-solid fa-code mr-1"></i> JSON
           </a>
           <a role="tab" class="tab" data-tab="history">
-            <i class="fa-solid fa-clock-rotate-left mr-1"></i> 히스토리
+            <i class="fa-solid fa-clock-rotate-left mr-1"></i> <span th:text="#{suhRandom.tab.history}">히스토리</span>
           </a>
         </div>
 
@@ -216,26 +216,26 @@
           <!-- 초기 상태 -->
           <div id="resultPlaceholder" class="text-center text-base-content/50 py-16">
             <i class="fa-solid fa-arrow-left text-5xl mb-4 opacity-50"></i>
-            <p class="text-sm">옵션을 선택하고<br/>닉네임 생성하기 버튼을 눌러주세요</p>
+            <p class="text-sm" th:utext="#{suhRandom.placeholder.guide}">옵션을 선택하고<br/>닉네임 생성하기 버튼을 눌러주세요</p>
           </div>
 
           <!-- 로딩 상태 -->
           <div id="resultLoading" class="hidden py-8">
             <div class="flex flex-col items-center gap-4">
               <span class="loading loading-spinner loading-lg text-primary"></span>
-              <p class="text-base-content/60">닉네임 생성 중...</p>
+              <p class="text-base-content/60" th:text="#{suhRandom.loading.generating}">닉네임 생성 중...</p>
             </div>
           </div>
 
           <!-- 결과 표시 -->
           <div id="resultDisplay" class="hidden">
             <div class="text-center py-8">
-              <p class="text-sm text-base-content/60 mb-2">생성된 닉네임</p>
+              <p class="text-sm text-base-content/60 mb-2" th:text="#{suhRandom.result.generatedLabel}">생성된 닉네임</p>
               <div class="text-3xl sm:text-4xl font-bold text-success mb-4" id="generatedNickname"></div>
               <button type="button" id="copyNicknameBtn"
                       class="btn btn-outline btn-sm gap-2">
                 <i class="fa-regular fa-copy"></i>
-                복사하기
+                <span th:text="#{suhRandom.button.copy}">복사하기</span>
               </button>
             </div>
             <div class="divider"></div>
@@ -249,7 +249,7 @@
           <div id="resultJsonWrapper" class="hidden relative">
             <button type="button" id="copyJsonBtn"
                     class="absolute top-2 right-2 btn btn-ghost btn-xs text-base-content/60 hover:text-primary hover:bg-base-200"
-                    title="JSON 복사">
+                    th:title="#{suhRandom.button.copyJson}" title="JSON 복사">
               <i class="fa-regular fa-copy"></i>
             </button>
             <pre id="resultJson" class="text-sm whitespace-pre-wrap break-words pt-6"></pre>
@@ -258,7 +258,7 @@
           <!-- 히스토리 -->
           <div id="resultHistory" class="hidden">
             <div id="historyList" class="space-y-2">
-              <p class="text-center text-base-content/50 py-8">아직 생성된 닉네임이 없습니다.</p>
+              <p class="text-center text-base-content/50 py-8" th:text="#{suhRandom.history.empty}">아직 생성된 닉네임이 없습니다.</p>
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-code text-success"></i>
-        API 사용법
+        <span th:text="#{suhRandom.collapse.apiUsage}">API 사용법</span>
       </div>
       <div class="collapse-content">
         <div class="pt-4 space-y-4">
@@ -301,28 +301,28 @@
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-list text-primary"></i>
-        닉네임 타입 설명
+        <span th:text="#{suhRandom.collapse.typeExplanation}">닉네임 타입 설명</span>
       </div>
       <div class="collapse-content">
         <div class="pt-4">
           <table class="table table-zebra w-full text-sm">
             <thead>
               <tr>
-                <th>타입</th>
-                <th>설명</th>
-                <th>예시</th>
+                <th th:text="#{suhRandom.table.type}">타입</th>
+                <th th:text="#{suhRandom.table.description}">설명</th>
+                <th th:text="#{suhRandom.table.example}">예시</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td class="font-mono">SIMPLE</td><td>형용사 + 명사 조합</td><td>멋진고양이</td></tr>
-              <tr><td class="font-mono">NUMBER</td><td>닉네임 + 숫자</td><td>멋진고양이-1234</td></tr>
-              <tr><td class="font-mono">UUID</td><td>닉네임 + UUID</td><td>멋진고양이-abcd</td></tr>
-              <tr><td class="font-mono">POLITICIAN</td><td>형용사 + 정치인 이름</td><td>멋진윤석열</td></tr>
-              <tr><td class="font-mono">POLITICIAN_NUMBER</td><td>정치인 닉네임 + 숫자</td><td>빛나는이재명-1234</td></tr>
-              <tr><td class="font-mono">POLITICIAN_UUID</td><td>정치인 닉네임 + UUID</td><td>멋진이준석-abcd</td></tr>
-              <tr><td class="font-mono text-warning">MATURE</td><td>성인용 형용사 + 명사</td><td>(19+)</td></tr>
-              <tr><td class="font-mono text-warning">MATURE_NUMBER</td><td>성인용 닉네임 + 숫자</td><td>(19+)</td></tr>
-              <tr><td class="font-mono text-warning">MATURE_UUID</td><td>성인용 닉네임 + UUID</td><td>(19+)</td></tr>
+              <tr><td class="font-mono">SIMPLE</td><td th:text="#{suhRandom.type.simple.short}">형용사 + 명사 조합</td><td>멋진고양이</td></tr>
+              <tr><td class="font-mono">NUMBER</td><td th:text="#{suhRandom.type.number.short}">닉네임 + 숫자</td><td>멋진고양이-1234</td></tr>
+              <tr><td class="font-mono">UUID</td><td th:text="#{suhRandom.type.uuid.short}">닉네임 + UUID</td><td>멋진고양이-abcd</td></tr>
+              <tr><td class="font-mono">POLITICIAN</td><td th:text="#{suhRandom.type.politician.short}">형용사 + 정치인 이름</td><td>멋진윤석열</td></tr>
+              <tr><td class="font-mono">POLITICIAN_NUMBER</td><td th:text="#{suhRandom.type.politicianNumber.short}">정치인 닉네임 + 숫자</td><td>빛나는이재명-1234</td></tr>
+              <tr><td class="font-mono">POLITICIAN_UUID</td><td th:text="#{suhRandom.type.politicianUuid.short}">정치인 닉네임 + UUID</td><td>멋진이준석-abcd</td></tr>
+              <tr><td class="font-mono text-warning">MATURE</td><td th:text="#{suhRandom.type.mature.short}">성인용 형용사 + 명사</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-warning">MATURE_NUMBER</td><td th:text="#{suhRandom.type.matureNumber.short}">성인용 닉네임 + 숫자</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-warning">MATURE_UUID</td><td th:text="#{suhRandom.type.matureUuid.short}">성인용 닉네임 + UUID</td><td>(19+)</td></tr>
             </tbody>
           </table>
         </div>
@@ -334,26 +334,26 @@
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
         <i class="fa-solid fa-triangle-exclamation text-warning"></i>
-        성인용 콘텐츠 주의사항
+        <span th:text="#{suhRandom.collapse.matureNotice}">성인용 콘텐츠 주의사항</span>
       </div>
       <div class="collapse-content">
         <div class="pt-4">
           <div class="alert alert-warning mb-4">
             <i class="fa-solid fa-exclamation-circle"></i>
-            <span>성인용 콘텐츠는 만 19세 이상만 사용할 수 있습니다.</span>
+            <span th:text="#{suhRandom.adult.warning}">성인용 콘텐츠는 만 19세 이상만 사용할 수 있습니다.</span>
           </div>
           <div class="space-y-4">
             <div>
-              <h4 class="font-bold text-sm mb-2">필수 동의 사항</h4>
+              <h4 class="font-bold text-sm mb-2" th:text="#{suhRandom.notice.consentHeading}">필수 동의 사항</h4>
               <ul class="text-sm text-base-content/70 space-y-1 list-disc list-inside">
-                <li>사용자가 만 19세 이상임을 확인</li>
-                <li>성인용 콘텐츠의 사용에 대한 책임은 사용자에게 있음을 동의</li>
-                <li>생성된 콘텐츠를 불법적인 용도로 사용하지 않을 것을 동의</li>
+                <li th:text="#{suhRandom.notice.consentAge}">사용자가 만 19세 이상임을 확인</li>
+                <li th:text="#{suhRandom.notice.consentResponsibility}">성인용 콘텐츠의 사용에 대한 책임은 사용자에게 있음을 동의</li>
+                <li th:text="#{suhRandom.notice.consentIllegal}">생성된 콘텐츠를 불법적인 용도로 사용하지 않을 것을 동의</li>
               </ul>
             </div>
             <div>
-              <h4 class="font-bold text-sm mb-2">법적 책임</h4>
-              <p class="text-sm text-base-content/70">
+              <h4 class="font-bold text-sm mb-2" th:text="#{suhRandom.notice.legalHeading}">법적 책임</h4>
+              <p class="text-sm text-base-content/70" th:text="#{suhRandom.notice.legalBody}">
                 성인용 콘텐츠의 부적절한 사용으로 인한 모든 법적 책임은 사용자 본인에게 있습니다.
                 서비스 제공자는 어떠한 책임도 지지 않습니다.
               </p>
@@ -457,18 +457,18 @@
   function copyNickname() {
     const nickname = window.elements.generatedNickname.textContent;
     navigator.clipboard.writeText(nickname).then(() => {
-      showToast('닉네임이 클립보드에 복사되었습니다!', 'positive');
+      showToast(window.MSG['suhRandom.toast.copySuccess'], 'positive');
     }).catch(() => {
-      showToast('복사에 실패했습니다.', 'negative');
+      showToast(window.MSG['suhRandom.toast.copyFail'], 'negative');
     });
   }
 
   function copyJsonToClipboard() {
     const json = window.elements.resultJson.textContent;
     navigator.clipboard.writeText(json).then(() => {
-      showToast('JSON이 클립보드에 복사되었습니다!', 'positive');
+      showToast(window.MSG['suhRandom.toast.copyJsonSuccess'], 'positive');
     }).catch(() => {
-      showToast('복사에 실패했습니다.', 'negative');
+      showToast(window.MSG['suhRandom.toast.copyFail'], 'negative');
     });
   }
 
@@ -512,7 +512,7 @@
                           window.elements.responsibilityConsent.checked &&
                           window.elements.illegalConsent.checked;
       if (!allConsented) {
-        showToast('성인용 콘텐츠 사용을 위해 모든 동의 사항에 체크해주세요.', 'warning');
+        showToast(window.MSG['suhRandom.toast.consentRequired'], 'warning');
         return;
       }
     }
@@ -536,12 +536,12 @@
         lastResult = response;
         renderResult(response);
         addToHistory(response);
-        showToast('닉네임이 생성되었습니다!', 'positive');
+        showToast(window.MSG['suhRandom.toast.generateSuccess'], 'positive');
       },
       error: function(xhr, status, error) {
         console.error('Generation error:', error);
         hideLoading();
-        let errorMessage = '닉네임 생성 중 오류가 발생했습니다.';
+        let errorMessage = window.MSG['suhRandom.toast.generateError'];
         if (xhr.responseJSON && xhr.responseJSON.message) {
           errorMessage = xhr.responseJSON.message;
         }
@@ -557,13 +557,13 @@
     window.elements.resultHistory.classList.add('hidden');
     window.elements.resultLoading.classList.remove('hidden');
     window.elements.generateBtn.disabled = true;
-    window.elements.generateBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> 생성 중...';
+    window.elements.generateBtn.innerHTML = '<span class="loading loading-spinner loading-sm"></span> ' + window.MSG['suhRandom.button.generating'];
   }
 
   function hideLoading() {
     window.elements.resultLoading.classList.add('hidden');
     window.elements.generateBtn.disabled = false;
-    window.elements.generateBtn.innerHTML = '<i class="fa-solid fa-dice"></i> 닉네임 생성하기';
+    window.elements.generateBtn.innerHTML = '<i class="fa-solid fa-dice"></i> ' + window.MSG['suhRandom.button.generate'];
   }
 
   function renderResult(result) {
@@ -576,11 +576,11 @@
     tbody.innerHTML = '';
 
     const fields = [
-      { key: 'nicknameType', label: '타입' },
-      { key: 'locale', label: '언어', format: v => v === 'ko' ? '한국어' : '영어' },
-      { key: 'numberLength', label: '숫자 길이' },
-      { key: 'uuidLength', label: 'UUID 길이' },
-      { key: 'generatedAt', label: '생성 시간' }
+      { key: 'nicknameType', label: window.MSG['suhRandom.field.type'] },
+      { key: 'locale', label: window.MSG['suhRandom.field.language'], format: v => v === 'ko' ? window.MSG['suhRandom.lang.ko'] : window.MSG['suhRandom.lang.en'] },
+      { key: 'numberLength', label: window.MSG['suhRandom.field.numberLength'] },
+      { key: 'uuidLength', label: window.MSG['suhRandom.field.uuidLength'] },
+      { key: 'generatedAt', label: window.MSG['suhRandom.field.generatedAt'] }
     ];
 
     fields.forEach(field => {
@@ -621,7 +621,7 @@
     const historyList = window.elements.historyList;
 
     if (nicknameHistory.length === 0) {
-      historyList.innerHTML = '<p class="text-center text-base-content/50 py-8">아직 생성된 닉네임이 없습니다.</p>';
+      historyList.innerHTML = '<p class="text-center text-base-content/50 py-8">' + window.MSG['suhRandom.history.empty'] + '</p>';
       return;
     }
 
@@ -645,9 +645,9 @@
 
   function copyHistoryItem(nickname) {
     navigator.clipboard.writeText(nickname).then(() => {
-      showToast('닉네임이 클립보드에 복사되었습니다!', 'positive');
+      showToast(window.MSG['suhRandom.toast.copySuccess'], 'positive');
     }).catch(() => {
-      showToast('복사에 실패했습니다.', 'negative');
+      showToast(window.MSG['suhRandom.toast.copyFail'], 'negative');
     });
   }
 
