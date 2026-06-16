@@ -918,7 +918,7 @@
       <!-- Summary 헤더 (새로고침 버튼 포함) -->
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-base-content" th:text="#{dashboard.summary.title}">서버 통계</h2>
-        <button id="refresh-summary-btn" onclick="refreshDashboardSummary()" class="btn btn-sm btn-ghost btn-circle" title="통계 새로고침">
+        <button id="refresh-summary-btn" onclick="refreshDashboardSummary()" class="btn btn-sm btn-ghost btn-circle" th:title="#{dashboard.summary.refresh}" title="통계 새로고침">
           <i class="fa-solid fa-arrows-rotate text-base-content/60"></i>
         </button>
       </div>
@@ -987,9 +987,9 @@
                   <i class="fa-solid fa-users text-blue-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1">총 방문자</p>
+                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.totalVisitors}">총 방문자</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-visitors">-</p>
-                  <p class="text-xs text-base-content/50">오늘: <span id="stat-today-visitors" class="text-success font-medium">+0</span></p>
+                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-visitors" class="text-success font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1003,9 +1003,9 @@
                   <i class="fa-solid fa-comments text-purple-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1">챗봇 메시지</p>
+                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.chatMessages}">챗봇 메시지</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-chats">-</p>
-                  <p class="text-xs text-base-content/50">오늘: <span id="stat-today-chats" class="text-success font-medium">+0</span></p>
+                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-chats" class="text-success font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1019,9 +1019,9 @@
                   <i class="fa-solid fa-bolt text-amber-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1">토큰 사용량</p>
+                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.tokenUsage}">토큰 사용량</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-tokens">-</p>
-                  <p class="text-xs text-base-content/50">오늘: <span id="stat-today-tokens" class="text-success font-medium">+0</span></p>
+                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-tokens" class="text-success font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1035,9 +1035,9 @@
                   <i class="fa-solid fa-globe text-indigo-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1">모든 페이지 조회</p>
+                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.allPageViews}">모든 페이지 조회</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-page-views">-</p>
-                  <p class="text-xs text-base-content/50">오늘: <span id="stat-today-page-views" class="text-success font-medium">+0</span></p>
+                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-page-views" class="text-success font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1051,9 +1051,9 @@
                   <i class="fa-solid fa-user text-pink-600 text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1">프로필 조회</p>
+                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.profileViews}">프로필 조회</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-profile-views">-</p>
-                  <p class="text-xs text-base-content/50">오늘: <span id="stat-today-profile-views" class="text-success font-medium">+0</span></p>
+                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-profile-views" class="text-success font-medium">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1065,7 +1065,7 @@
         <div class="mt-4">
           <h3 class="text-sm font-medium text-base-content/80 mb-3">
             <i class="fa-solid fa-chart-bar mr-2 text-base-content/60"></i>
-            기능별 상세 통계
+            <span th:text="#{dashboard.stat.featureDetailTitle}">기능별 상세 통계</span>
           </h3>
           <div class="dashboard-card-grid-5">
             <!-- 세종대 인증 -->
@@ -1076,9 +1076,9 @@
                     <i class="fa-solid fa-graduation-cap text-blue-600"></i>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs text-base-content/60 font-medium mb-1">세종대 인증</p>
+                    <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.sejongAuth}">세종대 인증</p>
                     <p class="text-lg font-bold text-base-content" id="stat-total-sejong-auth">-</p>
-                    <p class="text-xs text-base-content/50">오늘: <span id="stat-today-sejong-auth" class="text-success font-medium">+0</span></p>
+                    <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-sejong-auth" class="text-success font-medium">+0</span></p>
                   </div>
                 </div>
               </div>
@@ -1091,9 +1091,9 @@
                     <i class="fa-solid fa-dice text-rose-600"></i>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs text-base-content/60 font-medium mb-1">SUH 랜덤</p>
+                    <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.suhRandom}">SUH 랜덤</p>
                     <p class="text-lg font-bold text-base-content" id="stat-total-suh-random">-</p>
-                    <p class="text-xs text-base-content/50">오늘: <span id="stat-today-suh-random" class="text-success font-medium">+0</span></p>
+                    <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-suh-random" class="text-success font-medium">+0</span></p>
                   </div>
                 </div>
               </div>
@@ -1111,7 +1111,7 @@
           Task D-Day
         </h2>
         <a href="/task-tracker" class="text-sm text-base-content/60 hover:text-primary transition-colors">
-          전체보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+          <span th:text="#{dashboard.notice.viewAll}">전체보기</span> <i class="fa-solid fa-chevron-right text-xs"></i>
         </a>
       </div>
 
@@ -1138,8 +1138,8 @@
         <!-- 등록된 Task가 없을 때 -->
         <div id="task-dday-empty" class="hidden text-center py-8 bg-base-100 rounded-lg border border-base-300">
           <i class="fa-solid fa-clipboard-list text-base-content/30 text-4xl mb-3"></i>
-          <p class="text-base-content/60 mb-3">등록된 Task가 없습니다</p>
-          <a href="/task-tracker" class="btn btn-primary btn-sm">Task 등록하기</a>
+          <p class="text-base-content/60 mb-3" th:text="#{dashboard.task.empty}">등록된 Task가 없습니다</p>
+          <a href="/task-tracker" class="btn btn-primary btn-sm" th:text="#{dashboard.task.register}">Task 등록하기</a>
         </div>
       </div>
     </section>
@@ -1151,7 +1151,7 @@
           <i class="fa-solid fa-wrench text-primary"></i>
           Dev Tools
         </h2>
-        <p class="text-base-content/60 text-sm mb-6">개발 유틸리티 도구 모음</p>
+        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.devTools.subtitle}">개발 유틸리티 도구 모음</p>
 
         <!-- Internal Tools -->
         <div class="bg-base-200 rounded-xl p-5 mb-6">
@@ -1168,13 +1168,13 @@
                     <i class="fa-brands fa-github text-blue-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">이슈 도우미</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.issueHelper}">이슈 도우미</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-info badge-xs">Utility</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">커밋, 브랜치 자동 생성</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.issueHelper.desc}">커밋, 브랜치 자동 생성</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">GitHub API</span>
                   <span class="badge badge-ghost badge-xs">Automation</span>
@@ -1190,13 +1190,13 @@
                     <i class="fa-solid fa-gears text-base-content/80 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">DevOps 템플릿</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.devopsTemplate}">DevOps 템플릿</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-warning badge-xs">Module</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">GitHub 자동화 템플릿</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.devopsTemplate.desc}">GitHub 자동화 템플릿</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">GitHub Actions</span>
                   <span class="badge badge-ghost badge-xs">CI/CD</span>
@@ -1212,13 +1212,13 @@
                     <i class="fa-solid fa-terminal text-base-content/70 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">컨테이너 로그</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.containerLogs}">컨테이너 로그</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-secondary badge-xs">Docker</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">실시간 로그 스트리밍</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.containerLogs.desc}">실시간 로그 스트리밍</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Docker</span>
                   <span class="badge badge-ghost badge-xs">SSE</span>
@@ -1234,7 +1234,7 @@
                     <i class="fa-solid fa-server text-purple-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">AI 서버 관리</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.aiServer}">AI 서버 관리</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-accent badge-xs">AI</span>
                     </div>
@@ -1243,11 +1243,11 @@
                 <div id="ai-server-status" class="flex items-center justify-between text-sm text-base-content/60 mb-3 p-2 bg-base-200 rounded-lg">
                   <span class="flex items-center gap-1">
                     <i class="fa-solid fa-signal"></i>
-                    연결 상태
+                    <span th:text="#{dashboard.tool.aiServer.connStatus}">연결 상태</span>
                   </span>
                   <span class="status-main-btn loading flex items-center gap-1 text-base-content/50">
                     <span class="loading loading-spinner loading-xs"></span>
-                    확인중
+                    <span th:text="#{dashboard.tool.aiServer.checking}">확인중</span>
                   </span>
                 </div>
                 <div class="flex flex-wrap gap-1">
@@ -1265,13 +1265,13 @@
                     <i class="fa-solid fa-language text-indigo-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">AI 번역기</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.translator}">AI 번역기</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-accent badge-xs">AI</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">커스텀 API 번역 서비스</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.translator.desc}">커스텀 API 번역 서비스</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">OpenAI</span>
                   <span class="badge badge-ghost badge-xs">Translation</span>
@@ -1287,13 +1287,13 @@
                     <i class="fa-solid fa-graduation-cap text-indigo-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">세종대 인증</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.stat.sejongAuth}">세종대 인증</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-primary badge-xs">Library</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">세종대학교 포털 인증 테스트</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.sejongAuth.desc}">세종대학교 포털 인증 테스트</p>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <span class="badge badge-ghost badge-xs">Auth</span>
                   <span class="badge badge-ghost badge-xs">Sejong</span>
@@ -1320,7 +1320,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">GitHub 자동 커밋 관리</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.grassPlanter.desc}">GitHub 자동 커밋 관리</p>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <span class="badge badge-ghost badge-xs">GitHub</span>
                   <span class="badge badge-ghost badge-xs">Scheduler</span>
@@ -1341,13 +1341,13 @@
                     <i class="fa-solid fa-dice text-rose-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">SUH 랜덤 엔진</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.suhRandomEngine}">SUH 랜덤 엔진</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-warning badge-xs">Library</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">랜덤 닉네임 & 가챠 시스템</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.suhRandomEngine.desc}">랜덤 닉네임 & 가챠 시스템</p>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <span class="badge badge-ghost badge-xs">Random</span>
                   <span class="badge badge-ghost badge-xs">Gacha</span>
@@ -1368,13 +1368,13 @@
                     <i class="fa-solid fa-bus text-orange-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">버스 자동 예약</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.busReservation}">버스 자동 예약</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-warning badge-xs">Somansa</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">버스 자동 예약 시스템</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.busReservation.desc}">버스 자동 예약 시스템</p>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <span class="badge badge-ghost badge-xs">Automation</span>
                   <span class="badge badge-ghost badge-xs">Scheduler</span>
@@ -1395,13 +1395,13 @@
                     <i class="fa-solid fa-database text-violet-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">챗봇 문서 관리</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.chatbotDocs}">챗봇 문서 관리</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-accent badge-xs">RAG</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">RAG 챗봇 지식 문서 관리</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.chatbotDocs.desc}">RAG 챗봇 지식 문서 관리</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Qdrant</span>
                   <span class="badge badge-ghost badge-xs">Vector DB</span>
@@ -1426,13 +1426,13 @@
                     <i class="fa-brands fa-chrome text-yellow-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">원격 크롬 (JJ)</h3>
+                    <h3 class="font-bold text-base-content"><span th:text="#{dashboard.tool.remoteChrome}">원격 크롬</span> (JJ)</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-warning badge-xs">Remote</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">외부 크롬 원격 접속 (JJ 서버)</p>
+                <p class="text-base-content/60 text-sm mb-3"><span th:text="#{dashboard.tool.remoteChrome.desc}">외부 크롬 원격 접속</span> (JJ)</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Chrome</span>
                   <span class="badge badge-ghost badge-xs">Remote Desktop</span>
@@ -1448,13 +1448,13 @@
                     <i class="fa-brands fa-chrome text-amber-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">원격 크롬 (House)</h3>
+                    <h3 class="font-bold text-base-content"><span th:text="#{dashboard.tool.remoteChrome}">원격 크롬</span> (House)</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-warning badge-xs">Remote</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">외부 크롬 원격 접속 (House 서버)</p>
+                <p class="text-base-content/60 text-sm mb-3"><span th:text="#{dashboard.tool.remoteChrome.desc}">외부 크롬 원격 접속</span> (House)</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Chrome</span>
                   <span class="badge badge-ghost badge-xs">Remote Desktop</span>
@@ -1473,7 +1473,7 @@
           <i class="fa-solid fa-robot text-violet-500"></i>
           AI Assistants
         </h2>
-        <p class="text-base-content/60 text-sm mb-6">커스텀 ChatGPT 모델 모음</p>
+        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.aiAssistants.subtitle}">커스텀 ChatGPT 모델 모음</p>
 
         <!-- PROJECT GPT -->
         <div class="bg-base-200 rounded-xl p-5 mb-6">
@@ -1490,7 +1490,7 @@
                     <i class="fa-solid fa-file-code text-blue-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">Swagger 생성기</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.gpt.swaggerGenerator}">Swagger 생성기</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-info badge-xs">GPT</span>
                     </div>
@@ -1512,13 +1512,13 @@
                     <i class="fa-brands fa-js text-cyan-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">TS API 변환기</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.gpt.tsApiConverter}">TS API 변환기</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-info badge-xs">GPT</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">Spring > TypeScript 변환</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.gpt.tsApiConverter.desc}">Spring > TypeScript 변환</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">TypeScript</span>
                   <span class="badge badge-ghost badge-xs">Spring</span>
@@ -1534,13 +1534,13 @@
                     <i class="fa-solid fa-spell-check text-green-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">변수명 전문가</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.gpt.variableNamer}">변수명 전문가</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-info badge-xs">GPT</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">변수명 확실하게 알려줌</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.gpt.variableNamer.desc}">변수명 확실하게 알려줌</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Naming</span>
                   <span class="badge badge-ghost badge-xs">Convention</span>
@@ -1571,7 +1571,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">다국어 Tag Coder</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.gpt.cmTagCreator.desc}">다국어 Tag Coder</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Tag</span>
                   <span class="badge badge-ghost badge-xs">i18n</span>
@@ -1593,7 +1593,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">일감 Info > 브랜치, 커밋</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.gpt.cmBranchCreator.desc}">일감 Info > 브랜치, 커밋</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Branch</span>
                   <span class="badge badge-ghost badge-xs">Commit</span>
@@ -1615,7 +1615,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3">일감 Info > PPT Template</p>
+                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.gpt.issuePptGuide.desc}">일감 Info > PPT Template</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">PPT</span>
                   <span class="badge badge-ghost badge-xs">Template</span>
@@ -1656,7 +1656,7 @@
           <i class="fa-solid fa-hard-drive text-orange-500"></i>
           Server
         </h2>
-        <p class="text-base-content/60 text-sm mb-6">시놀로지 NAS 서버 바로가기</p>
+        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.server.subtitle}">시놀로지 NAS 서버 바로가기</p>
 
         <div class="dashboard-card-grid-4">
           <!-- Server (DSM) -->
@@ -1672,7 +1672,7 @@
                   <span class="badge badge-soft badge-warning badge-xs">NAS</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">시놀로지 DSM</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.server.dsm.desc}">시놀로지 DSM</p>
             </div>
           </a>
           <!-- Note Station -->
@@ -1688,7 +1688,7 @@
                   <span class="badge badge-soft badge-warning badge-xs">Note</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">시놀로지 노트</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.server.note.desc}">시놀로지 노트</p>
             </div>
           </a>
         </div>
@@ -1702,7 +1702,7 @@
           <i class="fa-solid fa-cube text-cyan-500"></i>
           Services
         </h2>
-        <p class="text-base-content/60 text-sm mb-6">인프라 서비스 바로가기</p>
+        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.services.subtitle}">인프라 서비스 바로가기</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Cloudflare -->
@@ -1718,7 +1718,7 @@
                   <span class="badge badge-soft badge-warning badge-xs">DNS/CDN</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">DNS · CDN · 보안 관리</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.cloudflare.desc}">DNS · CDN · 보안 관리</p>
             </div>
           </a>
           <!-- pgAdmin -->
@@ -1734,7 +1734,7 @@
                   <span class="badge badge-soft badge-info badge-xs">PostgreSQL</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">PostgreSQL 관리 콘솔</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.pgadmin.desc}">PostgreSQL 관리 콘솔</p>
             </div>
           </a>
           <!-- MongoDB Express -->
@@ -1750,7 +1750,7 @@
                   <span class="badge badge-soft badge-success badge-xs">NoSQL</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">MongoDB 관리 콘솔</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.mongodb.desc}">MongoDB 관리 콘솔</p>
             </div>
           </a>
           <!-- MinIO -->
@@ -1766,7 +1766,7 @@
                   <span class="badge badge-soft badge-error badge-xs">Object Storage</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">S3 호환 오브젝트 스토리지</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.minio.desc}">S3 호환 오브젝트 스토리지</p>
             </div>
           </a>
           <!-- Nexus -->
@@ -1798,7 +1798,7 @@
                   <span class="badge badge-soft badge-info badge-xs">VectorDB</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">벡터 DB 대시보드</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.qdrant.desc}">벡터 DB 대시보드</p>
             </div>
           </a>
           <!-- RabbitMQ -->
@@ -1814,7 +1814,7 @@
                   <span class="badge badge-soft badge-info badge-xs">MQ</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">메시지 큐 대시보드</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.rabbitmq.desc}">메시지 큐 대시보드</p>
             </div>
           </a>
           <!-- Traefik -->
@@ -1830,7 +1830,7 @@
                   <span class="badge badge-soft badge-info badge-xs">Proxy</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">리버스 프록시 대시보드</p>
+              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.traefik.desc}">리버스 프록시 대시보드</p>
             </div>
           </a>
         </div>
@@ -1844,7 +1844,7 @@
           <i class="fa-solid fa-folder-open text-amber-500"></i>
           Projects
         </h2>
-        <p class="text-base-content/60 text-sm mb-6">진행 중인 프로젝트 및 관련 리소스</p>
+        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.projects.subtitle}">진행 중인 프로젝트 및 관련 리소스</p>
 
         <!-- Tripgether -->
         <div class="bg-base-200 rounded-xl p-5 mb-6">
@@ -1862,11 +1862,11 @@
                     <i class="fa-solid fa-globe text-cyan-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">앱 메인</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.appMain}">앱 메인</h3>
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Tripgether 앱 메인 페이지</p>
+                <p class="text-base-content/60 text-sm mt-3">Tripgether <span th:text="#{dashboard.projects.appMainPage}">앱 메인 페이지</span></p>
               </div>
             </a>
             <!-- BE 레포 -->
@@ -1878,7 +1878,7 @@
                     <i class="fa-brands fa-github text-cyan-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">BE 레포</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.beRepo}">BE 레포</h3>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
@@ -1894,7 +1894,7 @@
                     <i class="fa-brands fa-github text-cyan-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">FE 레포</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.feRepo}">FE 레포</h3>
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                   </div>
                 </div>
@@ -1910,14 +1910,14 @@
                     <i class="fa-solid fa-brain text-cyan-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">AI 레포</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.aiRepo}">AI 레포</h3>
                     <div class="flex gap-1 mt-1">
                       <span class="badge badge-soft badge-secondary badge-xs">AI</span>
                       <span class="badge badge-soft badge-warning badge-xs">Private</span>
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Tripgether AI (비공개)</p>
+                <p class="text-base-content/60 text-sm mt-3">Tripgether AI (<span th:text="#{dashboard.projects.private}">비공개</span>)</p>
               </div>
             </a>
           </div>
@@ -1939,11 +1939,11 @@
                     <i class="fa-solid fa-globe text-emerald-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">메인 페이지</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.mainPage}">메인 페이지</h3>
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Mapsy 메인 페이지</p>
+                <p class="text-base-content/60 text-sm mt-3">Mapsy <span th:text="#{dashboard.projects.mainPage}">메인 페이지</span></p>
               </div>
             </a>
             <!-- AI 서비스 -->
@@ -1955,11 +1955,11 @@
                     <i class="fa-solid fa-brain text-emerald-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">AI 서비스</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.aiService}">AI 서비스</h3>
                     <span class="badge badge-soft badge-success badge-xs">AI</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Mapsy AI 서비스</p>
+                <p class="text-base-content/60 text-sm mt-3">Mapsy <span th:text="#{dashboard.projects.aiService}">AI 서비스</span></p>
               </div>
             </a>
             <!-- API 문서 -->
@@ -1971,11 +1971,11 @@
                     <i class="fa-solid fa-book text-emerald-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">API 문서</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.apiDocs}">API 문서</h3>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Mapsy API 문서</p>
+                <p class="text-base-content/60 text-sm mt-3">Mapsy <span th:text="#{dashboard.projects.apiDocs}">API 문서</span></p>
               </div>
             </a>
           </div>
@@ -1997,11 +1997,11 @@
                     <i class="fa-solid fa-globe text-blue-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">메인 페이지</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.mainPage}">메인 페이지</h3>
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">세종말싸미 메인 페이지</p>
+                <p class="text-base-content/60 text-sm mt-3">세종말싸미 <span th:text="#{dashboard.projects.mainPage}">메인 페이지</span></p>
               </div>
             </a>
             <!-- Swagger Docs -->
@@ -2017,7 +2017,7 @@
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">세종말싸미 API 문서</p>
+                <p class="text-base-content/60 text-sm mt-3">세종말싸미 <span th:text="#{dashboard.projects.apiDocs}">API 문서</span></p>
               </div>
             </a>
             <!-- 관리자 페이지 -->
@@ -2029,11 +2029,11 @@
                     <i class="fa-solid fa-user-shield text-blue-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">관리자 페이지</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.adminPage}">관리자 페이지</h3>
                     <span class="badge badge-soft badge-warning badge-xs">Admin</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">세종말싸미 관리자</p>
+                <p class="text-base-content/60 text-sm mt-3">세종말싸미 <span th:text="#{dashboard.projects.admin}">관리자</span></p>
               </div>
             </a>
             <!-- Figma -->
@@ -2049,7 +2049,7 @@
                     <span class="badge badge-soft badge-secondary badge-xs">Design</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">세종말싸미 디자인</p>
+                <p class="text-base-content/60 text-sm mt-3">세종말싸미 <span th:text="#{dashboard.projects.design}">디자인</span></p>
               </div>
             </a>
           </div>
@@ -2087,7 +2087,7 @@
                     <i class="fa-solid fa-book text-amber-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">API 문서</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.apiDocs}">API 문서</h3>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
@@ -2117,7 +2117,7 @@
                     <span class="badge badge-soft badge-success badge-xs">Google Play</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Google Play 스토어</p>
+                <p class="text-base-content/60 text-sm mt-3">Google Play <span th:text="#{dashboard.projects.store}">스토어</span></p>
               </div>
             </a>
             <!-- iOS -->
@@ -2145,7 +2145,7 @@
                     <i class="fa-solid fa-book text-pink-600 text-xl"></i>
                   </div>
                   <div>
-                    <h3 class="font-bold text-base-content">API 문서</h3>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.projects.apiDocs}">API 문서</h3>
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
@@ -2165,7 +2165,7 @@
                     <span class="badge badge-soft badge-secondary badge-xs">Design</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">롬롬 디자인</p>
+                <p class="text-base-content/60 text-sm mt-3">롬롬 <span th:text="#{dashboard.projects.design}">디자인</span></p>
               </div>
             </a>
           </div>
@@ -2191,7 +2191,7 @@
                     <span class="badge badge-soft badge-info badge-xs">FE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Team Bagel 프론트엔드</p>
+                <p class="text-base-content/60 text-sm mt-3">Team Bagel <span th:text="#{dashboard.projects.frontend}">프론트엔드</span></p>
               </div>
             </a>
             <!-- Bagel-BE -->
@@ -2207,7 +2207,7 @@
                     <span class="badge badge-soft badge-success badge-xs">BE</span>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mt-3">Team Bagel API 문서</p>
+                <p class="text-base-content/60 text-sm mt-3">Team Bagel <span th:text="#{dashboard.projects.apiDocs}">API 문서</span></p>
               </div>
             </a>
           </div>
@@ -2232,9 +2232,9 @@
     <div class="grid grid-cols-2 gap-4 text-sm text-base-content/70 mb-4">
       <p><i class="fa-solid fa-user mr-2"></i><span id="modal-notice-author"></span></p>
       <p><i class="fa-solid fa-calendar mr-2"></i><span id="modal-notice-date"></span></p>
-      <p><i class="fa-solid fa-eye mr-2"></i>조회수: <span id="modal-notice-views"></span></p>
+      <p><i class="fa-solid fa-eye mr-2"></i><span th:text="#{dashboard.modal.views}">조회수</span>: <span id="modal-notice-views"></span></p>
       <p id="modal-notice-important" class="hidden text-error">
-        <i class="fa-solid fa-exclamation-circle mr-2"></i><strong>중요 공지사항</strong>
+        <i class="fa-solid fa-exclamation-circle mr-2"></i><strong th:text="#{dashboard.modal.important}">중요 공지사항</strong>
       </p>
     </div>
 
@@ -2243,13 +2243,13 @@
 
     <!-- 댓글 섹션 -->
     <div class="divider"></div>
-    <h4 class="font-semibold mb-4"><i class="fa-solid fa-comments mr-2"></i>댓글</h4>
+    <h4 class="font-semibold mb-4"><i class="fa-solid fa-comments mr-2"></i><span th:text="#{dashboard.modal.comments}">댓글</span></h4>
 
     <div id="comment-list" class="space-y-3 mb-4">
       <div id="comments-loading" class="flex justify-center py-4">
         <span class="loading loading-spinner loading-md"></span>
       </div>
-      <div id="no-comments-message" class="hidden text-center text-base-content/60 py-4">
+      <div id="no-comments-message" class="hidden text-center text-base-content/60 py-4" th:text="#{dashboard.modal.noComments}">
         아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!
       </div>
     </div>
@@ -2257,19 +2257,19 @@
     <!-- 댓글 작성 폼 -->
     <div class="bg-base-200 rounded-lg p-4">
       <div class="form-control mb-3">
-        <input type="text" id="comment-author" placeholder="이름을 입력하세요 (선택사항)" class="input input-sm w-full">
+        <input type="text" id="comment-author" th:placeholder="#{dashboard.modal.authorPlaceholder}" placeholder="이름을 입력하세요 (선택사항)" class="input input-sm w-full">
       </div>
       <div class="form-control mb-3">
-        <textarea id="comment-content" class="textarea" rows="3" placeholder="댓글을 입력하세요"></textarea>
+        <textarea id="comment-content" class="textarea" rows="3" th:placeholder="#{dashboard.modal.contentPlaceholder}" placeholder="댓글을 입력하세요"></textarea>
       </div>
       <button type="button" id="comment-submit" class="btn btn-primary btn-sm">
-        <i class="fa-solid fa-pen mr-1"></i> 댓글 작성
+        <i class="fa-solid fa-pen mr-1"></i> <span th:text="#{dashboard.modal.submitComment}">댓글 작성</span>
       </button>
     </div>
 
     <div class="modal-action">
       <form method="dialog">
-        <button class="btn btn-primary">확인</button>
+        <button class="btn btn-primary" th:text="#{dashboard.modal.confirm}">확인</button>
       </form>
     </div>
   </div>
@@ -2456,13 +2456,13 @@
           initNoticeCards();
         } else {
           // 공지사항 없음
-          $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-base-content/50 text-sm">공지사항 없음</span></div>');
+          $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-base-content/50 text-sm">' + window.MSG['dashboard.js.noNotice'] + '</span></div>');
         }
       },
       function(xhr, status, error) {
         console.error('공지사항 로드 오류:', error);
         // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-        $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-error text-sm">로드 실패</span></div>');
+        $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-error text-sm">' + window.MSG['dashboard.js.loadFailed'] + '</span></div>');
       }
     );
   }
@@ -2475,7 +2475,7 @@
     // 모든 카드 생성
     noticeData.forEach(function(notice, index) {
       const importantBadge = notice.isImportant
-        ? '<span class="badge badge-soft badge-error badge-xs mr-2">중요</span>'
+        ? '<span class="badge badge-soft badge-error badge-xs mr-2">' + window.MSG['dashboard.js.importantBadge'] + '</span>'
         : '';
 
       const dateFormatted = formatNoticeDate(notice.createdDate);
@@ -2490,7 +2490,7 @@
             <span class="notice-dot">·</span>
             <span>${dateFormatted}</span>
             <span class="notice-dot">·</span>
-            <span>조회 ${formatNumber(viewCount)}</span>
+            <span>${window.MSG['dashboard.js.viewsPrefix']} ${formatNumber(viewCount)}</span>
           </span>
         </div>
       `);
@@ -2586,7 +2586,7 @@
           const notice = response;
 
           $('#modal-notice-title').text(notice.title).data('id', notice.noticeId);
-          $('#modal-notice-author').text(notice.author || '관리자');
+          $('#modal-notice-author').text(notice.author || window.MSG['dashboard.js.admin']);
           $('#modal-notice-date').text(new Date(notice.createdDate).toLocaleString());
           $('#modal-notice-views').text(notice.viewCount || 0);
           $('#modal-notice-content').html(notice.content.replace(/\n/g, '<br>'));
@@ -2603,7 +2603,7 @@
 
           document.getElementById('notice-detail-modal').showModal();
         } else {
-          alert('공지사항을 불러올 수 없습니다.');
+          alert(window.MSG['dashboard.js.noticeLoadError']);
         }
       },
       function(xhr, status, error) {
@@ -2633,7 +2633,7 @@
 
           $('.delete-comment-btn').click(function() {
             const commentId = $(this).data('id');
-            if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+            if (confirm(window.MSG['dashboard.js.deleteCommentConfirm'])) {
               deleteComment(commentId, noticeId);
             }
           });
@@ -2645,7 +2645,7 @@
         $('#comments-loading').hide();
         console.error('댓글 로드 오류:', error);
         // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-        $('#no-comments-message').removeClass('hidden').addClass('text-error').text('댓글을 불러오는 중 오류가 발생했습니다.');
+        $('#no-comments-message').removeClass('hidden').addClass('text-error').text(window.MSG['dashboard.js.commentLoadError']);
       }
     );
   }
@@ -2689,11 +2689,11 @@
   // 댓글 작성 이벤트
   $(document).on('click', '#comment-submit', function() {
     const noticeId = $('#modal-notice-title').data('id');
-    const authorName = $('#comment-author').val() || '익명';
+    const authorName = $('#comment-author').val() || window.MSG['dashboard.js.anonymous'];
     const content = $('#comment-content').val();
 
     if (!content) {
-      alert('댓글 내용을 입력해주세요.');
+      alert(window.MSG['dashboard.js.commentRequired']);
       return;
     }
 
@@ -2709,11 +2709,11 @@
           $('#comment-content').val('');
           loadComments(noticeId);
         } else {
-          alert('댓글 등록 실패');
+          alert(window.MSG['dashboard.js.commentCreateFailed']);
         }
       },
       function(xhr, status, error) {
-        alert('댓글 등록 오류: ' + error);
+        alert(window.MSG['dashboard.js.commentCreateError'] + error);
       }
     );
   });
@@ -2727,11 +2727,11 @@
         if (response) {
           loadComments(noticeId);
         } else {
-          alert('댓글 삭제 실패');
+          alert(window.MSG['dashboard.js.commentDeleteFailed']);
         }
       },
       function(xhr, status, error) {
-        alert('댓글 삭제 오류: ' + error);
+        alert(window.MSG['dashboard.js.commentDeleteError'] + error);
       }
     );
   }
@@ -2857,10 +2857,10 @@
 
         if (response.isHealthy) {
           statusBtn.removeClass('loading text-base-content/50').addClass('text-success');
-          statusBtn.html('<i class="fa-solid fa-check-circle"></i> 정상');
+          statusBtn.html('<i class="fa-solid fa-check-circle"></i> ' + window.MSG['dashboard.js.statusHealthy']);
         } else {
           statusBtn.removeClass('loading text-base-content/50').addClass('text-error');
-          statusBtn.html('<i class="fa-solid fa-times-circle"></i> 비정상');
+          statusBtn.html('<i class="fa-solid fa-times-circle"></i> ' + window.MSG['dashboard.js.statusUnhealthy']);
         }
       },
       error: function() {
@@ -2869,7 +2869,7 @@
         const statusBtn = statusContainer.find('.status-main-btn');
 
         statusBtn.removeClass('loading text-base-content/50').addClass('text-warning');
-        statusBtn.html('<i class="fa-solid fa-exclamation-triangle"></i> 연결 오류');
+        statusBtn.html('<i class="fa-solid fa-exclamation-triangle"></i> ' + window.MSG['dashboard.js.statusConnError']);
       }
     });
   }

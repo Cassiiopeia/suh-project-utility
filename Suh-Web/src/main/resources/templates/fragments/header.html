@@ -472,7 +472,29 @@
       'dockerLogs.status.ready': /*[[#{dockerLogs.status.ready}]]*/ '',
       'dockerLogs.status.reconnecting': /*[[#{dockerLogs.status.reconnecting}]]*/ '',
       'dockerLogs.status.stopped': /*[[#{dockerLogs.status.stopped}]]*/ '',
-      'dockerLogs.status.streaming': /*[[#{dockerLogs.status.streaming}]]*/ ''
+      'dockerLogs.status.streaming': /*[[#{dockerLogs.status.streaming}]]*/ '',
+      'issueHelper.js.generating': /*[[#{issueHelper.js.generating}]]*/ '',
+      'issueHelper.js.generated': /*[[#{issueHelper.js.generated}]]*/ '',
+      'issueHelper.js.requestFailed': /*[[#{issueHelper.js.requestFailed}]]*/ '',
+      'issueHelper.js.branchCopied': /*[[#{issueHelper.js.branchCopied}]]*/ '',
+      'issueHelper.js.commitCopied': /*[[#{issueHelper.js.commitCopied}]]*/ '',
+      'dashboard.js.admin': /*[[#{dashboard.js.admin}]]*/ '',
+      'dashboard.js.anonymous': /*[[#{dashboard.js.anonymous}]]*/ '',
+      'dashboard.js.commentCreateError': /*[[#{dashboard.js.commentCreateError}]]*/ '',
+      'dashboard.js.commentCreateFailed': /*[[#{dashboard.js.commentCreateFailed}]]*/ '',
+      'dashboard.js.commentDeleteError': /*[[#{dashboard.js.commentDeleteError}]]*/ '',
+      'dashboard.js.commentDeleteFailed': /*[[#{dashboard.js.commentDeleteFailed}]]*/ '',
+      'dashboard.js.commentLoadError': /*[[#{dashboard.js.commentLoadError}]]*/ '',
+      'dashboard.js.commentRequired': /*[[#{dashboard.js.commentRequired}]]*/ '',
+      'dashboard.js.deleteCommentConfirm': /*[[#{dashboard.js.deleteCommentConfirm}]]*/ '',
+      'dashboard.js.importantBadge': /*[[#{dashboard.js.importantBadge}]]*/ '',
+      'dashboard.js.loadFailed': /*[[#{dashboard.js.loadFailed}]]*/ '',
+      'dashboard.js.noNotice': /*[[#{dashboard.js.noNotice}]]*/ '',
+      'dashboard.js.noticeLoadError': /*[[#{dashboard.js.noticeLoadError}]]*/ '',
+      'dashboard.js.statusConnError': /*[[#{dashboard.js.statusConnError}]]*/ '',
+      'dashboard.js.statusHealthy': /*[[#{dashboard.js.statusHealthy}]]*/ '',
+      'dashboard.js.statusUnhealthy': /*[[#{dashboard.js.statusUnhealthy}]]*/ '',
+      'dashboard.js.viewsPrefix': /*[[#{dashboard.js.viewsPrefix}]]*/ ''
     };
   </script>
 </head>
@@ -492,7 +514,7 @@
       <!-- 버전 태그 (모바일: 아이콘만, 데스크탑: 아이콘 + 버전) -->
       <button onclick="openChangelogModal()"
               class="badge gap-0.5 ml-3 px-1.5 py-0.5 lg:px-2 lg:py-1 lg:gap-1 hover:opacity-80 transition-opacity cursor-pointer ml-1 version-badge text-[0.65rem]"
-              title="버전 정보">
+              th:title="#{header.versionInfo.title}" title="버전 정보">
         <i class="fa-solid fa-tag text-[0.7rem]"></i>
         <!-- 데스크탑에서만 버전 숫자 표시 -->
         <span id="header-version-tag" class="version-tag-text hidden lg:inline">v1.0.0</span>
@@ -545,20 +567,20 @@
             <i class="fa-solid fa-bars text-xl"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-base-300">
-            <li><a href="/dashboard" class="hover:bg-base-200"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
-            <li><a href="/issue-helper" class="hover:bg-base-200"><i class="fa-brands fa-github w-5"></i>깃헙 이슈</a></li>
-            <li><a href="/suh-devops-template" class="hover:bg-base-200"><i class="fa-solid fa-gears w-5"></i>DevOps 템플릿</a></li>
-            <li><a href="/translator" class="hover:bg-base-200"><i class="fa-solid fa-language w-5"></i>번역기</a></li>
-            <li><a href="/sejong-auth" class="hover:bg-base-200"><i class="fa-solid fa-graduation-cap w-5"></i>세종대 인증</a></li>
-            <li><a href="/suh-random" class="hover:bg-base-200"><i class="fa-solid fa-dice w-5"></i>SUH 랜덤</a></li>
+            <li><a href="/dashboard" class="hover:bg-base-200"><i class="fa-solid fa-clipboard-list w-5"></i><span th:text="#{header.nav.dashboard}">대시보드</span></a></li>
+            <li><a href="/issue-helper" class="hover:bg-base-200"><i class="fa-brands fa-github w-5"></i><span th:text="#{header.nav.issueHelper}">깃헙 이슈</span></a></li>
+            <li><a href="/suh-devops-template" class="hover:bg-base-200"><i class="fa-solid fa-gears w-5"></i><span th:text="#{header.nav.devopsTemplate}">DevOps 템플릿</span></a></li>
+            <li><a href="/translator" class="hover:bg-base-200"><i class="fa-solid fa-language w-5"></i><span th:text="#{header.nav.translator}">번역기</span></a></li>
+            <li><a href="/sejong-auth" class="hover:bg-base-200"><i class="fa-solid fa-graduation-cap w-5"></i><span th:text="#{header.nav.sejongAuth}">세종대 인증</span></a></li>
+            <li><a href="/suh-random" class="hover:bg-base-200"><i class="fa-solid fa-dice w-5"></i><span th:text="#{header.nav.suhRandom}">SUH 랜덤</span></a></li>
             <li class="divider my-1"></li>
-            <li><a href="/notice-management" class="hover:bg-base-200"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
-            <li><a href="/docker-logs" class="hover:bg-base-200"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
-            <li><a href="/grass" class="hover:bg-base-200"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
-            <li><a href="/task-tracker" class="hover:bg-base-200"><i class="fa-solid fa-bullseye w-5"></i>Task 트래커</a></li>
-            <li><a href="/somansa/bus" class="hover:bg-base-200"><i class="fa-solid fa-bus w-5"></i>버스 예약</a></li>
-            <li><a href="/ai-server" class="hover:bg-base-200"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
-            <li><a href="/chatbot-management" class="hover:bg-base-200"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
+            <li><a href="/notice-management" class="hover:bg-base-200"><i class="fa-solid fa-bullhorn w-5"></i><span th:text="#{header.nav.noticeManagement}">공지사항 관리</span></a></li>
+            <li><a href="/docker-logs" class="hover:bg-base-200"><i class="fa-solid fa-terminal w-5"></i><span th:text="#{header.nav.dockerLogs}">컨테이너 로그</span></a></li>
+            <li><a href="/grass" class="hover:bg-base-200"><i class="fa-solid fa-leaf w-5"></i><span th:text="#{header.nav.grassPlanter}">Grass Planter</span></a></li>
+            <li><a href="/task-tracker" class="hover:bg-base-200"><i class="fa-solid fa-bullseye w-5"></i><span th:text="#{header.nav.taskTracker}">Task 트래커</span></a></li>
+            <li><a href="/somansa/bus" class="hover:bg-base-200"><i class="fa-solid fa-bus w-5"></i><span th:text="#{header.nav.busReservation}">버스 예약</span></a></li>
+            <li><a href="/ai-server" class="hover:bg-base-200"><i class="fa-solid fa-server w-5"></i><span th:text="#{header.nav.aiServer}">AI 서버 관리</span></a></li>
+            <li><a href="/chatbot-management" class="hover:bg-base-200"><i class="fa-solid fa-database w-5"></i><span th:text="#{header.nav.chatbotManagement}">챗봇 문서 관리</span></a></li>
             <li sec:authorize="isAuthenticated()" class="divider my-1"></li>
             <li sec:authorize="isAuthenticated()">
               <form th:action="@{/logout}" method="post" class="m-0">
@@ -608,19 +630,19 @@
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-64 p-2 mt-3 border border-base-300">
             <li class="menu-title text-base-content/60 text-xs font-semibold px-4 py-2" th:text="#{header.menu.title}">메뉴</li>
-            <li><a href="/dashboard" class="hover:bg-base-200"><i class="fa-solid fa-clipboard-list w-5"></i>대시보드</a></li>
-            <li><a href="/issue-helper" class="hover:bg-base-200"><i class="fa-brands fa-github w-5"></i>깃헙 이슈 도우미</a></li>
-            <li><a href="/suh-devops-template" class="hover:bg-base-200"><i class="fa-solid fa-gears w-5"></i>DevOps 템플릿</a></li>
-            <li><a href="/translator" class="hover:bg-base-200"><i class="fa-solid fa-language w-5"></i>커스텀 AI 번역기</a></li>
-            <li><a href="/sejong-auth" class="hover:bg-base-200"><i class="fa-solid fa-graduation-cap w-5"></i>세종대 인증</a></li>
-            <li><a href="/suh-random" class="hover:bg-base-200"><i class="fa-solid fa-dice w-5"></i>SUH 랜덤 엔진</a></li>
-            <li><a href="/notice-management" class="hover:bg-base-200"><i class="fa-solid fa-bullhorn w-5"></i>공지사항 관리</a></li>
-            <li><a href="/docker-logs" class="hover:bg-base-200"><i class="fa-solid fa-terminal w-5"></i>컨테이너 로그</a></li>
-            <li><a href="/grass" class="hover:bg-base-200"><i class="fa-solid fa-leaf w-5"></i>Grass Planter</a></li>
-            <li><a href="/task-tracker" class="hover:bg-base-200"><i class="fa-solid fa-bullseye w-5"></i>Task 트래커</a></li>
-            <li><a href="/somansa/bus" class="hover:bg-base-200"><i class="fa-solid fa-bus w-5"></i>버스 예약</a></li>
-            <li><a href="/ai-server" class="hover:bg-base-200"><i class="fa-solid fa-server w-5"></i>AI 서버 관리</a></li>
-            <li><a href="/chatbot-management" class="hover:bg-base-200"><i class="fa-solid fa-database w-5"></i>챗봇 문서 관리</a></li>
+            <li><a href="/dashboard" class="hover:bg-base-200"><i class="fa-solid fa-clipboard-list w-5"></i><span th:text="#{header.nav.dashboard}">대시보드</span></a></li>
+            <li><a href="/issue-helper" class="hover:bg-base-200"><i class="fa-brands fa-github w-5"></i><span th:text="#{header.nav.issueHelperMobile}">깃헙 이슈 도우미</span></a></li>
+            <li><a href="/suh-devops-template" class="hover:bg-base-200"><i class="fa-solid fa-gears w-5"></i><span th:text="#{header.nav.devopsTemplate}">DevOps 템플릿</span></a></li>
+            <li><a href="/translator" class="hover:bg-base-200"><i class="fa-solid fa-language w-5"></i><span th:text="#{header.nav.translatorMobile}">커스텀 AI 번역기</span></a></li>
+            <li><a href="/sejong-auth" class="hover:bg-base-200"><i class="fa-solid fa-graduation-cap w-5"></i><span th:text="#{header.nav.sejongAuth}">세종대 인증</span></a></li>
+            <li><a href="/suh-random" class="hover:bg-base-200"><i class="fa-solid fa-dice w-5"></i><span th:text="#{header.nav.suhRandomMobile}">SUH 랜덤 엔진</span></a></li>
+            <li><a href="/notice-management" class="hover:bg-base-200"><i class="fa-solid fa-bullhorn w-5"></i><span th:text="#{header.nav.noticeManagement}">공지사항 관리</span></a></li>
+            <li><a href="/docker-logs" class="hover:bg-base-200"><i class="fa-solid fa-terminal w-5"></i><span th:text="#{header.nav.dockerLogs}">컨테이너 로그</span></a></li>
+            <li><a href="/grass" class="hover:bg-base-200"><i class="fa-solid fa-leaf w-5"></i><span th:text="#{header.nav.grassPlanter}">Grass Planter</span></a></li>
+            <li><a href="/task-tracker" class="hover:bg-base-200"><i class="fa-solid fa-bullseye w-5"></i><span th:text="#{header.nav.taskTracker}">Task 트래커</span></a></li>
+            <li><a href="/somansa/bus" class="hover:bg-base-200"><i class="fa-solid fa-bus w-5"></i><span th:text="#{header.nav.busReservation}">버스 예약</span></a></li>
+            <li><a href="/ai-server" class="hover:bg-base-200"><i class="fa-solid fa-server w-5"></i><span th:text="#{header.nav.aiServer}">AI 서버 관리</span></a></li>
+            <li><a href="/chatbot-management" class="hover:bg-base-200"><i class="fa-solid fa-database w-5"></i><span th:text="#{header.nav.chatbotManagement}">챗봇 문서 관리</span></a></li>
             <li class="divider my-1"></li>
 
             <li sec:authorize="isAuthenticated()">
