@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-16T02:25:33Z",
-    "currentVersion": "2.5.70",
+    "lastUpdated": "2026-06-16T04:16:53Z",
+    "currentVersion": "2.5.72",
     "projectType": "spring",
-    "totalReleases": 72
+    "totalReleases": 73
   },
   "releases": [
+    {
+      "version": "2.5.72",
+      "project_type": "spring",
+      "date": "2026-06-16",
+      "pr_number": 233,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 대시보드 통계 정보가 간헐적으로 불러와지지 않던 오류 해결",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "대시보드 통계 정보가 간헐적으로 불러와지지 않던 오류 해결"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.70",
       "project_type": "spring",

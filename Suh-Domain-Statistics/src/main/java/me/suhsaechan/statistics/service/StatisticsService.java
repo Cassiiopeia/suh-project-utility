@@ -170,8 +170,8 @@ public class StatisticsService {
      * 기능별 사용 통계 조회 (GROUP BY 단일 쿼리)
      */
     @Transactional(readOnly = true)
-    public Map<FeatureType, Long> getFeatureUsageCounts() {
-        Map<FeatureType, Long> counts = new EnumMap<>(FeatureType.class);
+    public Map<FeatureType, Number> getFeatureUsageCounts() {
+        Map<FeatureType, Number> counts = new EnumMap<>(FeatureType.class);
         // 모든 타입 0으로 초기화
         for (FeatureType type : FeatureType.values()) {
             counts.put(type, 0L);
@@ -179,7 +179,7 @@ public class StatisticsService {
         // GROUP BY 결과로 값 업데이트
         for (Object[] row : featureUsageLogRepository.countGroupByFeatureName()) {
             FeatureType type = (FeatureType) row[0];
-            Long count = (Long) row[1];
+            Number count = (Number) row[1];
             counts.put(type, count);
         }
         return counts;
@@ -189,9 +189,9 @@ public class StatisticsService {
      * 오늘 기능별 사용 통계 조회 (GROUP BY 단일 쿼리)
      */
     @Transactional(readOnly = true)
-    public Map<FeatureType, Long> getTodayFeatureUsageCounts() {
+    public Map<FeatureType, Number> getTodayFeatureUsageCounts() {
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
-        Map<FeatureType, Long> counts = new EnumMap<>(FeatureType.class);
+        Map<FeatureType, Number> counts = new EnumMap<>(FeatureType.class);
         // 모든 타입 0으로 초기화
         for (FeatureType type : FeatureType.values()) {
             counts.put(type, 0L);
@@ -199,7 +199,7 @@ public class StatisticsService {
         // GROUP BY 결과로 값 업데이트
         for (Object[] row : featureUsageLogRepository.countGroupByFeatureNameAfter(todayStart)) {
             FeatureType type = (FeatureType) row[0];
-            Long count = (Long) row[1];
+            Number count = (Number) row[1];
             counts.put(type, count);
         }
         return counts;

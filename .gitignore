@@ -96,5 +96,8 @@ Thumbs.db
 .superpowers/
 
 # ====================================================================
-# SUH-DEVOPS-TEMPLATE: Auto-added entries
+# Frontend build (Tailwind + DaisyUI)
 # ====================================================================
+# node_modules: 빌드 의존성 — 커밋 금지 (어느 위치든)
+node_modules/
+# package-lock.json, tailwind.input.css, tailwind.generated.css 는 커밋한다 (ignore하지 않음)
