@@ -185,6 +185,8 @@ public class QdrantVectorStoreService implements VectorStoreService {
 
             List<ScoredPoint> scoredPoints = qdrantClient.searchAsync(searchRequest).get();
 
+            logSearchDiagnostics(collectionName, scoredPoints, minScore, topK);
+
             return scoredPoints.stream()
                 .filter(sp -> sp.getScore() >= minScore)
                 .map(this::convertToSearchResult)
@@ -229,6 +231,40 @@ public class QdrantVectorStoreService implements VectorStoreService {
             Thread.currentThread().interrupt();
             return 0;
         }
+    }
+
+    /**
+     * RAG 검색 진단 로그: 필터링 전 Qdrant 원본 결과를 노출한다.
+     *
+     * <p>"결과 0건"이 minScore 필터 미달 때문인지(원본 N건), Qdrant 원본부터 0건인지를
+     * 로그만으로 판별할 수 있게 한다.</p>
+     */
+    private void logSearchDiagnostics(String collectionName, List<ScoredPoint> scoredPoints,
+                                      float minScore, int topK) {
+        long pointCount = countPoints(collectionName);
+        log.info("[RAG-Search] collection={}, 컬렉션 포인트 수={}, minScore={}, topK={}",
+            collectionName, pointCount, minScore, topK);
+
+        if (scoredPoints.isEmpty()) {
+            log.info("[RAG-Search] Qdrant 원본 0건 → 컬렉션이 비었거나 차원/컬렉션 불일치 의심");
+            return;
+        }
+
+        log.info("[RAG-Search] Qdrant 원본 {}건:", scoredPoints.size());
+        long passCount = 0;
+        for (ScoredPoint sp : scoredPoints) {
+            boolean pass = sp.getScore() >= minScore;
+            if (pass) {
+                passCount++;
+            }
+            String content = sp.getPayloadMap().getOrDefault("content",
+                io.qdrant.client.grpc.JsonWithInt.Value.getDefaultInstance()).getStringValue();
+            String preview = content.length() > 40 ? content.substring(0, 40) : content;
+            log.info("  - score={} PASS={} payload=\"{}\"",
+                String.format("%.3f", sp.getScore()), pass ? "Y" : "N", preview);
+        }
+        log.info("[RAG-Search] 필터 후 {}건 (원본 {}건 중 minScore={} 통과)",
+            passCount, scoredPoints.size(), minScore);
     }
 
     /**

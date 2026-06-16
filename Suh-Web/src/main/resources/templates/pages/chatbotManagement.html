@@ -388,6 +388,41 @@
           </div>
         </div>
       </div>
+
+      <!-- RAG 검색 설정 카드 -->
+      <div class="card bg-base-100 shadow-sm border border-base-300 mt-4">
+        <div class="card-body p-4">
+          <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-magnifying-glass text-blue-500"></i>
+            RAG 검색 설정
+          </h4>
+
+          <div class="space-y-3">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-sm">최소 유사도 점수</span>
+                <span class="label-text-alt text-base-content/60 text-xs">기본: 0.5</span>
+              </label>
+              <input type="number" id="rag-min-score-input" class="input input-bordered input-sm"
+                     min="0" max="1" step="0.05" placeholder="0.5">
+            </div>
+
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text text-sm">검색 문서 수 (topK)</span>
+                <span class="label-text-alt text-base-content/60 text-xs">기본: 3</span>
+              </label>
+              <input type="number" id="rag-top-k-input" class="input input-bordered input-sm"
+                     min="1" max="20" step="1" placeholder="3">
+            </div>
+
+            <button class="btn btn-outline btn-sm w-full" id="save-rag-settings-btn">
+              <i class="fa-solid fa-save"></i>
+              RAG 검색 설정 저장
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -616,6 +651,11 @@
     // 청크 설정 저장 버튼
     $('#save-settings-btn').click(function() {
       saveServerSettings();
+    });
+
+    // RAG 검색 설정 저장 버튼
+    $('#save-rag-settings-btn').click(function() {
+      saveRagSettings();
     });
 
     // 저장 버튼 클릭 이벤트
@@ -1102,6 +1142,32 @@
           $('#chunk-overlap-input').val(100);
         }
       );
+
+      // RAG 최소 유사도 점수 로드
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_RAG_MIN_SCORE' },
+        function(response) {
+          $('#rag-min-score-input').val(response.optionValue || 0.5);
+        },
+        function(xhr, status, error) {
+          console.error('RAG 최소 유사도 점수 로드 오류:', error);
+          $('#rag-min-score-input').val(0.5);
+        }
+      );
+
+      // RAG 검색 문서 수 로드
+      sendFormRequest(
+        '/api/server-option/get',
+        { optionKey: 'CHATBOT_RAG_TOP_K' },
+        function(response) {
+          $('#rag-top-k-input').val(response.optionValue || 3);
+        },
+        function(xhr, status, error) {
+          console.error('RAG 검색 문서 수 로드 오류:', error);
+          $('#rag-top-k-input').val(3);
+        }
+      );
     }
 
     // 서버 설정 저장 함수
@@ -1154,6 +1220,60 @@
         },
         function(xhr, status, error) {
           console.error('청크 크기 저장 오류:', error);
+          if (typeof showToast === 'function') {
+            showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
+          }
+        }
+      );
+    }
+
+    // RAG 검색 설정 저장 함수
+    function saveRagSettings() {
+      const minScore = $('#rag-min-score-input').val();
+      const topK = $('#rag-top-k-input').val();
+
+      if (minScore === '' || minScore < 0 || minScore > 1) {
+        if (typeof showToast === 'function') {
+          showToast('최소 유사도 점수는 0~1 사이의 값이어야 합니다.', 'negative');
+        }
+        return;
+      }
+
+      if (!topK || topK < 1 || topK > 20) {
+        if (typeof showToast === 'function') {
+          showToast('검색 문서 수는 1~20 사이의 값이어야 합니다.', 'negative');
+        }
+        return;
+      }
+
+      sendFormRequest(
+        '/api/server-option/update',
+        {
+          optionKey: 'CHATBOT_RAG_MIN_SCORE',
+          optionValue: minScore
+        },
+        function(response) {
+          sendFormRequest(
+            '/api/server-option/update',
+            {
+              optionKey: 'CHATBOT_RAG_TOP_K',
+              optionValue: topK
+            },
+            function(response) {
+              if (typeof showToast === 'function') {
+                showToast('RAG 검색 설정이 저장되었습니다. 새 대화부터 적용됩니다.', 'positive');
+              }
+            },
+            function(xhr, status, error) {
+              console.error('RAG 검색 문서 수 저장 오류:', error);
+              if (typeof showToast === 'function') {
+                showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
+              }
+            }
+          );
+        },
+        function(xhr, status, error) {
+          console.error('RAG 최소 유사도 점수 저장 오류:', error);
           if (typeof showToast === 'function') {
             showToast('설정 저장 중 오류가 발생했습니다.', 'negative');
           }
