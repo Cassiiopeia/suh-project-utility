@@ -40,8 +40,8 @@
     <div class="card bg-base-100 shadow-lg border border-base-300">
       <div class="card-body">
         <h2 class="card-title text-lg mb-4">
-          <div class="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center">
-            <i class="fa-solid fa-wand-magic-sparkles text-teal-600"></i>
+          <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-success"></i>
           </div>
           닉네임 생성 옵션
         </h2>
@@ -111,28 +111,28 @@
 
             <!-- 성인용 닉네임 -->
             <div class="divider text-xs text-base-content/50 my-2">성인용 닉네임 (19+)</div>
-            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-amber-200 bg-amber-50 transition-colors">
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-amber-700">성인용 닉네임</span>
+                <span class="font-medium text-warning">성인용 닉네임</span>
                 <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-amber-600 mt-1">성인용 형용사 + 명사 조합</p>
+                <p class="text-xs text-warning/80 mt-1">성인용 형용사 + 명사 조합</p>
               </div>
             </label>
-            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-amber-200 bg-amber-50 transition-colors">
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE_NUMBER" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-amber-700">성인용 + 숫자</span>
+                <span class="font-medium text-warning">성인용 + 숫자</span>
                 <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-amber-600 mt-1">성인용 닉네임 + 숫자</p>
+                <p class="text-xs text-warning/80 mt-1">성인용 닉네임 + 숫자</p>
               </div>
             </label>
-            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-amber-200 bg-amber-50 transition-colors">
+            <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE_UUID" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-amber-700">성인용 + UUID</span>
+                <span class="font-medium text-warning">성인용 + UUID</span>
                 <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-amber-600 mt-1">성인용 닉네임 + UUID</p>
+                <p class="text-xs text-warning/80 mt-1">성인용 닉네임 + UUID</p>
               </div>
             </label>
           </div>
@@ -192,8 +192,8 @@
     <div class="card bg-base-100 shadow-lg border border-base-300">
       <div class="card-body">
         <h2 class="card-title text-lg mb-4">
-          <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-            <i class="fa-solid fa-star text-green-600"></i>
+          <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
+            <i class="fa-solid fa-star text-success"></i>
           </div>
           생성 결과
         </h2>
@@ -231,7 +231,7 @@
           <div id="resultDisplay" class="hidden">
             <div class="text-center py-8">
               <p class="text-sm text-base-content/60 mb-2">생성된 닉네임</p>
-              <div class="text-3xl sm:text-4xl font-bold text-teal-600 mb-4" id="generatedNickname"></div>
+              <div class="text-3xl sm:text-4xl font-bold text-success mb-4" id="generatedNickname"></div>
               <button type="button" id="copyNicknameBtn"
                       class="btn btn-outline btn-sm gap-2">
                 <i class="fa-regular fa-copy"></i>
@@ -248,7 +248,7 @@
           <!-- JSON 결과 -->
           <div id="resultJsonWrapper" class="hidden relative">
             <button type="button" id="copyJsonBtn"
-                    class="absolute top-2 right-2 btn btn-ghost btn-xs text-base-content/60 hover:text-blue-600 hover:bg-base-200"
+                    class="absolute top-2 right-2 btn btn-ghost btn-xs text-base-content/60 hover:text-primary hover:bg-base-200"
                     title="JSON 복사">
               <i class="fa-regular fa-copy"></i>
             </button>
@@ -272,7 +272,7 @@
     <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-base-300">
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
-        <i class="fa-solid fa-code text-teal-500"></i>
+        <i class="fa-solid fa-code text-success"></i>
         API 사용법
       </div>
       <div class="collapse-content">
@@ -300,7 +300,7 @@
     <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-base-300">
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
-        <i class="fa-solid fa-list text-blue-500"></i>
+        <i class="fa-solid fa-list text-primary"></i>
         닉네임 타입 설명
       </div>
       <div class="collapse-content">
@@ -320,9 +320,9 @@
               <tr><td class="font-mono">POLITICIAN</td><td>형용사 + 정치인 이름</td><td>멋진윤석열</td></tr>
               <tr><td class="font-mono">POLITICIAN_NUMBER</td><td>정치인 닉네임 + 숫자</td><td>빛나는이재명-1234</td></tr>
               <tr><td class="font-mono">POLITICIAN_UUID</td><td>정치인 닉네임 + UUID</td><td>멋진이준석-abcd</td></tr>
-              <tr><td class="font-mono text-amber-600">MATURE</td><td>성인용 형용사 + 명사</td><td>(19+)</td></tr>
-              <tr><td class="font-mono text-amber-600">MATURE_NUMBER</td><td>성인용 닉네임 + 숫자</td><td>(19+)</td></tr>
-              <tr><td class="font-mono text-amber-600">MATURE_UUID</td><td>성인용 닉네임 + UUID</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-warning">MATURE</td><td>성인용 형용사 + 명사</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-warning">MATURE_NUMBER</td><td>성인용 닉네임 + 숫자</td><td>(19+)</td></tr>
+              <tr><td class="font-mono text-warning">MATURE_UUID</td><td>성인용 닉네임 + UUID</td><td>(19+)</td></tr>
             </tbody>
           </table>
         </div>
@@ -333,7 +333,7 @@
     <div class="collapse collapse-arrow bg-base-100 shadow-sm border border-base-300">
       <input type="checkbox"/>
       <div class="collapse-title text-lg font-medium flex items-center gap-2">
-        <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+        <i class="fa-solid fa-triangle-exclamation text-warning"></i>
         성인용 콘텐츠 주의사항
       </div>
       <div class="collapse-content">
@@ -628,9 +628,9 @@
     let html = '';
     nicknameHistory.forEach((item, index) => {
       html += `
-        <div class="flex items-center justify-between p-3 bg-base-100 rounded-lg border border-base-300 hover:border-teal-200 transition-colors">
+        <div class="flex items-center justify-between p-3 bg-base-100 rounded-lg border border-base-300 hover:border-success transition-colors">
           <div>
-            <span class="font-medium text-teal-600">${escapeHtml(item.nickname)}</span>
+            <span class="font-medium text-success">${escapeHtml(item.nickname)}</span>
             <span class="text-xs text-base-content/50 ml-2">${item.nicknameType}</span>
           </div>
           <button class="btn btn-ghost btn-xs" onclick="copyHistoryItem('${escapeHtml(item.nickname)}')">

@@ -1,11 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-16T01:04:33Z",
-    "currentVersion": "2.5.65",
+    "lastUpdated": "2026-06-16T02:22:27Z",
+    "currentVersion": "2.5.68",
     "projectType": "spring",
-    "totalReleases": 70
+    "totalReleases": 71
   },
   "releases": [
+    {
+      "version": "2.5.68",
+      "project_type": "spring",
+      "date": "2026-06-16",
+      "pr_number": 231,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 화면 언어를 한국어와 영어로 전환할 수 있습니다\n\n* **버그 수정**\n  * 영어 전환 시 글자가 깨져 보이던 문제 해결\n  * 다크모드에서 일부 색상이 제대로 적용되지 않던 문제 해결\n\n* **개선**\n  * 화면 전체의 색상과 테마 표시가 더 일관되게 정리되었습니다",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "화면 언어를 한국어와 영어로 전환할 수 있습니다"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "영어 전환 시 글자가 깨져 보이던 문제 해결",
+            "다크모드에서 일부 색상이 제대로 적용되지 않던 문제 해결"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "화면 전체의 색상과 테마 표시가 더 일관되게 정리되었습니다"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.65",
       "project_type": "spring",

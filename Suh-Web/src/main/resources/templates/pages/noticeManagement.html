@@ -9,7 +9,7 @@
   <!-- 페이지 헤더 -->
   <div class="mb-6">
     <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
-      <i class="fa-solid fa-bullhorn text-blue-500"></i>
+      <i class="fa-solid fa-bullhorn text-primary"></i>
       공지사항 관리
     </h2>
     <p class="text-base-content/60 mt-1">대시보드에 표시되는 공지사항을 관리합니다.</p>
@@ -171,29 +171,29 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-base-200 rounded-lg p-4 mb-4">
         <div class="space-y-2">
           <p class="flex items-center gap-2 text-base-content/70">
-            <i class="fa-solid fa-user text-blue-500"></i>
+            <i class="fa-solid fa-user text-primary"></i>
             <strong>작성자:</strong>
             <span id="detail-author"></span>
           </p>
           <p class="flex items-center gap-2 text-base-content/70">
-            <i class="fa-solid fa-calendar text-blue-500"></i>
+            <i class="fa-solid fa-calendar text-primary"></i>
             <strong>작성일:</strong>
             <span id="detail-created-date"></span>
           </p>
         </div>
         <div class="space-y-2">
           <p class="flex items-center gap-2 text-base-content/70">
-            <i class="fa-solid fa-eye text-blue-500"></i>
+            <i class="fa-solid fa-eye text-primary"></i>
             <strong>조회수:</strong>
             <span id="detail-view-count"></span>
           </p>
           <p class="flex items-center gap-2 text-base-content/70">
-            <i class="fa-solid fa-clock text-blue-500"></i>
+            <i class="fa-solid fa-clock text-primary"></i>
             <strong>게시 기간:</strong>
             <span id="detail-period"></span>
           </p>
           <p class="flex items-center gap-2 text-base-content/70">
-            <i class="fa-solid fa-circle-check text-blue-500"></i>
+            <i class="fa-solid fa-circle-check text-primary"></i>
             <strong>상태:</strong>
             <span id="detail-status"></span>
           </p>
@@ -209,7 +209,7 @@
 
       <!-- 댓글 섹션 -->
       <h4 class="font-bold text-lg flex items-center gap-2 mb-4">
-        <i class="fa-solid fa-comments text-blue-500"></i>
+        <i class="fa-solid fa-comments text-primary"></i>
         댓글
       </h4>
 
@@ -453,16 +453,16 @@
       let html = '';
       pageData.forEach(function(notice) {
         const titleHtml = notice.isImportant 
-          ? `<i class="fa-solid fa-bell text-red-500 mr-1"></i> ${escapeHtml(notice.title)}`
+          ? `<i class="fa-solid fa-bell text-error mr-1"></i> ${escapeHtml(notice.title)}`
           : escapeHtml(notice.title);
         
         const importantIcon = notice.isImportant 
-          ? '<i class="fa-solid fa-check text-green-500"></i>' 
-          : '<i class="fa-solid fa-times text-red-500"></i>';
+          ? '<i class="fa-solid fa-check text-success"></i>'
+          : '<i class="fa-solid fa-times text-error"></i>';
         
         const activeIcon = notice.isActive 
-          ? '<i class="fa-solid fa-check text-green-500"></i>' 
-          : '<i class="fa-solid fa-times text-red-500"></i>';
+          ? '<i class="fa-solid fa-check text-success"></i>'
+          : '<i class="fa-solid fa-times text-error"></i>';
 
         const startDate = notice.startDate ? formatDateTime(notice.startDate) : '-';
         const endDate = notice.endDate ? formatDateTime(notice.endDate) : '무기한';
@@ -781,8 +781,8 @@
       return `
         <div class="comment-item bg-base-100 border border-base-300 rounded-lg p-4">
           <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-              <i class="fa-solid fa-user text-blue-500"></i>
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-user text-primary"></i>
             </div>
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">

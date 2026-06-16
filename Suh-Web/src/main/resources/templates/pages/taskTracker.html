@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='Task 트래커 - D-Day & 진행 관리')}"></head>
-<body class="task-tracker-page bg-gray-50">
+<body class="task-tracker-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
   <!-- 페이지 헤더 -->
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fa-solid fa-bullseye text-blue-500"></i>
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="fa-solid fa-bullseye text-primary"></i>
       Task 트래커
     </h2>
-    <p class="text-gray-500 mt-1">D-Day 관리 및 일일 진행 기록</p>
+    <p class="text-base-content/60 mt-1">D-Day 관리 및 일일 진행 기록</p>
   </div>
 
   <!-- Task 목록 섹션 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-blue-500"></i>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-primary"></i>
             Task 목록
           </h3>
-          <p class="text-gray-500 text-sm">등록된 Task 및 D-Day 관리</p>
+          <p class="text-base-content/60 text-sm">등록된 Task 및 D-Day 관리</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <label class="label cursor-pointer gap-2 justify-start">
@@ -47,8 +47,8 @@
           <div class="skeleton h-48 w-full"></div>
         </div>
         <div id="emptyGoalsMessage" class="hidden text-center py-12">
-          <i class="fa-solid fa-clipboard-list text-6xl text-gray-300 mb-4"></i>
-          <p class="text-gray-500">등록된 Task가 없습니다.</p>
+          <i class="fa-solid fa-clipboard-list text-6xl text-base-content/30 mb-4"></i>
+          <p class="text-base-content/60">등록된 Task가 없습니다.</p>
           <button class="btn btn-primary btn-sm mt-4" onclick="showAddGoalModal()">
             <i class="fa-solid fa-plus"></i>
             첫 번째 Task 추가하기
@@ -59,15 +59,15 @@
   </div>
 
   <!-- 진행 기록 섹션 -->
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
+  <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-primary"></i>
             진행 기록
           </h3>
-          <p class="text-gray-500 text-sm">일일 학습/작업 기록</p>
+          <p class="text-base-content/60 text-sm">일일 학습/작업 기록</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <select id="progressGoalFilter" class="select select-bordered select-sm w-full sm:w-auto" onchange="loadProgress()">
@@ -99,7 +99,7 @@
               <tr>
                 <td colspan="6" class="text-center py-8">
                   <span class="loading loading-spinner loading-md text-primary"></span>
-                  <span class="ml-2 text-gray-500">기록 로딩 중...</span>
+                  <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
                 </td>
               </tr>
             </tbody>
@@ -109,12 +109,12 @@
         <div class="md:hidden space-y-3" id="progressCards">
           <div class="flex justify-center py-8">
             <span class="loading loading-spinner loading-md text-primary"></span>
-            <span class="ml-2 text-gray-500">기록 로딩 중...</span>
+            <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
           </div>
         </div>
         <div id="emptyProgressMessage" class="hidden text-center py-8">
-          <i class="fa-solid fa-inbox text-4xl text-gray-300 mb-4"></i>
-          <p class="text-gray-500">진행 기록이 없습니다.</p>
+          <i class="fa-solid fa-inbox text-4xl text-base-content/30 mb-4"></i>
+          <p class="text-base-content/60">진행 기록이 없습니다.</p>
         </div>
       </div>
     </div>
@@ -129,7 +129,7 @@
         </button>
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6" id="goalModalTitle">
-        <i class="fa-solid fa-bullseye text-blue-500"></i>
+        <i class="fa-solid fa-bullseye text-primary"></i>
         Task 추가
       </h3>
       <form id="goalForm" class="space-y-4">
@@ -138,7 +138,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control md:col-span-2">
             <label class="label">
-              <span class="label-text font-medium">Task 이름 <span class="text-red-500">*</span></span>
+              <span class="label-text font-medium">Task 이름 <span class="text-error">*</span></span>
             </label>
             <input type="text" id="goalTitle" name="title"
                    class="input w-full" placeholder="예: SQLD 자격증 준비" required>
@@ -156,7 +156,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-medium">목표일 <span class="text-red-500">*</span></span>
+              <span class="label-text font-medium">목표일 <span class="text-error">*</span></span>
             </label>
             <input type="date" id="goalTargetDate" name="targetDate"
                    class="input w-full" required>
@@ -243,7 +243,7 @@
         </button>
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6" id="progressModalTitle">
-        <i class="fa-solid fa-clock text-blue-500"></i>
+        <i class="fa-solid fa-clock text-primary"></i>
         진행 기록 추가
       </h3>
       <form id="progressForm" class="space-y-4">
@@ -252,7 +252,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control md:col-span-2">
             <label class="label">
-              <span class="label-text font-medium">Task 선택 <span class="text-red-500">*</span></span>
+              <span class="label-text font-medium">Task 선택 <span class="text-error">*</span></span>
             </label>
             <select id="progressGoalId" name="taskGoalId" class="select w-full" required>
               <option value="">Task를 선택하세요</option>
@@ -262,7 +262,7 @@
 
         <div class="form-control">
           <label class="label">
-            <span class="label-text font-medium">날짜 <span class="text-red-500">*</span></span>
+            <span class="label-text font-medium">날짜 <span class="text-error">*</span></span>
           </label>
           <input type="date" id="progressDate" name="progressDate"
                  class="input w-full" required>
@@ -282,7 +282,7 @@
             <span class="label-text-alt text-primary font-semibold" id="rangeDisplay">0 ~ 0</span>
           </label>
           <div class="relative pt-6 pb-2">
-            <div class="relative h-2 bg-gray-200 rounded-full" id="rangeTrack">
+            <div class="relative h-2 bg-base-300 rounded-full" id="rangeTrack">
               <div class="absolute h-2 bg-primary rounded-full" id="rangeHighlight"></div>
               <input type="range" id="rangeSliderStart" name="startAmount"
                      class="range-slider absolute w-full h-2 appearance-none bg-transparent pointer-events-none"
@@ -292,7 +292,7 @@
                      min="0" max="100" value="0">
             </div>
           </div>
-          <div class="flex justify-between text-xs text-gray-400 mt-1">
+          <div class="flex justify-between text-xs text-base-content/60 mt-1">
             <span id="rangeMin">0</span>
             <span id="rangeMax">100</span>
           </div>

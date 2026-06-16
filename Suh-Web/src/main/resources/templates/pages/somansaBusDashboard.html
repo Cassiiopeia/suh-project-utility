@@ -1,82 +1,82 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='소만사 버스 예약 - 대시보드')}"></head>
-<body class="somansa-bus-page bg-gray-50">
+<body class="somansa-bus-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
   <div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fa-solid fa-bus text-blue-500"></i>
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="fa-solid fa-bus text-primary"></i>
       소만사 버스 예약
     </h2>
-    <p class="text-gray-500 mt-1">통근버스 자동 예약 관리 시스템</p>
+    <p class="text-base-content/60 mt-1">통근버스 자동 예약 관리 시스템</p>
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="statsContainer">
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-base-300">
       <div class="card-body p-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-            <i class="fa-solid fa-users text-blue-500"></i>
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <i class="fa-solid fa-users text-primary"></i>
           </div>
           <div>
-            <p class="text-xs text-gray-500">전체 멤버</p>
-            <p class="text-xl font-bold text-gray-800" id="statTotalMembers">-</p>
+            <p class="text-xs text-base-content/60">전체 멤버</p>
+            <p class="text-xl font-bold text-base-content" id="statTotalMembers">-</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-base-300">
       <div class="card-body p-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-            <i class="fa-solid fa-calendar-check text-green-500"></i>
+          <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+            <i class="fa-solid fa-calendar-check text-success"></i>
           </div>
           <div>
-            <p class="text-xs text-gray-500">활성 스케줄</p>
-            <p class="text-xl font-bold text-gray-800" id="statActiveSchedules">-</p>
+            <p class="text-xs text-base-content/60">활성 스케줄</p>
+            <p class="text-xl font-bold text-base-content" id="statActiveSchedules">-</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-base-300">
       <div class="card-body p-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-            <i class="fa-solid fa-ticket text-purple-500"></i>
+          <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
+            <i class="fa-solid fa-ticket text-secondary"></i>
           </div>
           <div>
-            <p class="text-xs text-gray-500">이번주 예약</p>
-            <p class="text-xl font-bold text-gray-800" id="statThisWeekReservations">-</p>
+            <p class="text-xs text-base-content/60">이번주 예약</p>
+            <p class="text-xl font-bold text-base-content" id="statThisWeekReservations">-</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="card bg-base-100 shadow-sm border border-gray-100">
+    <div class="card bg-base-100 shadow-sm border border-base-300">
       <div class="card-body p-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-            <i class="fa-solid fa-circle-xmark text-red-500"></i>
+          <div class="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center">
+            <i class="fa-solid fa-circle-xmark text-error"></i>
           </div>
           <div>
-            <p class="text-xs text-gray-500">이번주 실패</p>
-            <p class="text-xl font-bold text-gray-800" id="statThisWeekFailed">-</p>
+            <p class="text-xs text-base-content/60">이번주 실패</p>
+            <p class="text-xl font-bold text-base-content" id="statThisWeekFailed">-</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-users text-blue-500"></i>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-users text-primary"></i>
             멤버 목록
           </h3>
-          <p class="text-gray-500 text-sm">등록된 버스 예약 멤버 관리</p>
+          <p class="text-base-content/60 text-sm">등록된 버스 예약 멤버 관리</p>
         </div>
         <button class="btn btn-primary btn-sm" onclick="showAddMemberModal()">
           <i class="fa-solid fa-plus"></i>
@@ -137,19 +137,19 @@
     </div>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-route text-blue-500"></i>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-route text-primary"></i>
             버스 노선
             <span class="badge badge-ghost badge-sm" id="routeTotalCount">-</span>
           </h3>
-          <p class="text-gray-500 text-sm">등록된 버스 노선 목록</p>
+          <p class="text-base-content/60 text-sm">등록된 버스 노선 목록</p>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-sm text-gray-500">
+          <span class="text-sm text-base-content/60">
             마지막 동기화: <span id="lastSyncedAt">-</span>
           </span>
           <button class="btn btn-primary btn-sm" id="btnSyncRoutes">
@@ -187,15 +187,15 @@
     </div>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
+  <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-primary"></i>
             최근 예약 기록
           </h3>
-          <p class="text-gray-500 text-sm">최근 예약 실행 기록</p>
+          <p class="text-base-content/60 text-sm">최근 예약 실행 기록</p>
         </div>
         <button class="btn btn-outline btn-sm" onclick="loadReservationHistory()">
           <i class="fa-solid fa-rotate"></i>
@@ -218,7 +218,7 @@
             <tr>
               <td colspan="5" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
-                <span class="ml-2 text-gray-500">기록 로딩 중...</span>
+                <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
               </td>
             </tr>
           </tbody>
@@ -235,7 +235,7 @@
         </button>
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
-        <i class="fa-solid fa-user-plus text-blue-500"></i>
+        <i class="fa-solid fa-user-plus text-primary"></i>
         멤버 등록
       </h3>
       <form id="memberForm" class="space-y-4">
@@ -253,7 +253,7 @@
             </span>
           </div>
           <label class="label">
-            <span class="label-text-alt text-gray-500">소만사 이메일로 인증됩니다</span>
+            <span class="label-text-alt text-base-content/60">소만사 이메일로 인증됩니다</span>
           </label>
         </div>
       </form>
@@ -365,7 +365,7 @@ function loadMembers() {
     function(xhr) {
       console.error('멤버 목록 로드 실패');
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#memberTable').html('<tr><td colspan="6" class="text-center py-8 text-gray-500">멤버 목록을 불러오는데 실패했습니다.</td></tr>');
+      $('#memberTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">멤버 목록을 불러오는데 실패했습니다.</td></tr>');
     }
   );
 }
@@ -493,7 +493,7 @@ function loadRoutes() {
     },
     function(xhr) {
       console.error('노선 목록 로드 실패');
-      $('#routeTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">노선 목록을 불러오는데 실패했습니다.</td></tr>');
+      $('#routeTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">노선 목록을 불러오는데 실패했습니다.</td></tr>');
     }
   );
 }
@@ -503,7 +503,7 @@ function displayRoutes(routes) {
   tableBody.empty();
 
   if (!routes || routes.length === 0) {
-    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-gray-500">등록된 노선이 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">등록된 노선이 없습니다.</td></tr>');
     return;
   }
 
@@ -536,7 +536,7 @@ function loadReservationHistory() {
     },
     function(xhr) {
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">기록 로드 실패</td></tr>');
+      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">기록 로드 실패</td></tr>');
     }
   );
 }
@@ -545,7 +545,7 @@ function displayReservationHistory(histories) {
   const tableBody = $('#historyTable');
 
   if (!histories || histories.length === 0) {
-    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-gray-500">예약 기록이 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">예약 기록이 없습니다.</td></tr>');
     return;
   }
 

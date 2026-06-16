@@ -1,0 +1,13 @@
+{
+  "name": "suh-web-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "tailwindcss -i ./tailwind.input.css -o ../src/main/resources/static/css/tailwind.generated.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.1",
+    "tailwindcss": "^4.3.1",
+    "daisyui": "^5.5.23"
+  }
+}

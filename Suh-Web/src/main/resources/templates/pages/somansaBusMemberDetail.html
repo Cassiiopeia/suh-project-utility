@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head(title='소만사 버스 예약 - 멤버 상세')}"></head>
-<body class="somansa-bus-page bg-gray-50">
+<body class="somansa-bus-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
@@ -10,13 +10,13 @@
       <i class="fa-solid fa-arrow-left"></i>
       목록으로
     </a>
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fa-solid fa-user text-blue-500"></i>
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="fa-solid fa-user text-primary"></i>
       멤버 상세
     </h2>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="flex items-center gap-4">
@@ -27,7 +27,7 @@
           </div>
           <div>
             <h3 class="text-xl font-bold" th:text="${member.displayName ?: '이름 없음'}">홍길동</h3>
-            <p class="text-gray-500" th:text="${member.loginId}">email@somansa.com</p>
+            <p class="text-base-content/60" th:text="${member.loginId}">email@somansa.com</p>
             <div class="flex gap-2 mt-2">
               <span th:if="${member.isActive}" class="badge badge-success">활성</span>
               <span th:unless="${member.isActive}" class="badge badge-ghost">비활성</span>
@@ -55,17 +55,17 @@
     </div>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
-      <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-4">
-        <i class="fa-solid fa-ticket text-blue-500"></i>
+      <h3 class="text-lg font-semibold text-base-content flex items-center gap-2 mb-4">
+        <i class="fa-solid fa-ticket text-primary"></i>
         빠른 예약
       </h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h4 class="font-medium mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-sun text-orange-400"></i> 출근
+            <i class="fa-solid fa-sun text-warning"></i> 출근
           </h4>
           <div class="space-y-2" id="commuteRoutes">
             <label th:each="route : ${routes}"
@@ -83,7 +83,7 @@
 
         <div>
           <h4 class="font-medium mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-moon text-indigo-400"></i> 퇴근
+            <i class="fa-solid fa-moon text-info"></i> 퇴근
           </h4>
           <div class="space-y-2" id="offworkRoutes">
             <label th:each="route : ${routes}"
@@ -115,12 +115,12 @@
     </div>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100 mb-6">
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h3 class="text-lg font-semibold flex items-center gap-2">
-            <i class="fa-solid fa-calendar text-blue-500"></i>
+            <i class="fa-solid fa-calendar text-primary"></i>
             자동 예약 스케줄
           </h3>
           <p class="text-base-content/60 text-sm">등록된 자동 예약 스케줄</p>
@@ -160,15 +160,15 @@
     </div>
   </div>
 
-  <div class="card bg-base-100 shadow-sm border border-gray-100">
+  <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-primary"></i>
             예약 기록
           </h3>
-          <p class="text-gray-500 text-sm">이 멤버의 예약 기록</p>
+          <p class="text-base-content/60 text-sm">이 멤버의 예약 기록</p>
         </div>
         <button class="btn btn-outline btn-sm" onclick="loadMemberHistory()">
           <i class="fa-solid fa-rotate"></i>
@@ -191,7 +191,7 @@
             <tr>
               <td colspan="5" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
-                <span class="ml-2 text-gray-500">기록 로딩 중...</span>
+                <span class="ml-2 text-base-content/60">기록 로딩 중...</span>
               </td>
             </tr>
           </tbody>
@@ -208,7 +208,7 @@
         </button>
       </form>
       <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
-        <i class="fa-solid fa-calendar-plus text-blue-500"></i>
+        <i class="fa-solid fa-calendar-plus text-primary"></i>
         스케줄 추가
       </h3>
       <form id="scheduleForm" class="space-y-4">
@@ -411,7 +411,7 @@ function loadMemberHistory() {
     },
     function(xhr) {
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-gray-500">기록 로드 실패</td></tr>');
+      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">기록 로드 실패</td></tr>');
     }
   );
 }
@@ -420,7 +420,7 @@ function displayHistory(histories) {
   const tableBody = $('#historyTable');
 
   if (!histories || histories.length === 0) {
-    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-gray-500">예약 기록이 없습니다.</td></tr>');
+    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">예약 기록이 없습니다.</td></tr>');
     return;
   }
 
@@ -448,7 +448,7 @@ function displayHistory(histories) {
     }
     row.append(statusCell);
 
-    const msgCell = $('<td class="text-sm text-gray-500">');
+    const msgCell = $('<td class="text-sm text-base-content/60">');
     msgCell.text(history.errorMessage || '-');
     row.append(msgCell);
 

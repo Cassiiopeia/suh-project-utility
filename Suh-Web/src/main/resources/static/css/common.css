@@ -22,85 +22,6 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
 
 /*
 ===========================
-   DaisyUI 5 버튼 색상 보강
-   (v3 CDN 환경에서 색 토큰이 버튼에 자동 적용되지 않아 최소 룰로 보강)
-===========================
-*/
-.btn-primary {
-  background-color: #3b82f6;
-  border-color: #3b82f6;
-  color: #ffffff;
-}
-.btn-primary:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
-}
-.btn-error {
-  background-color: #ef4444;
-  border-color: #ef4444;
-  color: #ffffff;
-}
-.btn-error:hover {
-  background-color: #dc2626;
-  border-color: #dc2626;
-}
-.btn-success {
-  background-color: #22c55e;
-  border-color: #22c55e;
-  color: #ffffff;
-}
-.btn-success:hover {
-  background-color: #16a34a;
-  border-color: #16a34a;
-}
-.btn-info {
-  background-color: #06b6d4;
-  border-color: #06b6d4;
-  color: #ffffff;
-}
-.btn-info:hover {
-  background-color: #0891b2;
-  border-color: #0891b2;
-}
-.btn-warning {
-  background-color: #f59e0b;
-  border-color: #f59e0b;
-  color: #ffffff;
-}
-.btn-warning:hover {
-  background-color: #d97706;
-  border-color: #d97706;
-}
-.btn-secondary {
-  background-color: #8b5cf6;
-  border-color: #8b5cf6;
-  color: #ffffff;
-}
-.btn-secondary:hover {
-  background-color: #7c3aed;
-  border-color: #7c3aed;
-}
-.btn-neutral {
-  background-color: #374151;
-  border-color: #374151;
-  color: #ffffff;
-}
-.btn-neutral:hover {
-  background-color: #1f2937;
-  border-color: #1f2937;
-}
-.btn-outline {
-  background-color: transparent;
-  border-color: #9ca3af;
-  color: inherit;
-}
-.btn-outline:hover {
-  background-color: rgba(156, 163, 175, 0.12);
-  border-color: #9ca3af;
-}
-
-/*
-===========================
    테마 토글 버튼 (swap) 배경 투명
 ===========================
 */
@@ -1351,43 +1272,6 @@ html:not([data-theme="dark"]) textarea::placeholder,
 ===========================
 */
 
-/* 다크모드일 때 navbar 배경색 및 텍스트 색상 */
-[data-theme="dark"] .navbar {
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] .navbar a,
-[data-theme="dark"] .navbar span,
-[data-theme="dark"] .navbar .btn-ghost {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .navbar .btn-ghost:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* 다크모드 드롭다운 메뉴 */
-[data-theme="dark"] .dropdown-content {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .dropdown-content a {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .dropdown-content a:hover {
-  background-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .dropdown-content .menu-title {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .dropdown-content .divider {
-  background-color: #4b5563 !important;
-}
-
 /* 다크모드 테이블 */
 [data-theme="dark"] .table-container {
   background: #1f2937 !important;
@@ -1477,12 +1361,6 @@ html:not([data-theme="dark"]) textarea::placeholder,
   color: #9ca3af !important;
 }
 
-/* 다크모드 카드 */
-[data-theme="dark"] .card {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
 /* 다크모드 입력 필드 */
 [data-theme="dark"] input,
 [data-theme="dark"] textarea,
@@ -1537,41 +1415,9 @@ html:not([data-theme="dark"]) textarea::placeholder,
   color: #e5e7eb !important;
 }
 
-/* 다크모드 badge (badge-soft 개별 스타일은 파일 상단에 정의됨) */
-[data-theme="dark"] .badge:not(.badge-soft) {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-}
-
-/* 다크모드 모달 */
-[data-theme="dark"] .modal-box {
-  background-color: #1f2937 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .modal-box h3,
-[data-theme="dark"] .modal-box p {
-  color: #e5e7eb !important;
-}
-
-/* 다크모드 버튼 ghost */
-[data-theme="dark"] .btn-ghost {
-  color: #e5e7eb !important;
-  padding: 10px;
-}
-
-[data-theme="dark"] .btn-ghost:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
 /* 다크모드 skeleton */
 [data-theme="dark"] .skeleton {
   background-color: #374151 !important;
-}
-
-/* 다크모드 divider */
-[data-theme="dark"] .divider {
-  border-color: #4b5563 !important;
 }
 
 /* 다크모드 에러 메시지 박스 */
@@ -1622,78 +1468,6 @@ html:not([data-theme="dark"]) textarea::placeholder,
 
 [data-theme="dark"] .sejong-auth-datasource-sis h3 {
   color: #4ade80 !important;
-}
-
-/* SUH DevOps Template 페이지 다크모드 */
-[data-theme="dark"] .devops-hero {
-  background: linear-gradient(to right, #78350f, #92400e, #a16207) !important;
-}
-
-[data-theme="dark"] .devops-hero-overlay {
-  background: rgba(0, 0, 0, 0.3) !important;
-}
-
-[data-theme="dark"] .devops-hero h1,
-[data-theme="dark"] .devops-hero p {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .devops-command-box {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .devops-command-box code {
-  color: #60a5fa !important;
-}
-
-[data-theme="dark"] .devops-command-item {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .devops-command-item:hover {
-  border-color: #3b82f6 !important;
-}
-
-[data-theme="dark"] .devops-feature-card {
-  background: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .devops-feature-card:hover {
-  border-color: #6b7280 !important;
-}
-
-[data-theme="dark"] .devops-feature-card p {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .devops-feature-card .text-blue-500 {
-  color: #60a5fa !important;
-}
-
-[data-theme="dark"] .devops-project-code {
-  background-color: #374151 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .devops-flow-card {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .devops-quick-start-card {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .devops-quick-start-card h3 {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .devops-quick-start-card p {
-  color: #9ca3af !important;
 }
 
 [data-theme="dark"] .bg-blue-50 {
@@ -1770,20 +1544,6 @@ html:not([data-theme="dark"]) textarea::placeholder,
 /* 다크모드 fieldset legend */
 [data-theme="dark"] .fieldset-legend {
   color: #e5e7eb !important;
-}
-
-/* 다크모드 collapse */
-[data-theme="dark"] .collapse {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .collapse-title {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .collapse-content {
-  color: #d1d5db !important;
 }
 
 /* 다크모드 mockup-code */
@@ -3052,24 +2812,6 @@ html:not([data-theme="dark"]) .collapse {
 
 [data-theme="dark"] #ai-server-status span {
   color: #e5e7eb !important;
-}
-
-/* 공지사항 아코디언 */
-[data-theme="dark"] .collapse {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .collapse-title {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .collapse-content {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .collapse-content p {
-  color: #9ca3af !important;
 }
 
 /* 모달 내 댓글 영역 */
