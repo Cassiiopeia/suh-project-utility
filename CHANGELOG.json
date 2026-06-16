@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-06-16T04:16:53Z",
-    "currentVersion": "2.5.72",
+    "lastUpdated": "2026-06-16T04:39:40Z",
+    "currentVersion": "2.5.74",
     "projectType": "spring",
-    "totalReleases": 73
+    "totalReleases": 74
   },
   "releases": [
+    {
+      "version": "2.5.74",
+      "project_type": "spring",
+      "date": "2026-06-16",
+      "pr_number": 236,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 실시간 로그·챗봇 화면을 닫을 때 발생하던 서버 오류 정리\n  * 챗봇이 질문 의도를 더 안정적으로 인식하도록 개선",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "실시간 로그·챗봇 화면을 닫을 때 발생하던 서버 오류 정리",
+            "챗봇이 질문 의도를 더 안정적으로 인식하도록 개선"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.72",
       "project_type": "spring",
