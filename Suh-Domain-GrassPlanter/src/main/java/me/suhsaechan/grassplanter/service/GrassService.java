@@ -391,6 +391,17 @@ public class GrassService {
             try {
                 String pat = encryptionUtil.decrypt(profile.getEncryptedPat());
 
+                // 오늘 이미 성공한 DB 커밋 기록이 있는지 확인
+                LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+                LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+                Long todaySuccessCount = grassCommitLogRepository.countDailyCommits(profile, startOfDay, endOfDay);
+
+                if (todaySuccessCount > 0) {
+                    log.info("자동 커밋 생략 - 사용자: {}, 오늘 이미 DB 커밋 기록 있음({}건)",
+                        profile.getGithubUsername(), todaySuccessCount);
+                    continue;
+                }
+
                 // 오늘 기여 수 확인 (GraphQL - private 기여 포함, 잔디와 동일)
                 int todayContributions = getTodayContributionCount(profile.getGithubUsername(), LocalDate.now(), pat);
 
