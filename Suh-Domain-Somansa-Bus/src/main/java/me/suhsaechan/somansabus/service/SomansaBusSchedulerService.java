@@ -135,8 +135,10 @@ public class SomansaBusSchedulerService {
       candidateDate = candidateDate.plusDays(1);
     }
 
+    // allowedDays 는 예약 대상일(발화일 다음날)의 요일 집합이다.
+    // 따라서 발화일의 다음날이 allowedDays 에 속하도록 발화일을 전진시킨다.
     int guard = 8;
-    while (!allowedDays.contains(candidateDate.getDayOfWeek()) && guard-- > 0) {
+    while (!allowedDays.contains(candidateDate.plusDays(1).getDayOfWeek()) && guard-- > 0) {
       candidateDate = candidateDate.plusDays(1);
     }
     if (guard <= 0) {

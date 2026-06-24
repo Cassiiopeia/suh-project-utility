@@ -142,6 +142,7 @@ class SomansaBusSchedulerServiceTest {
   public void computeNextFireAt_허용요일_전진_테스트() {
     lineLog("허용 요일 전진 계산 테스트 실행중");
 
+    // DAYS 는 예약 대상일 요일이다. MONDAY 좌석을 예약하려면 일요일 밤에 발화해야 한다.
     serverOptionService.setOptionValue(
         ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY");
     serverOptionService.setOptionValue(
@@ -152,7 +153,8 @@ class SomansaBusSchedulerServiceTest {
     LocalDateTime reference = LocalDateTime.now(SEOUL);
     LocalDateTime next = schedulerService.computeNextFireAt(reference);
 
-    assertThat(next.getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+    assertThat(next.getDayOfWeek()).isEqualTo(DayOfWeek.SUNDAY);
+    assertThat(next.plusDays(1).getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
     assertThat(next.getHour()).isBetween(22, 23);
     log.info("계산된 nextFireAt: {} ({})", next, next.getDayOfWeek());
 
