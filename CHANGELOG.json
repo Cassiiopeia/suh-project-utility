@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-07-09T09:13:44Z",
-    "currentVersion": "2.5.80",
+    "lastUpdated": "2026-07-09T11:18:41Z",
+    "currentVersion": "2.5.81",
     "projectType": "spring",
-    "totalReleases": 80
+    "totalReleases": 81
   },
   "releases": [
+    {
+      "version": "2.5.81",
+      "project_type": "spring",
+      "date": "2026-07-09",
+      "pr_number": 247,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 세종대학교 로그인이 되지 않던 문제를 완전히 해결했습니다",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "세종대학교 로그인이 되지 않던 문제를 완전히 해결했습니다"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.80",
       "project_type": "spring",
