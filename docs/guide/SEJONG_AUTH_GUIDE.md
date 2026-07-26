@@ -49,9 +49,9 @@ SIS Raw JSON 인증은 SIS 인증 결과와 함께 원본 JSON 응답을 포함�
 
 라이브러리 설치 방법
 
-Gradle 프로젝트에서는 build.gradle 파일에 의존성을 추가합니다. repositories 블록에 maven url https://nexus.suhsaechan.me/repository/maven-releases/ 를 추가합니다. dependencies 블록에 implementation kr.suhsaechan:sejong-univ-auth:1.2.0 을 추가합니다.
+Gradle 프로젝트에서는 build.gradle 파일에 의존성을 추가합니다. repositories 블록에 maven url https://nexus.suhsaechan.kr/repository/maven-releases/ 를 추가합니다. dependencies 블록에 implementation kr.suhsaechan:sejong-univ-auth:1.2.0 을 추가합니다.
 
-Maven 프로젝트에서는 pom.xml 파일에 repository와 dependency를 추가합니다. repository id는 suh-nexus이고 url은 https://nexus.suhsaechan.me/repository/maven-releases/ 입니다. dependency의 groupId는 kr.suhsaechan이고 artifactId는 sejong-univ-auth이며 version은 1.2.0입니다.
+Maven 프로젝트에서는 pom.xml 파일에 repository와 dependency를 추가합니다. repository id는 suh-nexus이고 url은 https://nexus.suhsaechan.kr/repository/maven-releases/ 입니다. dependency의 groupId는 kr.suhsaechan이고 artifactId는 sejong-univ-auth이며 version은 1.2.0입니다.
 
 
 라이브러리 사용 방법
