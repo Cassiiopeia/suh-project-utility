@@ -255,9 +255,12 @@
             </div>
             <div class="flex-1 min-w-0">
               <div class="font-bold text-base-content">1st Place — Hack the Beat</div>
-              <div class="text-sm text-base-content/60" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · GDG Campus Korea — 1st place, AI-judged hackathon</div>
+              <div class="text-sm text-base-content/60" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · GDG Campus Korea — 1st place</div>
               <div class="text-xs text-base-content/50 mt-1">Aug 2026</div>
             </div>
+            <!-- 카드 전체가 링크라 중첩 앵커 대신 onclick으로 새 탭을 연다 -->
+            <span onclick="event.preventDefault(); event.stopPropagation(); window.open('https://lnkd.in/p/gfJcFfSd', '_blank', 'noopener');"
+                  class="btn btn-outline btn-xs shrink-0"><i class="fa-brands fa-linkedin"></i> 회고</span>
             <i class="fa-solid fa-arrow-up-right-from-square text-base-content/50 shrink-0"></i>
           </a>
         </div>
