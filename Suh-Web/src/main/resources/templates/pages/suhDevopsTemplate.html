@@ -17,12 +17,12 @@
         </div>
         <h1 class="text-3xl sm:text-4xl font-bold mb-3 flex items-center justify-center gap-3">
           <i class="fa-solid fa-rocket text-warning"></i>
-          SUH-DEVOPS-TEMPLATE
+          ProjectOps
         </h1>
         <p class="text-base-content/70 text-sm sm:text-base mb-5">
           <span th:text="#{devops.hero.subtitle}">완전 자동화된 GitHub 프로젝트 관리 템플릿 — 버전 관리, AI 체인지로그, CI/CD, AI 스킬을 한 번에</span>
         </p>
-        <a href="https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE" target="_blank"
+        <a href="https://github.com/Cassiiopeia/projectops" target="_blank"
            class="btn btn-sm btn-neutral">
           <i class="fa-brands fa-github"></i>
           GitHub
@@ -75,8 +75,8 @@
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
-  const PREVIEW_BASE = 'https://htmlpreview.github.io/?https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/';
-  const REPO_BASE = 'https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/blob/main/';
+  const PREVIEW_BASE = 'https://htmlpreview.github.io/?https://github.com/Cassiiopeia/projectops/blob/main/';
+  const REPO_BASE = 'https://github.com/Cassiiopeia/projectops/blob/main/';
 
   const projectTypes = [
     { id:'spring',label:'Spring Boot',versionFile:'build.gradle' },{ id:'flutter',label:'Flutter',versionFile:'pubspec.yaml' },
@@ -146,14 +146,14 @@
     {cmd:'init-worktree',desc:window.MSG['devops.skill.initWorktree.desc']},{cmd:'synology-expose',desc:window.MSG['devops.skill.synologyExpose.desc']}
   ];
   const installCommands = {
-    claude:'claude plugin marketplace add Cassiiopeia/SUH-DEVOPS-TEMPLATE\nclaude plugin install cassiiopeia@cassiiopeia-marketplace --scope user',
-    cursor:'bash <(curl -fsSL "https://raw.githubusercontent.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/main/template_integrator.sh") --mode skills',
-    gemini:'gemini extensions install https://github.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE',
-    codex:'codex plugin marketplace add Cassiiopeia/SUH-DEVOPS-TEMPLATE'
+    claude:'claude plugin marketplace add Cassiiopeia/projectops\nclaude plugin install projectops@projectops-marketplace --scope user',
+    cursor:'bash <(curl -fsSL "https://raw.githubusercontent.com/Cassiiopeia/projectops/main/template_integrator.sh") --mode skills',
+    gemini:'gemini extensions install https://github.com/Cassiiopeia/projectops',
+    codex:'codex plugin marketplace add Cassiiopeia/projectops'
   };
   const integratorCommand = {
-    unix:'bash <(curl -fsSL "https://raw.githubusercontent.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/main/template_integrator.sh")',
-    windows:'$wc=New-Object Net.WebClient;$wc.Encoding=[Text.Encoding]::UTF8;iex $wc.DownloadString("https://raw.githubusercontent.com/Cassiiopeia/SUH-DEVOPS-TEMPLATE/main/template_integrator.ps1")'
+    unix:'bash <(curl -fsSL "https://raw.githubusercontent.com/Cassiiopeia/projectops/main/template_integrator.sh")',
+    windows:'$wc=New-Object Net.WebClient;$wc.Encoding=[Text.Encoding]::UTF8;iex $wc.DownloadString("https://raw.githubusercontent.com/Cassiiopeia/projectops/main/template_integrator.ps1")'
   };
   const featureDetails = {
     version:{title:window.MSG['devops.feature.version.title'],icon:'fa-tag',bgColor:'bg-primary',description:window.MSG['devops.feature.version.description'],details:[window.MSG['devops.feature.version.detail1'],window.MSG['devops.feature.version.detail2'],window.MSG['devops.feature.version.detail3'],window.MSG['devops.feature.version.detail4']],docLink:REPO_BASE+'docs/VERSION-CONTROL.md'},
