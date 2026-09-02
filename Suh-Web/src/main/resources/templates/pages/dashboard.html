@@ -239,6 +239,31 @@
       </div>
     </section>
 
+    <!-- 수상 -->
+    <section class="card bg-base-100 shadow-sm mb-8">
+      <div class="card-body">
+        <h2 class="card-title text-xl mb-4">
+          <i class="fa-solid fa-trophy text-yellow-500"></i>
+          Awards
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Hack the Beat 1위 -->
+          <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener"
+             class="flex items-center gap-4 p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
+            <div class="w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-medal text-yellow-500 text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-base-content">1st Place — Hack the Beat</div>
+              <div class="text-sm text-base-content/60" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · GDG Campus Korea — 1st place, AI-judged hackathon</div>
+              <div class="text-xs text-base-content/50 mt-1">Aug 2026</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square text-base-content/50 shrink-0"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- 자격증 전체화면 오버레이 -->
     <div id="cert-overlay" class="hide cert-overlay" onclick="closeCert()">
       <div class="hover-3d cert-overlay-card" onclick="event.stopPropagation()">
