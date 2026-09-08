@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.ServerOptionKey;
@@ -48,6 +49,10 @@ class SomansaBusSchedulerServiceTest {
     timeLog(this::tick_비허용요일_skip_테스트);
     lineLog(null);
     timeLog(this::computeNextFireAt_허용요일_전진_테스트);
+    lineLog(null);
+    timeLog(this::computeNextFireAt_발화직후_다음날_전진_테스트);
+    lineLog(null);
+    timeLog(this::computeNextFireAt_발화창_자정여유_테스트);
 
     lineLog("테스트종료");
   }
@@ -151,12 +156,52 @@ class SomansaBusSchedulerServiceTest {
         ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_TO, "23");
 
     LocalDateTime reference = LocalDateTime.now(SEOUL);
-    LocalDateTime next = schedulerService.computeNextFireAt(reference);
+    LocalDateTime next = schedulerService.computeNextFireAt(reference, false);
 
     assertThat(next.getDayOfWeek()).isEqualTo(DayOfWeek.SUNDAY);
     assertThat(next.plusDays(1).getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
     assertThat(next.getHour()).isBetween(22, 23);
     log.info("계산된 nextFireAt: {} ({})", next, next.getDayOfWeek());
+
+    serverOptionService.setOptionValue(
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
+  }
+
+  public void computeNextFireAt_발화직후_다음날_전진_테스트() {
+    lineLog("발화 직후 다음날 전진 테스트 실행중");
+
+    serverOptionService.setOptionValue(
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS,
+        "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY");
+    serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_FROM, "22");
+    serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_TO, "23");
+
+    // 발화 창 한가운데서 재계산해도 같은 날(과거 시각)로 돌아가면 자정까지 중복 예약된다
+    LocalDateTime firedAt = LocalDateTime.now(SEOUL).toLocalDate().atTime(22, 30);
+    LocalDateTime next = schedulerService.computeNextFireAt(firedAt, true);
+
+    assertThat(next.toLocalDate()).isEqualTo(firedAt.toLocalDate().plusDays(1));
+    assertThat(next).isAfter(firedAt);
+    log.info("발화 직후 계산된 nextFireAt: {}", next);
+
+    serverOptionService.setOptionValue(
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
+  }
+
+  public void computeNextFireAt_발화창_자정여유_테스트() {
+    lineLog("발화 창 자정 여유 테스트 실행중");
+
+    serverOptionService.setOptionValue(
+        ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS,
+        "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY");
+    serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_FROM, "22");
+    serverOptionService.setOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_TO, "23");
+
+    // 발화 시각이 자정 직전에 떨어지면 폴링 간격 안에 못 잡고 컷오프로 통째 누락된다
+    for (int i = 0; i < 200; i++) {
+      LocalDateTime next = schedulerService.computeNextFireAt(LocalDateTime.now(SEOUL), true);
+      assertThat(next.toLocalTime()).isBetween(LocalTime.of(22, 0), LocalTime.of(23, 0));
+    }
 
     serverOptionService.setOptionValue(
         ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS, "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");

@@ -90,7 +90,7 @@ public class SomansaBusSchedulerService {
   @Transactional
   SomansaBusSchedulerState loadOrInitState() {
     return repository.findById(SINGLETON_ID).orElseGet(() -> {
-      LocalDateTime nextFireAt = computeNextFireAt(LocalDateTime.now(SEOUL));
+      LocalDateTime nextFireAt = computeNextFireAt(LocalDateTime.now(SEOUL), false);
       SomansaBusSchedulerState fresh = SomansaBusSchedulerState.builder()
           .somansaBusSchedulerStateId(SINGLETON_ID)
           .nextFireAt(nextFireAt)
@@ -105,7 +105,7 @@ public class SomansaBusSchedulerService {
   @Transactional
   void updateNextFireAtOnly(LocalDateTime now) {
     SomansaBusSchedulerState state = repository.findById(SINGLETON_ID).orElseThrow();
-    state.setNextFireAt(computeNextFireAt(now));
+    state.setNextFireAt(computeNextFireAt(now, false));
     repository.save(state);
   }
 
@@ -115,23 +115,27 @@ public class SomansaBusSchedulerService {
     if (fired) {
       state.setLastFiredAt(now);
     }
-    state.setNextFireAt(computeNextFireAt(now));
+    // 발화 직후에는 같은 날 창 안에 있으므로 강제로 다음 발화일로 넘긴다.
+    // (이 처리가 없으면 과거 시각이 재계산돼 자정까지 10분마다 중복 예약된다)
+    state.setNextFireAt(computeNextFireAt(now, true));
     repository.save(state);
     log.info("state 갱신 완료 - fired: {}, nextFireAt: {}", fired, state.getNextFireAt());
   }
 
-  LocalDateTime computeNextFireAt(LocalDateTime referenceTime) {
+  LocalDateTime computeNextFireAt(LocalDateTime referenceTime, boolean forceNextDay) {
     int fromHour = readHour(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_FROM, DEFAULT_FROM_HOUR);
     int toHour = readHour(ServerOptionKey.SOMANSA_BUS_SCHEDULER_TIME_TO, DEFAULT_TO_HOUR);
     if (fromHour > toHour) toHour = fromHour;
-    int rangeMinutes = (toHour - fromHour) * 60 + 59;
+    // 창의 끝을 toHour:00 으로 잡는다. toHour:59 까지 허용하면 마지막 폴링과 자정 사이
+    // 틈에 발화 시각이 떨어져 컷오프로 통째로 누락된다.
+    int rangeMinutes = (toHour - fromHour) * 60;
 
     Set<DayOfWeek> allowedDays = parseDays(
         serverOptionService.getOptionValue(ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS));
 
     LocalDate candidateDate = referenceTime.toLocalDate();
-    LocalDateTime windowEnd = candidateDate.atTime(toHour, 59);
-    if (referenceTime.isAfter(windowEnd)) {
+    LocalDateTime windowEnd = candidateDate.atTime(toHour, 0);
+    if (forceNextDay || referenceTime.isAfter(windowEnd)) {
       candidateDate = candidateDate.plusDays(1);
     }
 

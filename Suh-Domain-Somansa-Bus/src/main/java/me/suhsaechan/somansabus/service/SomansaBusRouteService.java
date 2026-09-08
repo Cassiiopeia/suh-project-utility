@@ -17,6 +17,7 @@ import me.suhsaechan.somansabus.dto.SomansaBusRequest;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.entity.SomansaBusRoute;
 import me.suhsaechan.somansabus.repository.SomansaBusRouteRepository;
+import okhttp3.OkHttpClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,19 +78,20 @@ public class SomansaBusRouteService {
   }
 
   private List<RouteData> fetchRemoteRoutes(String triggerLoginId) {
-    int passengerId = apiService.login(triggerLoginId);
+    OkHttpClient session = apiService.newSession();
+    int passengerId = apiService.login(triggerLoginId, session);
     if (passengerId <= 0) {
       log.error("동기화 로그인 실패: {}", triggerLoginId);
       throw new CustomException(ErrorCode.SOMANSA_BUS_LOGIN_FAILED);
     }
 
-    boolean sessionCreated = apiService.createSession(triggerLoginId, passengerId);
+    boolean sessionCreated = apiService.createSession(triggerLoginId, passengerId, session);
     if (!sessionCreated) {
       log.error("동기화 세션 생성 실패: {}", triggerLoginId);
       throw new CustomException(ErrorCode.SOMANSA_BUS_SESSION_FAILED);
     }
 
-    return apiService.fetchRouteList();
+    return apiService.fetchRouteList(session);
   }
 
   @Transactional
