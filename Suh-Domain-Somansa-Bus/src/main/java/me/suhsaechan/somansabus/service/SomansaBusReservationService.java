@@ -2,6 +2,7 @@ package me.suhsaechan.somansabus.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.common.constant.SomansaBusSchedulerEventType;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.somansabus.dto.SomansaBusRequest;
@@ -38,6 +39,7 @@ public class SomansaBusReservationService {
   private final SomansaBusRouteRepository routeRepository;
   private final SomansaBusScheduleRepository scheduleRepository;
   private final SomansaBusReservationHistoryRepository historyRepository;
+  private final SomansaBusSchedulerEventService eventService;
 
   @Transactional
   public SomansaBusResponse manualReserve(SomansaBusRequest request) {
@@ -70,12 +72,15 @@ public class SomansaBusReservationService {
       SomansaBusMember member = schedule.getSomansaBusMember();
       SomansaBusRoute route = schedule.getSomansaBusRoute();
 
+      LocalDate reservationDate = LocalDate.now(SEOUL).plusDays(1);
+
       if (!Boolean.TRUE.equals(member.getIsActive()) || !Boolean.TRUE.equals(member.getIsVerified())) {
         log.info("비활성 또는 미인증 멤버 건너뜀: {}", member.getLoginId());
+        eventService.record(SomansaBusSchedulerEventType.SKIPPED_MEMBER_INACTIVE, reservationDate,
+            member.getLoginId() + " 는 비활성이거나 미인증 상태라 " + route.getDescription()
+                + " 예약을 건너뛰었습니다.");
         continue;
       }
-
-      LocalDate reservationDate = LocalDate.now(SEOUL).plusDays(1);
 
       // 스케줄러가 같은 날 여러 번 발화하더라도 외부 예약 API를 중복 호출하지 않는다
       if (historyRepository
@@ -83,6 +88,9 @@ public class SomansaBusReservationService {
               member.getSomansaBusMemberId(), route.getSomansaBusRouteId(), reservationDate)) {
         log.info("이미 성공한 예약 존재 — 건너뜀 (멤버: {}, 노선: {}, 예약일: {})",
             member.getLoginId(), route.getDescription(), reservationDate);
+        eventService.record(SomansaBusSchedulerEventType.SKIPPED_ALREADY_RESERVED, reservationDate,
+            member.getLoginId() + " 의 " + route.getDescription()
+                + " 예약이 이미 성공 상태라 중복 호출을 막았습니다.");
         continue;
       }
 

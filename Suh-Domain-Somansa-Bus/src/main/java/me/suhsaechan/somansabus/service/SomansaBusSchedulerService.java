@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.ServerOptionKey;
+import me.suhsaechan.common.constant.SomansaBusSchedulerEventType;
 import me.suhsaechan.common.service.ServerOptionService;
 import me.suhsaechan.somansabus.entity.SomansaBusSchedulerState;
 import me.suhsaechan.somansabus.repository.SomansaBusSchedulerStateRepository;
@@ -32,6 +33,7 @@ public class SomansaBusSchedulerService {
   private final SomansaBusSchedulerStateRepository repository;
   private final ServerOptionService serverOptionService;
   private final SomansaBusReservationService reservationService;
+  private final SomansaBusSchedulerEventService eventService;
 
   public void tick() {
     SomansaBusSchedulerState state;
@@ -39,6 +41,8 @@ public class SomansaBusSchedulerService {
       state = loadOrInitState();
     } catch (Exception e) {
       log.error("스케줄러 state 로드/생성 실패", e);
+      eventService.record(SomansaBusSchedulerEventType.STATE_ERROR, null,
+          "스케줄러 상태를 읽지 못했습니다: " + e.getMessage());
       return;
     }
 
@@ -59,6 +63,9 @@ public class SomansaBusSchedulerService {
     if (now.isAfter(cutoff)) {
       log.warn("발화 시각 컷오프 초과 — skip, nextFireAt 만 갱신 (nextFireAt: {}, now: {})",
           state.getNextFireAt(), now);
+      eventService.record(SomansaBusSchedulerEventType.SKIPPED_CUTOFF,
+          state.getNextFireAt().toLocalDate().plusDays(1),
+          "발화 예정 시각 " + state.getNextFireAt() + " 을 놓쳐 당일 자정을 넘겼습니다. 해당 날짜 예약이 실행되지 않았습니다.");
       updateNextFireAtOnly(now);
       return;
     }
@@ -68,6 +75,8 @@ public class SomansaBusSchedulerService {
         ServerOptionKey.SOMANSA_BUS_SCHEDULER_DAYS));
     if (!allowedDays.contains(tomorrow.getDayOfWeek())) {
       log.info("내일({}) 비허용 요일 — 예약 skip, nextFireAt 만 갱신", tomorrow.getDayOfWeek());
+      eventService.record(SomansaBusSchedulerEventType.SKIPPED_NOT_ALLOWED_DAY, tomorrow,
+          "예약 대상 요일이 아니라 실행하지 않았습니다.");
       updateNextFireAtOnly(now);
       return;
     }
@@ -77,12 +86,17 @@ public class SomansaBusSchedulerService {
   }
 
   private boolean invokeReservationSafely() {
+    LocalDate tomorrow = LocalDate.now(SEOUL).plusDays(1);
     try {
       reservationService.scheduledAutoReservation();
       log.info("자동 예약 호출 완료");
+      eventService.record(SomansaBusSchedulerEventType.FIRED, tomorrow,
+          "자동 예약을 실행했습니다. 노선별 결과는 예약 기록에서 확인할 수 있습니다.");
       return true;
     } catch (Exception e) {
       log.error("자동 예약 호출 중 예외 발생 — nextFireAt 만 갱신", e);
+      eventService.record(SomansaBusSchedulerEventType.FIRE_ERROR, tomorrow,
+          "자동 예약 실행 중 오류가 발생했습니다: " + e.getMessage());
       return false;
     }
   }

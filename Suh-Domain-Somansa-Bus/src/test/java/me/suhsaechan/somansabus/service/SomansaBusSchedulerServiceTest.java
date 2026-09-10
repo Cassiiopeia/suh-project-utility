@@ -8,10 +8,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.ServerOptionKey;
 import me.suhsaechan.common.service.ServerOptionService;
+import me.suhsaechan.common.constant.SomansaBusSchedulerEventType;
+import me.suhsaechan.somansabus.entity.SomansaBusSchedulerEvent;
 import me.suhsaechan.somansabus.entity.SomansaBusSchedulerState;
+import me.suhsaechan.somansabus.repository.SomansaBusSchedulerEventRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusSchedulerStateRepository;
 import me.suhsaechan.web.SuhProjectUtilityApplication;
 import org.junit.jupiter.api.Test;
@@ -34,6 +38,9 @@ class SomansaBusSchedulerServiceTest {
 
   @Autowired
   private ServerOptionService serverOptionService;
+
+  @Autowired
+  private SomansaBusSchedulerEventRepository eventRepository;
 
   @Test
   public void mainTest() {
@@ -114,6 +121,14 @@ class SomansaBusSchedulerServiceTest {
         .orElseThrow();
     assertThat(after.getLastFiredAt()).isNull();
     assertThat(after.getNextFireAt()).isAfter(LocalDateTime.now(SEOUL));
+
+    // 발화를 놓친 사건은 로그뿐 아니라 이력으로 남아야 화면에서 확인할 수 있다
+    List<SomansaBusSchedulerEvent> events = eventRepository.findTop30ByOrderByOccurredAtDesc();
+    assertThat(events).isNotEmpty();
+    assertThat(events.get(0).getEventType())
+        .isEqualTo(SomansaBusSchedulerEventType.SKIPPED_CUTOFF);
+    assertThat(events.get(0).getMessage()).contains(yesterdayFireAt.toString());
+    log.info("기록된 누락 이벤트: {}", events.get(0).getMessage());
   }
 
   public void tick_비허용요일_skip_테스트() {

@@ -212,13 +212,53 @@
               <th th:text="#{busDashboard.history.colRoute}">노선</th>
               <th th:text="#{busDashboard.history.colReservationDate}">예약일</th>
               <th th:text="#{busDashboard.history.colStatus}">상태</th>
+              <th th:text="#{busDashboard.history.colReason}">사유</th>
             </tr>
           </thead>
           <tbody id="historyTable">
             <tr>
-              <td colspan="5" class="text-center py-8">
+              <td colspan="6" class="text-center py-8">
                 <span class="loading loading-spinner loading-md text-primary"></span>
                 <span class="ml-2 text-base-content/60" th:text="#{busDashboard.history.loading}">기록 로딩 중...</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-base-300 mt-6">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+            <i class="fa-solid fa-robot text-primary"></i>
+            <span th:text="#{busDashboard.event.sectionTitle}">스케줄러 실행 기록</span>
+          </h3>
+          <p class="text-base-content/60 text-sm" th:text="#{busDashboard.event.sectionSubtitle}">자동 예약이 언제 실행되고 왜 건너뛰었는지 기록</p>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="loadSchedulerEvents()">
+          <i class="fa-solid fa-rotate"></i>
+          <span th:text="#{busDashboard.event.refreshButton}">새로고침</span>
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th th:text="#{busDashboard.event.colOccurredAt}">발생시각</th>
+              <th th:text="#{busDashboard.event.colType}">유형</th>
+              <th th:text="#{busDashboard.event.colTargetDate}">대상일</th>
+              <th th:text="#{busDashboard.event.colMessage}">내용</th>
+            </tr>
+          </thead>
+          <tbody id="schedulerEventTable">
+            <tr>
+              <td colspan="4" class="text-center py-8">
+                <span class="loading loading-spinner loading-md text-primary"></span>
+                <span class="ml-2 text-base-content/60" th:text="#{busDashboard.event.loading}">기록 로딩 중...</span>
               </td>
             </tr>
           </tbody>
@@ -281,6 +321,7 @@ $(document).ready(function() {
   loadMembers();
   loadRoutes();
   loadReservationHistory();
+  loadSchedulerEvents();
 
   document.getElementById('btnSyncRoutes').addEventListener('click', function() {
     if (!confirm(window.MSG['busDashboard.js.syncConfirm'])) {
@@ -536,7 +577,7 @@ function loadReservationHistory() {
     },
     function(xhr) {
       // 전역 핸들러가 toast를 표시하므로 여기서는 UI 업데이트만
-      $('#historyTable').html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.historyLoadFailed'] + '</td></tr>');
+      $('#historyTable').html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.historyLoadFailed'] + '</td></tr>');
     }
   );
 }
@@ -545,7 +586,7 @@ function displayReservationHistory(histories) {
   const tableBody = $('#historyTable');
 
   if (!histories || histories.length === 0) {
-    tableBody.html('<tr><td colspan="5" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.noHistory'] + '</td></tr>');
+    tableBody.html('<tr><td colspan="6" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.noHistory'] + '</td></tr>');
     return;
   }
 
@@ -576,6 +617,68 @@ function displayReservationHistory(histories) {
       statusCell.html('<span class="badge badge-error badge-sm">' + window.MSG['busDashboard.js.statusFailed'] + '</span>');
     }
     row.append(statusCell);
+
+    const reasonCell = $('<td>');
+    reasonCell.addClass('text-sm text-base-content/70');
+    reasonCell.text(history.errorMessage || '-');
+    row.append(reasonCell);
+
+    tableBody.append(row);
+  });
+}
+
+const SCHEDULER_EVENT_BADGE = {
+  FIRED: 'badge-success',
+  SKIPPED_CUTOFF: 'badge-error',
+  SKIPPED_NOT_ALLOWED_DAY: 'badge-ghost',
+  SKIPPED_MEMBER_INACTIVE: 'badge-warning',
+  SKIPPED_ALREADY_RESERVED: 'badge-info',
+  FIRE_ERROR: 'badge-error',
+  STATE_ERROR: 'badge-error'
+};
+
+function loadSchedulerEvents() {
+  sendFormRequest('/api/somansa-bus/scheduler/events/recent', {},
+    function(response) {
+      displaySchedulerEvents(response.schedulerEvents || []);
+    },
+    function(xhr) {
+      $('#schedulerEventTable').html('<tr><td colspan="4" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.eventLoadFailed'] + '</td></tr>');
+    }
+  );
+}
+
+function displaySchedulerEvents(events) {
+  const tableBody = $('#schedulerEventTable');
+
+  if (!events || events.length === 0) {
+    tableBody.html('<tr><td colspan="4" class="text-center py-8 text-base-content/60">' + window.MSG['busDashboard.js.noEvent'] + '</td></tr>');
+    return;
+  }
+
+  tableBody.empty();
+  events.forEach(function(event) {
+    const row = $('<tr>');
+
+    const timeCell = $('<td>');
+    timeCell.text(event.occurredAt ? new Date(event.occurredAt).toLocaleString('ko-KR') : '-');
+    row.append(timeCell);
+
+    const typeCell = $('<td>');
+    const badge = $('<span>').addClass('badge badge-sm');
+    badge.addClass(SCHEDULER_EVENT_BADGE[event.eventType] || 'badge-ghost');
+    badge.text(window.MSG['busDashboard.eventType.' + event.eventType] || event.eventType);
+    typeCell.append(badge);
+    row.append(typeCell);
+
+    const dateCell = $('<td>');
+    dateCell.text(event.targetDate || '-');
+    row.append(dateCell);
+
+    const messageCell = $('<td>');
+    messageCell.addClass('text-sm text-base-content/70');
+    messageCell.text(event.message || '-');
+    row.append(messageCell);
 
     tableBody.append(row);
   });
