@@ -612,7 +612,7 @@
           </div>
           <div class="bg-base-200 rounded-lg p-4">
             <h3 class="font-semibold text-base-content mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-database text-green-500"></i>
+              <i class="fa-solid fa-database text-success"></i>
               Database
             </h3>
             <div class="flex flex-wrap gap-2">
@@ -957,7 +957,7 @@
       </div>
 
       <!-- 슬라이드 카드 컨테이너 -->
-      <div class="notice-cards-container relative overflow-hidden bg-base-100 rounded-lg shadow-md" style="height: 4rem;">
+      <div class="notice-cards-container relative overflow-hidden bg-base-100 rounded-lg shadow-md h-16">
         <div id="notice-cards" class="relative w-full h-full">
           <!-- 로딩 상태 -->
           <div class="absolute inset-0 flex items-center justify-center">
@@ -1258,7 +1258,7 @@
                     <i class="fa-solid fa-signal"></i>
                     <span th:text="#{dashboard.tool.aiServer.connStatus}">연결 상태</span>
                   </span>
-                  <span class="status-main-btn loading flex items-center gap-1 text-base-content/50">
+                  <span class="status-main-btn loading flex items-center gap-1 text-base-content/70">
                     <span class="loading loading-spinner loading-xs"></span>
                     <span th:text="#{dashboard.tool.aiServer.checking}">확인중</span>
                   </span>
@@ -1473,8 +1473,8 @@
              class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
             <div class="card-body p-5">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                  <i class="fa-solid fa-leaf text-green-600 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center">
+                  <i class="fa-solid fa-leaf text-success text-xl"></i>
                 </div>
                 <div>
                   <h3 class="font-bold text-base-content">MongoDB</h3>
@@ -1489,8 +1489,8 @@
              class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
             <div class="card-body p-5">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
-                  <i class="fa-solid fa-hard-drive text-red-500 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-error/10 flex items-center justify-center">
+                  <i class="fa-solid fa-hard-drive text-error text-xl"></i>
                 </div>
                 <div>
                   <h3 class="font-bold text-base-content">MinIO</h3>
@@ -2179,9 +2179,7 @@
     let progressHtml = '';
     if (totalAmount > 0) {
       progressHtml = `
-        <div class="w-full bg-base-300 rounded-full h-1.5 mt-2">
-          <div class="bg-primary h-1.5 rounded-full" style="width: ${Math.min(progressPercentage, 100)}%"></div>
-        </div>
+        <progress class="progress progress-primary w-full h-1.5 mt-2" value="${Math.min(progressPercentage, 100)}" max="100"></progress>
         <p class="text-xs text-base-content/50 mt-1">${currentAmount}/${totalAmount} ${unit} (${progressPercentage.toFixed(0)}%)</p>
       `;
     }
@@ -2223,10 +2221,10 @@
         const statusBtn = statusContainer.find('.status-main-btn');
 
         if (response.isHealthy) {
-          statusBtn.removeClass('loading text-base-content/50').addClass('text-success');
+          statusBtn.removeClass('loading text-base-content/70').addClass('text-success');
           statusBtn.html('<i class="fa-solid fa-check-circle"></i> ' + window.MSG['dashboard.js.statusHealthy']);
         } else {
-          statusBtn.removeClass('loading text-base-content/50').addClass('text-error');
+          statusBtn.removeClass('loading text-base-content/70').addClass('text-error');
           statusBtn.html('<i class="fa-solid fa-times-circle"></i> ' + window.MSG['dashboard.js.statusUnhealthy']);
         }
       },
@@ -2235,7 +2233,7 @@
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
 
-        statusBtn.removeClass('loading text-base-content/50').addClass('text-warning');
+        statusBtn.removeClass('loading text-base-content/70').addClass('text-warning');
         statusBtn.html('<i class="fa-solid fa-exclamation-triangle"></i> ' + window.MSG['dashboard.js.statusConnError']);
       }
     });

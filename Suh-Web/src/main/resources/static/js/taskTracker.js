@@ -95,15 +95,15 @@ function renderGoalCard(goal) {
   if (daysRemaining > 0) {
     ddayText = 'D-' + daysRemaining;
     if (daysRemaining <= 7) {
-      ddayClass = 'text-red-500';
+      ddayClass = 'text-error';
     } else if (daysRemaining <= 30) {
-      ddayClass = 'text-yellow-500';
+      ddayClass = 'text-warning';
     } else {
-      ddayClass = 'text-green-500';
+      ddayClass = 'text-success';
     }
   } else if (daysRemaining === 0) {
     ddayText = 'D-Day';
-    ddayClass = 'text-red-600 font-bold';
+    ddayClass = 'text-error font-bold';
   } else {
     ddayText = 'D+' + Math.abs(daysRemaining);
     ddayClass = 'text-base-content/60';
@@ -159,7 +159,7 @@ function renderGoalCard(goal) {
       day: 'numeric'
     });
     const dateDiv = $('<div class="flex items-center gap-2 text-sm text-base-content/60 mb-3">');
-    dateDiv.append($('<i class="fa-regular fa-calendar text-blue-500">'));
+    dateDiv.append($('<i class="fa-regular fa-calendar text-primary">'));
     dateDiv.append($('<span>').text(targetDate));
     cardBody.append(dateDiv);
   }
@@ -210,16 +210,16 @@ function renderGoalCard(goal) {
  */
 function getColorClass(color) {
   const colorMap = {
-    'blue': 'text-blue-500',
-    'green': 'text-green-500',
-    'red': 'text-red-500',
-    'yellow': 'text-yellow-500',
-    'purple': 'text-purple-500',
-    'pink': 'text-pink-500',
-    'orange': 'text-orange-500',
+    'blue': 'text-primary',
+    'green': 'text-success',
+    'red': 'text-error',
+    'yellow': 'text-warning',
+    'purple': 'text-secondary',
+    'pink': 'text-secondary',
+    'orange': 'text-warning',
     'gray': 'text-base-content/60'
   };
-  return colorMap[color] || 'text-blue-500';
+  return colorMap[color] || 'text-primary';
 }
 
 /**
@@ -246,7 +246,7 @@ function updateGoalSelects(goals) {
 function showAddGoalModal() {
   $('#goalForm')[0].reset();
   $('#goalId').val('');
-  $('#goalModalTitle').html('<i class="fa-solid fa-bullseye text-blue-500"></i> ' + window.MSG['taskTracker.button.addTask']);
+  $('#goalModalTitle').html('<i class="fa-solid fa-bullseye text-primary"></i> ' + window.MSG['taskTracker.button.addTask']);
   setDefaultDate();
   document.getElementById('goalModal').showModal();
 }
@@ -275,7 +275,7 @@ function editGoal(goalId) {
   $('#goalIcon').val(goal.icon || 'fa-solid fa-bullseye');
   $('#goalColor').val(goal.color || 'blue');
 
-  $('#goalModalTitle').html('<i class="fa-solid fa-pen text-blue-500"></i> ' + window.MSG['taskTracker.goal.editTitle']);
+  $('#goalModalTitle').html('<i class="fa-solid fa-pen text-primary"></i> ' + window.MSG['taskTracker.goal.editTitle']);
   document.getElementById('goalModal').showModal();
 }
 
@@ -381,7 +381,7 @@ function showGoalDetail(goalId) {
       renderGoalDetail(goal, response.progressList || []);
     },
     function(xhr, status, error) {
-      detailContent.html('<p class="text-center text-red-500">' + window.MSG['taskTracker.toast.loadFailed'] + '</p>');
+      detailContent.html('<p class="text-center text-error">' + window.MSG['taskTracker.toast.loadFailed'] + '</p>');
     }
   );
 }
@@ -404,7 +404,7 @@ function renderGoalDetail(goal, progressList) {
         <h3 class="text-2xl font-bold text-base-content">${escapeHtml(goal.title)}</h3>
         ${goal.description ? `<p class="text-base-content/60 mt-1">${escapeHtml(goal.description)}</p>` : ''}
       </div>
-      <div class="text-3xl font-bold ${daysRemaining <= 7 ? 'text-red-500' : 'text-blue-500'}">${ddayText}</div>
+      <div class="text-3xl font-bold ${daysRemaining <= 7 ? 'text-error' : 'text-primary'}">${ddayText}</div>
     </div>
   `;
 
@@ -533,7 +533,7 @@ function renderProgress(progressList) {
     row.append(memoCell);
 
     const actionCell = $('<td>');
-    const deleteBtn = $('<button class="btn btn-xs btn-ghost text-red-500">').attr('title', window.MSG['taskTracker.button.delete']);
+    const deleteBtn = $('<button class="btn btn-xs btn-ghost text-error">').attr('title', window.MSG['taskTracker.button.delete']);
     deleteBtn.append($('<i class="fa-solid fa-trash">'));
     deleteBtn.attr('onclick', 'deleteProgress("' + progress.taskProgressId + '")');
     actionCell.append(deleteBtn);
@@ -565,7 +565,7 @@ function renderProgress(progressList) {
     }
 
     const actionRow = $('<div class="flex justify-end mt-2">');
-    const mobileDeleteBtn = $('<button class="btn btn-xs btn-ghost text-red-500">');
+    const mobileDeleteBtn = $('<button class="btn btn-xs btn-ghost text-error">');
     mobileDeleteBtn.append($('<i class="fa-solid fa-trash">'));
     mobileDeleteBtn.append(' ' + window.MSG['taskTracker.button.delete']);
     mobileDeleteBtn.attr('onclick', 'deleteProgress("' + progress.taskProgressId + '")');
@@ -583,7 +583,7 @@ function renderProgress(progressList) {
 function showAddProgressModal(goalId) {
   $('#progressForm')[0].reset();
   $('#progressId').val('');
-  $('#progressModalTitle').html('<i class="fa-solid fa-clock text-blue-500"></i> ' + window.MSG['taskTracker.progress.addTitle']);
+  $('#progressModalTitle').html('<i class="fa-solid fa-clock text-primary"></i> ' + window.MSG['taskTracker.progress.addTitle']);
 
   const today = new Date().toISOString().split('T')[0];
   $('#progressDate').val(today);
