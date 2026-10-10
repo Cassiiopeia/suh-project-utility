@@ -7,6 +7,21 @@
   themes: light --default, dark --prefersdark;
 }
 
+/* 라이트 테마 의미색: 흰 배경/흰 글씨에서 WCAG 대비(4.5:1 내외)를 확보하도록 어둡게 조정 */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  color-scheme: light;
+  --color-success: oklch(50% 0.14 155);
+  --color-success-content: oklch(99% 0 0);
+  --color-warning: oklch(52% 0.13 65);
+  --color-warning-content: oklch(99% 0 0);
+  --color-error: oklch(53% 0.21 25);
+  --color-error-content: oklch(99% 0 0);
+  --color-info: oklch(51% 0.14 235);
+  --color-info-content: oklch(99% 0 0);
+}
+
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @source inline("badge-{primary,secondary,info,success,warning,error,ghost,neutral}");

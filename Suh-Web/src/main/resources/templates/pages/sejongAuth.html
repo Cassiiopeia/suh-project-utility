@@ -7,27 +7,27 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Hero Section -->
-  <section class="sejong-auth-hero relative overflow-hidden bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 py-12 rounded-2xl mb-8 shadow-lg">
-    <div class="sejong-auth-hero-overlay absolute inset-0 bg-white/20"></div>
+  <section class="sejong-auth-hero relative overflow-hidden bg-gradient-to-r from-primary/10 via-primary/10 to-primary/10 py-12 rounded-2xl mb-8 shadow-lg">
+    <div class="sejong-auth-hero-overlay absolute inset-0 bg-base-100/20"></div>
     <div class="relative text-center px-6">
       <div class="flex justify-center gap-2 mb-4 flex-wrap">
-        <span class="badge bg-indigo-600/80 text-white border-indigo-700">v1.2.0</span>
-        <span class="badge bg-indigo-600/80 text-white border-indigo-700">Java 17+</span>
-        <span class="badge bg-indigo-600/80 text-white border-indigo-700">Spring Boot 3.x</span>
+        <span class="badge badge-soft badge-primary">v1.2.0</span>
+        <span class="badge badge-soft badge-primary">Java 17+</span>
+        <span class="badge badge-soft badge-primary">Spring Boot 3.x</span>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-bold mb-2 flex items-center justify-center gap-3 text-gray-800">
-        <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2 flex items-center justify-center gap-3 text-base-content">
+        <i class="fa-solid fa-graduation-cap text-primary"></i>
         <span th:text="#{sejongAuth.hero.title}">세종대학교 인증 모듈</span>
       </h1>
-      <p class="font-mono text-gray-700 text-sm sm:text-base mb-1">SUH Sejong University Auth Module</p>
+      <p class="font-mono text-base-content text-sm sm:text-base mb-1">SUH Sejong University Auth Module</p>
       <div class="mt-4 flex justify-center gap-2">
         <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank"
-           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-gray-900">
+           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-base-300">
           <i class="fa-brands fa-github"></i>
           GitHub
         </a>
         <a href="https://nexus.suhsaechan.kr/#browse/browse:maven-releases:kr%2Fsuhsaechan%2Fsejong-univ-auth" target="_blank"
-           class="btn btn-sm bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-700">
+           class="btn btn-sm bg-primary hover:bg-primary text-white border-primary/30">
           <i class="fa-solid fa-box"></i>
           Nexus
         </a>
@@ -83,7 +83,7 @@
               <input type="radio" name="authType" value="INTEGRATED" class="radio radio-primary" checked/>
               <div class="flex-1">
                 <span class="font-medium" th:text="#{sejongAuth.authType.integrated}">통합 인증</span>
-                <span class="badge badge-sm badge-success ml-2" th:text="#{sejongAuth.authType.recommended}">추천</span>
+                <span class="badge badge-sm badge-soft badge-primary ml-2" th:text="#{sejongAuth.authType.recommended}">추천</span>
                 <p class="text-xs text-base-content/60 mt-1" th:text="#{sejongAuth.authType.integratedDesc}">DHC + SIS 모든 정보 조회</p>
               </div>
             </label>
@@ -228,14 +228,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td class="font-mono text-error">AUTHENTICATION_FAILED</td><td th:text="#{sejongAuth.error.authenticationFailed}">학번 또는 비밀번호가 일치하지 않음</td></tr>
-              <tr><td class="font-mono text-error">INVALID_INPUT</td><td th:text="#{sejongAuth.error.invalidInput}">입력값이 비어있거나 유효하지 않음</td></tr>
-              <tr><td class="font-mono text-error">CONNECTION_FAILED</td><td th:text="#{sejongAuth.error.connectionFailed}">세종대학교 포털 연결 실패</td></tr>
-              <tr><td class="font-mono text-error">CONNECTION_TIMEOUT</td><td th:text="#{sejongAuth.error.connectionTimeout}">연결 시간 초과</td></tr>
-              <tr><td class="font-mono text-error">DATA_FETCH_FAILED</td><td th:text="#{sejongAuth.error.dataFetchFailed}">학생 정보 조회 실패</td></tr>
-              <tr><td class="font-mono text-error">PARSE_ERROR</td><td th:text="#{sejongAuth.error.parseError}">HTML/JSON 파싱 오류</td></tr>
-              <tr><td class="font-mono text-error">SESSION_ERROR</td><td th:text="#{sejongAuth.error.sessionError}">세션 처리 오류</td></tr>
-              <tr><td class="font-mono text-error">SSL_CONFIGURATION_ERROR</td><td th:text="#{sejongAuth.error.sslConfigurationError}">SSL 설정 오류</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">AUTHENTICATION_FAILED</td><td th:text="#{sejongAuth.error.authenticationFailed}">학번 또는 비밀번호가 일치하지 않음</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">INVALID_INPUT</td><td th:text="#{sejongAuth.error.invalidInput}">입력값이 비어있거나 유효하지 않음</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">CONNECTION_FAILED</td><td th:text="#{sejongAuth.error.connectionFailed}">세종대학교 포털 연결 실패</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">CONNECTION_TIMEOUT</td><td th:text="#{sejongAuth.error.connectionTimeout}">연결 시간 초과</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">DATA_FETCH_FAILED</td><td th:text="#{sejongAuth.error.dataFetchFailed}">학생 정보 조회 실패</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">PARSE_ERROR</td><td th:text="#{sejongAuth.error.parseError}">HTML/JSON 파싱 오류</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">SESSION_ERROR</td><td th:text="#{sejongAuth.error.sessionError}">세션 처리 오류</td></tr>
+              <tr><td class="font-mono text-base-content font-semibold">SSL_CONFIGURATION_ERROR</td><td th:text="#{sejongAuth.error.sslConfigurationError}">SSL 설정 오류</td></tr>
             </tbody>
           </table>
         </div>

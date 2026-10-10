@@ -58,9 +58,24 @@ public class SomansaBusApiService {
   private static final Pattern GO_PAGE_PATTERN = Pattern.compile("goPage\\((\\d+),\\s*'([^']+)'\\s*,\\s*'(True|False)'\\)");
   private static final Pattern LABEL_PATTERN = Pattern.compile("^\\s*(\\d{2}:\\d{2})\\s+(.+?)(?:\\s+(\\d+)호)?\\s*-.*$");
 
-  private final OkHttpClient client = SomansaBusHttpClient.newClient();
+  // 쿠키 저장소가 공유되면 세션이 섞이므로, 예약 흐름마다 독립 클라이언트를 만들어 쓴다
+  public OkHttpClient newSession() {
+    return SomansaBusHttpClient.newClient();
+  }
 
   public int login(String loginId) {
+    return login(loginId, newSession());
+  }
+
+  public boolean createSession(String rideId, int passengerId) {
+    return createSession(rideId, passengerId, newSession());
+  }
+
+  public List<RouteData> fetchRouteList() {
+    return fetchRouteList(newSession());
+  }
+
+  public int login(String loginId, OkHttpClient client) {
     log.info("버스 예약 로그인 시작: {}", loginId);
 
     Request getRequest = new Request.Builder()
@@ -120,7 +135,7 @@ public class SomansaBusApiService {
     }
   }
 
-  public boolean createSession(String rideId, int passengerId) {
+  public boolean createSession(String rideId, int passengerId, OkHttpClient client) {
     log.info("세션 생성 시작: rideId={}, passengerId={}", rideId, passengerId);
 
     String data = String.format("%s,%d,,%s", rideId, passengerId, PUSH_ID);
@@ -139,11 +154,12 @@ public class SomansaBusApiService {
         .build();
 
     try (Response response = client.newCall(request).execute()) {
+      String responseBody = response.body() != null ? response.body().string() : "";
       if (!response.isSuccessful()) {
-        log.error("세션 생성 실패, 코드: {}", response.code());
+        log.error("세션 생성 실패, 코드: {}, 응답: {}", response.code(), responseBody);
         return false;
       }
-      log.info("세션 생성 성공: rideId={}, passengerId={}", rideId, passengerId);
+      log.info("세션 생성 성공: rideId={}, passengerId={}, 응답: {}", rideId, passengerId, responseBody);
       return true;
     } catch (IOException e) {
       log.error("세션 생성 중 예외 발생", e);
@@ -151,7 +167,8 @@ public class SomansaBusApiService {
     }
   }
 
-  public boolean makeReservation(int passengerId, SomansaBusRoute route, LocalDate reservationDate) {
+  public boolean makeReservation(int passengerId, SomansaBusRoute route, LocalDate reservationDate,
+      OkHttpClient client) {
     String formattedDate = reservationDate.format(DATE_FORMATTER);
     log.info("예약 시작 - 승객ID: {}, 버스: {}, 예약일: {}", passengerId, route.getDescription(), formattedDate);
 
@@ -193,13 +210,23 @@ public class SomansaBusApiService {
       log.debug("예약 응답: {}", responseBody);
 
       JsonNode root = mapper.readTree(responseBody);
-      int resultCode = root.path("d").asInt(0);
+      JsonNode resultNode = root.path("d");
 
+      // 예약 성공 시에만 양수 예약번호가 내려온다. 정수가 아니거나 0 이하면 실패로 본다
+      // (기존에는 파싱 실패 시 기본값 0 을 성공으로 처리해 실패가 성공으로 기록됐다)
+      if (!resultNode.canConvertToInt()) {
+        log.error("예약 응답 파싱 실패 - 버스: {}, 예약일: {}, 응답: {}",
+            route.getDescription(), formattedDate, responseBody);
+        return false;
+      }
+
+      int resultCode = resultNode.asInt();
       if (resultCode == -1) {
         log.warn("예약 정원 초과 - 버스: {}, 예약일: {}", route.getDescription(), formattedDate);
         return false;
-      } else if (resultCode == -2) {
-        log.warn("예약 등록 오류 - 버스: {}, 예약일: {}", route.getDescription(), formattedDate);
+      } else if (resultCode <= 0) {
+        log.warn("예약 등록 오류 - 버스: {}, 예약일: {}, 결과코드: {}",
+            route.getDescription(), formattedDate, resultCode);
         return false;
       }
 
@@ -211,7 +238,7 @@ public class SomansaBusApiService {
     }
   }
 
-  public List<RouteData> fetchRouteList() {
+  public List<RouteData> fetchRouteList(OkHttpClient client) {
     log.info("노선 목록 조회 시작");
 
     Request request = new Request.Builder()

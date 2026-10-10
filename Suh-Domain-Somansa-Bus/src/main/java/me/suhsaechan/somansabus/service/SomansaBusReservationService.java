@@ -2,6 +2,7 @@ package me.suhsaechan.somansabus.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.common.constant.SomansaBusSchedulerEventType;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
 import me.suhsaechan.somansabus.dto.SomansaBusRequest;
@@ -14,11 +15,13 @@ import me.suhsaechan.somansabus.repository.SomansaBusMemberRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusReservationHistoryRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusRouteRepository;
 import me.suhsaechan.somansabus.repository.SomansaBusScheduleRepository;
+import okhttp3.OkHttpClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,11 +30,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SomansaBusReservationService {
 
+  private static final ZoneId SEOUL = ZoneId.of("Asia/Seoul");
+  private static final int MAX_ATTEMPTS = 3;
+  private static final long RETRY_DELAY_MS = 3_000L;
+
   private final SomansaBusApiService apiService;
   private final SomansaBusMemberRepository memberRepository;
   private final SomansaBusRouteRepository routeRepository;
   private final SomansaBusScheduleRepository scheduleRepository;
   private final SomansaBusReservationHistoryRepository historyRepository;
+  private final SomansaBusSchedulerEventService eventService;
 
   @Transactional
   public SomansaBusResponse manualReserve(SomansaBusRequest request) {
@@ -45,7 +53,7 @@ public class SomansaBusReservationService {
 
     LocalDate reservationDate = request.getReservationDate() != null
         ? request.getReservationDate()
-        : LocalDate.now().plusDays(3);
+        : LocalDate.now(SEOUL).plusDays(3);
 
     boolean success = executeReservation(member, route, reservationDate);
 
@@ -54,32 +62,70 @@ public class SomansaBusReservationService {
         .build();
   }
 
-  @Transactional
   public void scheduledAutoReservation() {
     log.info("자동 예약 스케줄러 실행 시작");
 
-    List<SomansaBusSchedule> activeSchedules = scheduleRepository.findByIsActiveTrue();
+    List<SomansaBusSchedule> activeSchedules = scheduleRepository.findActiveWithDetails();
     log.info("활성 스케줄 수: {}", activeSchedules.size());
 
     for (SomansaBusSchedule schedule : activeSchedules) {
       SomansaBusMember member = schedule.getSomansaBusMember();
       SomansaBusRoute route = schedule.getSomansaBusRoute();
 
+      LocalDate reservationDate = LocalDate.now(SEOUL).plusDays(1);
+
       if (!Boolean.TRUE.equals(member.getIsActive()) || !Boolean.TRUE.equals(member.getIsVerified())) {
         log.info("비활성 또는 미인증 멤버 건너뜀: {}", member.getLoginId());
+        eventService.record(SomansaBusSchedulerEventType.SKIPPED_MEMBER_INACTIVE, reservationDate,
+            member.getLoginId() + " 는 비활성이거나 미인증 상태라 " + route.getDescription()
+                + " 예약을 건너뛰었습니다.");
         continue;
       }
 
-      int daysAhead = 1;
-      LocalDate reservationDate = LocalDate.now().plusDays(daysAhead);
+      // 스케줄러가 같은 날 여러 번 발화하더라도 외부 예약 API를 중복 호출하지 않는다
+      if (historyRepository
+          .existsBySomansaBusMemberSomansaBusMemberIdAndSomansaBusRouteSomansaBusRouteIdAndReservationDateAndIsSuccessTrue(
+              member.getSomansaBusMemberId(), route.getSomansaBusRouteId(), reservationDate)) {
+        log.info("이미 성공한 예약 존재 — 건너뜀 (멤버: {}, 노선: {}, 예약일: {})",
+            member.getLoginId(), route.getDescription(), reservationDate);
+        eventService.record(SomansaBusSchedulerEventType.SKIPPED_ALREADY_RESERVED, reservationDate,
+            member.getLoginId() + " 의 " + route.getDescription()
+                + " 예약이 이미 성공 상태라 중복 호출을 막았습니다.");
+        continue;
+      }
 
       log.info("자동 예약 실행 - 멤버: {}, 노선: {}, 예약일: {}",
           member.getLoginId(), route.getDescription(), reservationDate);
 
-      executeReservation(member, route, reservationDate);
+      executeReservationWithRetry(member, route, reservationDate);
     }
 
     log.info("자동 예약 스케줄러 실행 완료");
+  }
+
+  private boolean executeReservationWithRetry(SomansaBusMember member, SomansaBusRoute route,
+      LocalDate reservationDate) {
+    for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      if (executeReservation(member, route, reservationDate)) {
+        return true;
+      }
+      if (attempt < MAX_ATTEMPTS) {
+        log.warn("예약 실패 — 재시도 {}/{} (멤버: {}, 노선: {})",
+            attempt + 1, MAX_ATTEMPTS, member.getLoginId(), route.getDescription());
+        sleepQuietly();
+      }
+    }
+    log.error("예약 최종 실패 - 멤버: {}, 노선: {}, 예약일: {}",
+        member.getLoginId(), route.getDescription(), reservationDate);
+    return false;
+  }
+
+  private void sleepQuietly() {
+    try {
+      Thread.sleep(RETRY_DELAY_MS);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
   }
 
   private boolean executeReservation(SomansaBusMember member, SomansaBusRoute route, LocalDate reservationDate) {
@@ -90,17 +136,18 @@ public class SomansaBusReservationService {
     boolean success = false;
 
     try {
-      int passengerId = apiService.login(member.getLoginId());
+      OkHttpClient session = apiService.newSession();
+      int passengerId = apiService.login(member.getLoginId(), session);
       if (passengerId <= 0) {
         errorMessage = "로그인 실패";
         log.error("로그인 실패, 예약 중단: {}", member.getLoginId());
       } else {
-        boolean sessionCreated = apiService.createSession(member.getLoginId(), passengerId);
+        boolean sessionCreated = apiService.createSession(member.getLoginId(), passengerId, session);
         if (!sessionCreated) {
           errorMessage = "세션 생성 실패";
           log.error("세션 생성 실패, 예약 중단: {}", member.getLoginId());
         } else {
-          success = apiService.makeReservation(passengerId, route, reservationDate);
+          success = apiService.makeReservation(passengerId, route, reservationDate, session);
           if (!success) {
             errorMessage = "예약 API 호출 실패";
           }
@@ -117,7 +164,7 @@ public class SomansaBusReservationService {
         .reservationDate(reservationDate)
         .isSuccess(success)
         .errorMessage(errorMessage)
-        .executedAt(LocalDateTime.now())
+        .executedAt(LocalDateTime.now(SEOUL))
         .build();
 
     historyRepository.save(history);

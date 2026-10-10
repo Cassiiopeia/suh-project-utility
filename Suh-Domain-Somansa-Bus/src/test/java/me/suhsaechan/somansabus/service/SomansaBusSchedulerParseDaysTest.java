@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 class SomansaBusSchedulerParseDaysTest {
 
   private final SomansaBusSchedulerService service =
-      new SomansaBusSchedulerService(null, null, null);
+      new SomansaBusSchedulerService(null, null, null, null);
 
   @Test
   void 정식명_월화수목금_파싱() {

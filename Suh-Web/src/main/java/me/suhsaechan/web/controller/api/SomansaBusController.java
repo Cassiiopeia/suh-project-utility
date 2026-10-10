@@ -6,6 +6,7 @@ import me.suhsaechan.somansabus.dto.SomansaBusRequest;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.service.SomansaBusMemberService;
 import me.suhsaechan.somansabus.service.SomansaBusReservationService;
+import me.suhsaechan.somansabus.service.SomansaBusSchedulerEventService;
 import me.suhsaechan.somansabus.service.SomansaBusRouteService;
 import me.suhsaechan.somansabus.service.SomansaBusScheduleService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
@@ -27,6 +28,7 @@ public class SomansaBusController {
   private final SomansaBusRouteService routeService;
   private final SomansaBusScheduleService scheduleService;
   private final SomansaBusReservationService reservationService;
+  private final SomansaBusSchedulerEventService schedulerEventService;
 
   @PostMapping(value = "/member/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
@@ -142,6 +144,12 @@ public class SomansaBusController {
   @LogMonitor
   public ResponseEntity<SomansaBusResponse> getRecentHistory() {
     return ResponseEntity.ok(reservationService.getRecentHistory());
+  }
+
+  @PostMapping(value = "/scheduler/events/recent", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @LogMonitor
+  public ResponseEntity<SomansaBusResponse> getRecentSchedulerEvents() {
+    return ResponseEntity.ok(schedulerEventService.getRecentEvents());
   }
 
   @PostMapping(value = "/stats", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

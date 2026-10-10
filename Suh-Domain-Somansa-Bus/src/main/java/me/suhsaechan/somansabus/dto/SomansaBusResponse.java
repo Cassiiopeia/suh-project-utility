@@ -9,6 +9,7 @@ import me.suhsaechan.somansabus.entity.SomansaBusMember;
 import me.suhsaechan.somansabus.entity.SomansaBusReservationHistory;
 import me.suhsaechan.somansabus.entity.SomansaBusRoute;
 import me.suhsaechan.somansabus.entity.SomansaBusSchedule;
+import me.suhsaechan.somansabus.entity.SomansaBusSchedulerEvent;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +41,9 @@ public class SomansaBusResponse {
 
     @Builder.Default
     private List<SomansaBusReservationHistory> histories = new ArrayList<>();
+
+    @Builder.Default
+    private List<SomansaBusSchedulerEvent> schedulerEvents = new ArrayList<>();
 
     // 카운트
     private Long totalCount;

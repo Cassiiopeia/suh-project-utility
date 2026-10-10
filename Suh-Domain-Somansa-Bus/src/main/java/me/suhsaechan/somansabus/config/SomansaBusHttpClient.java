@@ -34,7 +34,12 @@ public class SomansaBusHttpClient {
     private final List<Cookie> cookieStore = new ArrayList<>();
 
     @Override
-    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+    public synchronized void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+      // 같은 이름의 쿠키가 재발급되면 교체한다. 누적하면 낡은 세션 쿠키가 함께 전송된다
+      for (Cookie cookie : cookies) {
+        cookieStore.removeIf(stored -> stored.name().equals(cookie.name())
+            && stored.domain().equals(cookie.domain()));
+      }
       cookieStore.addAll(cookies);
       for (Cookie cookie : cookies) {
         log.debug("쿠키 저장: {}={}, Domain: {}", cookie.name(), cookie.value(), cookie.domain());
@@ -42,7 +47,7 @@ public class SomansaBusHttpClient {
     }
 
     @Override
-    public List<Cookie> loadForRequest(HttpUrl url) {
+    public synchronized List<Cookie> loadForRequest(HttpUrl url) {
       List<Cookie> validCookies = new ArrayList<>();
       for (Cookie cookie : cookieStore) {
         if (cookie.matches(url)) {

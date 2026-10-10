@@ -6,27 +6,27 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- Hero Section -->
-  <section class="suh-random-hero relative overflow-hidden bg-gradient-to-r from-green-200 via-teal-200 to-cyan-200 py-12 rounded-2xl mb-8 shadow-lg">
-    <div class="suh-random-hero-overlay absolute inset-0 bg-white/20"></div>
+  <section class="suh-random-hero relative overflow-hidden bg-gradient-to-r from-green-200 via-primary/10 to-primary/10 py-12 rounded-2xl mb-8 shadow-lg">
+    <div class="suh-random-hero-overlay absolute inset-0 bg-base-100/20"></div>
     <div class="relative text-center px-6">
       <div class="flex justify-center gap-2 mb-4 flex-wrap">
-        <span class="badge bg-teal-600/80 text-white border-teal-700">v1.1.0</span>
-        <span class="badge bg-teal-600/80 text-white border-teal-700">Java 17+</span>
-        <span class="badge bg-teal-600/80 text-white border-teal-700">Spring Boot 3.x</span>
+        <span class="badge badge-soft badge-primary">v1.1.0</span>
+        <span class="badge badge-soft badge-primary">Java 17+</span>
+        <span class="badge badge-soft badge-primary">Spring Boot 3.x</span>
       </div>
       <h1 class="text-3xl sm:text-4xl font-bold mb-2 flex items-center justify-center gap-3 text-base-content">
-        <i class="fa-solid fa-dice text-teal-600"></i>
+        <i class="fa-solid fa-dice text-primary"></i>
         SUH Random Nickname Generator
       </h1>
       <p class="font-mono text-base-content/80 text-sm sm:text-base mb-1" th:text="#{suhRandom.hero.subtitle}">96만 조합의 개성 있는 닉네임 생성기</p>
       <div class="mt-4 flex justify-center gap-2">
         <a href="https://github.com/Cassiiopeia/suh-random-engine" target="_blank"
-           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-gray-900">
+           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-base-300">
           <i class="fa-brands fa-github"></i>
           GitHub
         </a>
         <a href="https://nexus.suhsaechan.kr/#browse/browse:maven-releases:me%2Fsuhsaechan%2Fsuh-random-engine" target="_blank"
-           class="btn btn-sm bg-teal-600 hover:bg-teal-700 text-white border-teal-700">
+           class="btn btn-sm bg-primary hover:bg-primary text-white border-primary/30">
           <i class="fa-solid fa-box"></i>
           Nexus
         </a>
@@ -66,7 +66,7 @@
               <input type="radio" name="nicknameType" value="SIMPLE" class="radio radio-primary" checked/>
               <div class="flex-1">
                 <span class="font-medium" th:text="#{suhRandom.type.simple.title}">기본 닉네임</span>
-                <span class="badge badge-sm badge-success ml-2" th:text="#{suhRandom.badge.recommended}">추천</span>
+                <span class="badge badge-sm badge-soft badge-primary ml-2" th:text="#{suhRandom.badge.recommended}">추천</span>
                 <p class="text-xs text-base-content/60 mt-1" th:text="#{suhRandom.type.simple.desc}">형용사 + 명사 조합 (예: 멋진고양이)</p>
               </div>
             </label>
@@ -114,25 +114,25 @@
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-warning" th:text="#{suhRandom.type.mature.title}">성인용 닉네임</span>
-                <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-warning/80 mt-1" th:text="#{suhRandom.type.mature.desc}">성인용 형용사 + 명사 조합</p>
+                <span class="font-medium text-base-content" th:text="#{suhRandom.type.mature.title}">성인용 닉네임</span>
+                <span class="badge badge-sm badge-outline badge-warning ml-2">19+</span>
+                <p class="text-xs text-warning mt-1" th:text="#{suhRandom.type.mature.desc}">성인용 형용사 + 명사 조합</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE_NUMBER" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-warning" th:text="#{suhRandom.type.matureNumber.title}">성인용 + 숫자</span>
-                <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-warning/80 mt-1" th:text="#{suhRandom.type.matureNumber.desc}">성인용 닉네임 + 숫자</p>
+                <span class="font-medium text-base-content" th:text="#{suhRandom.type.matureNumber.title}">성인용 + 숫자</span>
+                <span class="badge badge-sm badge-outline badge-warning ml-2">19+</span>
+                <p class="text-xs text-warning mt-1" th:text="#{suhRandom.type.matureNumber.desc}">성인용 닉네임 + 숫자</p>
               </div>
             </label>
             <label class="suh-random-radio-option flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-warning/30 bg-warning/10 transition-colors">
               <input type="radio" name="nicknameType" value="MATURE_UUID" class="radio radio-warning"/>
               <div class="flex-1">
-                <span class="font-medium text-warning" th:text="#{suhRandom.type.matureUuid.title}">성인용 + UUID</span>
-                <span class="badge badge-sm badge-warning ml-2">19+</span>
-                <p class="text-xs text-warning/80 mt-1" th:text="#{suhRandom.type.matureUuid.desc}">성인용 닉네임 + UUID</p>
+                <span class="font-medium text-base-content" th:text="#{suhRandom.type.matureUuid.title}">성인용 + UUID</span>
+                <span class="badge badge-sm badge-outline badge-warning ml-2">19+</span>
+                <p class="text-xs text-warning mt-1" th:text="#{suhRandom.type.matureUuid.desc}">성인용 닉네임 + UUID</p>
               </div>
             </label>
           </div>

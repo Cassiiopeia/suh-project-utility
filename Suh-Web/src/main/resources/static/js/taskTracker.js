@@ -55,7 +55,7 @@ function loadGoals() {
     },
     function(xhr, status, error) {
       console.error('Goal 목록 로드 실패:', error);
-      $('#taskGoalsGrid').html('<div class="col-span-full text-center py-8 text-gray-500">' + window.MSG['taskTracker.toast.loadFailed'] + '</div>');
+      $('#taskGoalsGrid').html('<div class="col-span-full text-center py-8 text-base-content/60">' + window.MSG['taskTracker.toast.loadFailed'] + '</div>');
     }
   );
 }
@@ -106,20 +106,20 @@ function renderGoalCard(goal) {
     ddayClass = 'text-red-600 font-bold';
   } else {
     ddayText = 'D+' + Math.abs(daysRemaining);
-    ddayClass = 'text-gray-400';
+    ddayClass = 'text-base-content/60';
   }
 
   const colorClass = getColorClass(goal.color || 'blue');
   const icon = goal.icon || 'fa-solid fa-bullseye';
 
-  const card = $('<div class="card bg-base-100 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">');
+  const card = $('<div class="card bg-base-100 border border-base-300 hover:shadow-md transition-shadow cursor-pointer">');
 
   const cardBody = $('<div class="card-body p-4">');
 
   const header = $('<div class="flex items-center justify-between mb-3">');
   const iconTitle = $('<div class="flex items-center gap-2">');
   iconTitle.append($('<i>').addClass(icon + ' text-xl ' + colorClass));
-  iconTitle.append($('<span class="font-semibold text-gray-800 truncate max-w-32">').text(goal.title));
+  iconTitle.append($('<span class="font-semibold text-base-content truncate max-w-32">').text(goal.title));
   header.append(iconTitle);
 
   const ddayBadge = $('<div class="text-lg font-bold">').addClass(ddayClass).text(ddayText);
@@ -127,13 +127,13 @@ function renderGoalCard(goal) {
   cardBody.append(header);
 
   if (goal.description) {
-    const desc = $('<p class="text-sm text-gray-500 mb-3 line-clamp-2">').text(goal.description);
+    const desc = $('<p class="text-sm text-base-content/60 mb-3 line-clamp-2">').text(goal.description);
     cardBody.append(desc);
   }
 
   if (goal.totalAmount > 0) {
     const progressDiv = $('<div class="mb-3">');
-    const progressInfo = $('<div class="flex justify-between text-xs text-gray-500 mb-1">');
+    const progressInfo = $('<div class="flex justify-between text-xs text-base-content/60 mb-1">');
     progressInfo.append($('<span>').text(window.MSG['taskTracker.label.progressRate']));
     progressInfo.append($('<span>').text(progressPercentage + '%'));
     progressDiv.append(progressInfo);
@@ -144,7 +144,7 @@ function renderGoalCard(goal) {
     progressBar.attr('max', '100');
     progressDiv.append(progressBar);
 
-    const amountInfo = $('<div class="text-xs text-gray-400 mt-1">');
+    const amountInfo = $('<div class="text-xs text-base-content/60 mt-1">');
     const currentAmount = goal.currentAmount || 0;
     amountInfo.text(currentAmount + ' / ' + goal.totalAmount + ' ' + (goal.unit || ''));
     progressDiv.append(amountInfo);
@@ -158,7 +158,7 @@ function renderGoalCard(goal) {
       month: 'short',
       day: 'numeric'
     });
-    const dateDiv = $('<div class="flex items-center gap-2 text-sm text-gray-500 mb-3">');
+    const dateDiv = $('<div class="flex items-center gap-2 text-sm text-base-content/60 mb-3">');
     dateDiv.append($('<i class="fa-regular fa-calendar text-blue-500">'));
     dateDiv.append($('<span>').text(targetDate));
     cardBody.append(dateDiv);
@@ -217,7 +217,7 @@ function getColorClass(color) {
     'purple': 'text-purple-500',
     'pink': 'text-pink-500',
     'orange': 'text-orange-500',
-    'gray': 'text-gray-500'
+    'gray': 'text-base-content/60'
   };
   return colorMap[color] || 'text-blue-500';
 }
@@ -374,7 +374,7 @@ function showGoalDetail(goalId) {
     function(response) {
       const goal = response.goal;
       if (!goal) {
-        detailContent.html('<p class="text-center text-gray-500">' + window.MSG['taskTracker.toast.taskNotFound'] + '</p>');
+        detailContent.html('<p class="text-center text-base-content/60">' + window.MSG['taskTracker.toast.taskNotFound'] + '</p>');
         return;
       }
 
@@ -401,8 +401,8 @@ function renderGoalDetail(goal, progressList) {
     <div class="flex items-start gap-4 mb-6">
       <div class="text-4xl ${colorClass}"><i class="${icon}"></i></div>
       <div class="flex-1">
-        <h3 class="text-2xl font-bold text-gray-800">${escapeHtml(goal.title)}</h3>
-        ${goal.description ? `<p class="text-gray-500 mt-1">${escapeHtml(goal.description)}</p>` : ''}
+        <h3 class="text-2xl font-bold text-base-content">${escapeHtml(goal.title)}</h3>
+        ${goal.description ? `<p class="text-base-content/60 mt-1">${escapeHtml(goal.description)}</p>` : ''}
       </div>
       <div class="text-3xl font-bold ${daysRemaining <= 7 ? 'text-red-500' : 'text-blue-500'}">${ddayText}</div>
     </div>
@@ -485,7 +485,7 @@ function loadProgress() {
     },
     function(xhr, status, error) {
       console.error('진행 기록 로드 실패:', error);
-      $('#progressTable').html('<tr><td colspan="7" class="text-center py-8 text-gray-500">' + window.MSG['taskTracker.toast.loadFailed'] + '</td></tr>');
+      $('#progressTable').html('<tr><td colspan="7" class="text-center py-8 text-base-content/60">' + window.MSG['taskTracker.toast.loadFailed'] + '</td></tr>');
     }
   );
 }
@@ -500,7 +500,7 @@ function renderProgress(progressList) {
 
   if (!progressList || progressList.length === 0) {
     tableBody.closest('table').addClass('hidden');
-    cardContainer.html('<div class="text-center py-8 text-gray-500">' + window.MSG['taskTracker.empty.noProgress'] + '</div>');
+    cardContainer.html('<div class="text-center py-8 text-base-content/60">' + window.MSG['taskTracker.empty.noProgress'] + '</div>');
     emptyMessage.removeClass('hidden');
     return;
   }
@@ -542,26 +542,26 @@ function renderProgress(progressList) {
     tableBody.append(row);
 
     // 모바일 카드
-    const card = $('<div class="card bg-base-100 border border-gray-200 shadow-sm">');
+    const card = $('<div class="card bg-base-100 border border-base-300 shadow-sm">');
     const cardBody = $('<div class="card-body p-3">');
 
     const headerRow = $('<div class="flex justify-between items-start mb-2">');
     headerRow.append($('<span class="badge badge-ghost badge-sm">').text(goalTitle));
-    headerRow.append($('<span class="text-xs text-gray-400">').text(progressDate));
+    headerRow.append($('<span class="text-xs text-base-content/60">').text(progressDate));
     cardBody.append(headerRow);
 
     if (progress.content) {
-      cardBody.append($('<p class="text-sm font-medium text-gray-800 mb-2">').text(progress.content));
+      cardBody.append($('<p class="text-sm font-medium text-base-content mb-2">').text(progress.content));
     }
 
-    const infoRow = $('<div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-2">');
+    const infoRow = $('<div class="flex flex-wrap gap-2 text-xs text-base-content/60 mb-2">');
     if (range !== '-') {
       infoRow.append($('<span class="badge badge-outline badge-xs">').text(window.MSG['taskTracker.label.rangePrefix'] + range));
     }
     cardBody.append(infoRow);
 
     if (progress.memo) {
-      cardBody.append($('<p class="text-xs text-gray-400 line-clamp-2">').text(progress.memo));
+      cardBody.append($('<p class="text-xs text-base-content/60 line-clamp-2">').text(progress.memo));
     }
 
     const actionRow = $('<div class="flex justify-end mt-2">');

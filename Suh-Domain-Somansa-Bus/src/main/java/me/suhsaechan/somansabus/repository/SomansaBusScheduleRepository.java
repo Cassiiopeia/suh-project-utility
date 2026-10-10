@@ -25,6 +25,13 @@ public interface SomansaBusScheduleRepository extends JpaRepository<SomansaBusSc
 
   List<SomansaBusSchedule> findByIsActiveTrue();
 
+  // 자동 예약은 트랜잭션 밖에서 외부 API를 호출하므로 연관 엔티티를 미리 로딩한다
+  @Query("SELECT s FROM SomansaBusSchedule s " +
+      "JOIN FETCH s.somansaBusMember " +
+      "JOIN FETCH s.somansaBusRoute " +
+      "WHERE s.isActive = true")
+  List<SomansaBusSchedule> findActiveWithDetails();
+
   List<SomansaBusSchedule> findBySomansaBusMemberAndIsActiveTrue(SomansaBusMember member);
 
   List<SomansaBusSchedule> findBySomansaBusMemberSomansaBusMemberIdAndIsActiveTrue(UUID memberId);

@@ -55,4 +55,7 @@ public interface SomansaBusReservationHistoryRepository extends JpaRepository<So
   Integer countByReservationDateBetweenAndIsSuccessFalse(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
   List<SomansaBusReservationHistory> findTop20ByOrderByExecutedAtDesc();
+
+  boolean existsBySomansaBusMemberSomansaBusMemberIdAndSomansaBusRouteSomansaBusRouteIdAndReservationDateAndIsSuccessTrue(
+      UUID memberId, UUID routeId, LocalDate reservationDate);
 }
