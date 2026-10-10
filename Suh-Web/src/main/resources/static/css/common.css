@@ -12,13 +12,6 @@ COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
    primary: 파란색 (#3b82f6)
 ===========================
 */
-[data-theme="light"],
-[data-theme="dark"],
-:root {
-  --color-primary: oklch(0.6232 0.1888 255.09);
-  --color-primary-content: oklch(1 0 0);
-  --color-primary-focus: oklch(0.5706 0.1888 255.09);
-}
 
 /*
 ===========================
@@ -41,116 +34,32 @@ label.swap {
 */
 
 /* Light 모드 - badge-soft badge-primary */
-:root:not([data-theme="dark"]) .badge-soft.badge-primary,
-html:not([data-theme="dark"]) .badge-soft.badge-primary,
-[data-theme="light"] .badge-soft.badge-primary {
-  background-color: rgba(59, 130, 246, 0.15) !important;
-  color: #2563eb !important;
-  border-color: rgba(59, 130, 246, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-primary */
-[data-theme="dark"] .badge-soft.badge-primary {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-  color: #60a5fa !important;
-  border-color: rgba(59, 130, 246, 0.3) !important;
-}
 
 /* Light 모드 - badge-soft badge-secondary */
-:root:not([data-theme="dark"]) .badge-soft.badge-secondary,
-html:not([data-theme="dark"]) .badge-soft.badge-secondary,
-[data-theme="light"] .badge-soft.badge-secondary {
-  background-color: rgba(107, 114, 128, 0.15) !important;
-  color: #4b5563 !important;
-  border-color: rgba(107, 114, 128, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-secondary */
-[data-theme="dark"] .badge-soft.badge-secondary {
-  background-color: rgba(156, 163, 175, 0.2) !important;
-  color: #9ca3af !important;
-  border-color: rgba(156, 163, 175, 0.3) !important;
-}
 
 /* Light 모드 - badge-soft badge-accent */
-:root:not([data-theme="dark"]) .badge-soft.badge-accent,
-html:not([data-theme="dark"]) .badge-soft.badge-accent,
-[data-theme="light"] .badge-soft.badge-accent {
-  background-color: rgba(20, 184, 166, 0.15) !important;
-  color: #0d9488 !important;
-  border-color: rgba(20, 184, 166, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-accent */
-[data-theme="dark"] .badge-soft.badge-accent {
-  background-color: rgba(20, 184, 166, 0.2) !important;
-  color: #2dd4bf !important;
-  border-color: rgba(20, 184, 166, 0.3) !important;
-}
 
 /* Light 모드 - badge-soft badge-success */
-:root:not([data-theme="dark"]) .badge-soft.badge-success,
-html:not([data-theme="dark"]) .badge-soft.badge-success,
-[data-theme="light"] .badge-soft.badge-success {
-  background-color: rgba(34, 197, 94, 0.15) !important;
-  color: #16a34a !important;
-  border-color: rgba(34, 197, 94, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-success */
-[data-theme="dark"] .badge-soft.badge-success {
-  background-color: rgba(34, 197, 94, 0.2) !important;
-  color: #4ade80 !important;
-  border-color: rgba(34, 197, 94, 0.3) !important;
-}
 
 /* Light 모드 - badge-soft badge-info */
-:root:not([data-theme="dark"]) .badge-soft.badge-info,
-html:not([data-theme="dark"]) .badge-soft.badge-info,
-[data-theme="light"] .badge-soft.badge-info {
-  background-color: rgba(6, 182, 212, 0.15) !important;
-  color: #0891b2 !important;
-  border-color: rgba(6, 182, 212, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-info */
-[data-theme="dark"] .badge-soft.badge-info {
-  background-color: rgba(6, 182, 212, 0.2) !important;
-  color: #22d3ee !important;
-  border-color: rgba(6, 182, 212, 0.3) !important;
-}
 
 /* Light 모드 - badge-soft badge-warning */
-:root:not([data-theme="dark"]) .badge-soft.badge-warning,
-html:not([data-theme="dark"]) .badge-soft.badge-warning,
-[data-theme="light"] .badge-soft.badge-warning {
-  background-color: rgba(245, 158, 11, 0.15) !important;
-  color: #d97706 !important;
-  border-color: rgba(245, 158, 11, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-warning */
-[data-theme="dark"] .badge-soft.badge-warning {
-  background-color: rgba(245, 158, 11, 0.2) !important;
-  color: #fbbf24 !important;
-  border-color: rgba(245, 158, 11, 0.3) !important;
-}
 
 /* Light 모드 - badge-soft badge-error */
-:root:not([data-theme="dark"]) .badge-soft.badge-error,
-html:not([data-theme="dark"]) .badge-soft.badge-error,
-[data-theme="light"] .badge-soft.badge-error {
-  background-color: rgba(239, 68, 68, 0.15) !important;
-  color: #dc2626 !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
-}
 
 /* Dark 모드 - badge-soft badge-error */
-[data-theme="dark"] .badge-soft.badge-error {
-  background-color: rgba(239, 68, 68, 0.2) !important;
-  color: #f87171 !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
-}
 
 /*
 ===========================
@@ -190,20 +99,8 @@ html:not([data-theme="dark"]) .badge-soft.badge-error,
 }
 
 /* badge-ghost 스타일 (Light 모드) */
-:root:not([data-theme="dark"]) .badge-ghost,
-html:not([data-theme="dark"]) .badge-ghost,
-[data-theme="light"] .badge-ghost {
-  background-color: rgba(107, 114, 128, 0.1) !important;
-  border: 1px solid rgba(107, 114, 128, 0.2) !important;
-  color: #6b7280 !important;
-}
 
 /* badge-ghost 스타일 (Dark 모드) */
-[data-theme="dark"] .badge-ghost {
-  background-color: rgba(156, 163, 175, 0.15) !important;
-  border: 1px solid rgba(156, 163, 175, 0.25) !important;
-  color: #9ca3af !important;
-}
 
 /*
 ===========================
@@ -212,80 +109,16 @@ html:not([data-theme="dark"]) .badge-ghost,
 */
 
 /* badge-success - 밝은 파스텔 그린 */
-:root:not([data-theme="dark"]) .badge-success,
-html:not([data-theme="dark"]) .badge-success,
-[data-theme="light"] .badge-success {
-  background-color: rgba(134, 239, 172, 0.35) !important;
-  color: #16a34a !important;
-  border: 1px solid rgba(134, 239, 172, 0.6) !important;
-}
-
-[data-theme="dark"] .badge-success {
-  background-color: rgba(134, 239, 172, 0.2) !important;
-  color: #86efac !important;
-  border: 1px solid rgba(134, 239, 172, 0.35) !important;
-}
 
 /* badge-info - 밝은 파스텔 블루 */
-:root:not([data-theme="dark"]) .badge-info,
-html:not([data-theme="dark"]) .badge-info,
-[data-theme="light"] .badge-info {
-  background-color: rgba(147, 197, 253, 0.35) !important;
-  color: #2563eb !important;
-  border: 1px solid rgba(147, 197, 253, 0.6) !important;
-}
-
-[data-theme="dark"] .badge-info {
-  background-color: rgba(147, 197, 253, 0.2) !important;
-  color: #93c5fd !important;
-  border: 1px solid rgba(147, 197, 253, 0.35) !important;
-}
 
 /* badge-warning - 밝은 파스텔 옐로우 */
-:root:not([data-theme="dark"]) .badge-warning,
-html:not([data-theme="dark"]) .badge-warning,
-[data-theme="light"] .badge-warning {
-  background-color: rgba(253, 224, 71, 0.35) !important;
-  color: #ca8a04 !important;
-  border: 1px solid rgba(253, 224, 71, 0.6) !important;
-}
-
-[data-theme="dark"] .badge-warning {
-  background-color: rgba(253, 224, 71, 0.2) !important;
-  color: #fde047 !important;
-  border: 1px solid rgba(253, 224, 71, 0.35) !important;
-}
 
 /* badge-error - 밝은 파스텔 레드 */
-:root:not([data-theme="dark"]) .badge-error,
-html:not([data-theme="dark"]) .badge-error,
-[data-theme="light"] .badge-error {
-  background-color: rgba(252, 165, 165, 0.35) !important;
-  color: #dc2626 !important;
-  border: 1px solid rgba(252, 165, 165, 0.6) !important;
-}
-
-[data-theme="dark"] .badge-error {
-  background-color: rgba(252, 165, 165, 0.2) !important;
-  color: #fca5a5 !important;
-  border: 1px solid rgba(252, 165, 165, 0.35) !important;
-}
 
 /* badge-outline 스타일 (Light 모드) */
-:root:not([data-theme="dark"]) .badge-outline,
-html:not([data-theme="dark"]) .badge-outline,
-[data-theme="light"] .badge-outline {
-  background-color: transparent !important;
-  border: 1px solid #d1d5db !important;
-  color: #374151 !important;
-}
 
 /* badge-outline 스타일 (Dark 모드) */
-[data-theme="dark"] .badge-outline {
-  background-color: transparent !important;
-  border: 1px solid #6b7280 !important;
-  color: #e5e7eb !important;
-}
 
 /* Pretendard 폰트 적용 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css");
@@ -304,92 +137,20 @@ html, body, button, input, select, textarea {
 */
 
 /* Light 모드 - Toast Success (밝은 파스텔톤 녹색 #C8F2C8) */
-:root:not([data-theme="dark"]) .toast .alert-success,
-html:not([data-theme="dark"]) .toast .alert-success,
-[data-theme="light"] .toast .alert-success {
-  background-color: #C8F2C8 !important;
-  color: #15803d !important;
-  border-color: #86efac !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
-}
 
 /* Dark 모드 - Toast Success */
-[data-theme="dark"] .toast .alert-success {
-  background-color: #86efac !important;
-  color: #14532d !important;
-  border-color: #4ade80 !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
-}
 
 /* Light 모드 - Toast Error (밝은 파스텔톤 빨강) */
-:root:not([data-theme="dark"]) .toast .alert-error,
-html:not([data-theme="dark"]) .toast .alert-error,
-[data-theme="light"] .toast .alert-error {
-  background-color: #FFE5E5 !important;
-  color: #b91c1c !important;
-  border-color: #fca5a5 !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
-}
 
 /* Dark 모드 - Toast Error */
-[data-theme="dark"] .toast .alert-error {
-  background-color: #fca5a5 !important;
-  color: #7f1d1d !important;
-  border-color: #f87171 !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
-}
 
 /* Light 모드 - Toast Warning (밝은 파스텔톤 노랑) */
-:root:not([data-theme="dark"]) .toast .alert-warning,
-html:not([data-theme="dark"]) .toast .alert-warning,
-[data-theme="light"] .toast .alert-warning {
-  background-color: #FFF4E5 !important;
-  color: #c2410c !important;
-  border-color: #fcd34d !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
-}
 
 /* Dark 모드 - Toast Warning */
-[data-theme="dark"] .toast .alert-warning {
-  background-color: #fcd34d !important;
-  color: #78350f !important;
-  border-color: #fbbf24 !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
-}
 
 /* Light 모드 - Toast Info (밝은 파스텔톤 파랑) */
-:root:not([data-theme="dark"]) .toast .alert-info,
-html:not([data-theme="dark"]) .toast .alert-info,
-[data-theme="light"] .toast .alert-info {
-  background-color: #E5F3FF !important;
-  color: #0c4a6e !important;
-  border-color: #93c5fd !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
-}
 
 /* Dark 모드 - Toast Info */
-[data-theme="dark"] .toast .alert-info {
-  background-color: #93c5fd !important;
-  color: #082f49 !important;
-  border-color: #60a5fa !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
-}
 
 /* Toast 닫기 버튼 스타일 (파스텔톤과 조화) */
 .toast .alert .btn-ghost {
@@ -402,10 +163,6 @@ html:not([data-theme="dark"]) .toast .alert-info,
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-[data-theme="dark"] .toast .alert .btn-ghost:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
 /*
 ===========================
   Alert Info Styles - 밝은 하늘색 파스텔 톤
@@ -413,26 +170,8 @@ html:not([data-theme="dark"]) .toast .alert-info,
 */
 
 /* Light 모드 - Alert Info (밝은 하늘색 파스텔 톤) */
-:root:not([data-theme="dark"]) .alert-info,
-html:not([data-theme="dark"]) .alert-info,
-[data-theme="light"] .alert-info {
-  background-color: #E0F7FF !important;
-  color: #0369a1 !important;
-  border-color: #81D4FA !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
-}
 
 /* Dark 모드 - Alert Info */
-[data-theme="dark"] .alert-info {
-  background-color: #93c5fd !important;
-  color: #082f49 !important;
-  border-color: #60a5fa !important;
-  border-width: 1px;
-  border-style: solid;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2) !important;
-}
 
 /*
 ===========================
@@ -549,29 +288,6 @@ html:not([data-theme="dark"]) .alert-info,
 }
 
 /* 다크모드 텍스트 회전 스타일 */
-[data-theme="dark"] .text-rotate-item {
-  color: #e5e7eb;
-}
-
-[data-theme="dark"] .text-rotate-item i.text-blue-500 {
-  color: #60a5fa !important;
-}
-
-[data-theme="dark"] .text-rotate-item i.text-purple-500 {
-  color: #a78bfa !important;
-}
-
-[data-theme="dark"] .text-rotate-item i.text-teal-500 {
-  color: #2dd4bf !important;
-}
-
-[data-theme="dark"] .text-rotate-item i.text-orange-500 {
-  color: #fb923c !important;
-}
-
-[data-theme="dark"] .text-rotate-item i.text-yellow-500 {
-  color: #fbbf24 !important;
-}
 
 /*
 ===========================
@@ -772,11 +488,6 @@ html:not([data-theme="dark"]) .alert-info,
 }
 
 /* 다크모드 버전 배지 스타일 */
-[data-theme="dark"] .version-badge {
-  background-color: #0c4a6e !important;
-  color: #7dd3fc !important;
-  border: 1px solid #075985 !important;
-}
 
 /* Figma 로고 스타일 */
 .figma-logo {
@@ -830,31 +541,6 @@ html:not([data-theme="dark"]) .alert-info,
 ===========================
 */
 
-.grass-planter-dashboard .stat-card {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border: 1px solid #bae6fd;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-}
-
-.grass-planter-dashboard .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1);
-}
-
-.grass-planter-dashboard .stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e40af;
-}
-
-.grass-planter-dashboard .stat-label {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-top: 0.25rem;
-}
-
 /* 잔디 레벨 셀 — GitHub contribution 색상 (레벨 1~4) */
 .grass-cell {
   display: inline-block;
@@ -873,10 +559,6 @@ html:not([data-theme="dark"]) .alert-info,
 .grass-cell-on.grass-lv-4 { background-color: #216e39; }
 
 /* 다크모드: 빈 셀만 어둡게, 채워진 셀은 동일 색 유지 */
-[data-theme="dark"] .grass-cell-off {
-  background-color: #2d333b;
-  border-color: #444c56;
-}
 
 /*
 ===========================
@@ -1085,146 +767,22 @@ html:not([data-theme="dark"]) .alert-info,
 */
 
 /* 라이트모드 - navbar 배경색 및 텍스트 색상 */
-:root:not([data-theme="dark"]) .navbar,
-html:not([data-theme="dark"]) .navbar,
-[data-theme="light"] .navbar {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #e5e7eb !important;
-}
-
-:root:not([data-theme="dark"]) .navbar a,
-:root:not([data-theme="dark"]) .navbar span,
-:root:not([data-theme="dark"]) .navbar .btn-ghost,
-html:not([data-theme="dark"]) .navbar a,
-html:not([data-theme="dark"]) .navbar span,
-html:not([data-theme="dark"]) .navbar .btn-ghost,
-[data-theme="light"] .navbar a,
-[data-theme="light"] .navbar span,
-[data-theme="light"] .navbar .btn-ghost {
-  color: #1f2937 !important;
-}
-
-:root:not([data-theme="dark"]) .navbar .btn-ghost:hover,
-html:not([data-theme="dark"]) .navbar .btn-ghost:hover,
-[data-theme="light"] .navbar .btn-ghost:hover {
-  background-color: rgba(0, 0, 0, 0.05) !important;
-}
 
 /* 라이트모드 - 드롭다운 메뉴 */
-:root:not([data-theme="dark"]) .dropdown-content,
-html:not([data-theme="dark"]) .dropdown-content,
-[data-theme="light"] .dropdown-content {
-  background-color: #ffffff !important;
-  border-color: #e5e7eb !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-}
-
-:root:not([data-theme="dark"]) .dropdown-content a,
-html:not([data-theme="dark"]) .dropdown-content a,
-[data-theme="light"] .dropdown-content a {
-  color: #374151 !important;
-}
-
-:root:not([data-theme="dark"]) .dropdown-content a:hover,
-html:not([data-theme="dark"]) .dropdown-content a:hover,
-[data-theme="light"] .dropdown-content a:hover {
-  background-color: #f3f4f6 !important;
-}
 
 /* 라이트모드 - 배경색 명시적 스타일 */
-:root:not([data-theme="dark"]) .bg-white,
-html:not([data-theme="dark"]) .bg-white,
-[data-theme="light"] .bg-white {
-  background-color: #ffffff !important;
-}
-
-:root:not([data-theme="dark"]) .bg-base-100,
-html:not([data-theme="dark"]) .bg-base-100,
-[data-theme="light"] .bg-base-100 {
-  background-color: #ffffff !important;
-}
-
-:root:not([data-theme="dark"]) .bg-base-200,
-html:not([data-theme="dark"]) .bg-base-200,
-[data-theme="light"] .bg-base-200 {
-  background-color: #f9fafb !important;
-}
 
 /* 라이트모드 - 카드 스타일 */
-:root:not([data-theme="dark"]) .card,
-html:not([data-theme="dark"]) .card,
-[data-theme="light"] .card {
-  background-color: #ffffff !important;
-  border: 1px solid #e5e7eb !important;
-}
-
-:root:not([data-theme="dark"]) .card-body,
-html:not([data-theme="dark"]) .card-body,
-[data-theme="light"] .card-body {
-  color: #1f2937 !important;
-}
 
 /* 라이트모드 - 텍스트 색상 */
-:root:not([data-theme="dark"]) .text-base-content,
-html:not([data-theme="dark"]) .text-base-content,
-[data-theme="light"] .text-base-content {
-  color: #1f2937 !important;
-}
 
 /* 라이트모드 - body 배경 그라데이션 */
-:root:not([data-theme="dark"]) body,
-html:not([data-theme="dark"]) body,
-[data-theme="light"] body {
-  background-color: #f8fafc !important;
-}
 
 /* 라이트모드 - 로그인 페이지 그라데이션 유지 */
-:root:not([data-theme="dark"]) body.login-page,
-html:not([data-theme="dark"]) body.login-page,
-[data-theme="light"] body.login-page {
-  background: linear-gradient(to bottom right, #f8fafc, #eff6ff) !important;
-}
 
 /* 라이트모드 - input 스타일 */
-:root:not([data-theme="dark"]) .input,
-:root:not([data-theme="dark"]) .textarea,
-:root:not([data-theme="dark"]) .select,
-html:not([data-theme="dark"]) .input,
-html:not([data-theme="dark"]) .textarea,
-html:not([data-theme="dark"]) .select,
-[data-theme="light"] .input,
-[data-theme="light"] .textarea,
-[data-theme="light"] .select {
-  background-color: #ffffff !important;
-  border: 1.5px solid #bdbdbd !important;
-  color: #1f2937 !important;
-  padding-left: 10px !important;
-}
-
-:root:not([data-theme="dark"]) .input::placeholder,
-:root:not([data-theme="dark"]) .textarea::placeholder,
-html:not([data-theme="dark"]) .input::placeholder,
-html:not([data-theme="dark"]) .textarea::placeholder,
-[data-theme="light"] .input::placeholder,
-[data-theme="light"] .textarea::placeholder {
-  color: #9ca3af !important;
-}
 
 /* 라이트모드 - 순수 textarea 요소 스타일 (DaisyUI .textarea 클래스 없이 사용되는 경우) */
-:root:not([data-theme="dark"]) textarea,
-html:not([data-theme="dark"]) textarea,
-[data-theme="light"] textarea {
-  background-color: #ffffff !important;
-  border: 1.5px solid #bdbdbd !important;
-  color: #1f2937 !important;
-  padding-left: 10px !important;
-}
-
-:root:not([data-theme="dark"]) textarea::placeholder,
-html:not([data-theme="dark"]) textarea::placeholder,
-[data-theme="light"] textarea::placeholder {
-  color: #9ca3af !important;
-}
 
 /*
 ===========================
@@ -1273,266 +831,22 @@ html:not([data-theme="dark"]) textarea::placeholder,
 */
 
 /* 다크모드 테이블 */
-[data-theme="dark"] .table-container {
-  background: #1f2937 !important;
-}
-
-[data-theme="dark"] .tabulator {
-  background: #1f2937 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .tabulator-header {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .tabulator-header .tabulator-col {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .tabulator-col-title {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .tabulator-cell {
-  background-color: #1f2937 !important;
-  color: #e5e7eb !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .tabulator-row {
-  background-color: #1f2937 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .tabulator-row-odd {
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] .tabulator-row-even {
-  background-color: #111827 !important;
-}
-
-[data-theme="dark"] .tabulator-row:hover {
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .tabulator-footer {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .tabulator-page {
-  background-color: #1f2937 !important;
-  border-color: #4b5563 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .tabulator-page:hover:not([disabled]) {
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .tabulator-page.active {
-  background-color: #3b82f6 !important;
-  color: white !important;
-}
-
-[data-theme="dark"] .tabulator-page[disabled] {
-  opacity: 0.5;
-}
-
-[data-theme="dark"] .tabulator-paginator {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .tabulator-col-resize-handle {
-  background-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .tabulator-tableholder {
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] .tabulator-placeholder {
-  background-color: #1f2937 !important;
-  color: #9ca3af !important;
-}
 
 /* 다크모드 입력 필드 */
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
-  background-color: #374151 !important;
-  border: 1.5px solid #6b7280 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder {
-  color: #9ca3af !important;
-}
 
 /* 다크모드 토스트 (DaisyUI 5 기본 스타일 사용) */
 
 /* 다크모드 body 배경 */
-[data-theme="dark"] body {
-  background: linear-gradient(to bottom right, #111827, #1f2937) !important;
-}
 
 /* 다크모드 Footer */
-[data-theme="dark"] footer.footer {
-  background: linear-gradient(to bottom right, #1f2937, #374151) !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] footer.footer a,
-[data-theme="dark"] footer.footer .link {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] footer.footer a:hover,
-[data-theme="dark"] footer.footer .link:hover {
-  color: #3b82f6 !important;
-}
-
-[data-theme="dark"] footer.footer svg {
-  fill: #9ca3af;
-}
-
-[data-theme="dark"] footer.footer a:hover svg {
-  fill: #3b82f6;
-}
-
-[data-theme="dark"] footer.footer p {
-  color: #9ca3af !important;
-}
 
 /* 다크모드 label-text (text-gray-* 스타일은 파일 끝에 세분화 정의됨) */
-[data-theme="dark"] .label-text {
-  color: #e5e7eb !important;
-}
 
 /* 다크모드 skeleton */
-[data-theme="dark"] .skeleton {
-  background-color: #374151 !important;
-}
 
 /* 다크모드 에러 메시지 박스 */
-[data-theme="dark"] .bg-red-50 {
-  background-color: rgba(239, 68, 68, 0.1) !important;
-}
-
-[data-theme="dark"] .border-red-300 {
-  border-color: #ef4444 !important;
-}
 
 /* 세종대 인증 페이지 다크모드 */
-[data-theme="dark"] .sejong-auth-hero {
-  background: linear-gradient(to right, #1e3a5f, #312e81, #4c1d95) !important;
-}
-
-[data-theme="dark"] .sejong-auth-hero-overlay {
-  background: rgba(0, 0, 0, 0.2) !important;
-}
-
-[data-theme="dark"] .sejong-auth-radio-option {
-  border-color: #4b5563 !important;
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] .sejong-auth-radio-option:hover {
-  border-color: #3b82f6 !important;
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .sejong-auth-result-container {
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .sejong-auth-datasource-dhc {
-  background-color: rgba(59, 130, 246, 0.15) !important;
-  border-color: #3b82f6 !important;
-}
-
-[data-theme="dark"] .sejong-auth-datasource-dhc h3 {
-  color: #60a5fa !important;
-}
-
-[data-theme="dark"] .sejong-auth-datasource-sis {
-  background-color: rgba(34, 197, 94, 0.15) !important;
-  border-color: #22c55e !important;
-}
-
-[data-theme="dark"] .sejong-auth-datasource-sis h3 {
-  color: #4ade80 !important;
-}
-
-[data-theme="dark"] .bg-blue-50 {
-  background-color: rgba(59, 130, 246, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-green-50 {
-  background-color: rgba(34, 197, 94, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-gray-50 {
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .border-blue-200 {
-  border-color: #3b82f6 !important;
-}
-
-[data-theme="dark"] .border-green-200 {
-  border-color: #22c55e !important;
-}
-
-[data-theme="dark"] .border-gray-100 {
-  border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .border-gray-200 {
-  border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .text-gray-500 {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .text-gray-600 {
-  color: #d1d5db !important;
-}
-
-[data-theme="dark"] .text-gray-700 {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .text-gray-800 {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .text-blue-700 {
-  color: #60a5fa !important;
-}
-
-[data-theme="dark"] .text-green-700 {
-  color: #4ade80 !important;
-}
-
-[data-theme="dark"] .bg-blue-100 {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-green-100 {
-  background-color: rgba(34, 197, 94, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-gray-100 {
-  background-color: #4b5563 !important;
-}
 
 /* input 패딩 수정 (라이트/다크 공통) */
 .input,
@@ -1542,22 +856,8 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 /* 다크모드 fieldset legend */
-[data-theme="dark"] .fieldset-legend {
-  color: #e5e7eb !important;
-}
 
 /* 다크모드 mockup-code */
-[data-theme="dark"] .mockup-code {
-  background-color: #111827 !important;
-}
-
-[data-theme="dark"] .mockup-code pre {
-  background-color: transparent !important;
-}
-
-[data-theme="dark"] .mockup-code code {
-  color: #e5e7eb !important;
-}
 
 /*
 ===========================
@@ -2302,53 +1602,6 @@ html:not([data-theme="dark"]) textarea::placeholder,
 }
 
 /* 다크모드 - Thinking 패널 */
-[data-theme="dark"] .thinking-panel {
-  background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
-}
-
-[data-theme="dark"] .thinking-line {
-  color: #e5e7eb;
-}
-
-[data-theme="dark"] .thinking-line .thinking-spinner {
-  color: #60a5fa;
-}
-
-[data-theme="dark"] .thinking-line .thinking-icon {
-  color: #60a5fa;
-}
-
-[data-theme="dark"] .thinking-line.active {
-  color: #93c5fd;
-}
-
-[data-theme="dark"] .thinking-line.completed {
-  color: #86efac;
-}
-
-[data-theme="dark"] .thinking-line.completed .thinking-icon {
-  color: #4ade80;
-}
-
-[data-theme="dark"] .thinking-line.retrying {
-  color: #fcd34d;
-}
-
-[data-theme="dark"] .thinking-line.skipped {
-  color: #67e8f9;
-}
-
-[data-theme="dark"] .thinking-line.skipped .thinking-icon {
-  color: #22d3ee;
-}
-
-[data-theme="dark"] .thinking-detail .detail-info {
-  color: #60a5fa;
-}
-
-[data-theme="dark"] .thinking-detail .detail-query {
-  color: #9ca3af;
-}
 
 /*
 ===========================
@@ -2357,152 +1610,30 @@ html:not([data-theme="dark"]) textarea::placeholder,
 */
 
 /* 1. 하드코딩된 텍스트 색상 오버라이드 */
-[data-theme="dark"] .text-gray-900 {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .text-gray-800 {
-  color: #e5e7eb !important;
-}
 
 /* 2. 아이콘 배경색 오버라이드 (밝은 배경 → 어두운 투명 배경) */
-[data-theme="dark"] .bg-blue-100 {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-purple-100 {
-  background-color: rgba(139, 92, 246, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-gray-100 {
-  background-color: rgba(107, 114, 128, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-orange-100 {
-  background-color: rgba(249, 115, 22, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-teal-100 {
-  background-color: rgba(20, 184, 166, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-green-100 {
-  background-color: rgba(34, 197, 94, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-violet-100 {
-  background-color: rgba(139, 92, 246, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-indigo-100 {
-  background-color: rgba(99, 102, 241, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-emerald-100 {
-  background-color: rgba(16, 185, 129, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-amber-100 {
-  background-color: rgba(245, 158, 11, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-pink-100 {
-  background-color: rgba(236, 72, 153, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-cyan-100 {
-  background-color: rgba(6, 182, 212, 0.2) !important;
-}
-
-[data-theme="dark"] .bg-yellow-100 {
-  background-color: rgba(234, 179, 8, 0.2) !important;
-}
 
 /* 3. 섹션 배경색 오버라이드 */
-[data-theme="dark"] .bg-white {
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] .bg-gray-50 {
-  background-color: #374151 !important;
-}
 
 /* 4. body 그라데이션 배경 오버라이드 */
-[data-theme="dark"] .bg-gradient-to-br.from-slate-50.to-blue-50 {
-  background: linear-gradient(to bottom right, #111827, #1f2937) !important;
-}
 
 /* 5. 다크모드 gray-200 배경 */
-[data-theme="dark"] .bg-gray-200 {
-  background-color: rgba(75, 85, 99, 0.5) !important;
-}
 
 /* 6. 다크모드 추가 텍스트 색상 */
-[data-theme="dark"] .text-gray-400 {
-  color: #9ca3af !important;
-}
 
 /* 7. 다크모드 pink-100 배경 (ROM ROM 프로젝트) */
-[data-theme="dark"] .bg-pink-100 {
-  background-color: rgba(236, 72, 153, 0.2) !important;
-}
 
 /* 8. 다크모드 blue-50 배경 (Timeline Current 항목 등) */
-[data-theme="dark"] .bg-blue-50 {
-  background-color: rgba(59, 130, 246, 0.15) !important;
-}
 
 /* 9. 다크모드 border 색상들 */
-[data-theme="dark"] .border-blue-200 {
-  border-color: rgba(59, 130, 246, 0.4) !important;
-}
-
-[data-theme="dark"] .border-gray-100 {
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .border-gray-200 {
-  border-color: #4b5563 !important;
-}
 
 /* 10. 다크모드 Timeline 텍스트 */
-[data-theme="dark"] .text-gray-500 {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .text-gray-600 {
-  color: #d1d5db !important;
-}
 
 /* 11. 다크모드 Timeline box */
-[data-theme="dark"] .timeline-box {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .timeline-box.bg-blue-50 {
-  background-color: rgba(59, 130, 246, 0.15) !important;
-  border-color: rgba(59, 130, 246, 0.4) !important;
-}
-
-[data-theme="dark"] .timeline-box .font-bold {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .timeline-box .text-sm {
-  color: #d1d5db !important;
-}
 
 /* 12. 다크모드 sky-100 배경 */
-[data-theme="dark"] .bg-sky-100 {
-  background-color: rgba(14, 165, 233, 0.2) !important;
-}
 
 /* 13. 다크모드 rose-100 배경 */
-[data-theme="dark"] .bg-rose-100 {
-  background-color: rgba(244, 63, 94, 0.2) !important;
-}
 
 /*
 ===========================
@@ -2511,164 +1642,36 @@ html:not([data-theme="dark"]) textarea::placeholder,
 */
 
 /* 챗봇 패널 배경 */
-[data-theme="dark"] .chatbot-panel {
-  background: #1f2937 !important;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-}
 
 /* 챗봇 메시지 영역 배경 */
-[data-theme="dark"] .chatbot-messages {
-  background: linear-gradient(180deg, #111827 0%, #1f2937 100%) !important;
-}
 
 /* 웰컴 메시지 */
-[data-theme="dark"] .chatbot-welcome h3 {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .chatbot-welcome p {
-  color: #9ca3af !important;
-}
 
 /* 웰컴 아바타 */
-[data-theme="dark"] .chatbot-welcome .welcome-avatar {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.2) 100%) !important;
-}
 
 /* 추천 질문 버튼 */
-[data-theme="dark"] .chatbot-welcome .suggestion-btn {
-  background: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .chatbot-welcome .suggestion-btn:hover {
-  background: #4b5563 !important;
-  border-color: #3b82f6 !important;
-  color: #3b82f6 !important;
-}
-
-[data-theme="dark"] .chatbot-welcome .suggestion-btn i {
-  color: #6b7280 !important;
-}
-
-[data-theme="dark"] .chatbot-welcome .suggestion-btn:hover i {
-  color: #3b82f6 !important;
-}
 
 /* 어시스턴트 메시지 버블 */
-[data-theme="dark"] .chat-message.assistant .bubble {
-  background: #374151 !important;
-  color: #f3f4f6 !important;
-}
 
 /* 타이핑 인디케이터 */
-[data-theme="dark"] .typing-indicator {
-  background: #374151 !important;
-}
-
-[data-theme="dark"] .typing-indicator span {
-  background: #6b7280 !important;
-}
 
 /* 입력 영역 */
-[data-theme="dark"] .chatbot-input-area {
-  background: #1f2937 !important;
-  border-top-color: #374151 !important;
-}
-
-[data-theme="dark"] .chatbot-input-area textarea {
-  background-color: #374151 !important;
-  border: 1.5px solid #6b7280 !important;
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .chatbot-input-area textarea::placeholder {
-  color: #6b7280 !important;
-}
-
-[data-theme="dark"] .chatbot-input-area textarea:focus {
-  border: 2px solid #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
-}
 
 /* 초기화 버튼 */
-[data-theme="dark"] .chatbot-reset-btn {
-  background: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .chatbot-reset-btn:hover {
-  background: #4b5563 !important;
-  color: #e5e7eb !important;
-}
 
 /* 닫기 버튼 */
-[data-theme="dark"] .chatbot-close-btn {
-  background: #374151 !important;
-  border-color: #4b5563 !important;
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .chatbot-close-btn:hover {
-  background: #4b5563 !important;
-  color: #e5e7eb !important;
-}
 
 /* 모바일 헤더 */
-[data-theme="dark"] .chatbot-header-mobile {
-  background: #1f2937 !important;
-  border-bottom-color: #374151 !important;
-}
 
 /* 참조 문서 */
-[data-theme="dark"] .chat-references {
-  background: #111827 !important;
-}
-
-[data-theme="dark"] .chat-references .ref-title {
-  color: #9ca3af !important;
-}
 
 /* 피드백 버튼 */
-[data-theme="dark"] .chat-feedback button {
-  border-color: #4b5563 !important;
-  color: #6b7280 !important;
-}
-
-[data-theme="dark"] .chat-feedback button:hover {
-  background: #374151 !important;
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .chat-feedback button.active {
-  background: rgba(59, 130, 246, 0.2) !important;
-  border-color: #3b82f6 !important;
-  color: #60a5fa !important;
-}
-
-[data-theme="dark"] .chat-feedback button.active.btn-not-helpful {
-  background: rgba(239, 68, 68, 0.2) !important;
-  border-color: #ef4444 !important;
-  color: #f87171 !important;
-}
 
 /* 인라인 코드 */
-[data-theme="dark"] .chat-message .bubble .inline-code {
-  background: #4b5563 !important;
-  color: #e5e7eb !important;
-}
 
 /* 분석 중 인디케이터 */
-[data-theme="dark"] .analyzing-indicator {
-  color: #9ca3af !important;
-}
 
 /* 에러 메시지 */
-[data-theme="dark"] .error-message {
-  color: #f87171 !important;
-}
 
 /*
 ===========================
@@ -2677,108 +1680,22 @@ html:not([data-theme="dark"]) textarea::placeholder,
 */
 
 /* Light 모드 - DaisyUI base 색상 강제 지정 */
-:root:not([data-theme="dark"]) .bg-base-100,
-html:not([data-theme="dark"]) .bg-base-100 {
-  background-color: #ffffff !important;
-}
-
-:root:not([data-theme="dark"]) .bg-base-200,
-html:not([data-theme="dark"]) .bg-base-200 {
-  background-color: #f3f4f6 !important;
-}
-
-:root:not([data-theme="dark"]) .bg-base-300,
-html:not([data-theme="dark"]) .bg-base-300 {
-  background-color: #e5e7eb !important;
-}
 
 /* Light 모드 - card 배경색 명시적 지정 */
-:root:not([data-theme="dark"]) .card,
-html:not([data-theme="dark"]) .card {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-}
-
-:root:not([data-theme="dark"]) .card.bg-base-100,
-html:not([data-theme="dark"]) .card.bg-base-100 {
-  background-color: #ffffff !important;
-}
 
 /* Light 모드 - 스켈레톤 스타일 */
-:root:not([data-theme="dark"]) .skeleton,
-html:not([data-theme="dark"]) .skeleton {
-  background-color: #e5e7eb !important;
-}
 
 /* Light 모드 - timeline-box 스타일 */
-:root:not([data-theme="dark"]) .timeline-box,
-html:not([data-theme="dark"]) .timeline-box {
-  background-color: #ffffff !important;
-  border-color: #e5e7eb !important;
-  color: #1f2937 !important;
-}
-
-:root:not([data-theme="dark"]) .timeline-box.bg-blue-50,
-html:not([data-theme="dark"]) .timeline-box.bg-blue-50 {
-  background-color: #eff6ff !important;
-  border-color: #bfdbfe !important;
-}
-
-:root:not([data-theme="dark"]) .timeline-box .font-bold,
-html:not([data-theme="dark"]) .timeline-box .font-bold {
-  color: #111827 !important;
-}
-
-:root:not([data-theme="dark"]) .timeline-box .text-sm,
-html:not([data-theme="dark"]) .timeline-box .text-sm {
-  color: #4b5563 !important;
-}
-
-:root:not([data-theme="dark"]) .timeline-box time,
-html:not([data-theme="dark"]) .timeline-box time {
-  color: #6b7280 !important;
-}
 
 /* Light 모드 - input/textarea/select */
-:root:not([data-theme="dark"]) .input,
-:root:not([data-theme="dark"]) .textarea,
-:root:not([data-theme="dark"]) .select,
-html:not([data-theme="dark"]) .input,
-html:not([data-theme="dark"]) .textarea,
-html:not([data-theme="dark"]) .select {
-  background-color: #ffffff !important;
-  border: 1.5px solid #bdbdbd !important;
-  color: #1f2937 !important;
-  padding-left: 10px !important;
-}
 
 /* Light 모드 - modal */
-:root:not([data-theme="dark"]) .modal-box,
-html:not([data-theme="dark"]) .modal-box {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-}
 
 /* Light 모드 - dropdown */
-:root:not([data-theme="dark"]) .dropdown-content,
-html:not([data-theme="dark"]) .dropdown-content {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-}
 
 /* Light 모드 - menu */
-:root:not([data-theme="dark"]) .menu,
-html:not([data-theme="dark"]) .menu {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-}
 
 /* Light 모드 - collapse/accordion */
-:root:not([data-theme="dark"]) .collapse,
-html:not([data-theme="dark"]) .collapse {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
-}
 
 /*
 ===========================
@@ -2787,68 +1704,22 @@ html:not([data-theme="dark"]) .collapse {
 */
 
 /* 카드 제목 색상 */
-[data-theme="dark"] .card-title {
-  color: #f3f4f6 !important;
-}
 
 /* 카드 본문 내 텍스트 */
-[data-theme="dark"] .card-body h3 {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .card-body p {
-  color: #9ca3af !important;
-}
 
 /* 섹션 헤더 (Internal Tools, External Services 등) */
-[data-theme="dark"] .bg-gray-50 h3 {
-  color: #f3f4f6 !important;
-}
 
 /* AI 서버 상태 박스 */
-[data-theme="dark"] #ai-server-status {
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] #ai-server-status span {
-  color: #e5e7eb !important;
-}
 
 /* 모달 내 댓글 영역 */
-[data-theme="dark"] .comment-item {
-  background-color: #374151 !important;
-  border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] .comment-item .font-semibold {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .comment-item p {
-  color: #d1d5db !important;
-}
 
 /* 댓글 아바타 배경 */
-[data-theme="dark"] .comment-item .bg-blue-100 {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
 
 /* 메타 정보 텍스트 */
-[data-theme="dark"] .text-xs.text-gray-400 {
-  color: #6b7280 !important;
-}
 
 /* 빈 공지사항 메시지 */
-[data-theme="dark"] .notice-empty {
-  color: #9ca3af !important;
-}
 
 /* 스켈레톤 로더 다크모드 대비 */
-[data-theme="dark"] .skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%) !important;
-  background-size: 200% 100% !important;
-  animation: skeleton-loading 1.5s infinite !important;
-}
 
 @keyframes skeleton-loading {
   0% {
@@ -2862,18 +1733,6 @@ html:not([data-theme="dark"]) .collapse {
 /* 통계 카드 (Summary) - 이미 그라데이션이라 유지 */
 
 /* 버튼 outline 스타일 */
-[data-theme="dark"] .btn-outline {
-  border-color: #4b5563 !important;
-  color: #e5e7eb !important;
-  padding: 10px;
-}
-
-[data-theme="dark"] .btn-outline:hover {
-  background-color: #374151 !important;
-  border-color: #3b82f6 !important;
-  color: #3b82f6 !important;
-}
-
 
 /*
 ===========================
@@ -2882,59 +1741,16 @@ html:not([data-theme="dark"]) .collapse {
 */
 
 /* Summary 헤더 */
-[data-theme="dark"] #summary-section h2.text-gray-800 {
-  color: #e5e7eb !important;
-}
 
 /* Summary 카드 배경 및 테두리 */
-[data-theme="dark"] #summary-content .card {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
 
 /* Summary 카드 내 텍스트 색상 */
-[data-theme="dark"] #summary-content .text-gray-900 {
-  color: #f9fafb !important;
-}
-
-[data-theme="dark"] #summary-content .text-gray-500 {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] #summary-content .text-gray-400 {
-  color: #6b7280 !important;
-}
 
 /* Summary 카드 내 초록색 강조 텍스트 */
-[data-theme="dark"] #summary-content .text-green-600 {
-  color: #34d399 !important;
-}
 
 /* Summary 아이콘 배경색 (다크모드용 어두운 톤) */
-[data-theme="dark"] #summary-content .bg-blue-100 {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-[data-theme="dark"] #summary-content .bg-purple-100 {
-  background-color: rgba(168, 85, 247, 0.2) !important;
-}
-
-[data-theme="dark"] #summary-content .bg-amber-100 {
-  background-color: rgba(245, 158, 11, 0.2) !important;
-}
-
-[data-theme="dark"] #summary-content .bg-emerald-100 {
-  background-color: rgba(16, 185, 129, 0.2) !important;
-}
 
 /* Summary 새로고침 버튼 */
-[data-theme="dark"] #refresh-summary-btn i {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] #refresh-summary-btn:hover i {
-  color: #60a5fa !important;
-}
 
 /*
 ===========================
@@ -2946,8 +1762,9 @@ html:not([data-theme="dark"]) .collapse {
 .notice-cards-container {
   position: relative;
   overflow: hidden;
-  background: white;
-  border-radius: 0.5rem;
+  background: var(--color-base-100);
+  border: 1px solid color-mix(in oklab, var(--color-base-300) 60%, transparent);
+  border-radius: 1rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s ease;
 }
@@ -2973,7 +1790,7 @@ html:not([data-theme="dark"]) .collapse {
   visibility: hidden;
 
   font-size: 0.875rem;
-  color: #374151;
+  color: var(--color-base-content);
   cursor: pointer;
 }
 
@@ -2988,14 +1805,14 @@ html:not([data-theme="dark"]) .collapse {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  color: #9ca3af;
+  color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
   font-size: 0.75rem;
   margin-left: 0.75rem;
 }
 
 .notice-card .notice-dot {
   margin: 0 0.5rem;
-  color: #d1d5db;
+  color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
 }
 
 /* 활성 카드 (화면에 표시) */
@@ -3014,29 +1831,7 @@ html:not([data-theme="dark"]) .collapse {
 
 /* 호버 효과 */
 .notice-card:hover {
-  color: #3b82f6;
-}
-
-/* 다크모드 */
-[data-theme="dark"] .notice-cards-container {
-  background-color: #1f2937;
-  border-color: #374151;
-}
-
-[data-theme="dark"] .notice-card {
-  color: #e5e7eb;
-}
-
-[data-theme="dark"] .notice-card:hover {
-  color: #60a5fa;
-}
-
-[data-theme="dark"] .notice-card .notice-meta {
-  color: #6b7280;
-}
-
-[data-theme="dark"] .notice-card .notice-dot {
-  color: #4b5563;
+  color: var(--color-primary);
 }
 
 /* 반응형 - 모바일 */
@@ -3069,17 +1864,8 @@ html:not([data-theme="dark"]) .collapse {
 }
 
 /* 하늘색 버전 태그 다크모드 */
-[data-theme="dark"] button[style*="background-color: #e0f2fe"],
-[data-theme="dark"] .badge-sky {
-  background-color: rgba(14, 165, 233, 0.2) !important;
-  color: #7dd3fc !important;
-  border-color: rgba(14, 165, 233, 0.3) !important;
-}
 
 /* 헤더 버전 태그 다크모드 호버 */
-[data-theme="dark"] .navbar button[style*="#e0f2fe"]:hover {
-  opacity: 0.8 !important;
-}
 
 /*
 ===========================
@@ -3088,27 +1874,12 @@ html:not([data-theme="dark"]) .collapse {
 */
 
 /* bg-white 클래스 다크모드 변환 */
-[data-theme="dark"] .bg-white {
-  background-color: #1f2937 !important;
-}
 
 /* card.bg-white 다크모드 */
-[data-theme="dark"] .card.bg-white {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
 
 /* navbar 다크모드 */
-[data-theme="dark"] .navbar.bg-white {
-  background-color: #1f2937 !important;
-  border-bottom-color: #374151 !important;
-}
 
 /* dropdown-content.bg-white 다크모드 */
-[data-theme="dark"] .dropdown-content.bg-white {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
 
 /*
 ===========================
@@ -3117,15 +1888,8 @@ html:not([data-theme="dark"]) .collapse {
 */
 
 /* 그라데이션 배경 다크모드 (body 기본 배경은 1138줄에 정의됨) */
-[data-theme="dark"] .bg-gradient-to-br.from-slate-50.to-blue-50,
-[data-theme="dark"] body.bg-gradient-to-br {
-  background: linear-gradient(to bottom right, #111827, #1e293b) !important;
-}
 
 /* login-page 다크모드 배경 */
-[data-theme="dark"] .login-page {
-  background: linear-gradient(to bottom right, #111827, #1e293b) !important;
-}
 
 /*
 ===========================
@@ -3134,29 +1898,6 @@ html:not([data-theme="dark"]) .collapse {
 */
 
 /* 기본 텍스트 색상 */
-[data-theme="dark"] .text-gray-800 {
-  color: #e5e7eb !important;
-}
-
-[data-theme="dark"] .text-gray-900 {
-  color: #f9fafb !important;
-}
-
-[data-theme="dark"] .text-gray-700 {
-  color: #d1d5db !important;
-}
-
-[data-theme="dark"] .text-gray-600 {
-  color: #9ca3af !important;
-}
-
-[data-theme="dark"] .text-gray-500 {
-  color: #6b7280 !important;
-}
-
-[data-theme="dark"] .text-gray-400 {
-  color: #4b5563 !important;
-}
 
 /*
 ===========================
@@ -3164,27 +1905,11 @@ html:not([data-theme="dark"]) .collapse {
 ===========================
 */
 
-[data-theme="dark"] .border-gray-100 {
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .border-gray-200 {
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .border-gray-300 {
-  border-color: #4b5563 !important;
-}
-
 /*
 ===========================
    ring 색상 다크모드
 ===========================
 */
-
-[data-theme="dark"] .ring-gray-300 {
-  --tw-ring-color: #4b5563 !important;
-}
 
 /*
 ===========================
@@ -3192,47 +1917,11 @@ html:not([data-theme="dark"]) .collapse {
 ===========================
 */
 
-[data-theme="dark"] .hover\:bg-gray-100:hover {
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .hover\:bg-blue-50:hover {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-[data-theme="dark"] .hover\:bg-pink-50:hover {
-  background-color: rgba(236, 72, 153, 0.2) !important;
-}
-
-[data-theme="dark"] .hover\:bg-red-50:hover {
-  background-color: rgba(239, 68, 68, 0.2) !important;
-}
-
 /*
 ===========================
    섹션 배경색 다크모드
 ===========================
 */
-
-[data-theme="dark"] .bg-gray-50 {
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] .bg-blue-50 {
-  background-color: rgba(59, 130, 246, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-cyan-50 {
-  background-color: rgba(6, 182, 212, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-orange-50 {
-  background-color: rgba(249, 115, 22, 0.15) !important;
-}
-
-[data-theme="dark"] .bg-amber-50 {
-  background-color: rgba(245, 158, 11, 0.15) !important;
-}
 
 /*
 ===========================
@@ -3240,64 +1929,11 @@ html:not([data-theme="dark"]) .collapse {
 ===========================
 */
 
-[data-theme="dark"] .suh-random-hero {
-  background: linear-gradient(to right, rgba(16, 185, 129, 0.3), rgba(20, 184, 166, 0.3), rgba(6, 182, 212, 0.3)) !important;
-}
-
-[data-theme="dark"] .suh-random-hero-overlay {
-  background-color: rgba(0, 0, 0, 0.2) !important;
-}
-
-[data-theme="dark"] .suh-random-hero h1,
-[data-theme="dark"] .suh-random-hero p {
-  color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] .suh-random-radio-option {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-}
-
-[data-theme="dark"] .suh-random-radio-option:hover {
-  border-color: #14b8a6 !important;
-  background-color: #374151 !important;
-}
-
-[data-theme="dark"] .suh-random-radio-option.bg-amber-50 {
-  background-color: rgba(245, 158, 11, 0.15) !important;
-  border-color: rgba(245, 158, 11, 0.3) !important;
-}
-
-[data-theme="dark"] .suh-random-radio-option.bg-amber-50:hover {
-  background-color: rgba(245, 158, 11, 0.25) !important;
-  border-color: rgba(245, 158, 11, 0.5) !important;
-}
-
-[data-theme="dark"] .suh-random-radio-option .text-amber-700,
-[data-theme="dark"] .suh-random-radio-option .text-amber-600 {
-  color: #fbbf24 !important;
-}
-
-[data-theme="dark"] .suh-random-result-container {
-  background-color: #1f2937 !important;
-}
-
-[data-theme="dark"] #resultHistory .bg-white {
-  background-color: #374151 !important;
-}
-
 /*
 ===========================
    shadow 다크모드
 ===========================
 */
-
-[data-theme="dark"] .shadow-sm,
-[data-theme="dark"] .shadow-md,
-[data-theme="dark"] .shadow-lg,
-[data-theme="dark"] .shadow-xl {
-  --tw-shadow-color: rgba(0, 0, 0, 0.3) !important;
-}
 
 /*
 ===========================
@@ -3321,7 +1957,6 @@ html:not([data-theme="dark"]) .collapse {
   font-size: 13px;
   line-height: 1.5;
 }
-
 
 .docker-logs-page .log-line {
   padding: 1px 0;
@@ -3360,10 +1995,6 @@ html:not([data-theme="dark"]) .collapse {
 .docker-logs-page .log-line-current {
   background-color: rgba(250, 204, 21, 0.5);
   outline: 1px solid #facc15;
-}
-
-[data-theme="dark"] .docker-logs-page .container-item:hover {
-  background-color: #374151 !important;
 }
 
 /*
@@ -3430,16 +2061,6 @@ html:not([data-theme="dark"]) .collapse {
   border-radius: 4px;
 }
 
-[data-theme="dark"] .range-slider::-webkit-slider-thumb {
-  background: #60a5fa;
-  border-color: #1f2937;
-}
-
-[data-theme="dark"] .range-slider::-moz-range-thumb {
-  background: #60a5fa;
-  border-color: #1f2937;
-}
-
 #rangeTrack {
   position: relative;
 }
@@ -3447,7 +2068,6 @@ html:not([data-theme="dark"]) .collapse {
 #rangeHighlight {
   pointer-events: none;
 }
-
 
 /* Timeline Scroll Animation */
 .timeline-item {
@@ -3476,4 +2096,34 @@ html:not([data-theme="dark"]) .collapse {
 .cert-overlay-card {
   max-width: 420px;
   width: 90%;
+}
+
+/* 스크롤 진입 시 부드럽게 나타나는 카드 (미지원 브라우저는 즉시 표시) */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: revealUp linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 전역 타이포: 한글 가독성이 좋은 Pretendard 우선 */
+html {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 은은한 배경 글로우 (테마 변수 기반이라 다크모드 자동 적응) */
+.page-ambient {
+  background-image:
+    radial-gradient(60rem 30rem at 10% -10%, color-mix(in oklab, var(--color-primary) 12%, transparent), transparent 60%),
+    radial-gradient(50rem 28rem at 100% 0%, color-mix(in oklab, var(--color-secondary) 10%, transparent), transparent 60%);
+  background-attachment: fixed;
 }

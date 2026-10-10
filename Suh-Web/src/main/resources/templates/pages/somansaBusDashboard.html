@@ -118,7 +118,7 @@
               <td class="text-sm text-base-content/60" th:text="${member.loginId}">email@somansa.com</td>
               <td>
                 <span th:if="${member.isVerified}" class="badge badge-info badge-sm" th:text="#{busDashboard.member.verified}">인증됨</span>
-                <span th:unless="${member.isVerified}" class="badge badge-warning badge-sm" th:text="#{busDashboard.member.unverified}">미인증</span>
+                <span th:unless="${member.isVerified}" class="badge badge-outline badge-warning badge-sm" th:text="#{busDashboard.member.unverified}">미인증</span>
               </td>
               <td>
                 <span class="badge badge-ghost badge-sm">-</span>
@@ -174,7 +174,7 @@
             <tr th:each="route : ${routes}">
               <td>
                 <span th:if="${route.caralias == '출근'}" class="badge badge-soft badge-info badge-sm" th:text="#{busDashboard.route.commute}">출근</span>
-                <span th:if="${route.caralias == '퇴근'}" class="badge badge-soft badge-warning badge-sm" th:text="#{busDashboard.route.leave}">퇴근</span>
+                <span th:if="${route.caralias == '퇴근'}" class="badge badge-outline badge-warning badge-sm" th:text="#{busDashboard.route.leave}">퇴근</span>
               </td>
               <td th:text="${route.departureTime}">06:55</td>
               <td th:text="${route.station}">당산역</td>
@@ -443,7 +443,7 @@ function displayMembers(members, scheduleCounts) {
     const verifiedCell = $('<td>');
     verifiedCell.html(member.isVerified
       ? '<span class="badge badge-info badge-sm">' + window.MSG['busDashboard.member.verified'] + '</span>'
-      : '<span class="badge badge-warning badge-sm">' + window.MSG['busDashboard.member.unverified'] + '</span>');
+      : '<span class="badge badge-outline badge-warning badge-sm">' + window.MSG['busDashboard.member.unverified'] + '</span>');
     row.append(verifiedCell);
 
     // 스케줄 수
@@ -451,7 +451,7 @@ function displayMembers(members, scheduleCounts) {
     const count = scheduleCounts && scheduleCounts[member.somansaBusMemberId] != null
       ? scheduleCounts[member.somansaBusMemberId] : 0;
     scheduleCell.html(count > 0
-      ? `<span class="badge badge-success badge-sm">${count}${window.MSG['busDashboard.js.scheduleCountUnit']}</span>`
+      ? `<span class="badge badge-outline badge-success badge-sm">${count}${window.MSG['busDashboard.js.scheduleCountUnit']}</span>`
       : '<span class="badge badge-ghost badge-sm">' + window.MSG['busDashboard.js.scheduleNone'] + '</span>');
     row.append(scheduleCell);
 
@@ -555,7 +555,7 @@ function displayRoutes(routes) {
     if (route.caralias === '출근') {
       typeCell.html('<span class="badge badge-soft badge-info badge-sm">' + window.MSG['busDashboard.route.commute'] + '</span>');
     } else if (route.caralias === '퇴근') {
-      typeCell.html('<span class="badge badge-soft badge-warning badge-sm">' + window.MSG['busDashboard.route.leave'] + '</span>');
+      typeCell.html('<span class="badge badge-outline badge-warning badge-sm">' + window.MSG['busDashboard.route.leave'] + '</span>');
     } else {
       typeCell.text(route.caralias || '-');
     }
@@ -612,7 +612,7 @@ function displayReservationHistory(histories) {
 
     const statusCell = $('<td>');
     if (history.isSuccess) {
-      statusCell.html('<span class="badge badge-success badge-sm">' + window.MSG['busDashboard.js.statusSuccess'] + '</span>');
+      statusCell.html('<span class="badge badge-outline badge-success badge-sm">' + window.MSG['busDashboard.js.statusSuccess'] + '</span>');
     } else {
       statusCell.html('<span class="badge badge-error badge-sm">' + window.MSG['busDashboard.js.statusFailed'] + '</span>');
     }

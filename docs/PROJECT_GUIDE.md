@@ -198,9 +198,7 @@ Traefik은 https://traefik.suhsaechan.kr 에서 접근하며 리버스 프록시
 
 연관 프로젝트
 
-Mapsy 프로젝트: 메인 페이지는 https://mapsy.suhsaechan.kr 이고 AI 서비스는 https://ai.mapsy.suhsaechan.kr 이며 API 문서는 https://api.mapsy.suhsaechan.kr 입니다.
 
-세종말싸미 Sejong-Malsami 프로젝트: 메인 페이지는 https://test.sejong-malsami.co.kr 이고 Swagger 문서는 https://api.sejong-malsami.co.kr/docs/swagger-ui/index.html 이며 관리자 페이지는 https://api.sejong-malsami.co.kr 입니다.
 
 Plane Accident Finder 프로젝트: APK 다운로드는 http://suh-project.synology.me/plane-accident-finder/ 입니다.
 

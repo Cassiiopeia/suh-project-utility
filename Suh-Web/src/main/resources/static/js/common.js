@@ -1,3 +1,6 @@
+// 서버 렌더링 시점의 로그인 여부 (비로그인 시 인증 필요 API 호출을 건너뛰기 위함)
+window.isAuthenticated = (document.querySelector('meta[name="auth-state"]') || {}).content === 'true';
+
 // src/main/resources/static/js/common.js
 /**
  * showToast(message, typeOrDuration, duration)
@@ -257,7 +260,7 @@ function loadChangelog() {
       console.error('Changelog 로드 실패:', error);
       if (loadingEl) {
         loadingEl.innerHTML = `
-          <div class="text-center text-gray-500">
+          <div class="text-center text-base-content/60">
             <i class="fa-solid fa-circle-exclamation text-2xl mb-2"></i>
             <p>변경 이력을 불러올 수 없습니다.</p>
           </div>
@@ -319,6 +322,7 @@ function renderChangelog(data) {
  * 서버 세션에 저장된 clientHash를 가져와 세션 스토리지에 저장
  */
 function fetchAndStoreClientHash() {
+  if (!window.isAuthenticated) return;
   // 서버로부터 clientHash 가져오기
   var formData = new FormData();
   $.ajax({

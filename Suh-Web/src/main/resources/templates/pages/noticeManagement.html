@@ -677,18 +677,13 @@
       sendFormRequest(
         '/api/notice/delete',
         { noticeId: noticeId },
-        function(response) {
-          if (response) {
-            if (typeof showToast === 'function') {
-              showToast(response.message || window.MSG['notice.toast.deleted'], 'positive');
-            }
-            document.getElementById('notice-detail-modal').close();
-            loadNotices();
-          } else {
-            if (typeof showToast === 'function') {
-              showToast(window.MSG['notice.toast.deleteFailed'], 'negative');
-            }
+        function() {
+          // 삭제 API 는 204(본문 없음)로 응답하므로 성공 콜백 도달 자체를 성공으로 본다
+          if (typeof showToast === 'function') {
+            showToast(window.MSG['notice.toast.deleted'], 'positive');
           }
+          document.getElementById('notice-detail-modal').close();
+          loadNotices();
         },
         function(xhr, status, error) {
           console.error('공지사항 삭제 오류:', error);
@@ -846,14 +841,8 @@
       sendFormRequest(
         '/api/notice/comment/delete',
         { commentId: commentId },
-        function(response) {
-          if (response) {
-            loadComments(noticeId);
-          } else {
-            if (typeof showToast === 'function') {
-              showToast(window.MSG['notice.toast.commentDeleteFailed'], 'negative');
-            }
-          }
+        function() {
+          loadComments(noticeId);
         },
         function(xhr, status, error) {
           console.error('댓글 삭제 오류:', error);
