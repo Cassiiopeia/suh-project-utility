@@ -1258,7 +1258,7 @@
                     <i class="fa-solid fa-signal"></i>
                     <span th:text="#{dashboard.tool.aiServer.connStatus}">연결 상태</span>
                   </span>
-                  <span class="status-main-btn loading flex items-center gap-1 text-base-content/70">
+                  <span class="status-main-btn is-checking flex items-center gap-1 text-base-content/70">
                     <span class="loading loading-spinner loading-xs"></span>
                     <span th:text="#{dashboard.tool.aiServer.checking}">확인중</span>
                   </span>
@@ -2221,10 +2221,10 @@
         const statusBtn = statusContainer.find('.status-main-btn');
 
         if (response.isHealthy) {
-          statusBtn.removeClass('loading text-base-content/70').addClass('text-success');
+          statusBtn.removeClass('is-checking text-base-content/70').addClass('text-success');
           statusBtn.html('<i class="fa-solid fa-check-circle"></i> ' + window.MSG['dashboard.js.statusHealthy']);
         } else {
-          statusBtn.removeClass('loading text-base-content/70').addClass('text-error');
+          statusBtn.removeClass('is-checking text-base-content/70').addClass('text-error');
           statusBtn.html('<i class="fa-solid fa-times-circle"></i> ' + window.MSG['dashboard.js.statusUnhealthy']);
         }
       },
@@ -2233,7 +2233,7 @@
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
 
-        statusBtn.removeClass('loading text-base-content/70').addClass('text-warning');
+        statusBtn.removeClass('is-checking text-base-content/70').addClass('text-warning');
         statusBtn.html('<i class="fa-solid fa-exclamation-triangle"></i> ' + window.MSG['dashboard.js.statusConnError']);
       }
     });

@@ -333,30 +333,6 @@ html, body, button, input, select, textarea {
    Modal Table Container Styles
 ===========================
 */
-.modal-table-container {
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  background: var(--color-base-100);
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  margin-bottom: 2em;
-  min-height: 400px;
-  position: relative;
-}
-
-.modal-table-container .tabulator-header {
-  background-color: var(--color-base-200);
-  border-bottom: 2px solid var(--color-base-300);
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-
-.modal-table-container .tabulator {
-  width: 100%;
-  background: var(--color-base-100);
-}
 
 /*
 ===========================
@@ -364,18 +340,6 @@ html, body, button, input, select, textarea {
 ===========================
 */
 
-/* 클릭 영역 확장 */
-.main-title, .version-title {
-  cursor: pointer;
-}
-
-/* 버전 행 레이아웃 */
-.version-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
 
 /* 버전 태그 스타일 */
 .version-tag {
@@ -386,11 +350,6 @@ html, body, button, input, select, textarea {
 }
 
 /* 버전 날짜 스타일 */
-.version-date {
-  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
-  font-size: 0.9em;
-  font-family: 'Courier New', monospace;
-}
 
 /*
 ===========================
@@ -490,12 +449,6 @@ html, body, button, input, select, textarea {
 /* 다크모드 버전 배지 스타일 */
 
 /* Figma 로고 스타일 */
-.figma-logo {
-  width: 24px;
-  height: 24px;
-  margin-right: 5px;
-  vertical-align: middle;
-}
 
 /*
 ===========================
@@ -810,7 +763,7 @@ html, body, button, input, select, textarea {
 */
 
 @media print {
-  .navbar, footer, .btn, .no-print {
+  .navbar, footer, .btn {
     display: none !important;
   }
 
@@ -1142,43 +1095,6 @@ html, body, button, input, select, textarea {
   align-items: center;
   color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
   font-size: 14px;
-}
-
-.analyzing-text {
-  margin-right: 2px;
-}
-
-.analyzing-dots {
-  display: inline-flex;
-}
-
-.analyzing-dots span {
-  animation: analyzingDots 1.4s infinite;
-  opacity: 0;
-}
-
-.analyzing-dots span:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.analyzing-dots span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.analyzing-dots span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-@keyframes analyzingDots {
-  0%, 20% {
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
-  }
-  60%, 100% {
-    opacity: 0;
-  }
 }
 
 /* 에러 메시지 */
@@ -1857,11 +1773,6 @@ html, body, button, input, select, textarea {
 */
 
 /* 하늘색 버전 태그 라이트모드 (인라인 스타일 사용 중이므로 백업용) */
-.badge-sky {
-  background-color: color-mix(in oklab, var(--color-primary) 12%, var(--color-base-100)) !important;
-  color: var(--color-primary) !important;
-  border: 1px solid color-mix(in oklab, var(--color-primary) 30%, transparent) !important;
-}
 
 /* 하늘색 버전 태그 다크모드 */
 
