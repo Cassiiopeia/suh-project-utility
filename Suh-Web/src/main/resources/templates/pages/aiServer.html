@@ -440,8 +440,12 @@ function restoreActiveDownloads() {
 
   $.ajax({
     url: '/api/ai-server/models/pull/status',
-    method: 'GET',
-    success: function(statusMap) {
+    method: 'POST',
+    data: new FormData(),
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      const statusMap = response.downloadProgressMap || {};
       console.log('다운로드 상태:', statusMap);
 
       Object.keys(statusMap).forEach(modelName => {
