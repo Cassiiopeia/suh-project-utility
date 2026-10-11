@@ -2043,3 +2043,9 @@ html {
 .toast.toast-top.toast-end {
   z-index: 9999;
 }
+
+/* display 를 지정한 카드 그리드가 .hidden 을 덮어써 스켈레톤이 사라지지 않던 문제 */
+.dashboard-card-grid-4.hidden,
+.dashboard-card-grid-5.hidden {
+  display: none;
+}
