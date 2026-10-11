@@ -107,6 +107,34 @@
       </div>
     </section>
 
+    <!-- 수상 -->
+    <section class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
+      <div class="card-body">
+        <h2 class="card-title text-2xl font-extrabold tracking-tight mb-4">
+          <i class="fa-solid fa-trophy text-primary"></i>
+          Awards
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Hack the Beat 1위 -->
+          <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener"
+             class="flex items-center gap-4 p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-medal text-primary text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-base-content">1st Place — Hack the Beat</div>
+              <div class="text-sm text-base-content/60" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · Google Developers Groups Campus Korea — 1st place</div>
+              <div class="text-xs text-base-content/50 mt-1">Aug 2026</div>
+            </div>
+            <!-- 카드 전체가 링크라 중첩 앵커 대신 onclick으로 새 탭을 연다 -->
+            <span onclick="event.preventDefault(); event.stopPropagation(); window.open('https://lnkd.in/p/gfJcFfSd', '_blank', 'noopener');"
+                  class="btn btn-outline btn-xs shrink-0"><i class="fa-brands fa-linkedin"></i> 회고</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-base-content/50 shrink-0"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- Projects 섹션 -->
     <section class="mb-12">
       <div class="mb-6">
@@ -419,34 +447,6 @@
           </div>
         </div>
 
-      </div>
-    </section>
-
-    <!-- 수상 -->
-    <section class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
-      <div class="card-body">
-        <h2 class="card-title text-2xl font-extrabold tracking-tight mb-4">
-          <i class="fa-solid fa-trophy text-primary"></i>
-          Awards
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Hack the Beat 1위 -->
-          <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener"
-             class="flex items-center gap-4 p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
-            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-medal text-primary text-xl"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="font-bold text-base-content">1st Place — Hack the Beat</div>
-              <div class="text-sm text-base-content/60" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · Google Developers Groups Campus Korea — 1st place</div>
-              <div class="text-xs text-base-content/50 mt-1">Aug 2026</div>
-            </div>
-            <!-- 카드 전체가 링크라 중첩 앵커 대신 onclick으로 새 탭을 연다 -->
-            <span onclick="event.preventDefault(); event.stopPropagation(); window.open('https://lnkd.in/p/gfJcFfSd', '_blank', 'noopener');"
-                  class="btn btn-outline btn-xs shrink-0"><i class="fa-brands fa-linkedin"></i> 회고</span>
-            <i class="fa-solid fa-arrow-up-right-from-square text-base-content/50 shrink-0"></i>
-          </a>
-        </div>
       </div>
     </section>
 
