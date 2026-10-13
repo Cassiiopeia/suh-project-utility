@@ -45,6 +45,7 @@ public class PublicEndpointConfig {
         "/",
         "/robots.txt",
         "/sitemap.xml",
+        "/32589129db56824f35adfa022627f039.txt",       // IndexNow 소유 확인 키 파일
         "/dashboard",
         "/login",
         "/logout",
@@ -83,6 +84,7 @@ public class PublicEndpointConfig {
     // 정적 리소스 경로 추가
     excludedPaths.add("/robots.txt");
     excludedPaths.add("/sitemap.xml");
+    excludedPaths.add("/32589129db56824f35adfa022627f039.txt");
     excludedPaths.add("/css/**");
     excludedPaths.add("/js/**");
     excludedPaths.add("/images/**");
