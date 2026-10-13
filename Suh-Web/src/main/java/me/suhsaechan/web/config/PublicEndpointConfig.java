@@ -43,6 +43,8 @@ public class PublicEndpointConfig {
   public List<String> getPublicResourceEndpoints() {
     return Arrays.asList(
         "/",
+        "/robots.txt",
+        "/sitemap.xml",
         "/dashboard",
         "/login",
         "/logout",
@@ -79,6 +81,8 @@ public class PublicEndpointConfig {
     excludedPaths.add("/api/**");  // 모든 API는 인터셉터 제외
 
     // 정적 리소스 경로 추가
+    excludedPaths.add("/robots.txt");
+    excludedPaths.add("/sitemap.xml");
     excludedPaths.add("/css/**");
     excludedPaths.add("/js/**");
     excludedPaths.add("/images/**");

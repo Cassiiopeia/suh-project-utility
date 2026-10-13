@@ -1,9 +1,13 @@
 <!-- src/main/resources/templates/pages/dashboard.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/header :: head(title='대시보드-SAECHAN-LAB')}"></head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:lang="${#locale.language}">
+<head th:replace="~{fragments/header :: head(title='서새찬 (Suh Saechan) | 개발자 포트폴리오 - SAECHAN LAB')}"></head>
 <body class="page-ambient bg-base-200 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
+
+<script type="application/ld+json" th:inline="text">
+{"@context":"https://schema.org","@type":"Person","name":"Suh Saechan","alternateName":"서새찬","url":"[[${siteBaseUrl}]]/dashboard","image":"[[${siteBaseUrl}]]/images/suhSaeChanProfile.jpeg","jobTitle":"Full Stack Developer","worksFor":{"@type":"Organization","name":"SOMANSA"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Sejong University"},"sameAs":["https://github.com/Cassiiopeia","https://www.linkedin.com/in/suh-saechan-b0b1b8339/","https://www.instagram.com/suhsaechan/","https://www.youtube.com/@Cassiiopeia"]}
+</script>
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- 스켈레톤 로딩 컨테이너 -->
@@ -62,6 +66,17 @@
               <span class="badge badge-soft badge-primary">Flutter</span>
               <span class="badge badge-soft badge-primary">React</span>
             </div>
+            <div class="flex flex-wrap gap-2 mt-5 justify-center md:justify-start">
+              <a href="#projects" class="btn btn-primary btn-sm rounded-full gap-2">
+                <i class="fa-solid fa-layer-group text-xs"></i><span th:text="#{dashboard.hero.viewProjects}">프로젝트 보기</span>
+              </a>
+              <a href="mailto:chan4760@gmail.com" class="btn btn-outline btn-sm rounded-full gap-2">
+                <i class="fa-solid fa-envelope text-xs"></i><span th:text="#{dashboard.hero.contact}">문의하기</span>
+              </a>
+              <a href="#awards" class="btn btn-ghost btn-sm rounded-full gap-2 text-primary">
+                <i class="fa-solid fa-trophy text-xs"></i><span th:text="#{dashboard.hero.award}">Google Developers Groups 해커톤 1위</span>
+              </a>
+            </div>
             <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
               <a href="mailto:chan4760@gmail.com" class="btn btn-circle btn-ghost hover:bg-primary/10 hover:text-primary hover:-translate-y-0.5 transition-all" title="Email">
                 <i class="fa-solid fa-envelope text-base-content/60 text-lg"></i>
@@ -108,7 +123,7 @@
     </section>
 
     <!-- 수상 -->
-    <section class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
+    <section id="awards" class="scroll-mt-20 reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
       <div class="card-body">
         <h2 class="card-title text-2xl font-extrabold tracking-tight mb-4">
           <i class="fa-solid fa-trophy text-primary"></i>
@@ -136,7 +151,7 @@
     </section>
 
     <!-- Projects 섹션 -->
-    <section class="mb-12">
+    <section id="projects" class="mb-12 scroll-mt-20">
       <div class="mb-6">
         <h2 class="text-3xl font-extrabold tracking-tight text-base-content flex items-center gap-3">
           <span class="inline-flex w-10 h-10 rounded-xl bg-primary/10 text-primary items-center justify-center"><i class="fa-solid fa-layer-group text-lg"></i></span>
@@ -146,169 +161,169 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ROM ROM</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Android</span><span class="badge badge-soft badge-primary badge-sm">iOS</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/ROMROM_로고.png" alt="ROM ROM" width="64" height="64" loading="lazy" class="w-16 h-16 rounded-2xl object-cover shadow-md ring-1 ring-base-300">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/ROMROM_로고.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ROM ROM</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">혁신적인 물물교환 앱.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Flutter</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.romrom.desc}">혁신적인 물물교환 앱.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://play.google.com/store/apps/details?id=com.alom.romrom&hl=ko" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-google-play text-xs"></i>Google Play
+                <i class="fa-brands fa-google-play text-xs"></i><span>Google Play</span>
               </a>
               <a href="https://apps.apple.com/kr/app/%ED%98%81%EC%8B%A0%EC%A0%81%EC%9D%B8-%EB%AC%BC%EB%AC%BC%EA%B5%90%ED%99%98-%EB%A1%AC%EB%A1%AC/id6748823976" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-apple text-xs"></i>App Store
+                <i class="fa-brands fa-apple text-xs"></i><span>App Store</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/elumLogo.png" alt="elum" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">elum</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">App</span><span class="badge badge-soft badge-primary badge-sm">Flutter</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/projects/elum.webp" alt="elum" width="640" height="288" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/elumLogo.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">elum</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">보호자가 적은 하루 일과를 그림 행동 카드로 만들어 주는 앱.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Flutter</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span><span class="badge badge-soft badge-primary badge-sm">Generative AI</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.elum.desc}">보호자가 적은 하루 일과를 그림 행동 카드로 보여 주는 시각 일과표 앱.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://twin-fang.github.io/elum/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>소개 페이지
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.intro}">소개 페이지</span>
               </a>
               <a href="https://github.com/Twin-Fang/elum" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/passQLLogo.png" alt="passQL" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">passQL</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span><span class="badge badge-soft badge-primary badge-sm">AI</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/projects/passql.webp" alt="passQL" width="640" height="174" loading="lazy" class="w-full h-full object-contain bg-white p-5">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/passQLLogo.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">passQL</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">SQLD·SQLP 합격을 위한 AI 실행형 SQL 학습 서비스. AI가 함정 오답을 만들어 준다.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span><span class="badge badge-soft badge-primary badge-sm">Flutter</span><span class="badge badge-soft badge-primary badge-sm">React</span><span class="badge badge-soft badge-primary badge-sm">Gemini</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.passql.desc}">AI가 함정 오답을 만들고 샌드박스 DB에서 직접 실행해 검증하는 SQLD·SQLP 학습 서비스.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://passql.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>웹사이트
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.website}">웹사이트</span>
               </a>
               <a href="https://github.com/Twin-Fang/passQL" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-brands fa-google text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Hack the Beat</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Hackathon</span><span class="badge badge-soft badge-primary badge-sm">1st</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <i class="fa-brands fa-google text-primary text-5xl"></i>
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-brands fa-google text-primary text-xl"></i></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Hack the Beat</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">Google Developers Groups 2026 I/O Extended 해커톤 1위 수상 프로젝트.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">React</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span><span class="badge badge-soft badge-primary badge-sm">PostgreSQL</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.hackthebeat.desc}">파티에서 만난 사람과 QR로 인사하고 증표를 모으는 웹 패스포트. Google Developers Groups 2026 I/O Extended 해커톤 1위.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>프로젝트 페이지
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.projectPage}">프로젝트 페이지</span>
               </a>
               <a href="https://github.com/Twin-Fang/Hack-the-Beat" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/pickerPickerLogo.png" alt="PickerPicker" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">PickerPicker</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/projects/pickerpicker.webp" alt="PickerPicker" width="640" height="288" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/pickerPickerLogo.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">PickerPicker</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">피커피커 서비스.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">TypeScript</span><span class="badge badge-soft badge-primary badge-sm">Python</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.pickerpicker.desc}">한글 음절로 리듬을 타는 무료 웹 리듬게임. 15스테이지 생존과 랭킹.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://pickerpicker.suhsaechan.kr" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>웹사이트
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.website}">웹사이트</span>
               </a>
               <a href="https://github.com/PickerPicker/PickerPicker" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-gears text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ProjectOps</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">DevOps</span><span class="badge badge-soft badge-primary badge-sm">Agent Skills</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <i class="fa-solid fa-gears text-primary text-5xl"></i>
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-gears text-primary text-xl"></i></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ProjectOps</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">GitHub Actions 자동화와 에이전트 스킬. npx 한 줄로 개발 사이클 전체를 자동화한다.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">GitHub Actions</span><span class="badge badge-soft badge-primary badge-sm">Python</span><span class="badge badge-soft badge-primary badge-sm">Claude Code</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.projectops.desc}">이슈부터 배포까지 GitHub 프로젝트를 자동화하는 템플릿과 에이전트 스킬.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://cassiiopeia.github.io/projectops/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>projectops
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>projectops</span>
               </a>
               <a href="https://twin-fang.github.io/project-auto-wizard/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>auto-wizard
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>auto-wizard</span>
               </a>
               <a href="https://cassiiopeia.github.io/pro-judge/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>pro-judge
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>pro-judge</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/bagelLogo.jpeg" alt="Re: WAVE" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Re: WAVE</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span><span class="badge badge-soft badge-primary badge-sm">Game</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/bagelLogo.jpeg" alt="Re: WAVE" width="64" height="64" loading="lazy" class="w-16 h-16 rounded-2xl object-cover shadow-md ring-1 ring-base-300">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/bagelLogo.jpeg" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Re: WAVE</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">선택의 순간, 그녀의 운명이 갈린다.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">JavaScript</span><span class="badge badge-soft badge-primary badge-sm">Java</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.rewave.desc}">선택에 따라 스토리와 엔딩이 갈리는 인터랙티브 비주얼 노벨 게임.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://bagel.suhsaechan.kr/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>웹사이트
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.website}">웹사이트</span>
               </a>
               <a href="https://api.bagel.suhsaechan.kr/docs/swagger" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-book text-xs"></i>API 문서
+                <i class="fa-solid fa-book text-xs"></i><span th:text="#{dashboard.card.link.apiDocs}">API 문서</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-id-card text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">sejong-univ-auth</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Library</span><span class="badge badge-soft badge-primary badge-sm">Java</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <i class="fa-solid fa-id-card text-primary text-5xl"></i>
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-id-card text-primary text-xl"></i></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">sejong-univ-auth</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">세종대학교 포털 인증을 3줄로 끝내는 Java 라이브러리.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Java</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.sejongauth.desc}">세종대학교 포털 인증을 3줄로 끝내는 Java 라이브러리.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
               </a>
               </div>
             </div>
@@ -1946,6 +1961,15 @@
   }
 
   // Task D-Day 로드 함수
+  // 비로그인 방문자에게는 빈 Task D-Day 영역 자체를 숨겨 미완성처럼 보이지 않게 한다
+  function showTaskDDayEmpty() {
+    if (window.isAuthenticated) {
+      $('#task-dday-empty').removeClass('hidden');
+    } else {
+      $('#task-dday-section').addClass('hidden');
+    }
+  }
+
   function loadTaskDDay() {
     sendFormRequest(
       '/api/task/goal/list',
@@ -1969,11 +1993,11 @@
             $('#task-dday-empty').addClass('hidden');
           } else {
             $('#task-dday-cards').addClass('hidden');
-            $('#task-dday-empty').removeClass('hidden');
+            showTaskDDayEmpty();
           }
         } else {
           $('#task-dday-cards').addClass('hidden');
-          $('#task-dday-empty').removeClass('hidden');
+          showTaskDDayEmpty();
         }
       },
       function(xhr, status, error) {
@@ -1981,7 +2005,7 @@
         $('#task-dday-skeleton').addClass('hidden');
         $('#task-dday-content').removeClass('hidden');
         $('#task-dday-cards').addClass('hidden');
-        $('#task-dday-empty').removeClass('hidden');
+        showTaskDDayEmpty();
       }
     );
   }

@@ -6,6 +6,27 @@
   <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title th:text="${title}">Default Title</title>
 
+  <!-- SEO / 공유 미리보기 -->
+  <meta name="description" th:content="${seoDescription}">
+  <meta name="robots" th:content="${seoRobots}">
+  <link rel="canonical" th:href="${seoCanonicalUrl}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SUHSAECHAN LAB">
+  <meta property="og:title" th:content="${title}">
+  <meta property="og:description" th:content="${seoDescription}">
+  <meta property="og:url" th:content="${seoCanonicalUrl}">
+  <meta property="og:image" th:content="${seoImageUrl}">
+  <meta property="og:locale" th:content="${#locale.language == 'ko' ? 'ko_KR' : 'en_US'}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" th:content="${title}">
+  <meta name="twitter:description" th:content="${seoDescription}">
+  <meta name="twitter:image" th:content="${seoImageUrl}">
+
+  <!-- 외부 리소스 연결을 미리 열어 로딩 지연 감소 -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://code.jquery.com" crossorigin>
+
   <!-- 테마 즉시 적용 (FOUC 방지) -->
   <script>
     (function() {
