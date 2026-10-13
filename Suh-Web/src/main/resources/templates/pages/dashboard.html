@@ -10,38 +10,8 @@
 </script>
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- 스켈레톤 로딩 컨테이너 -->
-  <div id="skeleton-container">
-    <!-- 웰컴 스켈레톤 -->
-    <div class="mb-8">
-      <div class="skeleton h-10 w-80 mb-3"></div>
-      <div class="skeleton h-5 w-96"></div>
-    </div>
-    <!-- 공지사항 스켈레톤 -->
-    <div class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
-      <div class="card-body">
-        <div class="skeleton h-6 w-32 mb-4"></div>
-        <div class="space-y-3">
-          <div class="skeleton h-16 w-full"></div>
-          <div class="skeleton h-16 w-full"></div>
-          <div class="skeleton h-16 w-full"></div>
-        </div>
-      </div>
-    </div>
-    <!-- 카드 그리드 스켈레톤 -->
-    <div class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
-      <div class="card-body">
-        <div class="skeleton h-7 w-48 mb-2"></div>
-        <div class="skeleton h-4 w-32 mb-6"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="skeleton h-48 w-full" th:each="i : ${#numbers.sequence(1, 4)}"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- 실제 콘텐츠 -->
-  <div id="real-content" class="hidden">
+  <div id="real-content">
 
     <!-- 프로필 헤더 카드 -->
     <section class="reveal relative overflow-hidden card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
@@ -1519,12 +1489,6 @@
 
     // Task D-Day 로드
     loadTaskDDay();
-
-    // 페이지 로딩 효과
-    setTimeout(function() {
-      document.getElementById('skeleton-container').classList.add('hidden');
-      document.getElementById('real-content').classList.remove('hidden');
-    }, 500);
 
   });
 
