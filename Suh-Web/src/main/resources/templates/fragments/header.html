@@ -52,10 +52,10 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
   <!-- CryptoJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 
   <!-- Marked.js -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <!-- Common CSS & JS -->
   <link rel="stylesheet" type="text/css" th:href="@{/css/common.css}"/>
@@ -560,7 +560,7 @@
       <div class="hidden lg:flex items-center gap-1">
         <!-- 다크모드 토글 (항상 표시) -->
         <label class="swap swap-rotate cursor-pointer p-2">
-          <input type="checkbox" class="theme-controller" value="dark" id="theme-toggle-desktop" />
+          <input type="checkbox" class="theme-controller" value="dark" id="theme-toggle-desktop" aria-label="다크 모드 전환" />
           <!-- 해 아이콘 (라이트 모드일 때 표시) -->
           <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
@@ -591,7 +591,7 @@
 
         <!-- Menu (항상 표시) -->
         <div id="more-dropdown-desktop" class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle hover:bg-primary/10 hover:text-primary">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle hover:bg-primary/10 hover:text-primary" aria-label="메뉴 열기">
             <i class="fa-solid fa-bars text-xl"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-56 p-2 mt-2 border border-base-300">
@@ -632,7 +632,7 @@
       <div class="lg:hidden flex items-center gap-1">
         <!-- 모바일 다크모드 토글 (항상 표시) -->
         <label class="swap swap-rotate cursor-pointer p-2">
-          <input type="checkbox" class="theme-controller" value="dark" id="theme-toggle-mobile" />
+          <input type="checkbox" class="theme-controller" value="dark" id="theme-toggle-mobile" aria-label="다크 모드 전환" />
           <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
           </svg>
@@ -643,7 +643,7 @@
 
         <!-- 언어 토글 (모바일) -->
         <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="언어 선택">
             <i class="fa-solid fa-globe text-base-content"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-32 p-2 mt-3 border border-base-300">
@@ -654,11 +654,11 @@
 
         <!-- 햄버거 메뉴 (항상 표시) -->
         <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="메뉴 열기">
             <i class="fa-solid fa-bars text-xl text-base-content"></i>
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box shadow-lg z-50 w-64 p-2 mt-3 border border-base-300">
-            <li class="menu-title text-base-content/60 text-xs font-semibold px-4 py-2" th:text="#{header.menu.title}">메뉴</li>
+            <li class="menu-title text-base-content/70 text-xs font-semibold px-4 py-2" th:text="#{header.menu.title}">메뉴</li>
             <li><a href="/dashboard" class="hover:bg-primary/10 hover:text-primary"><i class="fa-solid fa-clipboard-list w-5"></i><span th:text="#{header.nav.dashboard}">대시보드</span></a></li>
             <li><a href="/issue-helper" class="hover:bg-primary/10 hover:text-primary"><i class="fa-brands fa-github w-5"></i><span th:text="#{header.nav.issueHelperMobile}">깃헙 이슈 도우미</span></a></li>
             <li><a href="/suh-devops-template" class="hover:bg-primary/10 hover:text-primary"><i class="fa-solid fa-gears w-5"></i><span th:text="#{header.nav.devopsTemplate}">DevOps 템플릿</span></a></li>
@@ -707,7 +707,7 @@
         </div>
         <div class="flex-1">
           <h3 class="font-bold text-lg">Changelog</h3>
-          <p class="text-sm text-base-content/60">SUH Project Utility</p>
+          <p class="text-sm text-base-content/70">SUH Project Utility</p>
         </div>
         <form method="dialog">
           <button class="btn btn-sm btn-circle btn-ghost">
@@ -732,7 +732,7 @@
           <div class="flex items-center gap-2 mb-3">
             <span id="changelog-version" class="font-bold text-lg">v1.4.6</span>
             <span class="badge badge-soft badge-success text-xs">Latest</span>
-            <span id="changelog-date" class="text-sm text-base-content/60">2025-12-13</span>
+            <span id="changelog-date" class="text-sm text-base-content/70">2025-12-13</span>
           </div>
 
           <!-- 변경사항 목록 -->
@@ -744,7 +744,7 @@
 
       <!-- 모달 푸터 -->
       <div class="flex justify-between items-center mt-6 pt-4 border-t border-base-300">
-        <span id="changelog-updated" class="text-xs text-base-content/50">Last updated: -</span>
+        <span id="changelog-updated" class="text-xs text-base-content/70">Last updated: -</span>
         <a href="https://github.com/Cassiiopeia/suh-project-utility/blob/main/CHANGELOG.md"
            target="_blank"
            class="text-sm text-primary hover:underline flex items-center gap-1">

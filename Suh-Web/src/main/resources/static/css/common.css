@@ -2021,8 +2021,8 @@ html, body, button, input, select, textarea {
 }
 
 @keyframes revealUp {
-  from { opacity: 0.35; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
+  from { transform: translateY(16px); }
+  to { transform: none; }
 }
 
 /* 전역 타이포: 한글 가독성이 좋은 Pretendard 우선 */
