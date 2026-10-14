@@ -1,11 +1,33 @@
 {
   "metadata": {
-    "lastUpdated": "2026-10-14T02:12:58Z",
+    "lastUpdated": "2026-10-14T05:23:28Z",
     "currentVersion": "2.5.106",
     "projectType": "spring",
-    "totalReleases": 83
+    "totalReleases": 84
   },
   "releases": [
+    {
+      "version": "2.5.106",
+      "project_type": "spring",
+      "date": "2026-10-14",
+      "pr_number": 261,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **문서**\n  * README 버전 표기를 v2.5.106으로 갱신\n\n* **기타**\n  * 릴리스 브랜치 설정을 명시해 배포 도구가 main에서 deploy로 릴리스를 올리도록 정리",
+      "parsed_changes": {
+        "문서": {
+          "title": "문서",
+          "items": [
+            "README 버전 표기를 v2.5.106으로 갱신"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "릴리스 브랜치 설정을 명시해 배포 도구가 main에서 deploy로 릴리스를 올리도록 정리"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.106",
       "project_type": "spring",
