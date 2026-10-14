@@ -1,9 +1,9 @@
-# SUH-PROJECT-UTILITY
+# SUHSAECHAN LAB
 
-> My personal lab for building random stuff that actually works.
+> Saechan Suh's portfolio and dev lab — the projects I ship, the tools I use daily, and the self-hosted server behind them.
 
-[![Live](https://img.shields.io/badge/Live-lab.suhsaechan.kr-blue)](https://lab.suhsaechan.kr/)
-[![GitHub](https://img.shields.io/badge/GitHub-Cassiiopeia-black)](https://github.com/Cassiiopeia)
+[![Live](https://img.shields.io/badge/Live-lab.suhsaechan.kr-5b4bdb)](https://lab.suhsaechan.kr/)
+[![GitHub](https://img.shields.io/badge/GitHub-Cassiiopeia-181717?logo=github)](https://github.com/Cassiiopeia)
 
 <!-- 수정하지마세요 자동으로 동기화 됩니다 -->
 <!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
@@ -13,66 +13,59 @@
 
 ---
 
-## Screenshots
-
-<img width="1211" height="926" alt="image" src="https://github.com/user-attachments/assets/779bc22b-ecae-4946-a41d-e111a02f84e4" />
-
-<img width="1222" height="930" alt="image" src="https://github.com/user-attachments/assets/6351ad16-d91d-4a2e-adf8-786130bd98b8" />
-
-<img width="1211" height="929" alt="image" src="https://github.com/user-attachments/assets/f52a4463-ffd5-44d9-bae6-5662cc112553" />
-
+<p align="center">
+  <img src="docs/images/readme-dash-light.webp" alt="Dashboard: profile hero and About section (light theme)" width="49%"/>
+  <img src="docs/images/readme-proj-dark.webp" alt="Dashboard: project cards (dark theme)" width="49%"/>
+</p>
 
 ---
 
 ## What is this?
 
-A collection of **experimental utilities** I build when I have an idea at 2am.
+**[lab.suhsaechan.kr](https://lab.suhsaechan.kr)** is one Spring Boot app that does two jobs.
 
-- **Built for me, shared for fun**
-- **If it's useful, it stays. If not, it was a good experiment.**
-- **No fancy frameworks. Just things that work.**
+- **Public portfolio**: profile, awards, project cards with live links, timeline, certifications and tech stack. Light and dark themes, Korean and English.
+- **Private lab**: the internal tools I use to run my own server and projects. These pages sit behind a login.
 
----
+## Public pages
 
-## Features
-
-| Tool | What it does |
+| Page | What it does |
 |------|-------------|
-| **Grass Planter** | Auto-commit to keep GitHub green |
-| **AI Translator** | Custom translation with OpenAI |
-| **Issue Helper** | Branch names & commits from GitHub issues |
-| **Docker Logs** | Real-time container monitoring |
+| [Dashboard](https://lab.suhsaechan.kr/dashboard) | Portfolio: projects, awards, timeline, tech stack |
+| [Issue Helper](https://lab.suhsaechan.kr/issue-helper) | Branch names and commit messages from a GitHub issue URL |
+| [Translator](https://lab.suhsaechan.kr/translator) | AI translation with language auto-detect |
+| [Sejong Auth](https://lab.suhsaechan.kr/sejong-auth) | Demo of [SUH-sejong-univ-auth](https://github.com/Cassiiopeia/SUH-sejong-univ-auth), Sejong University portal login |
+| [SUH Random](https://lab.suhsaechan.kr/suh-random) | Demo of [suh-random-engine](https://github.com/Cassiiopeia/suh-random-engine), nickname generator |
+| [DevOps Template](https://lab.suhsaechan.kr/suh-devops-template) | Intro to [ProjectOps](https://github.com/Cassiiopeia/projectops), the issue-to-deploy automation template |
 
----
+Private tools (login required) include Docker container logs, AI server control, a task tracker, a chatbot and notice management.
 
-## Tech Stack
+## Tech stack
 
 ```
-Backend    → Spring Boot 3.4 + Java 17
-Database   → PostgreSQL + Redis
-Frontend   → Thymeleaf + TailwindCSS + DaisyUI
-Deploy     → Docker + GitHub Actions + Synology NAS
+Backend    Spring Boot 3.4 · Java 17 · multi-module Gradle (domain modules + web)
+Database   PostgreSQL (Flyway) · Redis
+Frontend   Thymeleaf · Tailwind CSS v4 + DaisyUI 5 (build-time static CSS)
+Deploy     Docker · GitHub Actions blue-green deploy · Synology NAS · Cloudflare
+SEO        Open Graph · JSON-LD · sitemap.xml · robots.txt · IndexNow
 ```
 
----
+## Run locally
 
-## About Me
+```bash
+cd Suh-Web/frontend && npm install && npm run build:css && cd ../..
+./gradlew bootRun --args='--spring.profiles.active=dev'
+```
 
-**Saechan Suh** (서새찬)
-
-- Server Module Team @ SOMANSA
-- Sejong University - Integrative Bioscience
-- I like building things. Even if no one uses them.
-
----
-
-## Links
-
-- [Live Site](https://lab.suhsaechan.kr)
-- [Email](mailto:chan4760@gmail.com)
-- [GitHub](https://github.com/Cassiiopeia)
+You need PostgreSQL, Redis and an `application.yml` with your own settings. The file is not in the repo because it holds secrets.
 
 ---
+
+## About me
+
+**Saechan Suh** (서새찬). Server Module Team @ SOMANSA. Sejong University.
+
+- [Live site](https://lab.suhsaechan.kr) · [Email](mailto:chan4760@gmail.com) · [GitHub](https://github.com/Cassiiopeia) · [LinkedIn](https://www.linkedin.com/in/suh-saechan-b0b1b8339/)
 
 ## License
 
