@@ -40,7 +40,9 @@ project_type: "spring" # spring, flutter, react, react-native, react-native-expo
 metadata:
   last_updated: "2026-10-14 00:47:32"
   last_updated_by: "Cassiiopeia"
-  default_branch: "main"
+  # 릴리스 PR은 main(head) -> deploy(base) 구조다. 실제 서버 배포는 main push로 돈다
+  default_branch: "deploy"
+  deploy_branch: "main"
   integrated_from: "SUH-DEVOPS-TEMPLATE"
   integration_date: "2026-01-25"
   template:
