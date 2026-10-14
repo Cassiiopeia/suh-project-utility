@@ -69,4 +69,4 @@ You need PostgreSQL, Redis and an `application.yml` with your own settings. The 
 
 ## License
 
-Do whatever you want. Just don't blame me if it breaks.
+[MIT](LICENSE) © 2025 Saechan Suh
