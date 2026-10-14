@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:lang="${#locale.language}">
 <head th:replace="~{fragments/header :: head(title='AI 서버 관리-SAECHAN-LAB')}"></head>
 <body class="ai-server-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>
@@ -440,8 +440,12 @@ function restoreActiveDownloads() {
 
   $.ajax({
     url: '/api/ai-server/models/pull/status',
-    method: 'GET',
-    success: function(statusMap) {
+    method: 'POST',
+    data: new FormData(),
+    processData: false,
+    contentType: false,
+    success: function(response) {
+      const statusMap = response.downloadProgressMap || {};
       console.log('다운로드 상태:', statusMap);
 
       Object.keys(statusMap).forEach(modelName => {

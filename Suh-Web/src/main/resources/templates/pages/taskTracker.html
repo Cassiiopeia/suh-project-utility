@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head th:replace="~{fragments/header :: head(title='Task 트래커 - D-Day & 진행 관리')}"></head>
 <body class="task-tracker-page bg-base-200">
 <div th:replace="~{fragments/header :: header}"></div>

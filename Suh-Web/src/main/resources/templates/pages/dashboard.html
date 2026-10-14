@@ -1,43 +1,17 @@
 <!-- src/main/resources/templates/pages/dashboard.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/header :: head(title='대시보드-SAECHAN-LAB')}"></head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:lang="${#locale.language}">
+<head th:replace="~{fragments/header :: head(title='서새찬 (Suh Saechan) | 개발자 포트폴리오 - SAECHAN LAB')}"></head>
 <body class="page-ambient bg-base-200 min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <!-- 스켈레톤 로딩 컨테이너 -->
-  <div id="skeleton-container">
-    <!-- 웰컴 스켈레톤 -->
-    <div class="mb-8">
-      <div class="skeleton h-10 w-80 mb-3"></div>
-      <div class="skeleton h-5 w-96"></div>
-    </div>
-    <!-- 공지사항 스켈레톤 -->
-    <div class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
-      <div class="card-body">
-        <div class="skeleton h-6 w-32 mb-4"></div>
-        <div class="space-y-3">
-          <div class="skeleton h-16 w-full"></div>
-          <div class="skeleton h-16 w-full"></div>
-          <div class="skeleton h-16 w-full"></div>
-        </div>
-      </div>
-    </div>
-    <!-- 카드 그리드 스켈레톤 -->
-    <div class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
-      <div class="card-body">
-        <div class="skeleton h-7 w-48 mb-2"></div>
-        <div class="skeleton h-4 w-32 mb-6"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="skeleton h-48 w-full" th:each="i : ${#numbers.sequence(1, 4)}"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<script type="application/ld+json" th:inline="text">
+{"@context":"https://schema.org","@type":"Person","name":"Suh Saechan","alternateName":"서새찬","url":"[[${siteBaseUrl}]]/dashboard","image":"[[${siteBaseUrl}]]/images/suhSaeChanProfile.jpeg","jobTitle":"Full Stack Developer","worksFor":{"@type":"Organization","name":"SOMANSA"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Sejong University"},"sameAs":["https://github.com/Cassiiopeia","https://www.linkedin.com/in/suh-saechan-b0b1b8339/","https://www.instagram.com/suhsaechan/","https://www.youtube.com/@Cassiiopeia"]}
+</script>
 
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <!-- 실제 콘텐츠 -->
-  <div id="real-content" class="hidden">
+  <div id="real-content">
 
     <!-- 프로필 헤더 카드 -->
     <section class="reveal relative overflow-hidden card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
@@ -47,24 +21,35 @@
         <div class="flex flex-col md:flex-row items-center gap-6">
           <div class="avatar">
             <div class="w-36 rounded-3xl ring-2 ring-primary/40 ring-offset-4 ring-offset-base-100 shadow-xl">
-              <img src="/images/suhSaeChanProfile.jpeg" alt="Profile Photo" onerror="this.src='/images/logo_no_text.png'" />
+              <img src="/images/suhSaeChanProfile.jpeg" alt="Profile Photo" width="144" height="144" fetchpriority="high" decoding="async" onerror="this.src='/images/logo_no_text.png'" />
             </div>
           </div>
           <div class="text-center md:text-left flex-1">
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-base-content">Suh Saechan <span class="hidden md:inline text-base-content/50 font-normal">|</span> <span class="text-base-content/70 font-normal">서새찬</span></h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-base-content">Suh Saechan <span class="hidden md:inline text-base-content/70 font-normal">|</span> <span class="text-base-content/70 font-normal">서새찬</span></h1>
             <p class="text-lg text-primary font-semibold mt-3">
               <i class="fa-solid fa-code mr-1"></i>
               Full Stack Developer @ SOMANSA
             </p>
-            <p class="text-base-content/60 mt-2" th:text="#{dashboard.profile.tagline}">Developer who enjoys experimentation and problem-solving</p>
+            <p class="text-base-content/70 mt-2" th:text="#{dashboard.profile.tagline}">Developer who enjoys experimentation and problem-solving</p>
             <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
               <span class="badge badge-soft badge-primary">Spring</span>
               <span class="badge badge-soft badge-primary">Flutter</span>
               <span class="badge badge-soft badge-primary">React</span>
             </div>
+            <div class="flex flex-wrap gap-2 mt-5 justify-center md:justify-start">
+              <a href="#projects" class="btn btn-primary btn-sm rounded-full gap-2">
+                <i class="fa-solid fa-layer-group text-xs"></i><span th:text="#{dashboard.hero.viewProjects}">프로젝트 보기</span>
+              </a>
+              <a href="mailto:chan4760@gmail.com" class="btn btn-outline btn-sm rounded-full gap-2">
+                <i class="fa-solid fa-envelope text-xs"></i><span th:text="#{dashboard.hero.contact}">문의하기</span>
+              </a>
+              <a href="#awards" class="btn btn-ghost btn-sm rounded-full gap-2 text-primary">
+                <i class="fa-solid fa-trophy text-xs"></i><span th:text="#{dashboard.hero.award}">Google Developers Groups 해커톤 1위</span>
+              </a>
+            </div>
             <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
               <a href="mailto:chan4760@gmail.com" class="btn btn-circle btn-ghost hover:bg-primary/10 hover:text-primary hover:-translate-y-0.5 transition-all" title="Email">
-                <i class="fa-solid fa-envelope text-base-content/60 text-lg"></i>
+                <i class="fa-solid fa-envelope text-base-content/70 text-lg"></i>
               </a>
               <a href="https://github.com/Cassiiopeia" target="_blank" class="btn btn-circle btn-ghost hover:bg-primary/10 hover:text-primary hover:-translate-y-0.5 transition-all" title="GitHub">
                 <i class="fa-brands fa-github text-base-content/80 text-lg"></i>
@@ -107,270 +92,211 @@
       </div>
     </section>
 
+    <!-- 수상 -->
+    <section id="awards" class="scroll-mt-20 reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
+      <div class="card-body">
+        <h2 class="card-title text-2xl font-extrabold tracking-tight mb-4">
+          <i class="fa-solid fa-trophy text-primary"></i>
+          Awards
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Hack the Beat 1위 -->
+          <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener"
+             class="flex items-center gap-4 p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
+            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-medal text-primary text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-base-content">1st Place — Hack the Beat</div>
+              <div class="text-sm text-base-content/70" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · Google Developers Groups Campus Korea — 1st place</div>
+              <div class="text-xs text-base-content/70 mt-1">Aug 2026</div>
+            </div>
+            <!-- 카드 전체가 링크라 중첩 앵커 대신 onclick으로 새 탭을 연다 -->
+            <span onclick="event.preventDefault(); event.stopPropagation(); window.open('https://lnkd.in/p/gfJcFfSd', '_blank', 'noopener');"
+                  class="btn btn-outline btn-xs shrink-0"><i class="fa-brands fa-linkedin"></i> 회고</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-base-content/70 shrink-0"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- Projects 섹션 -->
-    <section class="mb-12">
+    <section id="projects" class="mb-12 scroll-mt-20">
       <div class="mb-6">
         <h2 class="text-3xl font-extrabold tracking-tight text-base-content flex items-center gap-3">
           <span class="inline-flex w-10 h-10 rounded-xl bg-primary/10 text-primary items-center justify-center"><i class="fa-solid fa-layer-group text-lg"></i></span>
           Projects
         </h2>
-        <p class="text-base-content/60 mt-2" th:text="#{dashboard.projects.subtitle}">진행 중인 프로젝트 및 관련 리소스</p>
+        <p class="text-base-content/70 mt-2" th:text="#{dashboard.projects.subtitle}">진행 중인 프로젝트 및 관련 리소스</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/passQLLogo.png" alt="passQL" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">passQL</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span><span class="badge badge-soft badge-primary badge-sm">AI</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/ROMROM_로고.png" alt="ROM ROM" width="64" height="64" loading="lazy" class="w-16 h-16 rounded-2xl object-cover shadow-md ring-1 ring-base-300">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/ROMROM_로고.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ROM ROM</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">SQLD·SQLP 합격을 위한 AI 실행형 SQL 학습 서비스. AI가 함정 오답을 만들어 준다.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://passql.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>웹사이트
-              </a>
-              <a href="https://github.com/Twin-Fang/passQL" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/pickerPickerLogo.png" alt="PickerPicker" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">PickerPicker</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">피커피커 서비스.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://pickerpicker.suhsaechan.kr" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>웹사이트
-              </a>
-              <a href="https://github.com/PickerPicker/PickerPicker" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-image text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">elum</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">App</span><span class="badge badge-soft badge-primary badge-sm">Flutter</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">보호자가 적은 하루 일과를 그림 행동 카드로 만들어 주는 앱.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://twin-fang.github.io/elum/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>소개 페이지
-              </a>
-              <a href="https://github.com/Twin-Fang/elum" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-trophy text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Hack the Beat</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Hackathon</span><span class="badge badge-soft badge-primary badge-sm">1st</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">2026 I/O Extended 해커톤 1위 수상 프로젝트.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>프로젝트 페이지
-              </a>
-              <a href="https://github.com/Twin-Fang/Hack-the-Beat" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-gears text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ProjectOps</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">DevOps</span><span class="badge badge-soft badge-primary badge-sm">Agent Skills</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">GitHub Actions 자동화와 에이전트 스킬. npx 한 줄로 개발 사이클 전체를 자동화한다.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://cassiiopeia.github.io/projectops/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>projectops
-              </a>
-              <a href="https://twin-fang.github.io/project-auto-wizard/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>auto-wizard
-              </a>
-              <a href="https://cassiiopeia.github.io/pro-judge/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>pro-judge
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/ROMROM_로고.png" alt="ROM ROM" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ROM ROM</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Android</span><span class="badge badge-soft badge-primary badge-sm">iOS</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">혁신적인 물물교환 앱.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Flutter</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.romrom.desc}">혁신적인 물물교환 앱.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://play.google.com/store/apps/details?id=com.alom.romrom&hl=ko" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-google-play text-xs"></i>Google Play
+                <i class="fa-brands fa-google-play text-xs"></i><span>Google Play</span>
               </a>
               <a href="https://apps.apple.com/kr/app/%ED%98%81%EC%8B%A0%EC%A0%81%EC%9D%B8-%EB%AC%BC%EB%AC%BC%EA%B5%90%ED%99%98-%EB%A1%AC%EB%A1%AC/id6748823976" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-apple text-xs"></i>App Store
+                <i class="fa-brands fa-apple text-xs"></i><span>App Store</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/bagelLogo.jpeg" alt="Re: WAVE" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Re: WAVE</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span><span class="badge badge-soft badge-primary badge-sm">Game</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/projects/elum.webp" alt="elum" width="640" height="288" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/elumLogo.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">elum</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">선택의 순간, 그녀의 운명이 갈린다.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Flutter</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span><span class="badge badge-soft badge-primary badge-sm">Generative AI</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.elum.desc}">보호자가 적은 하루 일과를 그림 행동 카드로 보여 주는 시각 일과표 앱.</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+              <a href="https://twin-fang.github.io/elum/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.intro}">소개 페이지</span>
+              </a>
+              <a href="https://github.com/Twin-Fang/elum" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
+              </a>
+              </div>
+            </div>
+          </article>
+          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/projects/passql.webp" alt="passQL" width="640" height="174" loading="lazy" class="w-full h-full object-contain bg-white p-5">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/passQLLogo.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">passQL</h3>
+              </div>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span><span class="badge badge-soft badge-primary badge-sm">Flutter</span><span class="badge badge-soft badge-primary badge-sm">React</span><span class="badge badge-soft badge-primary badge-sm">Gemini</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.passql.desc}">AI가 함정 오답을 만들고 샌드박스 DB에서 직접 실행해 검증하는 SQLD·SQLP 학습 서비스.</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+              <a href="https://passql.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.website}">웹사이트</span>
+              </a>
+              <a href="https://github.com/Twin-Fang/passQL" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
+              </a>
+              </div>
+            </div>
+          </article>
+          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <i class="fa-brands fa-google text-primary text-5xl"></i>
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-brands fa-google text-primary text-xl"></i></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Hack the Beat</h3>
+              </div>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">React</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span><span class="badge badge-soft badge-primary badge-sm">PostgreSQL</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.hackthebeat.desc}">파티에서 만난 사람과 QR로 인사하고 증표를 모으는 웹 패스포트. Google Developers Groups 2026 I/O Extended 해커톤 1위.</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+              <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.projectPage}">프로젝트 페이지</span>
+              </a>
+              <a href="https://github.com/Twin-Fang/Hack-the-Beat" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
+              </a>
+              </div>
+            </div>
+          </article>
+          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/projects/pickerpicker.webp" alt="PickerPicker" width="640" height="288" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/pickerPickerLogo.png" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">PickerPicker</h3>
+              </div>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">TypeScript</span><span class="badge badge-soft badge-primary badge-sm">Python</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.pickerpicker.desc}">한글 음절로 리듬을 타는 무료 웹 리듬게임. 15스테이지 생존과 랭킹.</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+              <a href="https://pickerpicker.suhsaechan.kr" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.website}">웹사이트</span>
+              </a>
+              <a href="https://github.com/PickerPicker/PickerPicker" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
+              </a>
+              </div>
+            </div>
+          </article>
+          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <i class="fa-solid fa-gears text-primary text-5xl"></i>
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-gears text-primary text-xl"></i></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">ProjectOps</h3>
+              </div>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">GitHub Actions</span><span class="badge badge-soft badge-primary badge-sm">Python</span><span class="badge badge-soft badge-primary badge-sm">Claude Code</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.projectops.desc}">이슈부터 배포까지 GitHub 프로젝트를 자동화하는 템플릿과 에이전트 스킬.</p>
+              <div class="flex flex-wrap gap-2 mt-auto">
+              <a href="https://cassiiopeia.github.io/projectops/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>projectops</span>
+              </a>
+              <a href="https://twin-fang.github.io/project-auto-wizard/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>auto-wizard</span>
+              </a>
+              <a href="https://cassiiopeia.github.io/pro-judge/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>pro-judge</span>
+              </a>
+              </div>
+            </div>
+          </article>
+          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <img src="/images/bagelLogo.jpeg" alt="Re: WAVE" width="64" height="64" loading="lazy" class="w-16 h-16 rounded-2xl object-cover shadow-md ring-1 ring-base-300">
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/bagelLogo.jpeg" alt="" width="48" height="48" loading="lazy" class="w-full h-full object-cover"></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Re: WAVE</h3>
+              </div>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">JavaScript</span><span class="badge badge-soft badge-primary badge-sm">Java</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.rewave.desc}">선택에 따라 스토리와 엔딩이 갈리는 인터랙티브 비주얼 노벨 게임.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
               <a href="https://bagel.suhsaechan.kr/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>웹사이트
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.website}">웹사이트</span>
               </a>
               <a href="https://api.bagel.suhsaechan.kr/docs/swagger" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-book text-xs"></i>API 문서
+                <i class="fa-solid fa-book text-xs"></i><span th:text="#{dashboard.card.link.apiDocs}">API 문서</span>
               </a>
               </div>
             </div>
           </article>
           <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><img src="/images/PLANE_ACCIDENT_FINDER_로고.png" alt="PLANE ACCIDENT FINDER" class="w-full h-full object-cover"></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">PLANE ACCIDENT FINDER</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Android</span></div>
-                </div>
+            <figure class="relative h-36 overflow-hidden bg-gradient-to-br from-primary/15 via-base-200 to-secondary/15 flex items-center justify-center">
+              <i class="fa-solid fa-id-card text-primary text-5xl"></i>
+            </figure>
+            <div class="card-body relative p-6 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 overflow-hidden flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-id-card text-primary text-xl"></i></div>
+                <h3 class="text-lg font-bold tracking-tight text-base-content truncate">sejong-univ-auth</h3>
               </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">APK 다운로드 페이지.</p>
+              <div class="flex flex-wrap gap-1"><span class="badge badge-soft badge-primary badge-sm">Java</span><span class="badge badge-soft badge-primary badge-sm">Spring Boot</span></div>
+              <p class="text-sm text-base-content/70 leading-relaxed" th:text="#{dashboard.card.sejongauth.desc}">세종대학교 포털 인증을 3줄로 끝내는 Java 라이브러리.</p>
               <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="http://suh-project.synology.me/plane-accident-finder/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-download text-xs"></i>APK 다운로드
+              <a href="https://cassiiopeia.github.io/SUH-sejong-univ-auth/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span th:text="#{dashboard.card.link.intro}">소개 페이지</span>
               </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-code-branch text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">SUH Issue Helper</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Tool</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">이슈 생성 시 브랜치명과 커밋 메시지를 댓글로 달아 주는 GitHub Action.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://github.com/Cassiiopeia/SUH-ISSUE-HELPER" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-dice text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">SUH Random Engine</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Library</span><span class="badge badge-soft badge-primary badge-sm">Java</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">랜덤 닉네임을 생성하는 Java 라이브러리.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://github.com/Cassiiopeia/suh-random-engine" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-id-card text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">sejong-univ-auth</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Library</span><span class="badge badge-soft badge-primary badge-sm">Java</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">세종대학교 포털 인증을 3줄로 끝내는 Java 라이브러리.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-seedling text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">Grass Planter</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Tool</span><span class="badge badge-soft badge-primary badge-sm">Java</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">GitHub 잔디를 자동으로 심어 주는 자동화 도구.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-brands fa-github text-xs"></i>GitHub
-              </a>
-              </div>
-            </div>
-          </article>
-          <article class="reveal group relative overflow-hidden card bg-base-100 border border-base-300 rounded-3xl shadow-sm hover:shadow-2xl hover:border-primary/40 hover:-translate-y-1 transition-all duration-300">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            <div class="card-body relative p-6 gap-4">
-              <div class="flex items-center gap-4">
-                <div class="w-14 h-14 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center ring-1 ring-base-300"><i class="fa-solid fa-language text-primary text-xl"></i></div>
-                <div class="min-w-0">
-                  <h3 class="text-lg font-bold tracking-tight text-base-content truncate">AI 번역기</h3>
-                  <div class="flex flex-wrap gap-1 mt-1"><span class="badge badge-soft badge-primary badge-sm">Web</span><span class="badge badge-soft badge-primary badge-sm">AI</span></div>
-                </div>
-              </div>
-              <p class="text-sm text-base-content/70 leading-relaxed">커스텀 AI 번역 서비스.</p>
-              <div class="flex flex-wrap gap-2 mt-auto">
-              <a href="/translator" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
-                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>바로가기
+<a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-soft btn-primary rounded-full gap-2">
+                <i class="fa-brands fa-github text-xs"></i><span>GitHub</span>
               </a>
               </div>
             </div>
@@ -389,13 +315,13 @@
           <li class="timeline-item">
             <div class="timeline-middle">
               <div class="w-10 h-10 rounded-full overflow-hidden bg-base-100 border border-base-300">
-                <img src="/images/somansaLogo.png" alt="SOMANSA" class="w-full h-full object-contain" />
+                <img loading="lazy" decoding="async" src="/images/somansaLogo.png" alt="SOMANSA" class="w-full h-full object-contain" />
               </div>
             </div>
             <div class="timeline-end timeline-box bg-primary/10 border-primary/30">
               <div class="flex items-center gap-2 mb-1">
                 <span class="badge badge-primary badge-sm">Current</span>
-                <time class="text-xs text-base-content/60">2024.07 - Present</time>
+                <time class="text-xs text-base-content/70">2024.07 - Present</time>
               </div>
               <div class="font-bold text-base-content" th:text="#{dashboard.timeline.somansa.name}">SOMANSA</div>
               <div class="text-sm text-base-content/70" th:text="#{dashboard.timeline.somansa.role}">DLP Solution - Server Module Team</div>
@@ -406,11 +332,11 @@
             <hr/>
             <div class="timeline-middle">
               <div class="w-10 h-10 rounded-full overflow-hidden bg-base-100 border border-base-300">
-                <img src="/images/day1CompanyLogo.jpg" alt="데이원컴퍼니" class="w-full h-full object-contain" />
+                <img loading="lazy" decoding="async" src="/images/day1CompanyLogo.jpg" alt="데이원컴퍼니" class="w-full h-full object-contain" />
               </div>
             </div>
             <div class="timeline-start timeline-box">
-              <time class="text-xs text-base-content/60">2023.06 - 2024.03</time>
+              <time class="text-xs text-base-content/70">2023.06 - 2024.03</time>
               <div class="font-bold text-base-content" th:text="#{dashboard.timeline.zerobase.name}">Zerobase (Day1Company)</div>
               <div class="text-sm text-base-content/70" th:text="#{dashboard.timeline.zerobase.role}">Backend Development Bootcamp</div>
             </div>
@@ -420,11 +346,11 @@
             <hr/>
             <div class="timeline-middle">
               <div class="w-10 h-10 rounded-full overflow-hidden bg-base-100 border border-base-300">
-                <img src="/images/sejongUniversityLogo.jpeg" alt="세종대학교" class="w-full h-full object-contain" />
+                <img loading="lazy" decoding="async" src="/images/sejongUniversityLogo.jpeg" alt="세종대학교" class="w-full h-full object-contain" />
               </div>
             </div>
             <div class="timeline-end timeline-box">
-              <time class="text-xs text-base-content/60">2018.03 - 2024.09</time>
+              <time class="text-xs text-base-content/70">2018.03 - 2024.09</time>
               <div class="font-bold text-base-content" th:text="#{dashboard.timeline.sejong.name}">Sejong University</div>
               <div class="text-sm text-base-content/70" th:text="#{dashboard.timeline.sejong.role}">Integrative Bioscience and Biotechnology</div>
             </div>
@@ -434,11 +360,11 @@
             <hr/>
             <div class="timeline-middle">
               <div class="w-10 h-10 rounded-full overflow-hidden bg-base-100 border border-base-300">
-                <img src="/images/whimoonHighschoolLogo.jpeg" alt="휘문고등학교" class="w-full h-full object-contain" />
+                <img loading="lazy" decoding="async" src="/images/whimoonHighschoolLogo.jpeg" alt="휘문고등학교" class="w-full h-full object-contain" />
               </div>
             </div>
             <div class="timeline-start timeline-box">
-              <time class="text-xs text-base-content/60">2015.03 - 2018.02</time>
+              <time class="text-xs text-base-content/70">2015.03 - 2018.02</time>
               <div class="font-bold text-base-content" th:text="#{dashboard.timeline.whimoon.name}">Whimoon High School</div>
               <div class="text-sm text-base-content/70" th:text="#{dashboard.timeline.whimoon.role}">Seoul, South Korea</div>
             </div>
@@ -459,84 +385,56 @@
           <div class="flex items-center gap-4 p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-200 transition-colors"
                onclick="toggleCert('/images/certificates/cert-info-processing.png', '정보처리기사', this)">
             <div class="w-12 h-12 rounded-lg bg-base-100 flex items-center justify-center overflow-hidden shrink-0">
-              <img src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
+              <img loading="lazy" decoding="async" src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
             </div>
             <div class="flex-1 min-w-0">
               <div class="font-bold text-base-content">Engineer Information Processing</div>
-              <div class="text-sm text-base-content/60">정보처리기사 | HRD Korea</div>
-              <div class="text-xs text-base-content/50 mt-1">Issued Jun 2024</div>
+              <div class="text-sm text-base-content/70">정보처리기사 | HRD Korea</div>
+              <div class="text-xs text-base-content/70 mt-1">Issued Jun 2024</div>
             </div>
-            <i class="fa-solid fa-chevron-down text-base-content/50 shrink-0 cert-chevron transition-transform duration-300"></i>
+            <i class="fa-solid fa-chevron-down text-base-content/70 shrink-0 cert-chevron transition-transform duration-300"></i>
           </div>
           <!-- 화학분석기사 -->
           <div class="flex items-center gap-4 p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-200 transition-colors"
                onclick="toggleCert('/images/certificates/cert-chemical.png', '화학분석기사', this)">
             <div class="w-12 h-12 rounded-lg bg-base-100 flex items-center justify-center overflow-hidden shrink-0">
-              <img src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
+              <img loading="lazy" decoding="async" src="/images/hrdKoreaLogo.jpeg" alt="HRD Korea" class="w-10 h-10 object-contain" />
             </div>
             <div class="flex-1 min-w-0">
               <div class="font-bold text-base-content">Engineer Chemical Analysis</div>
-              <div class="text-sm text-base-content/60">화학분석기사 | HRD Korea</div>
-              <div class="text-xs text-base-content/50 mt-1">Issued Dec 2022</div>
+              <div class="text-sm text-base-content/70">화학분석기사 | HRD Korea</div>
+              <div class="text-xs text-base-content/70 mt-1">Issued Dec 2022</div>
             </div>
-            <i class="fa-solid fa-chevron-down text-base-content/50 shrink-0 cert-chevron transition-transform duration-300"></i>
+            <i class="fa-solid fa-chevron-down text-base-content/70 shrink-0 cert-chevron transition-transform duration-300"></i>
           </div>
           <!-- 리눅스마스터 2급 -->
           <div class="flex items-center gap-4 p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-200 transition-colors"
                onclick="toggleCert('/images/certificates/cert-linux-master.png', '리눅스마스터 2급', this)">
             <div class="w-12 h-12 rounded-lg bg-base-100 flex items-center justify-center overflow-hidden shrink-0">
-              <img src="/images/kaitLogo.png" alt="KAIT" class="w-10 h-10 object-contain" />
+              <img loading="lazy" decoding="async" src="/images/kaitLogo.png" alt="KAIT" class="w-10 h-10 object-contain" />
             </div>
             <div class="flex-1 min-w-0">
               <div class="font-bold text-base-content">Linux Master Grade 2</div>
-              <div class="text-sm text-base-content/60">리눅스마스터 2급 | KAIT</div>
-              <div class="text-xs text-base-content/50 mt-1">Issued Apr 2026</div>
+              <div class="text-sm text-base-content/70">리눅스마스터 2급 | KAIT</div>
+              <div class="text-xs text-base-content/70 mt-1">Issued Apr 2026</div>
             </div>
-            <i class="fa-solid fa-chevron-down text-base-content/50 shrink-0 cert-chevron transition-transform duration-300"></i>
+            <i class="fa-solid fa-chevron-down text-base-content/70 shrink-0 cert-chevron transition-transform duration-300"></i>
           </div>
           <!-- SQLD -->
           <div class="flex items-center gap-4 p-4 bg-base-200 rounded-lg cursor-pointer hover:bg-base-200 transition-colors"
                onclick="toggleCert('/images/certificates/cert-sqld.png', 'SQL Developer (SQLD)', this)">
             <div class="w-12 h-12 rounded-lg bg-base-100 flex items-center justify-center overflow-hidden shrink-0">
-              <img src="/images/kdataLogo.png" alt="K-data" class="w-10 h-10 object-contain" />
+              <img loading="lazy" decoding="async" src="/images/kdataLogo.png" alt="K-data" class="w-10 h-10 object-contain" />
             </div>
             <div class="flex-1 min-w-0">
               <div class="font-bold text-base-content">SQL Developer (SQLD)</div>
-              <div class="text-sm text-base-content/60">SQL 개발자 | K-data</div>
-              <div class="text-xs text-base-content/50 mt-1">Issued Mar 2026</div>
+              <div class="text-sm text-base-content/70">SQL 개발자 | K-data</div>
+              <div class="text-xs text-base-content/70 mt-1">Issued Mar 2026</div>
             </div>
-            <i class="fa-solid fa-chevron-down text-base-content/50 shrink-0 cert-chevron transition-transform duration-300"></i>
+            <i class="fa-solid fa-chevron-down text-base-content/70 shrink-0 cert-chevron transition-transform duration-300"></i>
           </div>
         </div>
 
-      </div>
-    </section>
-
-    <!-- 수상 -->
-    <section class="reveal card bg-base-100 border border-base-300/60 rounded-3xl shadow-sm mb-8">
-      <div class="card-body">
-        <h2 class="card-title text-2xl font-extrabold tracking-tight mb-4">
-          <i class="fa-solid fa-trophy text-primary"></i>
-          Awards
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Hack the Beat 1위 -->
-          <a href="https://twin-fang.github.io/Hack-the-Beat/" target="_blank" rel="noopener"
-             class="flex items-center gap-4 p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">
-            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-medal text-primary text-xl"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="font-bold text-base-content">1st Place — Hack the Beat</div>
-              <div class="text-sm text-base-content/60" th:text="#{dashboard.award.hackthebeat.desc}">2026 Google I/O Extended · GDG Campus Korea — 1st place</div>
-              <div class="text-xs text-base-content/50 mt-1">Aug 2026</div>
-            </div>
-            <!-- 카드 전체가 링크라 중첩 앵커 대신 onclick으로 새 탭을 연다 -->
-            <span onclick="event.preventDefault(); event.stopPropagation(); window.open('https://lnkd.in/p/gfJcFfSd', '_blank', 'noopener');"
-                  class="btn btn-outline btn-xs shrink-0"><i class="fa-brands fa-linkedin"></i> 회고</span>
-            <i class="fa-solid fa-arrow-up-right-from-square text-base-content/50 shrink-0"></i>
-          </a>
-        </div>
       </div>
     </section>
 
@@ -612,7 +510,7 @@
           </div>
           <div class="bg-base-200 rounded-lg p-4">
             <h3 class="font-semibold text-base-content mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-database text-green-500"></i>
+              <i class="fa-solid fa-database text-success"></i>
               Database
             </h3>
             <div class="flex flex-wrap gap-2">
@@ -677,7 +575,7 @@
           <i class="fa-solid fa-flask text-primary"></i>
           Personal Projects
         </h2>
-        <p class="text-base-content/60 text-sm mb-6">Personal experiments and side projects</p>
+        <p class="text-base-content/70 text-sm mb-6">Personal experiments and side projects</p>
         <div class="dashboard-card-grid-4">
           <a href="https://lab.suhsaechan.kr" target="_blank" class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
             <div class="card-body p-5">
@@ -693,7 +591,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.suhUtility.desc}">Dev utility collection (This site!)</p>
+              <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.project.suhUtility.desc}">Dev utility collection (This site!)</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Spring Boot</span>
                 <span class="badge badge-ghost badge-xs">Thymeleaf</span>
@@ -714,7 +612,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.suhAiServer.desc}">Local AI server with Ollama, LLM &amp; embedding services</p>
+              <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.project.suhAiServer.desc}">Local AI server with Ollama, LLM &amp; embedding services</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Ollama</span>
                 <span class="badge badge-ghost badge-xs">Flask</span>
@@ -735,71 +633,11 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.devopsTemplate.desc}">Fully automated GitHub DevOps template with AI-powered workflows</p>
+              <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.project.devopsTemplate.desc}">Fully automated GitHub DevOps template with AI-powered workflows</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">GitHub Actions</span>
                 <span class="badge badge-ghost badge-xs">CI/CD</span>
                 <span class="badge badge-ghost badge-xs">Automation</span>
-              </div>
-            </div>
-          </a>
-          <a href="/issue-helper" class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-12 h-12 rounded-lg bg-base-200 flex items-center justify-center">
-                  <i class="fa-brands fa-github text-base-content/80 text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-base-content">GitHub Issue Helper</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-primary badge-xs">Module</span>
-                  </div>
-                </div>
-              </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.issueHelper.desc}">Auto-generate branch names and commit messages from issues</p>
-              <div class="flex flex-wrap gap-1">
-                <span class="badge badge-ghost badge-xs">GitHub API</span>
-                <span class="badge badge-ghost badge-xs">Automation</span>
-              </div>
-            </div>
-          </a>
-          <a href="/translator" class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <i class="fa-solid fa-language text-primary text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-base-content">Custom AI Translator</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-primary badge-xs">Module</span>
-                  </div>
-                </div>
-              </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.translator.desc}">OpenAI-powered custom translation service</p>
-              <div class="flex flex-wrap gap-1">
-                <span class="badge badge-ghost badge-xs">OpenAI API</span>
-                <span class="badge badge-ghost badge-xs">Translation</span>
-              </div>
-            </div>
-          </a>
-          <a href="https://github.com/Cassiiopeia/suh-grass-planter" target="_blank" class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
-            <div class="card-body p-5">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <i class="fa-solid fa-leaf text-primary text-xl"></i>
-                </div>
-                <div>
-                  <h3 class="font-bold text-base-content">Grass Planter</h3>
-                  <div class="flex gap-1 mt-1">
-                    <span class="badge badge-soft badge-primary badge-xs">Module</span>
-                  </div>
-                </div>
-              </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.grassPlanter.desc}">GitHub contribution graph auto-commit manager</p>
-              <div class="flex flex-wrap gap-1">
-                <span class="badge badge-ghost badge-xs">GitHub API</span>
-                <span class="badge badge-ghost badge-xs">Scheduler</span>
               </div>
             </div>
           </a>
@@ -816,7 +654,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.somansaBus.desc}">Automated bus reservation system</p>
+              <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.project.somansaBus.desc}">Automated bus reservation system</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Automation</span>
                 <span class="badge badge-ghost badge-xs">Reservation</span>
@@ -837,7 +675,7 @@
                   </div>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.project.sqlValidator.desc}">SQL file validation automation tool</p>
+              <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.project.sqlValidator.desc}">SQL file validation automation tool</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">SQL</span>
                 <span class="badge badge-ghost badge-xs">Validation</span>
@@ -855,7 +693,7 @@
           <i class="fa-solid fa-cube text-primary"></i>
           Nexus Modules
         </h2>
-        <p class="text-base-content/60 text-sm mb-4" th:text="#{dashboard.nexus.subtitle}">Open-source Java libraries published on my Nexus repository</p>
+        <p class="text-base-content/70 text-sm mb-4" th:text="#{dashboard.nexus.subtitle}">Open-source Java libraries published on my Nexus repository</p>
         <div class="bg-base-200 rounded-lg p-3 mb-6">
           <code class="text-xs text-base-content/70">maven { url "https://nexus.suhsaechan.kr/repository/maven-releases/" }</code>
         </div>
@@ -868,7 +706,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">SUH-AIder</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhAider.desc}">AI helper library for Spring Boot</p>
+              <p class="text-base-content/70 text-xs mb-3" th:text="#{dashboard.nexus.suhAider.desc}">AI helper library for Spring Boot</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">OpenAI</span>
                 <span class="badge badge-ghost badge-xs">Claude</span>
@@ -883,7 +721,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">suh-logger</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhLogger.desc}">Custom logging utility for Spring</p>
+              <p class="text-base-content/70 text-xs mb-3" th:text="#{dashboard.nexus.suhLogger.desc}">Custom logging utility for Spring</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Logging</span>
                 <span class="badge badge-ghost badge-xs">AOP</span>
@@ -898,7 +736,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">suh-api-log</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhApiLog.desc}">API request/response logging module</p>
+              <p class="text-base-content/70 text-xs mb-3" th:text="#{dashboard.nexus.suhApiLog.desc}">API request/response logging module</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">API</span>
                 <span class="badge badge-ghost badge-xs">Filter</span>
@@ -913,7 +751,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">suh-random-engine</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.suhRandomEngine.desc}">Weighted random &amp; gacha system</p>
+              <p class="text-base-content/70 text-xs mb-3" th:text="#{dashboard.nexus.suhRandomEngine.desc}">Weighted random &amp; gacha system</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Random</span>
                 <span class="badge badge-ghost badge-xs">Gacha</span>
@@ -928,7 +766,7 @@
                 </div>
                 <h3 class="font-bold text-base-content text-sm">sejong-univ-auth</h3>
               </div>
-              <p class="text-base-content/60 text-xs mb-3" th:text="#{dashboard.nexus.sejongAuth.desc}">Sejong University portal auth</p>
+              <p class="text-base-content/70 text-xs mb-3" th:text="#{dashboard.nexus.sejongAuth.desc}">Sejong University portal auth</p>
               <div class="flex flex-wrap gap-1">
                 <span class="badge badge-ghost badge-xs">Auth</span>
                 <span class="badge badge-ghost badge-xs">Scraping</span>
@@ -939,30 +777,23 @@
       </div>
     </section>
 
-    <!-- 웰컴 + 공지사항 통합 섹션 -->
-    <!-- 헤더 섹션 -->
-    <section id="header-section" class="mb-6">
-      <h1 class="text-3xl font-bold text-base-content mb-2" th:text="#{dashboard.header.title}">새찬 서버 실험실</h1>
-      <p class="text-sm text-base-content/70" th:text="#{dashboard.header.subtitle}">개발에 대한 나의 방향성을 탐구하는 실험실. 이번엔 뭘 만들어볼까?</p>
-    </section>
-
     <!-- 공지사항 섹션 -->
     <section id="notice-section" class="mb-8">
       <!-- 고정 헤더 (레이블 + 전체보기) -->
       <div class="flex items-center justify-between">
         <h2 class="text-lg font-semibold text-base-content/80" th:text="#{dashboard.notice.title}">공지사항</h2>
-        <a href="/notice" class="text-sm text-base-content/60 hover:text-primary transition-colors">
+        <a href="/notice" class="text-sm text-base-content/70 hover:text-primary transition-colors">
           <span th:text="#{dashboard.notice.viewAll}">전체보기</span> <i class="fa-solid fa-chevron-right text-xs"></i>
         </a>
       </div>
 
       <!-- 슬라이드 카드 컨테이너 -->
-      <div class="notice-cards-container relative overflow-hidden bg-base-100 rounded-lg shadow-md" style="height: 4rem;">
+      <div class="notice-cards-container relative overflow-hidden bg-base-100 rounded-lg shadow-md h-16">
         <div id="notice-cards" class="relative w-full h-full">
           <!-- 로딩 상태 -->
           <div class="absolute inset-0 flex items-center justify-center">
             <span class="loading loading-spinner loading-sm text-primary mr-2"></span>
-            <span class="text-base-content/50 text-sm" th:text="#{dashboard.notice.loading}">로딩중...</span>
+            <span class="text-base-content/70 text-sm" th:text="#{dashboard.notice.loading}">로딩중...</span>
           </div>
         </div>
       </div>
@@ -974,7 +805,7 @@
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-base-content" th:text="#{dashboard.summary.title}">서버 통계</h2>
         <button id="refresh-summary-btn" onclick="refreshDashboardSummary()" class="btn btn-sm btn-ghost btn-circle" th:title="#{dashboard.summary.refresh}" title="통계 새로고침">
-          <i class="fa-solid fa-arrows-rotate text-base-content/60"></i>
+          <i class="fa-solid fa-arrows-rotate text-base-content/70"></i>
         </button>
       </div>
       <!-- Summary 스켈레톤 -->
@@ -1042,9 +873,9 @@
                   <i class="fa-solid fa-users text-primary text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.totalVisitors}">총 방문자</p>
+                  <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.totalVisitors}">총 방문자</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-visitors">-</p>
-                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-visitors" class="text-primary font-semibold">+0</span></p>
+                  <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-visitors" class="text-primary font-semibold">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1058,9 +889,9 @@
                   <i class="fa-solid fa-comments text-primary text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.chatMessages}">챗봇 메시지</p>
+                  <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.chatMessages}">챗봇 메시지</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-chats">-</p>
-                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-chats" class="text-primary font-semibold">+0</span></p>
+                  <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-chats" class="text-primary font-semibold">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1074,9 +905,9 @@
                   <i class="fa-solid fa-bolt text-primary text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.tokenUsage}">토큰 사용량</p>
+                  <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.tokenUsage}">토큰 사용량</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-tokens">-</p>
-                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-tokens" class="text-primary font-semibold">+0</span></p>
+                  <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-tokens" class="text-primary font-semibold">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1090,9 +921,9 @@
                   <i class="fa-solid fa-globe text-primary text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.allPageViews}">모든 페이지 조회</p>
+                  <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.allPageViews}">모든 페이지 조회</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-page-views">-</p>
-                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-page-views" class="text-primary font-semibold">+0</span></p>
+                  <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-page-views" class="text-primary font-semibold">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1106,9 +937,9 @@
                   <i class="fa-solid fa-user text-primary text-xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.profileViews}">프로필 조회</p>
+                  <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.profileViews}">프로필 조회</p>
                   <p class="text-2xl font-bold text-base-content" id="stat-total-profile-views">-</p>
-                  <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-profile-views" class="text-primary font-semibold">+0</span></p>
+                  <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-profile-views" class="text-primary font-semibold">+0</span></p>
                 </div>
               </div>
             </div>
@@ -1119,7 +950,7 @@
         <!-- 기능별 상세 통계 -->
         <div class="mt-4">
           <h3 class="text-sm font-medium text-base-content/80 mb-3">
-            <i class="fa-solid fa-chart-bar mr-2 text-base-content/60"></i>
+            <i class="fa-solid fa-chart-bar mr-2 text-base-content/70"></i>
             <span th:text="#{dashboard.stat.featureDetailTitle}">기능별 상세 통계</span>
           </h3>
           <div class="dashboard-card-grid-5">
@@ -1131,9 +962,9 @@
                     <i class="fa-solid fa-graduation-cap text-primary"></i>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.sejongAuth}">세종대 인증</p>
+                    <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.sejongAuth}">세종대 인증</p>
                     <p class="text-lg font-bold text-base-content" id="stat-total-sejong-auth">-</p>
-                    <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-sejong-auth" class="text-primary font-semibold">+0</span></p>
+                    <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-sejong-auth" class="text-primary font-semibold">+0</span></p>
                   </div>
                 </div>
               </div>
@@ -1146,9 +977,9 @@
                     <i class="fa-solid fa-dice text-primary"></i>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs text-base-content/60 font-medium mb-1" th:text="#{dashboard.stat.suhRandom}">SUH 랜덤</p>
+                    <p class="text-xs text-base-content/70 font-medium mb-1" th:text="#{dashboard.stat.suhRandom}">SUH 랜덤</p>
                     <p class="text-lg font-bold text-base-content" id="stat-total-suh-random">-</p>
-                    <p class="text-xs text-base-content/50"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-suh-random" class="text-primary font-semibold">+0</span></p>
+                    <p class="text-xs text-base-content/70"><span th:text="#{dashboard.stat.today}">오늘</span>: <span id="stat-today-suh-random" class="text-primary font-semibold">+0</span></p>
                   </div>
                 </div>
               </div>
@@ -1165,7 +996,7 @@
           <i class="fa-solid fa-bullseye text-primary mr-2"></i>
           Task D-Day
         </h2>
-        <a href="/task-tracker" sec:authorize="isAuthenticated()" class="text-sm text-base-content/60 hover:text-primary transition-colors">
+        <a href="/task-tracker" sec:authorize="isAuthenticated()" class="text-sm text-base-content/70 hover:text-primary transition-colors">
           <span th:text="#{dashboard.notice.viewAll}">전체보기</span> <i class="fa-solid fa-chevron-right text-xs"></i>
         </a>
       </div>
@@ -1193,7 +1024,7 @@
         <!-- 등록된 Task가 없을 때 -->
         <div id="task-dday-empty" class="hidden text-center py-8 bg-base-100 rounded-lg border border-base-300">
           <i class="fa-solid fa-clipboard-list text-base-content/30 text-4xl mb-3"></i>
-          <p class="text-base-content/60 mb-3" th:text="#{dashboard.task.empty}">등록된 Task가 없습니다</p>
+          <p class="text-base-content/70 mb-3" th:text="#{dashboard.task.empty}">등록된 Task가 없습니다</p>
           <a href="/task-tracker" sec:authorize="isAuthenticated()" class="btn btn-primary btn-sm" th:text="#{dashboard.task.register}">Task 등록하기</a>
         </div>
       </div>
@@ -1206,7 +1037,7 @@
           <i class="fa-solid fa-wrench text-primary"></i>
           Dev Tools
         </h2>
-        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.devTools.subtitle}">개발 유틸리티 도구 모음</p>
+        <p class="text-base-content/70 text-sm mb-6" th:text="#{dashboard.devTools.subtitle}">개발 유틸리티 도구 모음</p>
 
         <!-- Internal Tools -->
         <div class="bg-base-200 rounded-xl p-5 mb-6">
@@ -1231,7 +1062,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.containerLogs.desc}">실시간 로그 스트리밍</p>
+                <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.tool.containerLogs.desc}">실시간 로그 스트리밍</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Docker</span>
                   <span class="badge badge-ghost badge-xs">SSE</span>
@@ -1253,12 +1084,12 @@
                     </div>
                   </div>
                 </div>
-                <div id="ai-server-status" class="flex items-center justify-between text-sm text-base-content/60 mb-3 p-2 bg-base-200 rounded-lg">
+                <div id="ai-server-status" class="flex items-center justify-between text-sm text-base-content/70 mb-3 p-2 bg-base-200 rounded-lg">
                   <span class="flex items-center gap-1">
                     <i class="fa-solid fa-signal"></i>
                     <span th:text="#{dashboard.tool.aiServer.connStatus}">연결 상태</span>
                   </span>
-                  <span class="status-main-btn loading flex items-center gap-1 text-base-content/50">
+                  <span class="status-main-btn is-checking flex items-center gap-1 text-base-content/70">
                     <span class="loading loading-spinner loading-xs"></span>
                     <span th:text="#{dashboard.tool.aiServer.checking}">확인중</span>
                   </span>
@@ -1288,7 +1119,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.busReservation.desc}">버스 자동 예약 시스템</p>
+                <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.tool.busReservation.desc}">버스 자동 예약 시스템</p>
                 <div class="flex flex-wrap gap-1 mb-3">
                   <span class="badge badge-ghost badge-xs">Automation</span>
                   <span class="badge badge-ghost badge-xs">Scheduler</span>
@@ -1315,7 +1146,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3" th:text="#{dashboard.tool.chatbotDocs.desc}">RAG 챗봇 지식 문서 관리</p>
+                <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.tool.chatbotDocs.desc}">RAG 챗봇 지식 문서 관리</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Qdrant</span>
                   <span class="badge badge-ghost badge-xs">Vector DB</span>
@@ -1346,7 +1177,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3"><span th:text="#{dashboard.tool.remoteChrome.desc}">외부 크롬 원격 접속</span> (JJ)</p>
+                <p class="text-base-content/70 text-sm mb-3"><span th:text="#{dashboard.tool.remoteChrome.desc}">외부 크롬 원격 접속</span> (JJ)</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Chrome</span>
                   <span class="badge badge-ghost badge-xs">Remote Desktop</span>
@@ -1368,7 +1199,7 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-base-content/60 text-sm mb-3"><span th:text="#{dashboard.tool.remoteChrome.desc}">외부 크롬 원격 접속</span> (House)</p>
+                <p class="text-base-content/70 text-sm mb-3"><span th:text="#{dashboard.tool.remoteChrome.desc}">외부 크롬 원격 접속</span> (House)</p>
                 <div class="flex flex-wrap gap-1">
                   <span class="badge badge-ghost badge-xs">Chrome</span>
                   <span class="badge badge-ghost badge-xs">Remote Desktop</span>
@@ -1387,7 +1218,7 @@
           <i class="fa-solid fa-hard-drive text-primary"></i>
           Server
         </h2>
-        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.server.subtitle}">시놀로지 NAS 서버 바로가기</p>
+        <p class="text-base-content/70 text-sm mb-6" th:text="#{dashboard.server.subtitle}">시놀로지 NAS 서버 바로가기</p>
 
         <div class="dashboard-card-grid-4">
           <!-- Server (DSM) -->
@@ -1403,7 +1234,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">NAS</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.server.dsm.desc}">시놀로지 DSM</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.server.dsm.desc}">시놀로지 DSM</p>
             </div>
           </a>
           <!-- Note Station -->
@@ -1419,7 +1250,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">Note</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.server.note.desc}">시놀로지 노트</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.server.note.desc}">시놀로지 노트</p>
             </div>
           </a>
         </div>
@@ -1433,7 +1264,7 @@
           <i class="fa-solid fa-cube text-primary"></i>
           Services
         </h2>
-        <p class="text-base-content/60 text-sm mb-6" th:text="#{dashboard.services.subtitle}">인프라 서비스 바로가기</p>
+        <p class="text-base-content/70 text-sm mb-6" th:text="#{dashboard.services.subtitle}">인프라 서비스 바로가기</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Cloudflare -->
@@ -1449,7 +1280,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">DNS/CDN</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.cloudflare.desc}">DNS · CDN · 보안 관리</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.cloudflare.desc}">DNS · CDN · 보안 관리</p>
             </div>
           </a>
           <!-- pgAdmin -->
@@ -1465,7 +1296,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">PostgreSQL</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.pgadmin.desc}">PostgreSQL 관리 콘솔</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.pgadmin.desc}">PostgreSQL 관리 콘솔</p>
             </div>
           </a>
           <!-- MongoDB Express -->
@@ -1473,15 +1304,15 @@
              class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
             <div class="card-body p-5">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                  <i class="fa-solid fa-leaf text-green-600 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center">
+                  <i class="fa-solid fa-leaf text-success text-xl"></i>
                 </div>
                 <div>
                   <h3 class="font-bold text-base-content">MongoDB</h3>
                   <span class="badge badge-soft badge-primary badge-xs">NoSQL</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.mongodb.desc}">MongoDB 관리 콘솔</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.mongodb.desc}">MongoDB 관리 콘솔</p>
             </div>
           </a>
           <!-- MinIO -->
@@ -1489,15 +1320,15 @@
              class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
             <div class="card-body p-5">
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center">
-                  <i class="fa-solid fa-hard-drive text-red-500 text-xl"></i>
+                <div class="w-12 h-12 rounded-lg bg-error/10 flex items-center justify-center">
+                  <i class="fa-solid fa-hard-drive text-error text-xl"></i>
                 </div>
                 <div>
                   <h3 class="font-bold text-base-content">MinIO</h3>
                   <span class="badge badge-soft badge-error badge-xs">Object Storage</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.minio.desc}">S3 호환 오브젝트 스토리지</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.minio.desc}">S3 호환 오브젝트 스토리지</p>
             </div>
           </a>
           <!-- Nexus -->
@@ -1513,7 +1344,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">Repository</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3">Maven/Docker Repository</p>
+              <p class="text-base-content/70 text-sm mt-3">Maven/Docker Repository</p>
             </div>
           </a>
           <!-- Qdrant -->
@@ -1529,7 +1360,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">VectorDB</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.qdrant.desc}">벡터 DB 대시보드</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.qdrant.desc}">벡터 DB 대시보드</p>
             </div>
           </a>
           <!-- RabbitMQ -->
@@ -1545,7 +1376,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">MQ</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.rabbitmq.desc}">메시지 큐 대시보드</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.rabbitmq.desc}">메시지 큐 대시보드</p>
             </div>
           </a>
           <!-- Traefik -->
@@ -1561,7 +1392,7 @@
                   <span class="badge badge-soft badge-primary badge-xs">Proxy</span>
                 </div>
               </div>
-              <p class="text-base-content/60 text-sm mt-3" th:text="#{dashboard.services.traefik.desc}">리버스 프록시 대시보드</p>
+              <p class="text-base-content/70 text-sm mt-3" th:text="#{dashboard.services.traefik.desc}">리버스 프록시 대시보드</p>
             </div>
           </a>
         </div>
@@ -1619,7 +1450,7 @@
       <div id="comments-loading" class="flex justify-center py-4">
         <span class="loading loading-spinner loading-md"></span>
       </div>
-      <div id="no-comments-message" class="hidden text-center text-base-content/60 py-4" th:text="#{dashboard.modal.noComments}">
+      <div id="no-comments-message" class="hidden text-center text-base-content/70 py-4" th:text="#{dashboard.modal.noComments}">
         아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!
       </div>
     </div>
@@ -1658,12 +1489,6 @@
 
     // Task D-Day 로드
     loadTaskDDay();
-
-    // 페이지 로딩 효과
-    setTimeout(function() {
-      document.getElementById('skeleton-container').classList.add('hidden');
-      document.getElementById('real-content').classList.remove('hidden');
-    }, 500);
 
   });
 
@@ -1826,7 +1651,7 @@
           initNoticeCards();
         } else {
           // 공지사항 없음
-          $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-base-content/50 text-sm">' + window.MSG['dashboard.js.noNotice'] + '</span></div>');
+          $('#notice-cards').html('<div class="absolute inset-0 flex items-center justify-center"><span class="text-base-content/70 text-sm">' + window.MSG['dashboard.js.noNotice'] + '</span></div>');
         }
       },
       function(xhr, status, error) {
@@ -2040,8 +1865,8 @@
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
               <span class="font-semibold text-base-content">${comment.author}</span>
-              ${comment.anonymizedIp ? `<span class="text-base-content/50 text-xs">(${comment.anonymizedIp})</span>` : ''}
-              <span class="text-base-content/50 text-xs">${date}</span>
+              ${comment.anonymizedIp ? `<span class="text-base-content/70 text-xs">(${comment.anonymizedIp})</span>` : ''}
+              <span class="text-base-content/70 text-xs">${date}</span>
             </div>
             <p class="text-base-content/70 text-sm whitespace-pre-line">${comment.content}</p>
           </div>
@@ -2103,6 +1928,15 @@
   }
 
   // Task D-Day 로드 함수
+  // 비로그인 방문자에게는 빈 Task D-Day 영역 자체를 숨겨 미완성처럼 보이지 않게 한다
+  function showTaskDDayEmpty() {
+    if (window.isAuthenticated) {
+      $('#task-dday-empty').removeClass('hidden');
+    } else {
+      $('#task-dday-section').addClass('hidden');
+    }
+  }
+
   function loadTaskDDay() {
     sendFormRequest(
       '/api/task/goal/list',
@@ -2126,11 +1960,11 @@
             $('#task-dday-empty').addClass('hidden');
           } else {
             $('#task-dday-cards').addClass('hidden');
-            $('#task-dday-empty').removeClass('hidden');
+            showTaskDDayEmpty();
           }
         } else {
           $('#task-dday-cards').addClass('hidden');
-          $('#task-dday-empty').removeClass('hidden');
+          showTaskDDayEmpty();
         }
       },
       function(xhr, status, error) {
@@ -2138,7 +1972,7 @@
         $('#task-dday-skeleton').addClass('hidden');
         $('#task-dday-content').removeClass('hidden');
         $('#task-dday-cards').addClass('hidden');
-        $('#task-dday-empty').removeClass('hidden');
+        showTaskDDayEmpty();
       }
     );
   }
@@ -2150,7 +1984,7 @@
 
     if (daysRemaining < 0) {
       ddayText = 'D+' + Math.abs(daysRemaining);
-      ddayClass = 'text-base-content/50';
+      ddayClass = 'text-base-content/70';
     } else if (daysRemaining === 0) {
       ddayText = 'D-Day';
       ddayClass = 'text-error font-bold';
@@ -2179,10 +2013,8 @@
     let progressHtml = '';
     if (totalAmount > 0) {
       progressHtml = `
-        <div class="w-full bg-base-300 rounded-full h-1.5 mt-2">
-          <div class="bg-primary h-1.5 rounded-full" style="width: ${Math.min(progressPercentage, 100)}%"></div>
-        </div>
-        <p class="text-xs text-base-content/50 mt-1">${currentAmount}/${totalAmount} ${unit} (${progressPercentage.toFixed(0)}%)</p>
+        <progress class="progress progress-primary w-full h-1.5 mt-2" value="${Math.min(progressPercentage, 100)}" max="100"></progress>
+        <p class="text-xs text-base-content/70 mt-1">${currentAmount}/${totalAmount} ${unit} (${progressPercentage.toFixed(0)}%)</p>
       `;
     }
 
@@ -2198,7 +2030,7 @@
                 <h3 class="font-bold text-base-content truncate">${task.title}</h3>
                 <span class="${ddayClass} text-lg ml-2">${ddayText}</span>
               </div>
-              <p class="text-xs text-base-content/60">${targetDate}</p>
+              <p class="text-xs text-base-content/70">${targetDate}</p>
               ${progressHtml}
             </div>
           </div>
@@ -2223,10 +2055,10 @@
         const statusBtn = statusContainer.find('.status-main-btn');
 
         if (response.isHealthy) {
-          statusBtn.removeClass('loading text-base-content/50').addClass('text-success');
+          statusBtn.removeClass('is-checking text-base-content/70').addClass('text-success');
           statusBtn.html('<i class="fa-solid fa-check-circle"></i> ' + window.MSG['dashboard.js.statusHealthy']);
         } else {
-          statusBtn.removeClass('loading text-base-content/50').addClass('text-error');
+          statusBtn.removeClass('is-checking text-base-content/70').addClass('text-error');
           statusBtn.html('<i class="fa-solid fa-times-circle"></i> ' + window.MSG['dashboard.js.statusUnhealthy']);
         }
       },
@@ -2235,7 +2067,7 @@
         const statusContainer = $('#ai-server-status');
         const statusBtn = statusContainer.find('.status-main-btn');
 
-        statusBtn.removeClass('loading text-base-content/50').addClass('text-warning');
+        statusBtn.removeClass('is-checking text-base-content/70').addClass('text-warning');
         statusBtn.html('<i class="fa-solid fa-exclamation-triangle"></i> ' + window.MSG['dashboard.js.statusConnError']);
       }
     });

@@ -1,6 +1,6 @@
 <!-- src/main/resources/templates/pages/sejongAuth.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head th:replace="~{fragments/header :: head(title='세종대 인증 모듈-SAECHAN-LAB')}"></head>
 <body class="min-h-screen">
 <div th:replace="~{fragments/header :: header}"></div>
@@ -22,12 +22,12 @@
       <p class="font-mono text-base-content text-sm sm:text-base mb-1">SUH Sejong University Auth Module</p>
       <div class="mt-4 flex justify-center gap-2">
         <a href="https://github.com/Cassiiopeia/SUH-sejong-univ-auth" target="_blank"
-           class="btn btn-sm bg-gray-800 hover:bg-gray-900 text-white border-base-300">
+           class="btn btn-sm btn-neutral">
           <i class="fa-brands fa-github"></i>
           GitHub
         </a>
         <a href="https://nexus.suhsaechan.kr/#browse/browse:maven-releases:kr%2Fsuhsaechan%2Fsejong-univ-auth" target="_blank"
-           class="btn btn-sm bg-primary hover:bg-primary text-white border-primary/30">
+           class="btn btn-sm btn-primary">
           <i class="fa-solid fa-box"></i>
           Nexus
         </a>
