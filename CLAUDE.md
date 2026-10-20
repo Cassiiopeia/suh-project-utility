@@ -703,7 +703,7 @@ source ~/.zshrc && ./gradlew clean build
 - **인증**: Spring Security 기반 폼 로그인
 - **CSP**: CSP 헤더 미적용. 인라인 `style=""`·대괄호 하드코딩 금지는 유지, 페이지 스크립트는 템플릿 내 `<script>` 사용 중
 - **파일 업로드**: 확장자 및 크기 제한 (200MB)
-- **SSH**: 세션은 `SshCommandExecutor.openSession()` 한 곳에서만 생성. `ssh.known-hosts-path` 설정 시 호스트키 검증 (미설정 시 경고 후 생략)
+- **SSH**: 세션은 `SshCommandExecutor.openSession()` 한 곳에서만 생성. 호스트키 검증 known_hosts: `ssh.known-hosts-path` > `Suh-Common/src/main/resources/ssh/known_hosts`(NAS 공개키, 호스트키 변경 시 `ssh-keyscan -p 2022 -t rsa,ecdsa suh-project.synology.me`로 갱신)
 - **공개 API 입력 상한**: 챗봇·번역은 `ServerOptionKey.CHATBOT_MAX_MESSAGE_LENGTH`·`TRANSLATE_MAX_TEXT_LENGTH`
 
 ### @Value 어노테이션 사용 예시

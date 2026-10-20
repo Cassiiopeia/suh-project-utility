@@ -5,6 +5,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -23,13 +24,15 @@ public class SshCommandExecutor {
 
   // SSH 연결 타임아웃 (10초)
   private static final int SSH_CONNECT_TIMEOUT_MILLISECONDS = 10_000;
+  // 번들 known_hosts 위치 (classpath)
+  private static final String BUNDLED_KNOWN_HOSTS_RESOURCE = "ssh/known_hosts";
 
   public SshCommandExecutor(SshConnectionProperties sshProps) {
     this.sshProps = sshProps;
   }
 
   /**
-   * SSH 세션 연결 (단일 지점): known_hosts 설정 시 호스트키 검증, 미설정 시 검증 생략
+   * SSH 세션 연결 (단일 지점): 호스트키 검증 known_hosts 우선순위 ssh.known-hosts-path 파일 > classpath ssh/known_hosts > 검증 생략
    */
   public Session openSession() throws JSchException {
     JSch jsch = new JSch();
@@ -38,8 +41,10 @@ public class SshCommandExecutor {
     if (knownHostsPath.isPresent()) {
       jsch.setKnownHosts(knownHostsPath.get());
       config.put("StrictHostKeyChecking", "yes");
+    } else if (loadBundledKnownHosts(jsch)) {
+      config.put("StrictHostKeyChecking", "yes");
     } else {
-      log.warn("ssh.known-hosts-path 미설정 - 호스트키 검증 생략");
+      log.warn("known_hosts 없음 - 호스트키 검증 생략");
       config.put("StrictHostKeyChecking", "no");
     }
 
@@ -48,6 +53,20 @@ public class SshCommandExecutor {
     session.setConfig(config);
     session.connect(SSH_CONNECT_TIMEOUT_MILLISECONDS);
     return session;
+  }
+
+  // classpath ssh/known_hosts (NAS 호스트 공개키, Suh-Common/src/main/resources) 로드 성공 여부
+  private boolean loadBundledKnownHosts(JSch jsch) throws JSchException {
+    try (InputStream knownHostsStream = getClass().getClassLoader().getResourceAsStream(BUNDLED_KNOWN_HOSTS_RESOURCE)) {
+      if (knownHostsStream == null) {
+        return false;
+      }
+      jsch.setKnownHosts(knownHostsStream);
+      return true;
+    } catch (IOException e) {
+      log.warn("번들 known_hosts 읽기 실패: {}", e.getMessage());
+      return false;
+    }
   }
 
   /**
