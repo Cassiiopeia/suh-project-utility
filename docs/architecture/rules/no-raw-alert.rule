@@ -1,0 +1,5 @@
+# 알림 단일 원본: common.js 의 showToast / 전역 ajaxError toast
+description=alert() 직접 사용 금지 (showToast 사용)
+paths=Suh-Web/src/main/resources/templates/,Suh-Web/src/main/resources/static/js/
+extensions=.html,.js
+pattern=(^|[^.\w])alert\(

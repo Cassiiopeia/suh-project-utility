@@ -18,8 +18,6 @@ public interface SomansaBusReservationHistoryRepository extends JpaRepository<So
 
   List<SomansaBusReservationHistory> findBySomansaBusMemberSomansaBusMemberId(UUID memberId);
 
-  List<SomansaBusReservationHistory> findBySomansaBusMemberSomansaBusMemberIdOrderByExecutedAtDesc(UUID memberId);
-
   @Query("SELECT h FROM SomansaBusReservationHistory h " +
       "JOIN FETCH h.somansaBusMember " +
       "JOIN FETCH h.somansaBusRoute " +
@@ -34,16 +32,6 @@ public interface SomansaBusReservationHistoryRepository extends JpaRepository<So
       "ORDER BY h.executedAt DESC " +
       "LIMIT 10")
   List<SomansaBusReservationHistory> findTop10ByMemberIdWithDetails(@Param("memberId") UUID memberId);
-
-  List<SomansaBusReservationHistory> findByReservationDate(LocalDate reservationDate);
-
-  List<SomansaBusReservationHistory> findByIsSuccessTrue();
-
-  List<SomansaBusReservationHistory> findByIsSuccessFalse();
-
-  List<SomansaBusReservationHistory> findTop10BySomansaBusMemberSomansaBusMemberIdOrderByExecutedAtDesc(UUID memberId);
-
-  List<SomansaBusReservationHistory> findByReservationDateBetween(LocalDate startDate, LocalDate endDate);
 
   @Query("SELECT COUNT(h) FROM SomansaBusReservationHistory h WHERE h.reservationDate BETWEEN :startDate AND :endDate")
   Integer countByReservationDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);

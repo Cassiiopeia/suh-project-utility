@@ -1,5 +1,7 @@
 package me.suhsaechan.common.util;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -52,6 +54,29 @@ public class AESUtil {
     }
   }
 
+  /**
+   * 고정 IV(aes.iv) 결정적 암호화: 같은 입력 > 항상 같은 결과 (clientHash 식별용, 구 CryptoJS 로그인 폼과 동일 형식)
+   * aes.iv 미설정 시 랜덤 IV 암호화로 대체
+   */
+  public String encryptWithFixedIv(String data) {
+    if (legacyIv == null || legacyIv.isEmpty()) {
+      log.warn("aes.iv 미설정 - 랜덤 IV 암호화로 대체 (clientHash 가 로그인마다 달라짐)");
+      return encrypt(data);
+    }
+    try {
+      IvParameterSpec ivSpec = new IvParameterSpec(legacyIv.getBytes(StandardCharsets.UTF_8));
+      SecretKeySpec keySpec = new SecretKeySpec(
+          secretKey.getBytes(StandardCharsets.UTF_8), "AES");
+
+      Cipher cipher = Cipher.getInstance(ALGORITHM);
+      cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+      return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+    } catch (Exception e) {
+      log.error("고정 IV 암호화 실패 - 상세 오류: {}", e.toString(), e);
+      return "encryption_failed";
+    }
+  }
+
   public String decrypt(String encrypted) {
     try {
       byte[] allBytes = Base64.getDecoder().decode(encrypted);
@@ -97,7 +122,8 @@ public class AESUtil {
    */
   private String decryptLegacy(String encrypted) {
     if (legacyIv == null || legacyIv.isEmpty()) {
-      throw new IllegalStateException("레거시 IV가 설정되지 않았습니다. aes.iv 속성을 확인하세요.");
+      log.error("레거시 IV 미설정 - aes.iv 속성 확인 필요");
+      throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
     
     try {
@@ -112,7 +138,7 @@ public class AESUtil {
       log.info("레거시 형식으로 복호화 성공");
       return new String(decrypted, StandardCharsets.UTF_8);
     } catch (Exception e) {
-      throw new RuntimeException("레거시 복호화 실패", e);
+      throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR, e);
     }
   }
 }

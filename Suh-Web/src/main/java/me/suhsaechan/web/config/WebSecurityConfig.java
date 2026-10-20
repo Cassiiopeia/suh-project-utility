@@ -25,7 +25,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WebSecurityConfig {
 
   private final PublicEndpointConfig publicEndpointConfig;
-  private final ServerInfo serverInfo;
   private final AESUtil aesUtil;
   private final UserAuthority userAuthority;
 
@@ -46,7 +45,6 @@ public class WebSecurityConfig {
         .csrf(csrf -> csrf
             // API 경로에 대해 CSRF 토큰 검사 비활성화
             .ignoringRequestMatchers("/api/issue-helper/create/commit-branch/github-workflow")
-            .ignoringRequestMatchers("/api/grass/**")  // GrassPlanter API CSRF 비활성화
         );
 
     http
@@ -56,6 +54,10 @@ public class WebSecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/docker/get/container-info").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/module/get/versions").hasAnyRole("USER", "ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/chatbot/admin/**").hasRole("ADMIN")
+            // 공지 관리 (화면 /notice-management 와 같은 슈퍼관리자 전용)
+            .requestMatchers(HttpMethod.POST,
+                "/api/notice/create", "/api/notice/update", "/api/notice/delete",
+                "/api/notice/toggle-active", "/api/notice/get/all", "/api/notice/search").hasRole("ADMIN")
             .anyRequest().authenticated()
         );
 

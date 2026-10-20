@@ -13,9 +13,11 @@ import org.springframework.stereotype.Component;
 @Setter
 @ToString
 public class ServerInfo {
+  @ToString.Exclude
   @Value("${aes.secret-key}")
   private String secretKey;
 
+  @ToString.Exclude
   @Value("${aes.iv}")
   private String iv;
 

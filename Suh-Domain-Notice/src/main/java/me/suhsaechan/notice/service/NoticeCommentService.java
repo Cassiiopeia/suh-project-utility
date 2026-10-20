@@ -1,6 +1,7 @@
 package me.suhsaechan.notice.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -106,16 +107,26 @@ public class NoticeCommentService {
     }
 
     /**
-     * 공지사항 댓글 삭제
+     * 공지사항 댓글 삭제 (작성자 또는 슈퍼관리자만)
      *
      * @param commentId 댓글 ID
+     * @param requesterClientHash 요청자 세션 clientHash
+     * @param isSuperAdmin 슈퍼관리자 여부
      */
     @Transactional
-    public NoticeResponse deleteComment(UUID commentId) {
+    public NoticeResponse deleteComment(UUID commentId, String requesterClientHash, boolean isSuperAdmin) {
         log.info("공지사항 댓글 삭제: {}", commentId);
         
         NoticeComment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT));
+
+        // 삭제 권한: 슈퍼관리자 또는 작성자(세션 clientHash 일치)
+        boolean isAuthor = Optional.ofNullable(requesterClientHash)
+                .map(hash -> hash.equals(comment.getClientHash()))
+                .orElse(false);
+        if (!isSuperAdmin && !isAuthor) {
+            throw new CustomException(ErrorCode.COMMENT_NO_PERMISSION);
+        }
         
         commentRepository.delete(comment);
         

@@ -33,7 +33,6 @@
             <span class="label-text-alt text-base-content/60 whitespace-normal break-keep" th:text="#{issueHelper.input.hint}">GitHub 이슈 URL을 입력하면 브랜치명과 커밋 메시지를 자동 생성합니다.</span>
           </label>
         </div>
-        <input type="hidden" name="clientHash" id="clientHash">
         <button class="btn btn-primary mt-4" type="submit">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
           <span th:text="#{issueHelper.button.generate}">생성하기</span>
@@ -101,8 +100,6 @@
       submitBtn.prop('disabled', true);
 
       try {
-        $("#clientHash").val(clientHash);
-
         // 폼 데이터 전송
         var formData = new FormData(this);
 

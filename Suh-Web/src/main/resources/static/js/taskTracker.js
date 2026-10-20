@@ -649,21 +649,6 @@ function deleteProgress(progressId) {
 }
 
 /**
- * HTML 이스케이프 (XSS 방지)
- */
-function escapeHtml(text) {
-  if (typeof text !== 'string') return text;
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-/**
  * Range Slider 초기화
  */
 function initRangeSlider(maxValue, startValue, endValue) {

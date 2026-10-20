@@ -12,15 +12,20 @@ import io.qdrant.client.grpc.Points.ScoredPoint;
 import io.qdrant.client.grpc.Points.SearchPoints;
 import io.qdrant.client.grpc.Points.WithPayloadSelector;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.dto.VectorSearchResult;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,6 +35,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class QdrantVectorStoreService implements VectorStoreService {
+
+    // Qdrant 비동기 호출 대기 최대 시간 (초)
+    private static final long QDRANT_TIMEOUT_SECONDS = 30;
 
     private final QdrantClient qdrantClient;
 
@@ -45,16 +53,14 @@ public class QdrantVectorStoreService implements VectorStoreService {
                         .setSize(vectorSize)
                         .setDistance(Distance.Cosine)
                         .build()
-                ).get();
+                ).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
                 log.info("Qdrant 컬렉션 생성 완료 - {}", collectionName);
             } else {
                 log.debug("Qdrant 컬렉션이 이미 존재함 - {}", collectionName);
             }
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 컬렉션 생성 실패 - {}", collectionName, e);
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Qdrant 컬렉션 생성 실패", e);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 컬렉션 생성 실패 - {}", collectionName);
         }
     }
 
@@ -62,13 +68,11 @@ public class QdrantVectorStoreService implements VectorStoreService {
     public boolean collectionExists(String collectionName) {
         try {
             // listCollections로 컬렉션 존재 여부 확인
-            var collections = qdrantClient.listCollectionsAsync().get();
+            var collections = qdrantClient.listCollectionsAsync().get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             return collections.stream()
                 .anyMatch(name -> name.equals(collectionName));
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 컬렉션 존재 확인 실패 - {}", collectionName, e);
-            Thread.currentThread().interrupt();
-            return false;
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 컬렉션 존재 확인 실패 - {}", collectionName);
         }
     }
 
@@ -76,11 +80,9 @@ public class QdrantVectorStoreService implements VectorStoreService {
     public void deleteCollection(String collectionName) {
         try {
             log.info("Qdrant 컬렉션 삭제 - {}", collectionName);
-            qdrantClient.deleteCollectionAsync(collectionName).get();
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 컬렉션 삭제 실패 - {}", collectionName, e);
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Qdrant 컬렉션 삭제 실패", e);
+            qdrantClient.deleteCollectionAsync(collectionName).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 컬렉션 삭제 실패 - {}", collectionName);
         }
     }
 
@@ -104,13 +106,11 @@ public class QdrantVectorStoreService implements VectorStoreService {
                 .putAllPayload(payload)
                 .build();
 
-            qdrantClient.upsertAsync(collectionName, List.of(point)).get();
+            qdrantClient.upsertAsync(collectionName, List.of(point)).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             log.debug("Qdrant 포인트 저장 완료 - pointId: {}", pointId);
 
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 포인트 저장 실패 - pointId: {}", pointId, e);
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Qdrant 포인트 저장 실패", e);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 포인트 저장 실패 - pointId: {}", pointId);
         }
     }
 
@@ -120,19 +120,19 @@ public class QdrantVectorStoreService implements VectorStoreService {
 
         // 입력 검증
         if (pointIds == null || vectors == null || contents == null) {
-            throw new IllegalArgumentException("upsertPoints 필수 파라미터는 null일 수 없습니다");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
 
         if (pointIds.size() != vectors.size() || pointIds.size() != contents.size()) {
-            throw new IllegalArgumentException(
-                String.format("upsertPoints 입력 크기 불일치: pointIds=%d, vectors=%d, contents=%d",
-                    pointIds.size(), vectors.size(), contents.size()));
+            log.error("upsertPoints 입력 크기 불일치: pointIds={}, vectors={}, contents={}",
+                    pointIds.size(), vectors.size(), contents.size());
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
 
         if (metadataList != null && metadataList.size() != pointIds.size()) {
-            throw new IllegalArgumentException(
-                String.format("upsertPoints 입력 크기 불일치: metadataList=%d (기대값: %d)",
-                    metadataList.size(), pointIds.size()));
+            log.error("upsertPoints 입력 크기 불일치: metadataList={} (기대값: {})",
+                    metadataList.size(), pointIds.size());
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
 
         try {
@@ -157,13 +157,11 @@ public class QdrantVectorStoreService implements VectorStoreService {
                 points.add(point);
             }
 
-            qdrantClient.upsertAsync(collectionName, points).get();
+            qdrantClient.upsertAsync(collectionName, points).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             log.info("Qdrant 포인트 일괄 저장 완료 - 개수: {}", pointIds.size());
 
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 포인트 일괄 저장 실패", e);
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Qdrant 포인트 일괄 저장 실패", e);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 포인트 일괄 저장 실패");
         }
     }
 
@@ -183,7 +181,7 @@ public class QdrantVectorStoreService implements VectorStoreService {
                 .setWithPayload(WithPayloadSelector.newBuilder().setEnable(true).build())
                 .build();
 
-            List<ScoredPoint> scoredPoints = qdrantClient.searchAsync(searchRequest).get();
+            List<ScoredPoint> scoredPoints = qdrantClient.searchAsync(searchRequest).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
             logSearchDiagnostics(collectionName, scoredPoints, minScore, topK);
 
@@ -192,10 +190,8 @@ public class QdrantVectorStoreService implements VectorStoreService {
                 .map(this::convertToSearchResult)
                 .collect(Collectors.toList());
 
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 검색 실패", e);
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Qdrant 검색 실패", e);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 검색 실패");
         }
     }
 
@@ -211,25 +207,21 @@ public class QdrantVectorStoreService implements VectorStoreService {
                 .map(uuid -> id(uuid))
                 .toList();
             
-            qdrantClient.deleteAsync(collectionName, qdrantPointIds).get();
+            qdrantClient.deleteAsync(collectionName, qdrantPointIds).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             log.info("Qdrant 포인트 삭제 완료 - 개수: {}", pointIds.size());
 
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 포인트 삭제 실패", e);
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Qdrant 포인트 삭제 실패", e);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 포인트 삭제 실패");
         }
     }
 
     @Override
     public long countPoints(String collectionName) {
         try {
-            var collectionInfo = qdrantClient.getCollectionInfoAsync(collectionName).get();
+            var collectionInfo = qdrantClient.getCollectionInfoAsync(collectionName).get(QDRANT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             return collectionInfo.getPointsCount();
-        } catch (InterruptedException | ExecutionException e) {
-            log.error("Qdrant 포인트 수 조회 실패 - {}", collectionName, e);
-            Thread.currentThread().interrupt();
-            return 0;
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw toVectorStoreException(e, "Qdrant 포인트 수 조회 실패 - {}", collectionName);
         }
     }
 
@@ -295,5 +287,18 @@ public class QdrantVectorStoreService implements VectorStoreService {
             .content(content)
             .metadata(metadata)
             .build();
+    }
+
+    /**
+     * Qdrant 호출 실패 > CHATBOT_VECTOR_STORE_ERROR (인터럽트일 때만 플래그 복구)
+     */
+    private CustomException toVectorStoreException(Exception e, String message, Object... messageArgs) {
+        if (e instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
+        }
+        Object[] logArgs = Arrays.copyOf(messageArgs, messageArgs.length + 1);
+        logArgs[messageArgs.length] = e;
+        log.error(message, logArgs);
+        return new CustomException(ErrorCode.CHATBOT_VECTOR_STORE_ERROR);
     }
 }

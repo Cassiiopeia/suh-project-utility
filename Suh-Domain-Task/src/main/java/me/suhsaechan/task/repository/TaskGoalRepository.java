@@ -9,10 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TaskGoalRepository extends JpaRepository<TaskGoal, UUID> {
 
-  List<TaskGoal> findByIsActiveTrueOrderByTargetDateAsc();
-
-  List<TaskGoal> findByIsActiveTrueAndIsCompletedFalseOrderByTargetDateAsc();
-
   List<TaskGoal> findByIsActiveTrueOrderByPriorityAscTargetDateAsc();
 
   List<TaskGoal> findByTitleContainingIgnoreCaseAndIsActiveTrue(String title);

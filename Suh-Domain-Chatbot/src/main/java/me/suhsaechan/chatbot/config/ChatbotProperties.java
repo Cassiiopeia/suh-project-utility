@@ -15,33 +15,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "chatbot")
 public class ChatbotProperties {
 
-    private Models models = new Models();
     private Agent agent = new Agent();
-
-    /**
-     * AI 모델 설정
-     */
-    @Getter
-    @Setter
-    public static class Models {
-        /**
-         * 의도 분류 모델 (경량 모델)
-         * 예: gemma3:1b
-         */
-        private String intentClassifier = "gemma3:1b";
-
-        /**
-         * 최종 응답 생성 모델 (고품질 모델)
-         * 예: rnj-1:8b
-         */
-        private String responseGenerator = "rnj-1:8b";
-
-        /**
-         * 임베딩 모델
-         * 예: embeddinggemma:latest
-         */
-        private String embedding = "embeddinggemma:latest";
-    }
 
     /**
      * Agent 동작 설정

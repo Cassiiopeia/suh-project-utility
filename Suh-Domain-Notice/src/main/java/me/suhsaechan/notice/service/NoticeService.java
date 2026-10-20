@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.notice.entity.SuhProjectUtilityNotice;
+import me.suhsaechan.notice.repository.NoticeCommentRepository;
 import me.suhsaechan.notice.repository.SuhProjectUtilityNoticeRepository;
 import me.suhsaechan.common.exception.CustomException;
 import me.suhsaechan.common.exception.ErrorCode;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
   
   private final SuhProjectUtilityNoticeRepository noticeRepository;
+  private final NoticeCommentRepository commentRepository;
 
   /**
    * 활성화된 공지사항 목록 조회
@@ -34,19 +36,6 @@ public class NoticeService {
         .build();
   }
   
-  /**
-   * 중요 공지사항 목록 조회
-   */
-  @Transactional(readOnly = true)
-  public NoticeResponse getImportantNotices() {
-    log.info("중요 공지사항 목록 조회");
-    List<SuhProjectUtilityNotice> notices = 
-        noticeRepository.findByIsImportantTrueAndIsActiveTrueOrderByCreatedDateDesc();
-    return NoticeResponse.builder()
-        .notices(notices)
-        .totalCount((long) notices.size())
-        .build();
-  }
   
   /**
    * 모든 공지사항 목록 조회 (관리자용)
@@ -175,6 +164,8 @@ public class NoticeService {
     SuhProjectUtilityNotice notice = noticeRepository.findById(noticeId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
     
+    // 자식 댓글 먼저 삭제 (notice FK not null)
+    commentRepository.deleteByNotice(notice);
     noticeRepository.delete(notice);
     return NoticeResponse.builder()
         .suhProjectUtilityNotice(notice)

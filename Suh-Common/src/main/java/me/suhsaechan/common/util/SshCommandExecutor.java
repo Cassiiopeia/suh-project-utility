@@ -2,11 +2,15 @@ package me.suhsaechan.common.util;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.properties.SshConnectionProperties;
 import org.springframework.stereotype.Component;
@@ -17,8 +21,33 @@ public class SshCommandExecutor {
 
   private final SshConnectionProperties sshProps;
 
+  // SSH 연결 타임아웃 (10초)
+  private static final int SSH_CONNECT_TIMEOUT_MILLISECONDS = 10_000;
+
   public SshCommandExecutor(SshConnectionProperties sshProps) {
     this.sshProps = sshProps;
+  }
+
+  /**
+   * SSH 세션 연결 (단일 지점): known_hosts 설정 시 호스트키 검증, 미설정 시 검증 생략
+   */
+  public Session openSession() throws JSchException {
+    JSch jsch = new JSch();
+    Properties config = new Properties();
+    Optional<String> knownHostsPath = Optional.ofNullable(sshProps.getKnownHostsPath()).filter(path -> !path.isBlank());
+    if (knownHostsPath.isPresent()) {
+      jsch.setKnownHosts(knownHostsPath.get());
+      config.put("StrictHostKeyChecking", "yes");
+    } else {
+      log.warn("ssh.known-hosts-path 미설정 - 호스트키 검증 생략");
+      config.put("StrictHostKeyChecking", "no");
+    }
+
+    Session session = jsch.getSession(sshProps.getUsername(), sshProps.getHost(), sshProps.getPort());
+    session.setPassword(sshProps.getPassword());
+    session.setConfig(config);
+    session.connect(SSH_CONNECT_TIMEOUT_MILLISECONDS);
+    return session;
   }
 
   /**
@@ -30,18 +59,8 @@ public class SshCommandExecutor {
     ChannelExec channel = null;
 
     try {
-      // 1) 세션 생성
-      JSch jsch = new JSch();
-      session = jsch.getSession(sshProps.getUsername(), sshProps.getHost(), sshProps.getPort());
-      session.setPassword(sshProps.getPassword());
-
-      // 2) 호스트 key 체크 설정
-      java.util.Properties config = new java.util.Properties();
-      config.put("StrictHostKeyChecking", "no");
-      session.setConfig(config);
-
-      // 3) SSH 연결
-      session.connect(10_000); // 10초 타임아웃
+      // 1) SSH 세션 연결
+      session = openSession();
 
       // 4) 채널 열기
       channel = (ChannelExec) session.openChannel("exec");
@@ -99,7 +118,7 @@ public class SshCommandExecutor {
    *     - docker 등 PATH 문제 해결을 위해 env 설정
    *
    * 예시:
-   *   echo "<PASSWORD>" | sudo -S bash -c 'export PATH=$PATH:/usr/local/bin && <command>'
+   *   sudo -S -p '' bash -c "export PATH=$PATH:/usr/local/bin && <command>"  (비번은 채널 stdin 으로 전달)
    */
   public String executeCommandWithSudoStdin(String command) {
     Session session = null;
@@ -108,33 +127,28 @@ public class SshCommandExecutor {
     // SSH 접속 비번 == sudo 비번이라고 가정
     String sudoPassword = sshProps.getPassword();
 
-    // (중요) docker 등 명령어를 찾기 위해 bash -c 에서 PATH 설정
-    //   export PATH=$PATH:/usr/local/bin && <원래 command>
-    //   예) "echo \"PW\" | sudo -S bash -c 'export PATH=$PATH:/usr/local/bin && /volume1/.../docker_info.sh ...'"
-    // bash -c 부분을 \"...\" 로 감싸서 내부에서 단일 따옴표(')가 포함된 명령도 안전하게 실행되도록 수정
+    // docker 등 PATH 설정 후 실행. 비번은 명령 문자열에 넣지 않음 (원격 ps·로그 노출 차단)
     //  ex) docker ps -a --format \"{{.Names}}|{{.Status}}\"
     String wrappedCommand = String.format(
-        "echo \"%s\" | sudo -S bash -c \"export PATH=$PATH:/usr/local/bin && %s\"",
-        sudoPassword, command
+        "sudo -S -p '' bash -c \"export PATH=$PATH:/usr/local/bin && %s\"",
+        command
     );
 
     try {
-      JSch jsch = new JSch();
-      session = jsch.getSession(sshProps.getUsername(), sshProps.getHost(), sshProps.getPort());
-      session.setPassword(sshProps.getPassword());
-
-      java.util.Properties config = new java.util.Properties();
-      config.put("StrictHostKeyChecking", "no");
-      session.setConfig(config);
-
-      session.connect(10_000);
+      session = openSession();
 
       channel = (ChannelExec) session.openChannel("exec");
       channel.setCommand(wrappedCommand);
       channel.setErrStream(System.err);
 
       InputStream in = channel.getInputStream();
+      OutputStream sudoPasswordInput = channel.getOutputStream();
       channel.connect();
+
+      // sudo 비번 stdin 전달 후 EOF
+      sudoPasswordInput.write((sudoPassword + "\n").getBytes(StandardCharsets.UTF_8));
+      sudoPasswordInput.flush();
+      sudoPasswordInput.close();
 
       StringBuilder outputBuffer = new StringBuilder();
       try (BufferedReader reader = new BufferedReader(

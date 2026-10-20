@@ -1,5 +1,7 @@
 package me.suhsaechan.web.config;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -40,40 +42,44 @@ public class RedisConfig {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
     template.setKeySerializer(new StringRedisSerializer());
-    template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+    template.setValueSerializer(createRedisValueSerializer());
     template.setHashKeySerializer(new StringRedisSerializer());
-    template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+    template.setHashValueSerializer(createRedisValueSerializer());
 
     return template;
   }
 
   @Bean
   public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
-    RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofMinutes(CACHE_EXPIRED_TIME))
-        .disableCachingNullValues()
-        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
-    // 대시보드 Summary 캐시: 5분 TTL
-    RedisCacheConfiguration dashboardConfig = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofMinutes(5))
-        .disableCachingNullValues()
-        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
-    // ServerOption 캐시: 1시간 TTL (설정 변경 빈도 낮음)
-    RedisCacheConfiguration serverOptionConfig = RedisCacheConfiguration.defaultCacheConfig()
-        .entryTtl(Duration.ofHours(1))
-        .disableCachingNullValues()
-        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
     return RedisCacheManager.builder(factory)
-        .cacheDefaults(defaultConfig)
-        .withCacheConfiguration("dashboardSummary", dashboardConfig)
-        .withCacheConfiguration("serverOption", serverOptionConfig)
+        .cacheDefaults(createCacheConfiguration(Duration.ofMinutes(CACHE_EXPIRED_TIME)))
+        // 대시보드 Summary 캐시: 5분 TTL
+        .withCacheConfiguration("dashboardSummary", createCacheConfiguration(Duration.ofMinutes(5)))
+        // ServerOption 캐시: 1시간 TTL (설정 변경 빈도 낮음)
+        .withCacheConfiguration("serverOption", createCacheConfiguration(Duration.ofHours(1)))
         .build();
+  }
+
+  /**
+   * 캐시 설정 (TTL만 다름): 문자열 키 + JSON 값, null 미캐시
+   */
+  private RedisCacheConfiguration createCacheConfiguration(Duration timeToLive) {
+    return RedisCacheConfiguration.defaultCacheConfig()
+        .entryTtl(timeToLive)
+        .disableCachingNullValues()
+        .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+        .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(createRedisValueSerializer()));
+  }
+
+  /**
+   * Redis 값 JSON 직렬화기: 기본 타입 정보 형식 유지(기존 캐시 호환) + LocalDateTime 등 java.time 지원
+   */
+  private GenericJackson2JsonRedisSerializer createRedisValueSerializer() {
+    GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+    serializer.configure(objectMapper -> objectMapper
+        .registerModule(new JavaTimeModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
+    return serializer;
   }
 
   @Bean

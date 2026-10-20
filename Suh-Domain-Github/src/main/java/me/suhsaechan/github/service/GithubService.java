@@ -117,14 +117,14 @@ public class GithubService {
                 .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36")
                 .build();
             
-            Response response = okHttpClient.newCall(request).execute();
-            
-            if (!response.isSuccessful()) {
-              log.error("GitHub 페이지 로드 실패: {} - 응답 코드: {}", url, response.code());
-              throw new CustomException(ErrorCode.GITHUB_API_ERROR);
+            String html;
+            try (Response response = okHttpClient.newCall(request).execute()) {
+              if (!response.isSuccessful()) {
+                log.error("GitHub 페이지 로드 실패: {} - 응답 코드: {}", url, response.code());
+                throw new CustomException(ErrorCode.GITHUB_API_ERROR);
+              }
+              html = response.body().string();
             }
-            
-            String html = response.body().string();
             Document doc = Jsoup.parse(html);
             
             // 스타, 포크, 워처 수 파싱
@@ -135,9 +135,9 @@ public class GithubService {
             // 스타 수 파싱
             Element starElement = doc.select("a[href*='/stargazers'] strong").first();
             if (starElement != null) {
-              String starText = starElement.text().replace(",", "").replace("k", "000");
+              String starText = starElement.text();
               try {
-                starCount = Long.parseLong(starText);
+                starCount = parseGithubCount(starText);
               } catch (NumberFormatException e) {
                 log.warn("스타 수 파싱 실패: {}", starText);
               }
@@ -146,9 +146,9 @@ public class GithubService {
             // 포크 수 파싱
             Element forkElement = doc.select("a[href*='/forks'] strong").first();
             if (forkElement != null) {
-              String forkText = forkElement.text().replace(",", "").replace("k", "000");
+              String forkText = forkElement.text();
               try {
-                forkCount = Long.parseLong(forkText);
+                forkCount = parseGithubCount(forkText);
               } catch (NumberFormatException e) {
                 log.warn("포크 수 파싱 실패: {}", forkText);
               }
@@ -180,6 +180,17 @@ public class GithubService {
             throw new CustomException(ErrorCode.GITHUB_API_ERROR);
           }
         });
+  }
+
+  /**
+   * GitHub 표시 수 > 숫자 (1,234 > 1234, 1.2k > 1200, 15k > 15000)
+   */
+  private Long parseGithubCount(String countText) {
+    String normalized = countText.replace(",", "").trim().toLowerCase();
+    if (normalized.endsWith("k")) {
+      return Math.round(Double.parseDouble(normalized.substring(0, normalized.length() - 1)) * 1000);
+    }
+    return Long.parseLong(normalized);
   }
 
 }

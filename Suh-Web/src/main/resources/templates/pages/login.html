@@ -99,9 +99,6 @@
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script th:inline="javascript">
-  // 페이지 로드 시 즉시 IP 정보 요청 시작
-  const getClientIPPromise = $.getJSON('https://api.ipify.org?format=json');
-
   // 타이핑 효과 설정
   const typingText = "Welcome To SUH-LAB !!";
   let typingIndex = 0;
@@ -111,15 +108,6 @@
     setupLoginForm();
     setupPasswordToggle();
     startTypingEffect();
-
-    // IP 정보 처리 (이미 요청 시작)
-    getClientIPPromise
-    .done(function(data) {
-      processClientIP(data.ip);
-    })
-    .fail(function() {
-      console.error("IP 주소를 가져오는 데 실패했습니다");
-    });
   });
 
   // 타이핑 효과 함수 (글자 아래 밑줄 스타일)
@@ -169,38 +157,10 @@
   }
 
 
-  function processClientIP(clientIP) {
-    const key = CryptoJS.enc.Utf8.parse(window.encryptionKey);
-    const iv = CryptoJS.enc.Utf8.parse(window.encryptionIv);
-
-    const encrypted = CryptoJS.AES.encrypt(clientIP, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-
-    window.clientHash = encrypted.toString();
-  }
-
   function setupLoginForm() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
       loginForm.addEventListener('submit', function(e) {
-        // 기존 필드 제거
-        const existingField = this.querySelector('input[name="clientHash"]');
-        if (existingField) existingField.remove();
-
-        // clientHash 추가
-        if (window.clientHash) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
-          hiddenField.name = 'clientHash';
-          hiddenField.value = window.clientHash;
-          this.appendChild(hiddenField);
-        } else {
-          console.warn("clientHash 값이 설정되지 않았습니다");
-        }
-
         // 로딩 표시
         const loadingEl = document.getElementById('login-loading');
         loadingEl.classList.remove('hidden');

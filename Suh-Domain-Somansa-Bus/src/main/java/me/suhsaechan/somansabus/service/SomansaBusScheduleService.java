@@ -68,16 +68,6 @@ public class SomansaBusScheduleService {
   }
 
   @Transactional(readOnly = true)
-  public SomansaBusResponse getActiveSchedulesByMember(UUID memberId) {
-    log.info("멤버별 활성 스케줄 조회: {}", memberId);
-    List<SomansaBusSchedule> schedules = scheduleRepository.findBySomansaBusMemberSomansaBusMemberIdAndIsActiveTrue(memberId);
-    return SomansaBusResponse.builder()
-        .schedules(schedules)
-        .totalCount((long) schedules.size())
-        .build();
-  }
-
-  @Transactional(readOnly = true)
   public SomansaBusResponse getAllActiveSchedules() {
     log.info("전체 활성 스케줄 조회");
     List<SomansaBusSchedule> schedules = scheduleRepository.findByIsActiveTrue();

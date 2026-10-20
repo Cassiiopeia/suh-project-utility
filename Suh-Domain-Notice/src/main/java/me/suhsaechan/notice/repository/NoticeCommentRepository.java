@@ -12,10 +12,8 @@ import java.util.List;
 
 @Repository
 public interface NoticeCommentRepository extends JpaRepository<NoticeComment, UUID> {
-    
-    List<NoticeComment> findByNoticeOrderByCreatedDateDesc(SuhProjectUtilityNotice notice);
-    
-    long countByNotice(SuhProjectUtilityNotice notice);
+
+    void deleteByNotice(SuhProjectUtilityNotice notice);
 
     /**
      * 공지사항 ID로 댓글 목록 조회 (생성일 내림차순)

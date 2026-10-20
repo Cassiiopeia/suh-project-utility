@@ -1,18 +1,3 @@
-/* src/main/resources/static/css/common.css */
-
-/*
-===========================================
-COMMON.CSS - Tailwind + DaisyUI 5 호환 스타일
-===========================================
-*/
-
-/*
-===========================
-   DaisyUI 5 테마 커스터마이징
-   primary: 파란색 (#3b82f6)
-===========================
-*/
-
 /*
 ===========================
    테마 토글 버튼 (swap) 배경 투명
@@ -26,40 +11,6 @@ label.swap {
   background: transparent !important;
   box-shadow: none !important;
 }
-
-/*
-===========================
-   badge-soft badge-primary 파란색 스타일
-===========================
-*/
-
-/* Light 모드 - badge-soft badge-primary */
-
-/* Dark 모드 - badge-soft badge-primary */
-
-/* Light 모드 - badge-soft badge-secondary */
-
-/* Dark 모드 - badge-soft badge-secondary */
-
-/* Light 모드 - badge-soft badge-accent */
-
-/* Dark 모드 - badge-soft badge-accent */
-
-/* Light 모드 - badge-soft badge-success */
-
-/* Dark 모드 - badge-soft badge-success */
-
-/* Light 모드 - badge-soft badge-info */
-
-/* Dark 모드 - badge-soft badge-info */
-
-/* Light 모드 - badge-soft badge-warning */
-
-/* Dark 모드 - badge-soft badge-warning */
-
-/* Light 모드 - badge-soft badge-error */
-
-/* Dark 모드 - badge-soft badge-error */
 
 /*
 ===========================
@@ -98,27 +49,11 @@ label.swap {
   min-height: 1.25rem !important;
 }
 
-/* badge-ghost 스타일 (Light 모드) */
-
-/* badge-ghost 스타일 (Dark 모드) */
-
 /*
 ===========================
    파스텔 톤 배지 색상 오버라이드
 ===========================
 */
-
-/* badge-success - 밝은 파스텔 그린 */
-
-/* badge-info - 밝은 파스텔 블루 */
-
-/* badge-warning - 밝은 파스텔 옐로우 */
-
-/* badge-error - 밝은 파스텔 레드 */
-
-/* badge-outline 스타일 (Light 모드) */
-
-/* badge-outline 스타일 (Dark 모드) */
 
 /* Pretendard 폰트 적용 */
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css");
@@ -136,22 +71,6 @@ html, body, button, input, select, textarea {
 ===========================
 */
 
-/* Light 모드 - Toast Success (밝은 파스텔톤 녹색 #C8F2C8) */
-
-/* Dark 모드 - Toast Success */
-
-/* Light 모드 - Toast Error (밝은 파스텔톤 빨강) */
-
-/* Dark 모드 - Toast Error */
-
-/* Light 모드 - Toast Warning (밝은 파스텔톤 노랑) */
-
-/* Dark 모드 - Toast Warning */
-
-/* Light 모드 - Toast Info (밝은 파스텔톤 파랑) */
-
-/* Dark 모드 - Toast Info */
-
 /* Toast 닫기 버튼 스타일 (파스텔톤과 조화) */
 .toast .alert .btn-ghost {
   opacity: 0.7;
@@ -162,16 +81,6 @@ html, body, button, input, select, textarea {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
-
-/*
-===========================
-  Alert Info Styles - 밝은 하늘색 파스텔 톤
-===========================
-*/
-
-/* Light 모드 - Alert Info (밝은 하늘색 파스텔 톤) */
-
-/* Dark 모드 - Alert Info */
 
 /*
 ===========================
@@ -287,8 +196,6 @@ html, body, button, input, select, textarea {
   }
 }
 
-/* 다크모드 텍스트 회전 스타일 */
-
 /*
 ===========================
    Table Container Styles
@@ -305,41 +212,11 @@ html, body, button, input, select, textarea {
   margin-bottom: 2em;
 }
 
-.table-container .total-count {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--color-base-content);
-  margin-bottom: 16px;
-  padding: 8px 0;
-}
-
-/* Tabulator 공통 스타일 */
-.table-container .tabulator {
-  min-width: 1200px;
-  width: 100%;
-  background: var(--color-base-100);
-}
-
-.table-container .tabulator-header {
-  background-color: var(--color-base-200);
-  border-bottom: 2px solid var(--color-base-300);
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-
-/*
-===========================
-   Modal Table Container Styles
-===========================
-*/
-
 /*
 ===========================
    Version Info Styles
 ===========================
 */
-
 
 /* 버전 태그 스타일 */
 .version-tag {
@@ -348,8 +225,6 @@ html, body, button, input, select, textarea {
   font-family: 'Courier New', monospace;
   margin: 0 0.4rem;
 }
-
-/* 버전 날짜 스타일 */
 
 /*
 ===========================
@@ -400,24 +275,6 @@ html, body, button, input, select, textarea {
   transform: translateY(-1px) !important;
 }
 
-.container-item .status-dot {
-  width: 10px !important;
-  height: 10px !important;
-  border-radius: 50% !important;
-  margin-right: 0.75rem !important;
-  flex-shrink: 0 !important;
-}
-
-.container-item .status-dot.online {
-  background-color: var(--color-success) !important;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-success) 30%, transparent) !important;
-}
-
-.container-item .status-dot.offline {
-  background-color: var(--color-error) !important;
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-error) 30%, transparent) !important;
-}
-
 .container-item .content {
   flex: 1 !important;
 }
@@ -446,10 +303,6 @@ html, body, button, input, select, textarea {
   border: 1px solid color-mix(in oklab, var(--color-primary) 30%, transparent) !important;
 }
 
-/* 다크모드 버전 배지 스타일 */
-
-/* Figma 로고 스타일 */
-
 /*
 ===========================
    Mobile Responsive Styles
@@ -457,11 +310,6 @@ html, body, button, input, select, textarea {
 */
 
 @media (max-width: 767px) {
-  .table-container .total-count {
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
-
   .table-container {
     margin: 0;
     border-radius: 0;
@@ -510,106 +358,6 @@ html, body, button, input, select, textarea {
 .grass-cell-on.grass-lv-2 { background-color: #40c463; }
 .grass-cell-on.grass-lv-3 { background-color: #30a14e; }
 .grass-cell-on.grass-lv-4 { background-color: #216e39; }
-
-/* 다크모드: 빈 셀만 어둡게, 채워진 셀은 동일 색 유지 */
-
-/*
-===========================
-   AI Server Page Styles
-===========================
-*/
-
-.ai-server-page .server-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.ai-server-page .server-status .status-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-.ai-server-page .server-status .status-indicator.online {
-  background-color: var(--color-success);
-}
-
-.ai-server-page .server-status .status-indicator.offline {
-  background-color: var(--color-error);
-  animation: none;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-/*
-===========================
-   Notice Management Styles
-===========================
-*/
-
-.notice-management-page .notice-item {
-  padding: 1rem;
-  border: 1px solid var(--color-base-300);
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.notice-management-page .notice-item:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.notice-management-page .notice-item.important {
-  border-left: 4px solid var(--color-error);
-  background-color: color-mix(in oklab, var(--color-error) 12%, var(--color-base-100));
-}
-
-/*
-===========================
-   Issue Helper Page Styles
-===========================
-*/
-
-.issue-helper-page .issue-card {
-  border: 1px solid var(--color-base-300);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  transition: all 0.2s ease;
-  background: var(--color-base-100);
-}
-
-.issue-helper-page .issue-card:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 12px color-mix(in oklab, var(--color-primary) 15%, transparent);
-}
-
-.issue-helper-page .issue-card .issue-title {
-  font-weight: 600;
-  color: var(--color-base-content);
-  margin-bottom: 0.5rem;
-}
-
-.issue-helper-page .issue-card .issue-meta {
-  font-size: 0.875rem;
-  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
-}
-
-/*
-===========================
-   Form Styles (Tailwind Override)
-===========================
-*/
-
-/* Input focus — DaisyUI 기본 스타일 사용 (오버라이드 없음) */
 
 /*
 ===========================
@@ -715,30 +463,6 @@ html, body, button, input, select, textarea {
 
 /*
 ===========================
-   Light Mode Override Styles
-===========================
-*/
-
-/* 라이트모드 - navbar 배경색 및 텍스트 색상 */
-
-/* 라이트모드 - 드롭다운 메뉴 */
-
-/* 라이트모드 - 배경색 명시적 스타일 */
-
-/* 라이트모드 - 카드 스타일 */
-
-/* 라이트모드 - 텍스트 색상 */
-
-/* 라이트모드 - body 배경 그라데이션 */
-
-/* 라이트모드 - 로그인 페이지 그라데이션 유지 */
-
-/* 라이트모드 - input 스타일 */
-
-/* 라이트모드 - 순수 textarea 요소 스타일 (DaisyUI .textarea 클래스 없이 사용되는 경우) */
-
-/*
-===========================
    Validator Hint Styles
 ===========================
 */
@@ -783,34 +507,12 @@ html, body, button, input, select, textarea {
 ===========================
 */
 
-/* 다크모드 테이블 */
-
-/* 다크모드 입력 필드 */
-
-/* 다크모드 토스트 (DaisyUI 5 기본 스타일 사용) */
-
-/* 다크모드 body 배경 */
-
-/* 다크모드 Footer */
-
-/* 다크모드 label-text (text-gray-* 스타일은 파일 끝에 세분화 정의됨) */
-
-/* 다크모드 skeleton */
-
-/* 다크모드 에러 메시지 박스 */
-
-/* 세종대 인증 페이지 다크모드 */
-
 /* input 패딩 수정 (라이트/다크 공통) */
 .input,
 .input-bordered {
   padding-left: 1rem !important;
   padding-right: 1rem !important;
 }
-
-/* 다크모드 fieldset legend */
-
-/* 다크모드 mockup-code */
 
 /*
 ===========================
@@ -1517,123 +1219,11 @@ html, body, button, input, select, textarea {
   color: var(--color-info);
 }
 
-/* 다크모드 - Thinking 패널 */
-
-/*
-===========================
-   다크모드 - 대시보드 페이지 스타일
-===========================
-*/
-
-/* 1. 하드코딩된 텍스트 색상 오버라이드 */
-
-/* 2. 아이콘 배경색 오버라이드 (밝은 배경 → 어두운 투명 배경) */
-
-/* 3. 섹션 배경색 오버라이드 */
-
-/* 4. body 그라데이션 배경 오버라이드 */
-
-/* 5. 다크모드 gray-200 배경 */
-
-/* 6. 다크모드 추가 텍스트 색상 */
-
-/* 7. 다크모드 pink-100 배경 (ROM ROM 프로젝트) */
-
-/* 8. 다크모드 blue-50 배경 (Timeline Current 항목 등) */
-
-/* 9. 다크모드 border 색상들 */
-
-/* 10. 다크모드 Timeline 텍스트 */
-
-/* 11. 다크모드 Timeline box */
-
-/* 12. 다크모드 sky-100 배경 */
-
-/* 13. 다크모드 rose-100 배경 */
-
-/*
-===========================
-   다크모드 - 챗봇 위젯 스타일
-===========================
-*/
-
-/* 챗봇 패널 배경 */
-
-/* 챗봇 메시지 영역 배경 */
-
-/* 웰컴 메시지 */
-
-/* 웰컴 아바타 */
-
-/* 추천 질문 버튼 */
-
-/* 어시스턴트 메시지 버블 */
-
-/* 타이핑 인디케이터 */
-
-/* 입력 영역 */
-
-/* 초기화 버튼 */
-
-/* 닫기 버튼 */
-
-/* 모바일 헤더 */
-
-/* 참조 문서 */
-
-/* 피드백 버튼 */
-
-/* 인라인 코드 */
-
-/* 분석 중 인디케이터 */
-
-/* 에러 메시지 */
-
-/*
-===========================
-   Light Mode - 명시적 스타일 (DaisyUI 오버라이드)
-===========================
-*/
-
-/* Light 모드 - DaisyUI base 색상 강제 지정 */
-
-/* Light 모드 - card 배경색 명시적 지정 */
-
-/* Light 모드 - 스켈레톤 스타일 */
-
-/* Light 모드 - timeline-box 스타일 */
-
-/* Light 모드 - input/textarea/select */
-
-/* Light 모드 - modal */
-
-/* Light 모드 - dropdown */
-
-/* Light 모드 - menu */
-
-/* Light 모드 - collapse/accordion */
-
 /*
 ===========================
    다크모드 - 추가 컴포넌트 스타일
 ===========================
 */
-
-/* 카드 제목 색상 */
-
-/* 카드 본문 내 텍스트 */
-
-/* 섹션 헤더 (Internal Tools, External Services 등) */
-
-/* AI 서버 상태 박스 */
-
-/* 모달 내 댓글 영역 */
-
-/* 댓글 아바타 배경 */
-
-/* 메타 정보 텍스트 */
-
-/* 빈 공지사항 메시지 */
 
 /* 스켈레톤 로더 다크모드 대비 */
 
@@ -1645,28 +1235,6 @@ html, body, button, input, select, textarea {
     background-position: -200% 0;
   }
 }
-
-/* 통계 카드 (Summary) - 이미 그라데이션이라 유지 */
-
-/* 버튼 outline 스타일 */
-
-/*
-===========================
-   Dashboard Summary Card Dark Mode
-===========================
-*/
-
-/* Summary 헤더 */
-
-/* Summary 카드 배경 및 테두리 */
-
-/* Summary 카드 내 텍스트 색상 */
-
-/* Summary 카드 내 초록색 강조 텍스트 */
-
-/* Summary 아이콘 배경색 (다크모드용 어두운 톤) */
-
-/* Summary 새로고침 버튼 */
 
 /*
 ===========================
@@ -1765,86 +1333,6 @@ html, body, button, input, select, textarea {
     display: none;
   }
 }
-
-/*
-===========================
-   버전 태그 하늘색 스타일
-===========================
-*/
-
-/* 하늘색 버전 태그 라이트모드 (인라인 스타일 사용 중이므로 백업용) */
-
-/* 하늘색 버전 태그 다크모드 */
-
-/* 헤더 버전 태그 다크모드 호버 */
-
-/*
-===========================
-   bg-white 다크모드 오버라이드
-===========================
-*/
-
-/* bg-white 클래스 다크모드 변환 */
-
-/* card.bg-white 다크모드 */
-
-/* navbar 다크모드 */
-
-/* dropdown-content.bg-white 다크모드 */
-
-/*
-===========================
-   페이지 배경 다크모드
-===========================
-*/
-
-/* 그라데이션 배경 다크모드 (body 기본 배경은 1138줄에 정의됨) */
-
-/* login-page 다크모드 배경 */
-
-/*
-===========================
-   텍스트 색상 다크모드 오버라이드
-===========================
-*/
-
-/* 기본 텍스트 색상 */
-
-/*
-===========================
-   테두리 색상 다크모드
-===========================
-*/
-
-/*
-===========================
-   ring 색상 다크모드
-===========================
-*/
-
-/*
-===========================
-   호버 배경색 다크모드
-===========================
-*/
-
-/*
-===========================
-   섹션 배경색 다크모드
-===========================
-*/
-
-/*
-===========================
-   SUH Random 다크모드
-===========================
-*/
-
-/*
-===========================
-   shadow 다크모드
-===========================
-*/
 
 /*
 ===========================

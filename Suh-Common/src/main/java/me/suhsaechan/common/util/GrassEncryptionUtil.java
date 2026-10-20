@@ -1,5 +1,7 @@
 package me.suhsaechan.common.util;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -45,7 +47,7 @@ public class GrassEncryptionUtil {
             return Base64.getEncoder().encodeToString(result);
         } catch (Exception ex) {
             log.error("암호화 중 오류 발생: {}", ex.getMessage(), ex);
-            throw new RuntimeException("암호화 실패", ex);
+            throw new CustomException(ErrorCode.GRASS_PAT_ENCRYPT_FAILED, ex);
         }
     }
 
@@ -79,7 +81,7 @@ public class GrassEncryptionUtil {
             
         } catch (Exception ex) {
             log.error("복호화 중 오류 발생: {}", ex.getMessage(), ex);
-            throw new RuntimeException("복호화 실패", ex);
+            throw new CustomException(ErrorCode.GRASS_PAT_DECRYPT_FAILED, ex);
         }
     }
 
@@ -90,7 +92,8 @@ public class GrassEncryptionUtil {
      */
     private String decryptLegacy(String encrypted) {
         if (legacyIv == null || legacyIv.isEmpty()) {
-            throw new IllegalStateException("레거시 IV가 설정되지 않았습니다. grass.encryption.iv 속성을 확인하세요.");
+            log.error("레거시 IV 미설정 - grass.encryption.iv 속성 확인 필요");
+            throw new CustomException(ErrorCode.GRASS_PAT_DECRYPT_FAILED);
         }
         
         try {
@@ -104,7 +107,7 @@ public class GrassEncryptionUtil {
             log.info("레거시 형식으로 복호화 성공");
             return new String(original, StandardCharsets.UTF_8);
         } catch (Exception ex) {
-            throw new RuntimeException("레거시 복호화 실패", ex);
+            throw new CustomException(ErrorCode.GRASS_PAT_DECRYPT_FAILED, ex);
         }
     }
 }

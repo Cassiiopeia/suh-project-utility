@@ -2,20 +2,13 @@ package me.suhsaechan.web.config;
 
 import static me.suhsaechan.suhlogger.util.SuhLogger.superLog;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.service.ServerOptionService;
 import me.suhsaechan.suhlogger.util.SuhLogger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
 
 @Slf4j
 @Component

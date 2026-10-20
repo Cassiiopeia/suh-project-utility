@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.docker.dto.DockerRequest;
 import me.suhsaechan.docker.dto.DockerLogResponse;
 import me.suhsaechan.docker.dto.ContainerInfoDto;
+import me.suhsaechan.docker.service.DockerContainerNameValidator;
 import me.suhsaechan.docker.service.DockerLogService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -92,6 +93,7 @@ public class DockerLogController {
             @RequestParam(defaultValue = "sejong-malsami-back") String containerName,
             @RequestParam(defaultValue = "100") int tailLines) {
 
+        DockerContainerNameValidator.requireValidContainerName(containerName);
         log.info("SSE 스트리밍 요청 - 컨테이너: {}, tail: {}", containerName, tailLines);
 
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);

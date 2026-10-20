@@ -18,35 +18,9 @@ public interface GrassCommitLogRepository extends JpaRepository<GrassCommitLog, 
 
     // 프로필별 커밋 로그 조회
     List<GrassCommitLog> findByGrassProfile(GrassProfile grassProfile);
-    
-    // 프로필 ID로 커밋 로그 조회
-    List<GrassCommitLog> findByGrassProfileGrassProfileId(UUID grassProfileId);
-
-    // 기간별 커밋 로그 조회
-    List<GrassCommitLog> findByCommitTimeBetween(LocalDateTime start, LocalDateTime end);
-
-    // 프로필과 기간별 커밋 로그 조회
-    List<GrassCommitLog> findByGrassProfileAndCommitTimeBetween(
-        GrassProfile grassProfile, 
-        LocalDateTime start, 
-        LocalDateTime end
-    );
-
-    // 성공한 커밋만 조회
-    List<GrassCommitLog> findByGrassProfileAndIsSuccessTrue(GrassProfile grassProfile);
-
-    // 실패한 커밋만 조회
-    List<GrassCommitLog> findByGrassProfileAndIsSuccessFalse(GrassProfile grassProfile);
-
-    // 자동 커밋만 조회
-    List<GrassCommitLog> findByGrassProfileAndIsAutoCommitTrue(GrassProfile grassProfile);
 
     // 페이징 처리된 커밋 로그 조회
     Page<GrassCommitLog> findByGrassProfile(GrassProfile grassProfile, Pageable pageable);
-
-    // 특정 저장소의 커밋 로그 조회
-    @Query("SELECT gcl FROM GrassCommitLog gcl WHERE gcl.repository.githubRepositoryId = :repositoryId")
-    List<GrassCommitLog> findByRepositoryId(@Param("repositoryId") UUID repositoryId);
 
     // 일일 커밋 수 통계
     @Query("SELECT COUNT(gcl) FROM GrassCommitLog gcl " +
@@ -59,7 +33,4 @@ public interface GrassCommitLogRepository extends JpaRepository<GrassCommitLog, 
         @Param("startOfDay") LocalDateTime startOfDay,
         @Param("endOfDay") LocalDateTime endOfDay
     );
-
-    // 최근 커밋 조회
-    List<GrassCommitLog> findTop10ByGrassProfileOrderByCommitTimeDesc(GrassProfile grassProfile);
 }

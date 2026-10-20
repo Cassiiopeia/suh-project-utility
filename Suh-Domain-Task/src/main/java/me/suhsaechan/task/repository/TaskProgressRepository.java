@@ -21,11 +21,6 @@ public interface TaskProgressRepository extends JpaRepository<TaskProgress, UUID
 
   Optional<TaskProgress> findByTaskGoalTaskGoalIdAndProgressDate(UUID taskGoalId, LocalDate progressDate);
 
-  Optional<TaskProgress> findTopByTaskGoalTaskGoalIdOrderByProgressDateDesc(UUID taskGoalId);
-
-  List<TaskProgress> findByTaskGoalTaskGoalIdAndProgressDateBetweenOrderByProgressDateDesc(
-      UUID taskGoalId, LocalDate startDate, LocalDate endDate);
-
   @Query("SELECT COALESCE(MAX(p.endAmount), 0) FROM TaskProgress p WHERE p.taskGoal.taskGoalId = :taskGoalId")
   Integer findMaxEndAmountByTaskGoalId(@Param("taskGoalId") UUID taskGoalId);
 }

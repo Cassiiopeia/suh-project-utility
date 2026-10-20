@@ -158,14 +158,19 @@ SUH 프로젝트 유틸리티는 Spring Boot 3.4.2 기반의 멀티모듈 웹 �
 ## 프로젝트 구조
 ```
 suh-project-utility/
-├── Suh-Common/           # 공통 유틸리티, 엔티티, 설정
-├── Suh-Domain-Docker/    # Docker 관련 기능
-├── Suh-Domain-Github/    # GitHub 이슈 헬퍼 기능
-├── Suh-Domain-Notice/    # 공지사항 및 댓글 기능
-├── Suh-Domain-Module/    # 모듈 버전 관리
-├── Suh-Module-Translate/ # 번역 서비스
-├── Suh-Application/      # 애플리케이션 서비스
-└── Suh-Web/             # 웹 컨트롤러 및 UI (Config 포함)
+├── Suh-Common/              # 공통 유틸리티, 엔티티, 설정
+├── Suh-Domain-Docker/       # Docker 컨테이너 모니터링 (SSH)
+├── Suh-Domain-Github/       # GitHub 이슈 헬퍼 기능
+├── Suh-Domain-AiServer/     # AI 서버(Ollama·SuhAider) 연동
+├── Suh-Domain-Chatbot/      # RAG 챗봇 (Qdrant)
+├── Suh-Domain-GrassPlanter/ # GitHub 잔디 자동 커밋
+├── Suh-Domain-Notice/       # 공지사항 및 댓글 기능
+├── Suh-Domain-Statistics/   # 방문·기능 사용 통계
+├── Suh-Domain-Somansa-Bus/  # 소만사 셔틀버스 예약
+├── Suh-Domain-Task/         # Task 목표·진행 기록
+├── Suh-Module-Translate/    # 번역 서비스
+├── Suh-Application/         # 여러 도메인 조합 서비스 (대시보드)
+└── Suh-Web/                 # 웹 컨트롤러 및 UI (Config 포함)
 ```
 
 ## 기술 스택
@@ -215,16 +220,10 @@ public class EntityName extends BasePostgresEntity {
 ### LocalDateTime 직렬화 규칙 (Entity 직접 반환)
 - **Entity 직접 반환 허용**: Response에서 Entity를 직접 반환해도 됨 (DTO 변환 불필요)
 - **@JsonFormat 필수**: `LocalDateTime` 필드에는 반드시 `@JsonFormat` 어노테이션 추가
-- **BasePostgresEntity**: `createdDate`, `updatedDate`는 이미 `@JsonFormat` 적용됨
+- **BasePostgresEntity**: `createdDate`, `updatedDate`는 `@JsonFormat` 없음 — `JacksonConfig`의 전역 `LocalDateTime` 포맷(`yyyy-MM-dd'T'HH:mm:ss`)으로 직렬화
 - **Entity 자체 날짜 필드**: Entity에 별도 `LocalDateTime` 필드가 있으면 직접 `@JsonFormat` 추가
 
 ```java
-// BasePostgresEntity - 이미 적용됨
-@CreatedDate
-@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-@Column(nullable = false, updatable = false)
-private LocalDateTime createdDate;
-
 // Entity 자체 LocalDateTime 필드 - 직접 추가 필요
 @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 @Column
@@ -374,9 +373,10 @@ public class NoticeController {
   - `isSuccess` 필드 사용 금지
   - `message` 필드 사용 금지
   - `errorMessage` 필드 사용 금지
+  - 예외: `/api/sejong-auth/authenticate` (`SejongAuthResponse`) — 비로그인 외부 공개 API 계약이라 `isSuccess`/`errorMessage` 유지
 - **응답 패턴**:
   - 성공: 데이터만 포함한 Response 반환
-  - 실패: CustomException 또는 RuntimeException 발생
+  - 실패: `CustomException(ErrorCode)` 발생 (`RuntimeException` 직접 throw 금지 — 규칙 테스트 `no-raw-runtime-exception`)
   - 에러 메시지는 GlobalExceptionHandler에서 처리
 - **HTTP 상태 코드**:
   - 생성(create/save/register): `201 CREATED`
@@ -561,7 +561,7 @@ public class NoticeService {
 ```
 
 ### Optional 처리 패턴
-- **null 체크 금지**: `== null` 비교 사용 금지
+- **null 체크 금지**: 새 코드에서 `== null` 비교 사용 금지 (기존 코드에 남은 비교는 해당 코드를 고칠 때 Optional 로 전환)
 - **Optional 메서드 활용**: `orElseThrow()`, `orElse()`, `orElseGet()` 사용
 - **Boolean 비교**: `Boolean.TRUE.equals()` 또는 `Boolean.FALSE.equals()` 사용
 
@@ -701,8 +701,10 @@ source ~/.zshrc && ./gradlew clean build
 ## 보안 고려사항
 - **민감 정보 관리**: application.yml의 민감 정보는 `@Value` 어노테이션으로 주입
 - **인증**: Spring Security 기반 폼 로그인
-- **CSP**: 인라인 스크립트/스타일 금지
+- **CSP**: CSP 헤더 미적용. 인라인 `style=""`·대괄호 하드코딩 금지는 유지, 페이지 스크립트는 템플릿 내 `<script>` 사용 중
 - **파일 업로드**: 확장자 및 크기 제한 (200MB)
+- **SSH**: 세션은 `SshCommandExecutor.openSession()` 한 곳에서만 생성. `ssh.known-hosts-path` 설정 시 호스트키 검증 (미설정 시 경고 후 생략)
+- **공개 API 입력 상한**: 챗봇·번역은 `ServerOptionKey.CHATBOT_MAX_MESSAGE_LENGTH`·`TRANSLATE_MAX_TEXT_LENGTH`
 
 ### @Value 어노테이션 사용 예시
 민감한 정보들은 application.yml에서 환경변수로 관리하고 @Value로 주입합니다:
@@ -821,6 +823,11 @@ Swagger 접속 오류 수정 : fix : springdoc 버전 업그레이드 https://gi
 
 ## 코드 품질 규칙
 
+### 아키텍처 규칙 테스트
+- 규칙: `docs/architecture/rules/*.rule` (금지 패턴), 강제: `Suh-Web/src/test/java/architecture/ArchitectureRulesTest.java` (`./gradlew test`)
+- 현재 규칙: `no-raw-runtime-exception`, `no-direct-jsch-session`, `no-local-escape-html`(common.js 단일 원본), `no-raw-alert`(`showToast` 사용)
+- 위반이 생기면 코드를 고친다. `*.allow` 예외 목록에 줄을 더하지 않는다
+
 ### 주석 작성 규칙 ⚠️ 중요
 - **불필요한 설명 주석 금지**: 코드 자체로 의미가 명확한 경우 주석 작성 금지
 - **LLM 스타일 주석 금지**: "(enum의 fromEnglishNameOrCode 메서드 사용)", "(AI 응답 파싱용)" 등 불필요한 설명 금지
@@ -846,8 +853,8 @@ TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiRes
 이슈 기반 작업 시 **무조건 이 순서**를 따른다. 관련 issue: [#186](https://github.com/Cassiiopeia/suh-project-utility/issues/186)
 
 ### Phase 1 — 이슈 + 워크트리
-- **신규 이슈**: `/cassiiopeia:issue` (이슈 작성·등록·브랜치명 계산·worktree 옵션까지 한 방)
-- **이슈 이미 있고 브랜치만 분리**: `/cassiiopeia:init-worktree`
+- **신규 이슈**: `/pro-github` (이슈 작성·등록·브랜치명 계산)
+- **이슈 이미 있고 브랜치만 분리**: `/pro-init-worktree`
 - **긴급 버그 등 신속 대응 케이스**: worktree 생성 생략 가능 (main 또는 메인 작업 디렉터리에서 바로 진행)
 
 ### Phase 2 — 설계 (무조건 superpowers)
@@ -858,20 +865,20 @@ TranslatorLanguage detectedLang = TranslatorLanguage.fromEnglishNameOrCode(aiRes
 - `/superpowers:subagent-driven-development` — Task별 implementer + spec reviewer + quality reviewer 디스패치
 
 ### Phase 4 — Commit + PR
-- `/cassiiopeia:commit` — 사용자 승인 후 commit. push는 사용자 명시 요청 시
-- `/cassiiopeia:github` — PR 생성
+- `/pro-commit` — 사용자 승인 후 commit. push는 사용자 명시 요청 시
+- `/pro-github` — PR 생성
 
 ### Phase 5 — 빌드 + QA
-- `/cassiiopeia:github` — 이슈에 `@suh-lab server build` 댓글 추가
-- `/cassiiopeia:testcase` — 테스트케이스 MD 작성
-- `/cassiiopeia:github` — 테스트케이스 이슈 댓글로 게시
+- `/pro-github` — 이슈에 `@suh-lab server build` 댓글 추가
+- `/pro-testcase` — 테스트케이스 MD 작성
+- `/pro-github` — 테스트케이스 이슈 댓글로 게시
 
 ### Phase 6 — main 머지 후 배포
-- `/cassiiopeia:changelog-deploy` — main push + deploy PR 생성 + 릴리스 노트 작성 + automerge
+- `/pro-changelog-deploy` — main push + deploy PR 생성 + 릴리스 노트 작성 + automerge
 
 ### 절대 규칙 — Skill 우회 금지
-- **GitHub 작업** (이슈/PR/댓글) → 무조건 `/cassiiopeia:github` 거치기. `gh`/`curl`/`Invoke-RestMethod` 직접 호출 금지
-- **Commit** → 무조건 `/cassiiopeia:commit` 거치기. `git commit` 직접 호출 금지
+- **GitHub 작업** (이슈/PR/댓글) → 무조건 `/pro-github` 거치기. `gh`/`curl`/`Invoke-RestMethod` 직접 호출 금지
+- **Commit** → 무조건 `/pro-commit` 거치기. `git commit` 직접 호출 금지
 - **설계/구현** → 무조건 superpowers 3-skill 체인 (`brainstorming` → `writing-plans` → `subagent-driven-development`) 거치기. 바로 코드 작성 금지
 
 ### 본 flow 미적용 예외

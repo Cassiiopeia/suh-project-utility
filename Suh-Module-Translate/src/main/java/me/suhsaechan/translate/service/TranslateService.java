@@ -1,5 +1,9 @@
 package me.suhsaechan.translate.service;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.common.constant.ServerOptionKey;
+import me.suhsaechan.common.service.ServerOptionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.suhsaechan.ai.model.JsonSchema;
 import kr.suhsaechan.ai.model.SuhAiderRequest;
@@ -13,7 +17,6 @@ import me.suhsaechan.common.constant.TranslatorLanguage;
 import me.suhsaechan.translate.dto.TranslationDto;
 import me.suhsaechan.translate.dto.TranslationRequest;
 import me.suhsaechan.translate.dto.TranslationResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,9 +30,8 @@ public class TranslateService {
 
     private final SuhAiderEngine suhAiderEngine;
     private final ObjectMapper objectMapper;
+    private final ServerOptionService serverOptionService;
 
-    @Value("${suh.aider.translation-model:gemma3:1b}")
-    private String translationModel;
 
     /**
      * AI 기반 번역 수행
@@ -38,8 +40,12 @@ public class TranslateService {
         // 1. 입력 검증
         String text = request.getText();
         if (text == null || text.trim().isEmpty()) {
-            throw new RuntimeException("번역할 텍스트가 비어있습니다.");
+            throw new CustomException(ErrorCode.TRANSLATE_EMPTY_TEXT);
         }
+        if (text.length() > serverOptionService.getOptionValueAsInt(ServerOptionKey.TRANSLATE_MAX_TEXT_LENGTH)) {
+            throw new CustomException(ErrorCode.TRANSLATE_TEXT_TOO_LONG);
+        }
+        String translationModel = serverOptionService.getOptionValue(ServerOptionKey.TRANSLATE_MODEL);
 
         log.info("AI 번역 시작 - 모델: {}, 원본 언어: {}, 목표 언어: {}",
             translationModel, request.getSourceLang(), request.getTargetLang());
@@ -89,7 +95,7 @@ public class TranslateService {
 
         } catch (Exception e) {
             log.error("AI 번역 처리 중 오류 발생: {}", e.getMessage(), e);
-            throw new RuntimeException("번역 처리 중 오류가 발생했습니다: " + e.getMessage(), e);
+            throw new CustomException(ErrorCode.TRANSLATE_FAILED);
         }
     }
 

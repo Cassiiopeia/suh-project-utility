@@ -485,17 +485,11 @@ function displayCommitLogs(logs) {
 
 // 공통 헬퍼
 function notify(msg, type) {
-  if (typeof showToast === 'function') showToast(msg, type);
-  else alert(msg);
+  showToast(msg, type);
 }
 function extractError(xhr) {
   if (xhr && xhr.responseJSON && xhr.responseJSON.message) return ' (' + xhr.responseJSON.message + ')';
   return '';
-}
-function escapeHtml(text) {
-  if (typeof text !== 'string') return text;
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 </script>
 </body>

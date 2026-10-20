@@ -14,4 +14,6 @@ public class SshConnectionProperties {
   private int port;
   private String username;
   private String password;
+  // known_hosts 파일 경로 (설정 시 호스트키 검증, 미설정 시 검증 생략 + 경고)
+  private String knownHostsPath;
 }

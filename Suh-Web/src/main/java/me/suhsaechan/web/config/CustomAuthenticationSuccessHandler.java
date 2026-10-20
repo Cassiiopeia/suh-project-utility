@@ -23,25 +23,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException, ServletException {
 
-    // 폼에서 전송된 clientHash 값 확인
-    String clientHashFromForm = request.getParameter("clientHash");
-    String clientHash;
-
-    // 폼에서 전송된 암호화된 값 있으면 사용
-    if (clientHashFromForm != null && !clientHashFromForm.isEmpty()) {
-      clientHash = clientHashFromForm;
-    } else {
-      // 없으면 : IP 주소 추출 후 암호화
-      String clientIp = request.getRemoteAddr();
-      clientHash = aesUtil.encrypt(clientIp);
-    }
+    // clientHash는 서버에서만 생성 (프록시 헤더 기준 IP > 고정 IV AES, 폼 값 신뢰 안 함)
+    // 고정 IV: 재로그인해도 같은 IP면 같은 값 (댓글 작성자 확인·방문자 집계 기준)
+    String clientHash = aesUtil.encryptWithFixedIv(userAuthority.extractIpFromRequest(request));
 
     // 세션에 저장
     HttpSession session = request.getSession(true);
     session.setAttribute(ServerInfo.CLIENT_HASH_SESSION_KEY, clientHash);
-    
-    // IP 저장
-    userAuthority.saveUserIp(request, session);
     
     // 슈퍼관리자 권한 확인
     String username = authentication.getName();

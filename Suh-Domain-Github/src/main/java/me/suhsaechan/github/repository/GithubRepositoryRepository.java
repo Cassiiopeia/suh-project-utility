@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GithubRepositoryRepository extends JpaRepository<GithubRepository, UUID> {
+
   Optional<GithubRepository> findByFullName(String fullName);
 }

@@ -6,5 +6,6 @@ import me.suhsaechan.github.entity.GithubIssueHelper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GithubIssueHelperRepository extends JpaRepository<GithubIssueHelper, UUID> {
+
   Optional<GithubIssueHelper> findByIssueUrl(String issueUrl);
 }

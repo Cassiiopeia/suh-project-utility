@@ -1,0 +1,6 @@
+# SSH 세션 단일 지점: SshCommandExecutor.openSession (known_hosts 호스트키 검증·타임아웃 일괄 적용)
+description=new JSch() 직접 생성 금지 (SshCommandExecutor.openSession 사용)
+paths=Suh-Application/src/main/java/,Suh-Common/src/main/java/,Suh-Domain-AiServer/src/main/java/,Suh-Domain-Chatbot/src/main/java/,Suh-Domain-Docker/src/main/java/,Suh-Domain-Github/src/main/java/,Suh-Domain-GrassPlanter/src/main/java/,Suh-Domain-Notice/src/main/java/,Suh-Domain-Somansa-Bus/src/main/java/,Suh-Domain-Statistics/src/main/java/,Suh-Domain-Task/src/main/java/,Suh-Module-Translate/src/main/java/,Suh-Web/src/main/java/
+extensions=.java
+exclude=Suh-Common/src/main/java/me/suhsaechan/common/util/SshCommandExecutor.java
+pattern=new JSch\(\)

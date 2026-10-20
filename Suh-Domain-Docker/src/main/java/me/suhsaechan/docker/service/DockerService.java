@@ -22,7 +22,8 @@ public class DockerService {
   // 컨테이너 정보 확인
   public DockerResponse getContainerInfo(DockerRequest request) {
     String command
-        = String.format("/volume1/projects/suh-project/bin/docker_manager.sh %s %s", "status", request.getContainerName());
+        = String.format("/volume1/projects/suh-project/bin/docker_manager.sh %s %s", "status",
+            DockerContainerNameValidator.requireValidContainerName(request.getContainerName()));
     String output = sshCommandExecutor.executeCommandWithSudoStdin(command);
 
     // 스크립트 반환값 확인
@@ -53,7 +54,7 @@ public class DockerService {
       }
     } catch (JsonProcessingException e) {
       log.error("DockerService.getContainerInfo() 오류 발생 : {}", e.getMessage());
-      throw new RuntimeException(e);
+      throw new CustomException(ErrorCode.JSON_PARSING_ERROR, e);
     }
     return response;
   }

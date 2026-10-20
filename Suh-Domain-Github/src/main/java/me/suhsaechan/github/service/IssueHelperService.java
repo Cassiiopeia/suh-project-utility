@@ -34,6 +34,10 @@ public class IssueHelperService {
   // 기본 commit type (필요시 확장 가능)
   private static final String DEFAULT_COMMIT_TYPE = "feat";
 
+  // https://github.com/{owner}/{repo}/issues/{번호} (뒤 슬래시·쿼리·앵커 허용)
+  private static final Pattern GITHUB_ISSUE_URL_PATTERN = Pattern.compile(
+      "^https://github\\.com/([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)/issues/\\d+/?(?:[?#].*)?$");
+
   /**
    * GitHub 이슈 URL로부터 페이지를 읽어 <title> 태그를 파싱한 후,
    * 커스텀 규칙에 따라 브랜치명과 커밋 메시지를 생성합니다.
@@ -108,14 +112,14 @@ public class IssueHelperService {
         commitTitle, DEFAULT_COMMIT_TYPE, "변경 사항에 대한 설명", issueUrl);
   }
 
-  // URL에서 owner/repository 추출
+  // 이슈 URL 전체 일치 검증 > owner/repository 추출 (github.com 외 호스트 요청 차단)
   private String extractRepositoryFullName(String url) {
-    Pattern pattern = Pattern.compile("github\\.com/([^/]+/[^/]+)/issues/\\d+");
-    Matcher matcher = pattern.matcher(url);
-    if (matcher.find()) {
-      return matcher.group(1);
+    Matcher matcher = GITHUB_ISSUE_URL_PATTERN.matcher(url);
+    if (!matcher.matches()) {
+      log.error("GitHub 이슈 URL 형식 불일치: {}", url);
+      throw new CustomException(ErrorCode.GITHUB_ISSUE_URL_INVALID);
     }
-    return null;
+    return matcher.group(1);
   }
 
   /**

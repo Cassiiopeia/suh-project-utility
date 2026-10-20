@@ -1,6 +1,7 @@
 package me.suhsaechan.web.controller.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.service.UserAuthority;
@@ -9,6 +10,7 @@ import me.suhsaechan.notice.dto.NoticeResponse;
 import me.suhsaechan.notice.service.NoticeCommentService;
 import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
+import me.suhsaechan.web.config.ServerInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -137,8 +139,9 @@ public class NoticeController {
    */
   @PostMapping(value = "/comment/delete", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @LogMonitor
-  public ResponseEntity<Void> deleteComment(@ModelAttribute NoticeRequest request) {
-    noticeCommentService.deleteComment(request.getCommentId());
+  public ResponseEntity<Void> deleteComment(@ModelAttribute NoticeRequest request, HttpSession session) {
+    String requesterClientHash = (String) session.getAttribute(ServerInfo.CLIENT_HASH_SESSION_KEY);
+    noticeCommentService.deleteComment(request.getCommentId(), requesterClientHash, userAuthority.isSuperAdmin(session));
     return ResponseEntity.noContent().build();
   }
 }

@@ -1,5 +1,7 @@
 package me.suhsaechan.chatbot.service;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -90,9 +92,10 @@ public class ChatbotService {
      * Step 2: RAG 검색 (조건부)
      * Step 3: 응답 생성 (고품질 LLM)
      * </pre>
+     * 트랜잭션 없음: LLM 호출 동안 DB 커넥션 점유 방지 (저장은 save 단위)
      */
-    @Transactional
     public ChatbotResponse chat(ChatbotRequest request, String userIp, String userAgent) {
+        validateMessageLength(request.getMessage());
         long startTime = System.currentTimeMillis();
         log.info("[Agent-LLM] 채팅 요청 처리 시작 - message: {}", request.getMessage());
 
@@ -197,10 +200,11 @@ public class ChatbotService {
     public void chatStream(String sessionToken, String message,
                            String userIp, String userAgent, StreamCallback callback,
                            Consumer<String> sessionTokenCallback, ThinkingCallback thinkingCallback) {
+        validateMessageLength(message);
         log.info("[Agent-LLM Stream] 스트리밍 채팅 요청 처리 시작 - message: {}", message);
 
         try {
-            // 초기 DB 작업 (트랜잭션으로 처리)
+            // 초기 DB 작업 (세션·사용자 메시지 저장)
             StreamingContext context = initializeStreamingContext(sessionToken, message, userIp, userAgent, sessionTokenCallback);
             ChatSession session = context.getSession();
             int messageIndex = context.getMessageIndex();
@@ -284,7 +288,7 @@ public class ChatbotService {
 
                 @Override
                 public void onComplete() {
-                    // AI 응답 저장 (별도 트랜잭션으로 처리, 토큰 계산 포함)
+                    // AI 응답 저장 (토큰 계산 포함)
                     saveStreamingResponse(finalSession, fullResponse.toString(), finalMessageIndex + 1,
                         referencedDocIds, finalFullPrompt);
 
@@ -852,12 +856,23 @@ public class ChatbotService {
     }
 
     /**
+     * 메시지 길이 상한 검증 (ServerOptionKey.CHATBOT_MAX_MESSAGE_LENGTH)
+     */
+    public void validateMessageLength(String message) {
+        int maxMessageLength = serverOptionService.getOptionValueAsInt(ServerOptionKey.CHATBOT_MAX_MESSAGE_LENGTH);
+        if (message != null && message.length() > maxMessageLength) {
+            throw new CustomException(ErrorCode.CHATBOT_MESSAGE_TOO_LONG);
+        }
+    }
+
+    /**
      * 세션 조회 또는 생성
      */
     private ChatSession getOrCreateSession(String sessionToken, String userIp, String userAgent) {
+        // 활성 세션 없으면 서버가 새 토큰 발급 (종료된 클라이언트 토큰 재사용 시 행 중복 방지)
         if (sessionToken != null && !sessionToken.isEmpty()) {
             return sessionRepository.findBySessionTokenAndIsActiveTrue(sessionToken)
-                .orElseGet(() -> createNewSession(sessionToken, userIp, userAgent));
+                .orElseGet(() -> createNewSession(UUID.randomUUID().toString(), userIp, userAgent));
         }
         return createNewSession(UUID.randomUUID().toString(), userIp, userAgent);
     }
@@ -881,9 +896,8 @@ public class ChatbotService {
     }
 
     /**
-     * 스트리밍 초기 컨텍스트 생성 (트랜잭션)
+     * 스트리밍 초기 컨텍스트 생성
      */
-    @Transactional
     private StreamingContext initializeStreamingContext(String sessionToken, String message, String userIp, 
                                                          String userAgent, Consumer<String> sessionTokenCallback) {
         // 1. 세션 조회 또는 생성
@@ -925,9 +939,8 @@ public class ChatbotService {
     }
 
     /**
-     * 스트리밍 응답 저장 (별도 트랜잭션, 토큰 계산 포함)
+     * 스트리밍 응답 저장 (토큰 계산 포함)
      */
-    @Transactional
     public void saveStreamingResponse(ChatSession session, String content, int messageIndex,
                                        List<String> referencedDocIds, String fullPrompt) {
         ChatMessage assistantMessage = saveMessage(session, MessageRole.ASSISTANT, content, messageIndex);
@@ -999,21 +1012,9 @@ public class ChatbotService {
     @Transactional(readOnly = true)
     public List<ChatHistoryDto> getChatHistory(String sessionToken) {
         ChatSession session = sessionRepository.findBySessionToken(sessionToken)
-            .orElseThrow(() -> new RuntimeException("세션을 찾을 수 없습니다: " + sessionToken));
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_SESSION_NOT_FOUND));
 
         List<ChatMessage> messages = messageRepository.findByChatSessionOrderByMessageIndexAsc(session);
-
-        return messages.stream()
-            .map(this::convertToHistoryDto)
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * 세션 ID로 대화 이력 조회
-     */
-    @Transactional(readOnly = true)
-    public List<ChatHistoryDto> getChatHistoryBySessionId(UUID sessionId) {
-        List<ChatMessage> messages = messageRepository.findByChatSessionChatSessionIdOrderByMessageIndexAsc(sessionId);
 
         return messages.stream()
             .map(this::convertToHistoryDto)
@@ -1026,7 +1027,7 @@ public class ChatbotService {
     @Transactional
     public void saveMessageFeedback(UUID messageId, boolean isHelpful) {
         ChatMessage message = messageRepository.findById(messageId)
-            .orElseThrow(() -> new RuntimeException("메시지를 찾을 수 없습니다: " + messageId));
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_MESSAGE_NOT_FOUND));
 
         message.setIsHelpful(isHelpful);
         messageRepository.save(message);
@@ -1040,30 +1041,12 @@ public class ChatbotService {
     @Transactional
     public void endSession(String sessionToken) {
         ChatSession session = sessionRepository.findBySessionToken(sessionToken)
-            .orElseThrow(() -> new RuntimeException("세션을 찾을 수 없습니다: " + sessionToken));
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_SESSION_NOT_FOUND));
 
         session.setIsActive(false);
         sessionRepository.save(session);
 
         log.info("세션 종료 - sessionId: {}", session.getChatSessionId());
-    }
-
-    /**
-     * 비활성 세션 정리 (스케줄러용)
-     */
-    @Transactional
-    public int cleanupInactiveSessions(int hoursThreshold) {
-        LocalDateTime cutoff = LocalDateTime.now().minusHours(hoursThreshold);
-        List<ChatSession> inactiveSessions = sessionRepository.findByIsActiveTrueAndLastActivityAtBefore(cutoff);
-
-        for (ChatSession session : inactiveSessions) {
-            session.setIsActive(false);
-        }
-
-        sessionRepository.saveAll(inactiveSessions);
-        log.info("비활성 세션 정리 완료 - 정리 수: {}", inactiveSessions.size());
-
-        return inactiveSessions.size();
     }
 
     private ChatHistoryDto convertToHistoryDto(ChatMessage message) {

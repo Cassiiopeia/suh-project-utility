@@ -1,5 +1,7 @@
 package me.suhsaechan.chatbot.service;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,7 @@ import me.suhsaechan.common.constant.ServerOptionKey;
 import me.suhsaechan.common.service.ServerOptionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * 문서 관리 서비스
@@ -33,6 +36,7 @@ public class DocumentService {
     private final VectorStoreService vectorStoreService;
     private final QdrantProperties qdrantProperties;
     private final ServerOptionService serverOptionService;
+    private final TransactionTemplate transactionTemplate;
 
     /**
      * 청크 크기 조회 (DB 설정 기반)
@@ -87,23 +91,21 @@ public class DocumentService {
     }
 
     /**
-     * 문서 처리 (청크 분할 + 벡터화)
+     * 문서 처리: 청크 분할 > 임베딩 > 새 포인트 저장 > 기존 청크 삭제 > 새 청크 저장
+     * 새 포인트 저장 성공 후에만 기존 청크 삭제 (임베딩·Qdrant 저장 실패 시 기존 검색 데이터 유지, 이후 DB 실패는 Qdrant 롤백 안 됨)
      */
     @Transactional
     public void processDocument(ChatDocument document) {
         log.info("문서 처리 시작 - documentId: {}", document.getChatDocumentId());
 
-        // 1. 기존 청크 삭제 (재처리 시)
-        deleteDocumentChunks(document);
-
-        // 2. 청크 분할 (토큰 수 기준, DB 설정 사용)
+        // 1. 청크 분할 (토큰 수 기준, DB 설정 사용)
         List<String> chunks = splitIntoChunksByTokens(document.getContent(), getChunkSize(), getChunkOverlap());
         log.info("청크 분할 완료 - 총 {} 개", chunks.size());
 
-        // 3. 임베딩 생성
+        // 2. 임베딩 생성
         List<List<Float>> embeddings = embeddingService.embedBatch(chunks);
 
-        // 4. Qdrant에 저장 및 청크 엔티티 생성
+        // 3. 포인트 ID·메타데이터 생성
         List<UUID> pointIds = new ArrayList<>();
         List<Map<String, String>> metadataList = new ArrayList<>();
 
@@ -119,9 +121,12 @@ public class DocumentService {
             metadataList.add(metadata);
         }
 
-        // 5. Qdrant에 일괄 저장
+        // 4. Qdrant에 일괄 저장
         String collectionName = qdrantProperties.getCollectionName();
         vectorStoreService.upsertPoints(collectionName, pointIds, embeddings, chunks, metadataList);
+
+        // 5. 기존 청크 삭제 (재처리 시, Qdrant + PostgreSQL)
+        deleteDocumentChunks(document);
 
         // 6. 청크 엔티티 저장
         List<ChatDocumentChunk> chunkEntities = new ArrayList<>();
@@ -154,7 +159,7 @@ public class DocumentService {
         String content, String description) {
 
         ChatDocument document = documentRepository.findById(documentId)
-            .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다: " + documentId));
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_DOCUMENT_NOT_FOUND));
 
         document.setTitle(title);
         document.setCategory(category);
@@ -176,7 +181,7 @@ public class DocumentService {
     @Transactional
     public void deleteDocument(UUID documentId) {
         ChatDocument document = documentRepository.findById(documentId)
-            .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다: " + documentId));
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_DOCUMENT_NOT_FOUND));
 
         // 1. Qdrant에서 벡터 삭제
         deleteDocumentChunks(document);
@@ -216,7 +221,7 @@ public class DocumentService {
     @Transactional
     public void setDocumentActive(UUID documentId, boolean isActive) {
         ChatDocument document = documentRepository.findById(documentId)
-            .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다: " + documentId));
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_DOCUMENT_NOT_FOUND));
 
         document.setIsActive(isActive);
         documentRepository.save(document);
@@ -236,7 +241,6 @@ public class DocumentService {
      * 전체 문서 재처리
      * 모든 활성 문서를 현재 설정으로 다시 벡터화
      */
-    @Transactional
     public Map<String, Object> reprocessAllDocuments() {
         log.info("전체 문서 재처리 시작");
         
@@ -253,7 +257,8 @@ public class DocumentService {
                 log.info("문서 재처리 중 - documentId: {}, title: {}", 
                     document.getChatDocumentId(), document.getTitle());
                 
-                processDocument(document);
+                // 문서별 개별 트랜잭션 (한 문서 실패가 다른 문서 결과를 롤백하지 않도록)
+                transactionTemplate.executeWithoutResult(status -> processDocument(document));
                 successCount++;
                 
                 log.info("문서 재처리 완료 - documentId: {}", document.getChatDocumentId());
@@ -281,28 +286,12 @@ public class DocumentService {
     }
 
     /**
-     * 카테고리별 문서 조회
-     */
-    @Transactional(readOnly = true)
-    public List<ChatDocument> getDocumentsByCategory(String category) {
-        return documentRepository.findByCategoryAndIsActiveTrueOrderByOrderIndexAsc(category);
-    }
-
-    /**
      * 문서 ID로 조회
      */
     @Transactional(readOnly = true)
     public ChatDocument getDocument(UUID documentId) {
         return documentRepository.findById(documentId)
-            .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다: " + documentId));
-    }
-
-    /**
-     * 문서의 청크 조회
-     */
-    @Transactional(readOnly = true)
-    public List<ChatDocumentChunk> getDocumentChunks(UUID documentId) {
-        return chunkRepository.findByChatDocumentChatDocumentIdOrderByChunkIndexAsc(documentId);
+            .orElseThrow(() -> new CustomException(ErrorCode.CHATBOT_DOCUMENT_NOT_FOUND));
     }
 
     /**
@@ -372,16 +361,6 @@ public class DocumentService {
         }
 
         return chunks;
-    }
-
-    /**
-     * 오버랩 텍스트 추출 (문자 수 기준, 하위 호환성 유지)
-     */
-    private String getOverlapText(String text, int overlap) {
-        if (text.length() <= overlap) {
-            return text;
-        }
-        return text.substring(text.length() - overlap);
     }
 
     /**

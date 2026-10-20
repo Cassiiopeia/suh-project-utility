@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SuhProjectUtilityNoticeRepository extends JpaRepository<SuhProjectUtilityNotice, UUID> {
+
   
   /**
    * 현재 활성화된 공지사항 목록 조회
@@ -22,11 +23,6 @@ public interface SuhProjectUtilityNoticeRepository extends JpaRepository<SuhProj
          "ORDER BY n.isImportant DESC, n.createdDate DESC")
   List<SuhProjectUtilityNotice> findActiveNotices(@Param("now") LocalDateTime now);
 
-  /**
-   * 중요 공지사항 목록 조회
-   */
-  List<SuhProjectUtilityNotice> findByIsImportantTrueAndIsActiveTrueOrderByCreatedDateDesc();
-  
   /**
    * 제목으로 공지사항 검색
    */

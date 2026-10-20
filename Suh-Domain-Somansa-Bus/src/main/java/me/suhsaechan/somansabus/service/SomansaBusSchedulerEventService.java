@@ -23,10 +23,10 @@ public class SomansaBusSchedulerEventService {
   private final SomansaBusSchedulerEventRepository eventRepository;
 
   // 이벤트 기록 실패가 예약 자체를 막으면 안 되므로 예외를 삼킨다
-  @Transactional
+  // 트랜잭션 없음: saveAndFlush 자체 트랜잭션 > 실패해도 호출자 트랜잭션 rollback-only 오염 없음
   public void record(SomansaBusSchedulerEventType eventType, LocalDate targetDate, String message) {
     try {
-      eventRepository.save(SomansaBusSchedulerEvent.builder()
+      eventRepository.saveAndFlush(SomansaBusSchedulerEvent.builder()
           .eventType(eventType)
           .targetDate(targetDate)
           .message(message)

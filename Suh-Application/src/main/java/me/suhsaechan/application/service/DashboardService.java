@@ -9,7 +9,7 @@ import me.suhsaechan.chatbot.repository.ChatSessionRepository;
 import me.suhsaechan.notice.repository.SuhProjectUtilityNoticeRepository;
 import me.suhsaechan.statistics.dto.DashboardSummaryDto;
 import me.suhsaechan.statistics.service.StatisticsService;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +36,20 @@ public class DashboardService {
     @Cacheable(value = DASHBOARD_SUMMARY_CACHE, key = "'summary'")
     @Transactional(readOnly = true)
     public DashboardSummaryDto getDashboardSummary() {
+        return aggregateDashboardSummary();
+    }
+
+    /**
+     * 캐시 갱신 후 새 데이터 반환 (새로고침 버튼)
+     */
+    @CachePut(value = DASHBOARD_SUMMARY_CACHE, key = "'summary'")
+    @Transactional(readOnly = true)
+    public DashboardSummaryDto refreshDashboardSummary() {
+        log.info("대시보드 Summary 캐시 갱신");
+        return aggregateDashboardSummary();
+    }
+
+    private DashboardSummaryDto aggregateDashboardSummary() {
         log.debug("대시보드 Summary 데이터 조회 시작");
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
 
@@ -121,22 +135,5 @@ public class DashboardService {
                 .todayFeatureUsageCounts(java.util.Collections.emptyMap())
                 .build();
         }
-    }
-
-    /**
-     * 대시보드 Summary 캐시 무효화 후 새로 조회
-     * 새로고침 버튼 클릭 시 호출
-     */
-    @CacheEvict(value = DASHBOARD_SUMMARY_CACHE, key = "'summary'")
-    public void evictDashboardSummaryCache() {
-        log.info("대시보드 Summary 캐시 무효화");
-    }
-
-    /**
-     * 캐시 무효화 후 새 데이터 조회
-     */
-    public DashboardSummaryDto refreshDashboardSummary() {
-        evictDashboardSummaryCache();
-        return getDashboardSummary();
     }
 }

@@ -1,5 +1,7 @@
 package me.suhsaechan.web.controller.api;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -11,7 +13,6 @@ import me.suhsaechan.grassplanter.service.GrassService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,7 +92,7 @@ public class GrassController {
             return ResponseEntity.ok(level);
         } catch (IOException e) {
             log.error("기여도 확인 실패: {}", e.getMessage(), e);
-            throw new RuntimeException("기여도 확인 실패", e);
+            throw new CustomException(ErrorCode.GRASS_CONTRIBUTION_CHECK_FAILED, e);
         }
     }
 }

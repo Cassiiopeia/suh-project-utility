@@ -1,5 +1,7 @@
 package me.suhsaechan.web.controller.api;
 
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,7 @@ public class RandomNicknameController {
 		Boolean isAdultConsent = Boolean.TRUE.equals(request.getIsAdultConsent());
 
 		if (nicknameType.startsWith("MATURE") && !isAdultConsent) {
-			throw new IllegalArgumentException("성인용 콘텐츠 사용을 위해서는 동의가 필요합니다.");
+			throw new CustomException(ErrorCode.SUH_RANDOM_ADULT_CONSENT_REQUIRED);
 		}
 
 		SuhRandomKit generator = SuhRandomKit.builder()

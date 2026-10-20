@@ -2,9 +2,6 @@ package me.suhsaechan.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.common.constant.SystemType;
-import me.suhsaechan.common.exception.CustomException;
-import me.suhsaechan.common.exception.ErrorCode;
-import org.springframework.util.StringUtils;
 
 /**
  * 파일 관련 유틸리티 클래스
@@ -29,64 +26,6 @@ public class FileUtil {
     } else {
       return SystemType.OTHER;
     }
-  }
-
-  /**
-   * 파일명 특수문자 제거 및 정제
-   * 1. 특수문자/공백 -> 언더스코어
-   * 2. 중복 언더스코어 제거
-   * 3. 시작/끝 언더스코어 제거
-   */
-  private static String sanitizeFileName(String fileName) {
-    return fileName.replaceAll("[\\[\\]\\{\\}\\(\\)\\s]+", "_")  // 특수문자와 공백을 언더스코어로
-        .replaceAll("_{2,}", "_")                      // 중복 언더스코어 제거
-        .replaceAll("^_|_$", "");                     // 시작과 끝의 언더스코어 제거
-  }
-
-  /**
-   * 파일명에서 확장자를 제외한 기본 이름만 추출
-   * @return 확장자 제외 파일명
-   */
-  public static String getBaseName(String filename) {
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex == -1) {
-      return filename;
-    }
-    return filename.substring(0, dotIndex);
-  }
-
-  /**
-   * 파일명에서 확장자만 추출
-   * @return 파일 확장자
-   */
-  public static String getExtension(String filename) {
-    if (!StringUtils.hasText(filename)) {
-      return "";
-    }
-
-    int dotIndex = filename.lastIndexOf('.');
-    if (dotIndex == -1 || dotIndex == filename.length() - 1) {
-      return "";
-    }
-    return filename.substring(dotIndex + 1);
-  }
-
-
-  /**
-   * 파일 경로에서 파일명만 추출
-   * @return 파일명
-   */
-  public static String extractFileName(String filePath) {
-    if (!StringUtils.hasText(filePath)) {
-      throw new CustomException(ErrorCode.FILE_PATH_EMPTY);
-    }
-
-    int lastSeparatorIndex = filePath.lastIndexOf('/');
-    if (lastSeparatorIndex == -1) {
-      return filePath; // 경로에 '/'가 없는 경우 전체가 파일 이름으로 간주
-    }
-
-    return filePath.substring(lastSeparatorIndex + 1);
   }
 
 }

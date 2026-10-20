@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.suhsaechan.ai.service.StreamCallback;
 import lombok.Data;
@@ -20,7 +19,6 @@ import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,6 +64,8 @@ public class ChatbotController {
           @RequestParam String message,
           HttpServletRequest httpRequest) {
 
+    // 길이 초과는 SSE 시작 전 400 응답
+    chatbotService.validateMessageLength(message);
     log.info("스트리밍 채팅 요청 - message: {}, sessionToken: {}", message, sessionToken);
 
     String userIp = extractClientIp(httpRequest);
@@ -86,8 +86,8 @@ public class ChatbotController {
           public void onNext(String chunk) {
             try {
               log.debug("SSE 청크 전송: [{}] ({} bytes)", chunk, chunk.length());
-              // JSON 형식으로 감싸서 공백 보존
-              String jsonData = "{\"text\":\"" + chunk.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\"}";
+              // JSON 형식으로 감싸서 공백 보존 (제어문자 포함 이스케이프는 ObjectMapper)
+              String jsonData = objectMapper.writeValueAsString(Map.of("text", chunk));
               emitter.send(SseEmitter.event()
                   .name("message")
                   .data(jsonData));
@@ -130,7 +130,7 @@ public class ChatbotController {
             log.info("세션 토큰 전송 - sessionToken: {}", newSessionToken);
             emitter.send(SseEmitter.event()
                 .name("connected")
-                .data("{\"sessionToken\":\"" + newSessionToken + "\"}"));
+                .data(objectMapper.writeValueAsString(Map.of("sessionToken", newSessionToken))));
           } catch (IOException e) {
             log.error("세션 토큰 SSE 전송 실패: {}", e.getMessage());
           }

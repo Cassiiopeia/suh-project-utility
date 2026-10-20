@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.common.constant.ServerOptionKey;
 import me.suhsaechan.common.dto.ServerOptionDto;
 import me.suhsaechan.common.dto.ServerOptionRequest;
 import me.suhsaechan.common.entity.ServerOption;

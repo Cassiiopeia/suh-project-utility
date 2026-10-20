@@ -177,12 +177,6 @@
   let currentTab = resolveInitialTab();
   let currentType = localStorage.getItem('devopsType') || 'spring';
 
-  function escapeHtml(t) {
-    const div = document.createElement('div');
-    div.textContent = t;
-    return div.innerHTML;
-  }
-
   function copyText(text, label) {
     navigator.clipboard.writeText(text).then(() => {
       showToast((label || window.MSG['devops.label.command']) + window.MSG['devops.toast.copied'], 'positive');

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kr.suhsaechan.ai.service.SuhAiderEngine;
 import lombok.RequiredArgsConstructor;
+import me.suhsaechan.common.constant.ServerOptionKey;
+import me.suhsaechan.common.service.ServerOptionService;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.config.QdrantProperties;
 import org.springframework.context.annotation.Primary;
@@ -20,16 +22,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SuhAiderEmbeddingService implements EmbeddingService {
 
-    private static final String EMBEDDING_MODEL = "embeddinggemma:latest";
-
     private final SuhAiderEngine suhAiderEngine;
+    private final ServerOptionService serverOptionService;
     private final QdrantProperties qdrantProperties;
 
     @Override
     public List<Float> embed(String text) {
         log.debug("임베딩 생성 요청 - 텍스트 길이: {}", text.length());
 
-        List<Double> vector = suhAiderEngine.embed(EMBEDDING_MODEL, text);
+        List<Double> vector = suhAiderEngine.embed(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_EMBEDDING_MODEL), text);
 
         // Double -> Float 변환
         List<Float> floatVector = vector.stream()
@@ -44,7 +45,7 @@ public class SuhAiderEmbeddingService implements EmbeddingService {
     public List<List<Float>> embedBatch(List<String> texts) {
         log.debug("일괄 임베딩 생성 요청 - 텍스트 수: {}", texts.size());
 
-        List<List<Double>> vectors = suhAiderEngine.embed(EMBEDDING_MODEL, texts);
+        List<List<Double>> vectors = suhAiderEngine.embed(serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_EMBEDDING_MODEL), texts);
 
         // Double -> Float 변환
         List<List<Float>> floatVectors = new ArrayList<>();
@@ -66,6 +67,6 @@ public class SuhAiderEmbeddingService implements EmbeddingService {
 
     @Override
     public String getModelName() {
-        return EMBEDDING_MODEL;
+        return serverOptionService.getOptionValue(ServerOptionKey.CHATBOT_EMBEDDING_MODEL);
     }
 }

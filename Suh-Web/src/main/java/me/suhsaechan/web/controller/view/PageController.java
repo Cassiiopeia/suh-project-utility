@@ -13,7 +13,6 @@ import me.suhsaechan.grassplanter.service.GrassService;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.service.SomansaBusMemberService;
 import me.suhsaechan.somansabus.service.SomansaBusRouteService;
-import me.suhsaechan.web.config.ServerInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,6 @@ public class PageController {
 	private final UserAuthority userAuthority;
 	private final NoticeService noticeService;
 	private final GrassService grassService;
-	private final ServerInfo serverInfo;
 	private final SomansaBusMemberService somansaBusMemberService;
 	private final SomansaBusRouteService somansaBusRouteService;
 

@@ -337,22 +337,18 @@ $(document).ready(function() {
       function(data) {
         btn.disabled = false;
         btn.textContent = originalText;
-        alert(window.MSG['busDashboard.js.syncComplete'] + '\n'
-          + window.MSG['busDashboard.js.syncCreated'] + ': +' + (data.syncCreatedCount || 0) + '\n'
-          + window.MSG['busDashboard.js.syncUpdated'] + ': ' + (data.syncUpdatedCount || 0) + '\n'
-          + window.MSG['busDashboard.js.syncDeactivated'] + ': ' + (data.syncDeactivatedCount || 0) + '\n'
-          + window.MSG['busDashboard.js.syncTotal'] + ': ' + (data.syncTotalCount || 0) + window.MSG['busDashboard.js.syncCountUnit'] + '\n'
-          + window.MSG['busDashboard.js.syncTrigger'] + ': ' + (data.syncTriggerLoginId || ''));
+        showToast(window.MSG['busDashboard.js.syncComplete'] + ' · '
+          + window.MSG['busDashboard.js.syncCreated'] + ': +' + (data.syncCreatedCount || 0) + ' · '
+          + window.MSG['busDashboard.js.syncUpdated'] + ': ' + (data.syncUpdatedCount || 0) + ' · '
+          + window.MSG['busDashboard.js.syncDeactivated'] + ': ' + (data.syncDeactivatedCount || 0) + ' · '
+          + window.MSG['busDashboard.js.syncTotal'] + ': ' + (data.syncTotalCount || 0) + window.MSG['busDashboard.js.syncCountUnit'] + ' · '
+          + window.MSG['busDashboard.js.syncTrigger'] + ': ' + (data.syncTriggerLoginId || ''), 'positive', 6000);
         loadRoutes();
       },
-      function(xhr) {
+      function() {
+        // 실패 메시지는 전역 ajaxError toast 가 표시
         btn.disabled = false;
         btn.textContent = originalText;
-        let errorMessage = window.MSG['busDashboard.js.unknownError'];
-        if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
-          errorMessage = xhr.responseJSON.message;
-        }
-        alert(window.MSG['busDashboard.js.syncFailed'] + ': ' + errorMessage);
       }
     );
   });

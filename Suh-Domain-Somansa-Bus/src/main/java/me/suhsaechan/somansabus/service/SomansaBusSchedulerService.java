@@ -81,6 +81,14 @@ public class SomansaBusSchedulerService {
       return;
     }
 
+    // 발화권 선점 (블루그린·프리뷰 등 여러 인스턴스 중 1곳만 예약 실행)
+    // 선점 시 nextFireAt 이 다음 날로 이동 > 선점 직후 프로세스 종료 시 당일 예약 누락 (중복 예약보다 누락 허용)
+    int claimedCount = repository.claimFire(SINGLETON_ID, state.getNextFireAt(), computeNextFireAt(now, true));
+    if (claimedCount == 0) {
+      log.info("다른 인스턴스가 발화권 선점 — tick skip (nextFireAt: {})", state.getNextFireAt());
+      return;
+    }
+
     boolean fired = invokeReservationSafely();
     markStateAfterFire(now, fired);
   }

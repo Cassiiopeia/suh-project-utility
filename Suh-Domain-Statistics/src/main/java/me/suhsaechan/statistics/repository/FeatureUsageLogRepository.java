@@ -25,9 +25,6 @@ public interface FeatureUsageLogRepository extends JpaRepository<FeatureUsageLog
     // 전체 기능 사용 횟수
     long count();
 
-    // 기간별 전체 기능 사용 횟수
-    long countByUsedAtAfter(LocalDateTime after);
-
     // 전체 기능별 사용 횟수 (GROUP BY - N+1 방지)
     @Query("SELECT f.featureName, COUNT(f) FROM FeatureUsageLog f GROUP BY f.featureName")
     List<Object[]> countGroupByFeatureName();

@@ -41,7 +41,7 @@ public class SomansaBusReservationService {
   private final SomansaBusReservationHistoryRepository historyRepository;
   private final SomansaBusSchedulerEventService eventService;
 
-  @Transactional
+  // 트랜잭션 없음: 외부 예약 API 호출(최대 3회 재시도) 동안 DB 커넥션 점유 방지
   public SomansaBusResponse manualReserve(SomansaBusRequest request) {
     log.info("수동 예약 시작 - 멤버: {}, 노선: {}", request.getSomansaBusMemberId(), request.getSomansaBusRouteId());
 

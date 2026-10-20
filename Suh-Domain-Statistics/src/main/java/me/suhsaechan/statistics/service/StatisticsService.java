@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.suhsaechan.statistics.dto.StatisticsResponse;
 import me.suhsaechan.statistics.entity.FeatureUsageLog;
 import me.suhsaechan.statistics.entity.FeatureUsageLog.FeatureType;
 import me.suhsaechan.statistics.entity.PageVisitLog;
@@ -205,18 +204,4 @@ public class StatisticsService {
         return counts;
     }
 
-    /**
-     * 방문자 통계 조회 (통합)
-     */
-    @Transactional(readOnly = true)
-    public StatisticsResponse getVisitorStatistics() {
-        return StatisticsResponse.builder()
-            .totalUniqueVisitors(getTotalUniqueVisitors())
-            .todayUniqueVisitors(getTodayUniqueVisitors())
-            .totalPageViews(getTotalPageViews())
-            .todayPageViews(getTodayPageViews())
-            .featureUsageCounts(getFeatureUsageCounts())
-            .todayFeatureUsageCounts(getTodayFeatureUsageCounts())
-            .build();
-    }
 }

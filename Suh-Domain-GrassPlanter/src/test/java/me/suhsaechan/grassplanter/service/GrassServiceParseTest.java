@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class GrassServiceParseTest {
 
   private final GrassService service =
-      new GrassService(null, null, null, null, null, null);
+      new GrassService(null, null, null, null, null, null, null);
 
   @Test
   void 오늘_기여_있음_파싱() {

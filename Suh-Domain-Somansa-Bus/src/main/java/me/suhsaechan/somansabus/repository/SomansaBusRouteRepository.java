@@ -14,8 +14,6 @@ public interface SomansaBusRouteRepository extends JpaRepository<SomansaBusRoute
 
   List<SomansaBusRoute> findByIsActiveTrue();
 
-  List<SomansaBusRoute> findByCaralias(String caralias);
-
   List<SomansaBusRoute> findByCaraliasAndIsActiveTrue(String caralias);
 
   Optional<SomansaBusRoute> findByDisptid(Integer disptid);

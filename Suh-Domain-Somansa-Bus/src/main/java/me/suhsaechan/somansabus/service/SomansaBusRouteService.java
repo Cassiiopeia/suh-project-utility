@@ -20,6 +20,7 @@ import me.suhsaechan.somansabus.repository.SomansaBusRouteRepository;
 import okhttp3.OkHttpClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Slf4j
 @Service
@@ -29,6 +30,7 @@ public class SomansaBusRouteService {
   private final SomansaBusRouteRepository routeRepository;
   private final SomansaBusApiService apiService;
   private final ServerOptionService serverOptionService;
+  private final TransactionTemplate transactionTemplate;
 
   @Transactional(readOnly = true)
   public SomansaBusResponse getAllRoutes() {
@@ -74,7 +76,8 @@ public class SomansaBusRouteService {
     List<RouteData> remoteRoutes = fetchRemoteRoutes(triggerLoginId);
     log.info("외부 노선 응답 수신: {}개", remoteRoutes.size());
 
-    return applyRemoteRoutes(remoteRoutes, triggerLoginId);
+    // upsert + soft delete 만 트랜잭션 (자기 호출이라 @Transactional 대신 TransactionTemplate)
+    return transactionTemplate.execute(status -> applyRemoteRoutes(remoteRoutes, triggerLoginId));
   }
 
   private List<RouteData> fetchRemoteRoutes(String triggerLoginId) {
@@ -94,8 +97,7 @@ public class SomansaBusRouteService {
     return apiService.fetchRouteList(session);
   }
 
-  @Transactional
-  public SomansaBusResponse applyRemoteRoutes(List<RouteData> remoteRoutes, String triggerLoginId) {
+  private SomansaBusResponse applyRemoteRoutes(List<RouteData> remoteRoutes, String triggerLoginId) {
     Set<Integer> remoteDisptids = new HashSet<>();
     int created = 0;
     int updated = 0;

@@ -1,0 +1,6 @@
+# HTML 이스케이프 단일 원본: static/js/common.js 의 escapeHtml
+description=common.js 밖에서 escapeHtml 재정의 금지
+paths=Suh-Web/src/main/resources/templates/,Suh-Web/src/main/resources/static/js/
+extensions=.html,.js
+exclude=Suh-Web/src/main/resources/static/js/common.js
+pattern=function escapeHtml\s*\(

@@ -600,13 +600,13 @@ function downloadModel() {
   const modelName = $('#modelNameInput').val().trim();
 
   if (!modelName) {
-    alert(window.MSG['aiServer.alert.enterModelName']);
+    showToast(window.MSG['aiServer.alert.enterModelName'], 'warning');
     return;
   }
 
   // 클라이언트 측에서 이미 폴링 중인지 확인
   if (activeDownloads.has(modelName)) {
-    alert('"' + modelName + '" ' + window.MSG['aiServer.alert.alreadyDownloading']);
+    showToast('"' + modelName + '" ' + window.MSG['aiServer.alert.alreadyDownloading'], 'warning');
     return;
   }
 
@@ -830,13 +830,13 @@ function runApiTest() {
   const inputText = $('#inputText').val().trim();
 
   if (!inputText) {
-    alert(window.MSG['aiServer.alert.enterInputText']);
+    showToast(window.MSG['aiServer.alert.enterInputText'], 'warning');
     return;
   }
 
   // Generate 테스트는 모델 필수, 임베딩은 선택
   if (testType === 'generate' && !selectedModel) {
-    alert(window.MSG['aiServer.alert.selectModelForGenerate']);
+    showToast(window.MSG['aiServer.alert.selectModelForGenerate'], 'warning');
     return;
   }
 
@@ -1009,7 +1009,7 @@ function copyGeneratedText() {
 // 벡터 복사
 function copyVector() {
   if (!currentEmbeddingVector) {
-    alert(window.MSG['aiServer.alert.noVectorToCopy']);
+    showToast(window.MSG['aiServer.alert.noVectorToCopy'], 'warning');
     return;
   }
   const vectorText = JSON.stringify(currentEmbeddingVector);
@@ -1029,7 +1029,7 @@ function copyToClipboard(text, btn) {
     textArea.select();
     document.execCommand('copy');
     document.body.removeChild(textArea);
-    alert(window.MSG['aiServer.alert.copiedToClipboard']);
+    showToast(window.MSG['aiServer.alert.copiedToClipboard'], 'positive');
   });
 }
 
@@ -1058,10 +1058,6 @@ function formatDate(dateStr) {
   }
 }
 
-function escapeHtml(text) {
-  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
 </script>
 
 </body>

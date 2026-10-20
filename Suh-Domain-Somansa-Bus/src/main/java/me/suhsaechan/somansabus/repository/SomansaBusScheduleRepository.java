@@ -32,7 +32,5 @@ public interface SomansaBusScheduleRepository extends JpaRepository<SomansaBusSc
       "WHERE s.isActive = true")
   List<SomansaBusSchedule> findActiveWithDetails();
 
-  List<SomansaBusSchedule> findBySomansaBusMemberAndIsActiveTrue(SomansaBusMember member);
-
   List<SomansaBusSchedule> findBySomansaBusMemberSomansaBusMemberIdAndIsActiveTrue(UUID memberId);
 }

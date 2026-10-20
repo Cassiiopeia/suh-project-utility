@@ -1,0 +1,5 @@
+# ErrorCode 우회 예외 금지: GlobalExceptionHandler 가 500 + 고정 문구로 바꿔 사용자 메시지·상태코드가 사라짐
+description=RuntimeException·IllegalArgumentException·IllegalStateException 직접 throw 금지 (CustomException + ErrorCode 사용)
+paths=Suh-Application/src/main/java/,Suh-Common/src/main/java/,Suh-Domain-AiServer/src/main/java/,Suh-Domain-Chatbot/src/main/java/,Suh-Domain-Docker/src/main/java/,Suh-Domain-Github/src/main/java/,Suh-Domain-GrassPlanter/src/main/java/,Suh-Domain-Notice/src/main/java/,Suh-Domain-Somansa-Bus/src/main/java/,Suh-Domain-Statistics/src/main/java/,Suh-Domain-Task/src/main/java/,Suh-Module-Translate/src/main/java/,Suh-Web/src/main/java/
+extensions=.java
+pattern=throw new (RuntimeException|IllegalArgumentException|IllegalStateException)\(

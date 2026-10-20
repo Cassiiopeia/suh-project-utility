@@ -1,5 +1,6 @@
 package me.suhsaechan.grassplanter.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -7,7 +8,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +56,7 @@ public class GrassService {
     private final GrassEncryptionUtil encryptionUtil;
     private final OkHttpClient okHttpClient;
     private final GithubService githubService;
+    private final ObjectMapper objectMapper;
     
     @Transactional
     public GrassResponse createProfile(GrassRequest request) {
@@ -61,7 +65,7 @@ public class GrassService {
         // 중복 체크 (먼저 username 중복 확인)
         if (grassProfileRepository.existsByGithubUsername(request.getGithubUsername())) {
             log.error("이미 존재하는 GitHub 사용자명: {}", request.getGithubUsername());
-            throw new RuntimeException("이미 존재하는 GitHub 사용자명입니다: " + request.getGithubUsername());
+            throw new CustomException(ErrorCode.GRASS_PROFILE_DUPLICATE_USERNAME);
         }
 
         // GitHub Repository 조회 또는 웹 스크래핑으로 자동 생성
@@ -80,7 +84,7 @@ public class GrassService {
                 request.getGithubUsername(), githubRepository.getGithubRepositoryId())) {
             log.error("이미 존재하는 프로필 - 사용자: {}, 저장소: {}", 
                 request.getGithubUsername(), githubRepository.getFullName());
-            throw new RuntimeException("이미 존재하는 프로필입니다.");
+            throw new CustomException(ErrorCode.GRASS_PROFILE_DUPLICATE);
         }
 
         // PAT 암호화
@@ -197,60 +201,49 @@ public class GrassService {
                 .build();
     }
 
-    @Transactional
+    /**
+     * 수동 커밋: 프로필 조회 > PAT 복호화 > GitHub 커밋 > 로그 1회 저장 > 실패 시 GRASS_COMMIT_FAILED
+     * 트랜잭션 없음: 실패 로그가 롤백되지 않고 남도록 save 단위 커밋
+     */
     public GrassResponse executeCommit(GrassRequest request) {
         log.info("수동 커밋 실행 시작 - 프로필 ID: {}", request.getProfileId());
 
         GrassProfile profile = grassProfileRepository.findByIdWithRepository(request.getProfileId())
                 .orElseThrow(() -> new CustomException(ErrorCode.GRASS_PROFILE_NOT_FOUND));
 
+        boolean isCommitSucceeded;
+        String failureReason = null;
         try {
-            // PAT 복호화
             String pat = encryptionUtil.decrypt(profile.getEncryptedPat());
-            
-            // GitHub API를 통한 커밋 실행
-            boolean success = performGitHubCommit(profile, pat, request.getCommitMessage());
-            
-            // 커밋 로그 저장
-            GrassCommitLog commitLog = GrassCommitLog.builder()
-                    .grassProfile(profile)
-                    .repositoryName(profile.getDefaultRepository() != null ? profile.getDefaultRepository().getFullName() : null)
-                    .commitTime(LocalDateTime.now())
-                    .commitMessage(request.getCommitMessage() != null ? 
-                        request.getCommitMessage() : "Manual commit from GrassPlanter")
-                    .isAutoCommit(false)  // 수동 커밋이므로 false
-                    .isSuccess(success)
-                    .errorMessage(success ? null : "커밋 실행 실패")
-                    .build();
-
-            GrassCommitLog savedLog = grassCommitLogRepository.save(commitLog);
-            
-            if (success) {
-                return GrassResponse.builder()
-                        .commitLog(convertToCommitLogDto(savedLog))
-                        .build();
-            } else {
-                throw new CustomException(ErrorCode.GRASS_COMMIT_FAILED);
+            isCommitSucceeded = performGitHubCommit(profile, pat, request.getCommitMessage());
+            if (!isCommitSucceeded) {
+                failureReason = "커밋 실행 실패";
             }
-                    
         } catch (Exception e) {
             log.error("커밋 실행 중 오류 발생: {}", e.getMessage(), e);
-            
-            // 오류 로그 저장
-            GrassCommitLog errorLog = GrassCommitLog.builder()
-                    .grassProfile(profile)
-                    .repositoryName(profile.getDefaultRepository() != null ? profile.getDefaultRepository().getFullName() : null)
-                    .commitTime(LocalDateTime.now())
-                    .commitMessage(request.getCommitMessage())
-                    .isAutoCommit(false)  // 수동 커밋이므로 false
-                    .isSuccess(false)
-                    .errorMessage(e.getMessage())
-                    .build();
-
-            grassCommitLogRepository.save(errorLog);
-            
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            isCommitSucceeded = false;
+            failureReason = e.getMessage();
         }
+
+        // 커밋 로그 저장 (성공·실패 공통)
+        GrassCommitLog commitLog = GrassCommitLog.builder()
+                .grassProfile(profile)
+                .repositoryName(profile.getDefaultRepository() != null ? profile.getDefaultRepository().getFullName() : null)
+                .commitTime(LocalDateTime.now())
+                .commitMessage(request.getCommitMessage() != null ?
+                    request.getCommitMessage() : "Manual commit from GrassPlanter")
+                .isAutoCommit(false)  // 수동 커밋이므로 false
+                .isSuccess(isCommitSucceeded)
+                .errorMessage(failureReason)
+                .build();
+        GrassCommitLog savedLog = grassCommitLogRepository.save(commitLog);
+
+        if (!isCommitSucceeded) {
+            throw new CustomException(ErrorCode.GRASS_COMMIT_FAILED);
+        }
+        return GrassResponse.builder()
+                .commitLog(convertToCommitLogDto(savedLog))
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -331,9 +324,9 @@ public class GrassService {
                 + "user(login:$login){contributionsCollection(from:$from,to:$to){"
                 + "contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}";
 
-        String graphqlBody = String.format(
-                "{\"query\":\"%s\",\"variables\":{\"login\":\"%s\",\"from\":\"%s\",\"to\":\"%s\"}}",
-                query.replace("\"", "\\\""), githubUsername, from, to);
+        String graphqlBody = objectMapper.writeValueAsString(Map.of(
+                "query", query,
+                "variables", Map.of("login", githubUsername, "from", from.toString(), "to", to.toString())));
 
         RequestBody body = RequestBody.create(graphqlBody, MediaType.parse("application/json"));
         Request request = new Request.Builder()
@@ -471,13 +464,14 @@ public class GrassService {
             String newContent = currentContent + "\n## [" + LocalDateTime.now() + "]\n- " + commitMessage + "\n";
             String encodedContent = Base64.getEncoder().encodeToString(newContent.getBytes(StandardCharsets.UTF_8));
             
-            // 파일 업데이트
-            String updateJson = String.format(
-                "{\"message\":\"%s\",\"content\":\"%s\"%s,\"branch\":\"main\"}",
-                commitMessage,
-                encodedContent,
-                sha != null ? ",\"sha\":\"" + sha + "\"" : ""
-            );
+            // 파일 업데이트 (branch 생략 > 저장소 기본 브랜치)
+            Map<String, String> updateBody = new HashMap<>();
+            updateBody.put("message", commitMessage);
+            updateBody.put("content", encodedContent);
+            if (sha != null) {
+                updateBody.put("sha", sha);
+            }
+            String updateJson = objectMapper.writeValueAsString(updateBody);
             
             RequestBody body = RequestBody.create(updateJson, MediaType.parse("application/json"));
             Request updateRequest = new Request.Builder()

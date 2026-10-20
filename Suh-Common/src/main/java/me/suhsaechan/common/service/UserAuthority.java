@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 public class UserAuthority {
 
     private static final String SESSION_USER_ROLE = "USER_ROLE";
-    private static final String SESSION_USER_IP = "USER_IP";
     public static final String ROLE_SUPER_ADMIN = "SUPER_ADMIN";
     public static final String ROLE_USER = "USER";
     
@@ -36,25 +35,7 @@ public class UserAuthority {
         return ROLE_SUPER_ADMIN.equals(role);
     }
     
-    /**
-     * 요청한 사용자의 IP를 세션에 저장
-     * @param request HTTP 요청
-     * @param session 현재 세션
-     */
-    public void saveUserIp(HttpServletRequest request, HttpSession session) {
-        String ip = extractIpFromRequest(request);
-        session.setAttribute(SESSION_USER_IP, ip);
-        log.debug("사용자 IP 저장: {}", ip);
-    }
     
-    /**
-     * 세션에서 사용자 IP 조회
-     * @param session 현재 세션
-     * @return 사용자 IP
-     */
-    public String getUserIp(HttpSession session) {
-        return (String) session.getAttribute(SESSION_USER_IP);
-    }
     
     /**
      * 로그인 시 슈퍼 관리자 여부 확인 및 권한 설정
@@ -100,14 +81,4 @@ public class UserAuthority {
         return ip;
     }
     
-    /**
-     * IP 주소 일치 여부 확인 (댓글 작성자와 현재 사용자)
-     * @param commentIp 댓글 작성자 IP
-     * @param session 현재 세션
-     * @return IP 일치 여부
-     */
-    public boolean isSameIp(String commentIp, HttpSession session) {
-        String userIp = getUserIp(session);
-        return commentIp != null && commentIp.equals(userIp);
-    }
 } 

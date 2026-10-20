@@ -1798,7 +1798,7 @@
 
           document.getElementById('notice-detail-modal').showModal();
         } else {
-          alert(window.MSG['dashboard.js.noticeLoadError']);
+          showToast(window.MSG['dashboard.js.noticeLoadError'], 'negative');
         }
       },
       function(xhr, status, error) {
@@ -1864,11 +1864,11 @@
           </div>
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
-              <span class="font-semibold text-base-content">${comment.author}</span>
-              ${comment.anonymizedIp ? `<span class="text-base-content/70 text-xs">(${comment.anonymizedIp})</span>` : ''}
+              <span class="font-semibold text-base-content">${escapeHtml(comment.author)}</span>
+              ${comment.anonymizedIp ? `<span class="text-base-content/70 text-xs">(${escapeHtml(comment.anonymizedIp)})</span>` : ''}
               <span class="text-base-content/70 text-xs">${date}</span>
             </div>
-            <p class="text-base-content/70 text-sm whitespace-pre-line">${comment.content}</p>
+            <p class="text-base-content/70 text-sm whitespace-pre-line">${escapeHtml(comment.content)}</p>
           </div>
           ${deleteButton}
         </div>
@@ -1888,7 +1888,7 @@
     const content = $('#comment-content').val();
 
     if (!content) {
-      alert(window.MSG['dashboard.js.commentRequired']);
+      showToast(window.MSG['dashboard.js.commentRequired'], 'warning');
       return;
     }
 
@@ -1904,11 +1904,8 @@
           $('#comment-content').val('');
           loadComments(noticeId);
         } else {
-          alert(window.MSG['dashboard.js.commentCreateFailed']);
+          showToast(window.MSG['dashboard.js.commentCreateFailed'], 'negative');
         }
-      },
-      function(xhr, status, error) {
-        alert(window.MSG['dashboard.js.commentCreateError'] + error);
       }
     );
   });
@@ -1920,9 +1917,6 @@
       { commentId: commentId },
       function() {
         loadComments(noticeId);
-      },
-      function(xhr, status, error) {
-        alert(window.MSG['dashboard.js.commentDeleteError'] + error);
       }
     );
   }
