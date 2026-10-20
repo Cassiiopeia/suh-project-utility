@@ -34,11 +34,11 @@
 # - 버전은 항상 높은 버전으로 자동 동기화됩니다
 # ===================================================================
 
-version: "2.5.107"
-version_code: 174 # app build number
+version: "2.5.108"
+version_code: 175 # app build number
 project_type: "spring" # spring, flutter, react, react-native, react-native-expo, node, python, basic
 metadata:
-  last_updated: "2026-10-20 15:33:47"
+  last_updated: "2026-10-20 23:45:30"
   last_updated_by: "Cassiiopeia"
   # 릴리스 PR은 main(head) -> deploy(base) 구조다. 실제 서버 배포는 main push로 돈다
   default_branch: "deploy"
