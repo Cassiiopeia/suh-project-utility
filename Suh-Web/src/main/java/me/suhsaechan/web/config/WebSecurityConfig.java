@@ -45,6 +45,8 @@ public class WebSecurityConfig {
         .csrf(csrf -> csrf
             // API 경로에 대해 CSRF 토큰 검사 비활성화
             .ignoringRequestMatchers("/api/issue-helper/create/commit-branch/github-workflow")
+            // 세종 인증: 세션 없는 무상태 API, GitHub Pages 데모에서 호출 (#263)
+            .ignoringRequestMatchers(CorsConfig.SEJONG_AUTH_API_PATTERN)
         );
 
     http
