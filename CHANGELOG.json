@@ -1,11 +1,27 @@
 {
   "metadata": {
-    "lastUpdated": "2026-10-21T22:05:53Z",
-    "currentVersion": "2.5.109",
+    "lastUpdated": "2026-10-21T22:22:24Z",
+    "currentVersion": "2.5.110",
     "projectType": "spring",
-    "totalReleases": 85
+    "totalReleases": 86
   },
   "releases": [
+    {
+      "version": "2.5.110",
+      "project_type": "spring",
+      "date": "2026-10-21",
+      "pr_number": 265,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **버그 수정**\n  * 세종대 인증 시 비밀번호가 서버 기록에 남던 문제 수정",
+      "parsed_changes": {
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "세종대 인증 시 비밀번호가 서버 기록에 남던 문제 수정"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.109",
       "project_type": "spring",
