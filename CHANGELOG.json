@@ -1,11 +1,35 @@
 {
   "metadata": {
-    "lastUpdated": "2026-10-21T22:22:24Z",
-    "currentVersion": "2.5.110",
+    "lastUpdated": "2026-10-22T05:43:40Z",
+    "currentVersion": "2.5.111",
     "projectType": "spring",
-    "totalReleases": 86
+    "totalReleases": 87
   },
   "releases": [
+    {
+      "version": "2.5.111",
+      "project_type": "spring",
+      "date": "2026-10-22",
+      "pr_number": 267,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 세종대 인증: 포털 계정이 잠기면 잠금 안내와 비밀번호 재설정 주소를 보여 줌\n  * 세종대 인증: 같은 학번으로 3번 연속 비밀번호가 틀리면 30분 동안 시도를 막아 포털 계정 잠금을 방지\n\n* **개선**\n  * 세종대 인증 라이브러리 1.2.17 적용 (비밀번호가 틀리면 즉시 실패)\n  * 세종대 인증 에러 메시지를 화면 언어로 표시",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "세종대 인증: 포털 계정이 잠기면 잠금 안내와 비밀번호 재설정 주소를 보여 줌",
+            "세종대 인증: 같은 학번으로 3번 연속 비밀번호가 틀리면 30분 동안 시도를 막아 포털 계정 잠금을 방지"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "세종대 인증 라이브러리 1.2.17 적용 (비밀번호가 틀리면 즉시 실패)",
+            "세종대 인증 에러 메시지를 화면 언어로 표시"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.110",
       "project_type": "spring",
