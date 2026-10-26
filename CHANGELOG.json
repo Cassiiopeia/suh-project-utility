@@ -1,11 +1,42 @@
 {
   "metadata": {
-    "lastUpdated": "2026-10-22T05:43:40Z",
-    "currentVersion": "2.5.111",
+    "lastUpdated": "2026-10-26T02:45:19Z",
+    "currentVersion": "2.5.112",
     "projectType": "spring",
-    "totalReleases": 87
+    "totalReleases": 88
   },
   "releases": [
+    {
+      "version": "2.5.112",
+      "project_type": "spring",
+      "date": "2026-10-26",
+      "pr_number": 269,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 대시보드 서버 통계를 차트 기반 분석 화면으로 개편 (7일·30일·90일 기간 선택)\n  * 방문자·페이지뷰·기능 사용·챗봇 토큰의 직전 기간 대비 증감과 추이선 표시\n  * 일별 방문 추이, 많이 쓴 기능, 유입 경로, 인기 페이지, 요일·시간대 방문 분포 차트 추가\n\n* **개선**\n  * 라이트·다크 테마와 모바일 화면에 맞춰 차트 색과 배치 자동 조정\n  * 통계 조회 속도 개선\n\n* **기타**\n  * 대시보드에서 Task D-Day 섹션 제거",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "대시보드 서버 통계를 차트 기반 분석 화면으로 개편 (7일·30일·90일 기간 선택)",
+            "방문자·페이지뷰·기능 사용·챗봇 토큰의 직전 기간 대비 증감과 추이선 표시",
+            "일별 방문 추이, 많이 쓴 기능, 유입 경로, 인기 페이지, 요일·시간대 방문 분포 차트 추가"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "라이트·다크 테마와 모바일 화면에 맞춰 차트 색과 배치 자동 조정",
+            "통계 조회 속도 개선"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "대시보드에서 Task D-Day 섹션 제거"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.111",
       "project_type": "spring",
