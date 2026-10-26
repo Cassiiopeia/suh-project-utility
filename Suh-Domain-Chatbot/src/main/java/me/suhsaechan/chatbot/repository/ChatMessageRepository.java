@@ -43,4 +43,15 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> 
     // 기간별 출력 토큰 합계
     @Query("SELECT COALESCE(SUM(m.outputTokens), 0) FROM ChatMessage m WHERE m.outputTokens IS NOT NULL AND m.createdDate > :after")
     Long sumOutputTokensAfter(@Param("after") LocalDateTime after);
+
+    // 일별 토큰 합계 [날짜, 입력+출력 합] (시작 이상, 끝 미만)
+    @Query(value = "SELECT CAST(created_date AS date), SUM(COALESCE(input_tokens, 0) + COALESCE(output_tokens, 0)) "
+        + "FROM chat_message WHERE created_date >= :start AND created_date < :end "
+        + "GROUP BY CAST(created_date AS date)", nativeQuery = true)
+    List<Object[]> sumDailyTokensBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    // 기간 토큰 합계 (시작 이상, 끝 미만)
+    @Query("SELECT COALESCE(SUM(COALESCE(m.inputTokens, 0) + COALESCE(m.outputTokens, 0)), 0) FROM ChatMessage m "
+        + "WHERE m.createdDate >= :start AND m.createdDate < :end")
+    Long sumTokensBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

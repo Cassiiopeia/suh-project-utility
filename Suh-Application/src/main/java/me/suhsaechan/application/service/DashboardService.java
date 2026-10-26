@@ -2,6 +2,15 @@ package me.suhsaechan.application.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import me.suhsaechan.common.exception.CustomException;
+import me.suhsaechan.common.exception.ErrorCode;
+import me.suhsaechan.statistics.dto.DailyStatisticsDto;
+import me.suhsaechan.statistics.dto.DashboardStatisticsDto;
+import me.suhsaechan.statistics.dto.StatisticsPeriodTotalDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.chatbot.repository.ChatMessageRepository;
@@ -28,6 +37,67 @@ public class DashboardService {
     private final ChatMessageRepository chatMessageRepository;
     private final SuhProjectUtilityNoticeRepository noticeRepository;
     private static final String DASHBOARD_SUMMARY_CACHE = "dashboardSummary";
+    private static final String DASHBOARD_STATISTICS_CACHE = "dashboardStatistics";
+    // 조회 가능한 기간 일수
+    private static final Set<Integer> ALLOWED_PERIOD_DAYS = Set.of(7, 30, 90);
+
+    /**
+     * 기간 일수 검증: 7, 30, 90 외·누락은 INVALID_PARAMETER
+     */
+    public void validatePeriodDays(Integer periodDays) {
+        if (Optional.ofNullable(periodDays).filter(ALLOWED_PERIOD_DAYS::contains).isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
+        }
+    }
+
+    /**
+     * 기간 통계 조회 (5분 캐싱, 기간별 키)
+     */
+    @Cacheable(value = DASHBOARD_STATISTICS_CACHE, key = "#periodDays")
+    @Transactional(readOnly = true)
+    public DashboardStatisticsDto getDashboardStatistics(Integer periodDays) {
+        return aggregateDashboardStatistics(periodDays);
+    }
+
+    /**
+     * 기간 통계 캐시 갱신 후 반환
+     */
+    @CachePut(value = DASHBOARD_STATISTICS_CACHE, key = "#periodDays")
+    @Transactional(readOnly = true)
+    public DashboardStatisticsDto refreshDashboardStatistics(Integer periodDays) {
+        log.info("[dashboard statistics] cache refresh : periodDays={}", periodDays);
+        return aggregateDashboardStatistics(periodDays);
+    }
+
+    private DashboardStatisticsDto aggregateDashboardStatistics(Integer periodDays) {
+        // 기간 경계 (현재: [오늘-(N-1)일, 내일), 직전: 같은 길이로 바로 앞)
+        LocalDate today = LocalDate.now();
+        LocalDateTime currentStart = today.minusDays(periodDays - 1L).atStartOfDay();
+        LocalDateTime currentEnd = today.plusDays(1).atStartOfDay();
+        LocalDateTime previousStart = currentStart.minusDays(periodDays);
+
+        // 방문·기능 통계 + 직전 기간 합계
+        DashboardStatisticsDto statistics = statisticsService.buildPeriodStatistics(currentStart, currentEnd);
+        StatisticsPeriodTotalDto previousTotal = statisticsService.getPeriodTotal(previousStart, currentStart);
+
+        // 챗봇 토큰 (일별, 기간 합계)
+        Map<LocalDate, Long> chatTokensByDate = chatMessageRepository
+            .sumDailyTokensBetween(currentStart, currentEnd).stream()
+            .collect(Collectors.toMap(row -> toLocalDate(row[0]), row -> ((Number) row[1]).longValue(), Long::sum));
+        for (DailyStatisticsDto day : statistics.getDailyStatistics()) {
+            day.setChatTokens(chatTokensByDate.getOrDefault(day.getDate(), 0L));
+        }
+        statistics.getCurrentTotal().setChatTokens(chatMessageRepository.sumTokensBetween(currentStart, currentEnd));
+        previousTotal.setChatTokens(chatMessageRepository.sumTokensBetween(previousStart, currentStart));
+
+        statistics.setPeriodDays(periodDays);
+        statistics.setPreviousTotal(previousTotal);
+        return statistics;
+    }
+
+    private LocalDate toLocalDate(Object dateValue) {
+        return LocalDate.parse(dateValue.toString().substring(0, 10));
+    }
 
     /**
      * 대시보드 Summary 데이터 조회

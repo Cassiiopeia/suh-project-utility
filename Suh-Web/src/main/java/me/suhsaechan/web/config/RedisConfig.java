@@ -55,6 +55,8 @@ public class RedisConfig {
         .cacheDefaults(createCacheConfiguration(Duration.ofMinutes(CACHE_EXPIRED_TIME)))
         // 대시보드 Summary 캐시: 5분 TTL
         .withCacheConfiguration("dashboardSummary", createCacheConfiguration(Duration.ofMinutes(5)))
+        // 대시보드 기간 통계 캐시: 5분 TTL
+        .withCacheConfiguration("dashboardStatistics", createCacheConfiguration(Duration.ofMinutes(5)))
         // ServerOption 캐시: 1시간 TTL (설정 변경 빈도 낮음)
         .withCacheConfiguration("serverOption", createCacheConfiguration(Duration.ofHours(1)))
         .build();

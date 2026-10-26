@@ -2,11 +2,14 @@ package me.suhsaechan.web.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.suhsaechan.application.dto.DashboardRequest;
 import me.suhsaechan.application.service.DashboardService;
+import me.suhsaechan.statistics.dto.DashboardStatisticsDto;
 import me.suhsaechan.statistics.dto.DashboardSummaryDto;
 import me.suhsaechan.suhlogger.annotation.LogMonitor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,5 +44,25 @@ public class DashboardController {
     @LogMonitor
     public ResponseEntity<DashboardSummaryDto> refreshSummary() {
         return ResponseEntity.ok(dashboardService.refreshDashboardSummary());
+    }
+
+    /**
+     * 기간 통계 조회 (7/30/90일, 5분 캐싱)
+     */
+    @PostMapping(value = "/statistics", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @LogMonitor
+    public ResponseEntity<DashboardStatisticsDto> getStatistics(@ModelAttribute DashboardRequest request) {
+        dashboardService.validatePeriodDays(request.getPeriodDays());
+        return ResponseEntity.ok(dashboardService.getDashboardStatistics(request.getPeriodDays()));
+    }
+
+    /**
+     * 기간 통계 새로고침 (로그인 필요)
+     */
+    @PostMapping(value = "/statistics/refresh", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @LogMonitor
+    public ResponseEntity<DashboardStatisticsDto> refreshStatistics(@ModelAttribute DashboardRequest request) {
+        dashboardService.validatePeriodDays(request.getPeriodDays());
+        return ResponseEntity.ok(dashboardService.refreshDashboardStatistics(request.getPeriodDays()));
     }
 }

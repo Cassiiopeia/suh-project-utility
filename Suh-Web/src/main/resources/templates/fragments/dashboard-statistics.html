@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!-- 서버 통계: 헤더 > KPI 4개 > 일별 추이 > 기능·유입 > 페이지·히트맵 (dashboard-statistics.js 가 채움) -->
+<section th:fragment="section" id="statistics-section" class="mb-8">
+  <span id="statistics-color-probe" class="hidden" aria-hidden="true"></span>
+
+  <!-- 헤더 (제목, 기간 선택, 새로고침) -->
+  <div class="flex flex-wrap items-end justify-between gap-4 mb-4">
+    <div>
+      <p class="text-xs font-medium text-base-content/60 mb-1" th:text="#{dashboard.stats.subtitle}">봇 제외 · 기간 기준</p>
+      <h2 class="text-2xl font-extrabold tracking-tight text-base-content" th:text="#{dashboard.summary.title}">서버 통계</h2>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="join" role="group">
+        <button type="button" class="btn btn-sm join-item" data-period-days="7" aria-pressed="false" th:text="#{dashboard.stats.period.7}">7일</button>
+        <button type="button" class="btn btn-sm join-item btn-primary" data-period-days="30" aria-pressed="true" th:text="#{dashboard.stats.period.30}">30일</button>
+        <button type="button" class="btn btn-sm join-item" data-period-days="90" aria-pressed="false" th:text="#{dashboard.stats.period.90}">90일</button>
+      </div>
+      <button type="button" id="statistics-refresh-button" sec:authorize="isAuthenticated()" onclick="refreshDashboardStatistics()"
+              class="btn btn-sm btn-ghost btn-circle" th:title="#{dashboard.summary.refresh}" th:attr="aria-label=#{dashboard.summary.refresh}">
+        <i class="fa-solid fa-arrows-rotate text-base-content/70"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI 카드 4개 (data-kpi = 응답 필드명) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <div th:each="kpi : ${ {'uniqueVisitors', 'pageViews', 'featureUsages', 'chatTokens'} }"
+         class="card bg-base-100 border border-base-300 shadow-sm" data-statistics-card th:attr="data-kpi=${kpi}">
+      <div class="card-body p-5 gap-2">
+        <p class="text-xs font-medium text-base-content/70"
+           th:text="#{dashboard.stats.kpi.__${kpi == 'uniqueVisitors' ? 'visitors' : kpi}__}">방문자</p>
+        <div data-card-state="loading">
+          <div class="skeleton h-8 w-24 mb-3"></div>
+          <div class="skeleton h-10 w-full mb-2"></div>
+          <div class="skeleton h-3 w-28"></div>
+        </div>
+        <div data-card-state="content" class="hidden">
+          <div class="flex items-baseline gap-2 mb-2">
+            <span class="text-3xl font-extrabold tracking-tight text-base-content" data-kpi-value>-</span>
+            <span class="badge badge-sm hidden" data-kpi-change></span>
+          </div>
+          <div class="relative h-10 mb-2"><canvas data-kpi-sparkline aria-hidden="true"></canvas></div>
+          <p class="text-xs text-base-content/60">
+            <span th:text="#{dashboard.stats.cumulative}">전체 누적</span> <span data-kpi-cumulative>-</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 일별 방문 추이 -->
+  <div id="statistics-trend-card" class="card bg-base-100 border border-base-300 shadow-sm mb-4" data-statistics-card>
+    <div class="card-body p-6 gap-4">
+      <h3 class="text-lg font-bold text-base-content" th:text="#{dashboard.stats.trend.title}">일별 방문 추이</h3>
+      <div data-card-state="loading" class="skeleton h-64 w-full"></div>
+      <div data-card-state="content" class="hidden relative h-64"><canvas id="statistics-trend-chart"></canvas></div>
+      <div data-card-state="empty" class="hidden py-16 text-center text-sm text-base-content/60" th:text="#{dashboard.stats.empty}">아직 기록이 없어요</div>
+    </div>
+  </div>
+
+  <!-- 많이 쓴 기능 | 유입 경로 -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <div id="statistics-features-card" class="card bg-base-100 border border-base-300 shadow-sm" data-statistics-card>
+      <div class="card-body p-6 gap-4">
+        <h3 class="text-lg font-bold text-base-content" th:text="#{dashboard.stats.features.title}">많이 쓴 기능</h3>
+        <div data-card-state="loading" class="skeleton h-64 w-full"></div>
+        <div data-card-state="content" class="hidden relative h-64"><canvas id="statistics-features-chart"></canvas></div>
+        <div data-card-state="empty" class="hidden py-16 text-center text-sm text-base-content/60" th:text="#{dashboard.stats.empty}">아직 기록이 없어요</div>
+      </div>
+    </div>
+
+    <div id="statistics-sources-card" class="card bg-base-100 border border-base-300 shadow-sm" data-statistics-card>
+      <div class="card-body p-6 gap-4">
+        <h3 class="text-lg font-bold text-base-content" th:text="#{dashboard.stats.sources.title}">어디서 들어왔나</h3>
+        <div data-card-state="loading" class="skeleton h-64 w-full"></div>
+        <div data-card-state="content" class="hidden">
+          <div class="flex flex-col sm:flex-row items-center gap-6">
+            <div class="relative h-48 w-48 shrink-0"><canvas id="statistics-sources-chart"></canvas></div>
+            <ul id="statistics-sources-list" class="flex-1 w-full divide-y divide-base-300"></ul>
+          </div>
+        </div>
+        <div data-card-state="empty" class="hidden py-16 text-center text-sm text-base-content/60" th:text="#{dashboard.stats.empty}">아직 기록이 없어요</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 인기 페이지 | 요일×시간대 히트맵 -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div id="statistics-pages-card" class="card bg-base-100 border border-base-300 shadow-sm" data-statistics-card>
+      <div class="card-body p-6 gap-4">
+        <h3 class="text-lg font-bold text-base-content" th:text="#{dashboard.stats.pages.title}">인기 페이지</h3>
+        <div data-card-state="loading" class="skeleton h-64 w-full"></div>
+        <div data-card-state="content" class="hidden relative h-64"><canvas id="statistics-pages-chart"></canvas></div>
+        <div data-card-state="empty" class="hidden py-16 text-center text-sm text-base-content/60" th:text="#{dashboard.stats.empty}">아직 기록이 없어요</div>
+      </div>
+    </div>
+
+    <div id="statistics-heatmap-card" class="card bg-base-100 border border-base-300 shadow-sm" data-statistics-card>
+      <div class="card-body p-6 gap-4">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="text-lg font-bold text-base-content" th:text="#{dashboard.stats.heatmap.title}">언제 많이 오나</h3>
+          <span class="text-xs text-base-content/60" th:text="#{dashboard.stats.heatmap.caption}">요일 × 3시간 단위</span>
+        </div>
+        <div data-card-state="loading" class="skeleton h-64 w-full"></div>
+        <div data-card-state="content" class="hidden">
+          <!-- 시간대 머리글 (hourBucket 0~7 = 0시~21시) -->
+          <div class="flex items-center gap-1 mb-1">
+            <span class="w-6 shrink-0"></span>
+            <div class="grid grid-cols-8 gap-1 flex-1 text-xs text-base-content/60">
+              <span th:each="bucket : ${#numbers.sequence(0, 7)}" th:text="#{dashboard.stats.heatmap.hour(${bucket * 3})}">0시</span>
+            </div>
+          </div>
+          <!-- 요일 행 (dayOfWeek 1~7 = 월~일) -->
+          <div th:each="day : ${#numbers.sequence(1, 7)}" class="flex items-center gap-1 mb-1">
+            <span class="w-6 shrink-0 text-xs text-base-content/60" th:text="#{dashboard.stats.day.__${day}__}">월</span>
+            <div class="grid grid-cols-8 gap-1 flex-1">
+              <div th:each="bucket : ${#numbers.sequence(0, 7)}" class="h-6 rounded bg-base-200"
+                   th:attr="data-heatmap-day=${day},data-heatmap-hour=${bucket}"></div>
+            </div>
+          </div>
+          <!-- 범례 (적음 > 많음, 단계 클래스는 JS 와 동일) -->
+          <div class="flex items-center justify-end gap-1 mt-2 text-xs text-base-content/60">
+            <span th:text="#{dashboard.stats.heatmap.less}">적음</span>
+            <span class="w-3.5 h-3.5 rounded-sm bg-base-200"></span>
+            <span class="w-3.5 h-3.5 rounded-sm bg-primary/25"></span>
+            <span class="w-3.5 h-3.5 rounded-sm bg-primary/55"></span>
+            <span class="w-3.5 h-3.5 rounded-sm bg-primary"></span>
+            <span th:text="#{dashboard.stats.heatmap.more}">많음</span>
+          </div>
+        </div>
+        <div data-card-state="empty" class="hidden py-16 text-center text-sm text-base-content/60" th:text="#{dashboard.stats.empty}">아직 기록이 없어요</div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
