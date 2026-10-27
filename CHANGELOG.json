@@ -1,11 +1,40 @@
 {
   "metadata": {
-    "lastUpdated": "2026-10-26T02:45:19Z",
-    "currentVersion": "2.5.112",
+    "lastUpdated": "2026-10-27T13:56:37Z",
+    "currentVersion": "2.5.113",
     "projectType": "spring",
-    "totalReleases": 88
+    "totalReleases": 89
   },
   "releases": [
+    {
+      "version": "2.5.113",
+      "project_type": "spring",
+      "date": "2026-10-27",
+      "pr_number": 271,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 대시보드에 EarLocAlert 앱 카드 추가 (소개 페이지, 스토어 링크)\n  * github.io 소개 페이지가 있는 프로젝트는 소개 페이지로 먼저 연결\n\n* **버그 수정**\n  * 세종대 인증 카드의 소개 페이지 링크 오류 수정\n\n* **개선**\n  * 랜덤 엔진, 세종대 인증 모듈 카드에 소개 페이지 링크 추가",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "대시보드에 EarLocAlert 앱 카드 추가 (소개 페이지, 스토어 링크)",
+            "github.io 소개 페이지가 있는 프로젝트는 소개 페이지로 먼저 연결"
+          ]
+        },
+        "버그_수정": {
+          "title": "버그 수정",
+          "items": [
+            "세종대 인증 카드의 소개 페이지 링크 오류 수정"
+          ]
+        },
+        "개선": {
+          "title": "개선",
+          "items": [
+            "랜덤 엔진, 세종대 인증 모듈 카드에 소개 페이지 링크 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.112",
       "project_type": "spring",
