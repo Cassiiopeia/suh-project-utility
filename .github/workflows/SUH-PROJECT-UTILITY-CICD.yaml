@@ -124,7 +124,8 @@ jobs:
             fi
 
             echo "새로운 컨테이너 $CONTAINER_NAME 실행 중..."
-            echo $PW | sudo -S docker run -d --network selenium-chrome-network -p ${PORT}:8080 --name $CONTAINER_NAME \
+            # 재시작 정책 unless-stopped: 비정상 종료·NAS 재부팅 시 자동 복구 (#272)
+            echo $PW | sudo -S docker run -d --restart unless-stopped --network selenium-chrome-network -p ${PORT}:8080 --name $CONTAINER_NAME \
               -e TZ=Asia/Seoul \
               -e SPRING_PROFILES_ACTIVE=prod \
               -v /etc/localtime:/etc/localtime:ro \

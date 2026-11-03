@@ -396,6 +396,11 @@ jobs:
               exit 1
             fi
 
+            # 재시작 정책 unless-stopped: 비정상 종료·NAS 재부팅 시 자동 복구 (#272)
+            # 헬스체크 통과 후에만 적용 (실패 컨테이너는 디버깅용으로 남기므로 재시작 루프·exited 판정 누락 방지)
+            echo "🔁 ${NEW_NAME} 재시작 정책 unless-stopped 적용"
+            echo $PW | sudo -S docker update --restart unless-stopped "${NEW_NAME}"
+
             # ============================================================
             # 8. old 컨테이너 graceful 제거 (502 방지 핵심)
             #
