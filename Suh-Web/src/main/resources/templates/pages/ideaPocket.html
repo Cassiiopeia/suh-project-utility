@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head th:replace="~{fragments/header :: head(title='아이디어 보따리')}"></head>
+<body class="idea-pocket-page bg-base-200">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="fa-solid fa-lightbulb text-primary"></i>
+      <span th:text="#{ideaPocket.title}">아이디어 보따리</span>
+    </h2>
+    <p class="text-base-content/60 mt-1" th:text="#{ideaPocket.subtitle}">떠오른 아이디어를 키워드 한 줄로 바로 적어 두기</p>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
+    <form id="ideaCreateForm" class="card-body gap-3">
+      <input type="text" id="ideaKeywordInput" class="input w-full" maxlength="200" autocomplete="off"
+             th:placeholder="#{ideaPocket.placeholder.keyword}" placeholder="예: 출퇴근 버스 알림 앱">
+      <textarea id="ideaMemoInput" class="textarea w-full h-20"
+                th:placeholder="#{ideaPocket.placeholder.memo}" placeholder="자세한 내용 (선택)"></textarea>
+      <div class="flex justify-end">
+        <button type="submit" class="btn btn-primary btn-sm sm:btn-md w-full sm:w-auto">
+          <i class="fa-solid fa-plus"></i>
+          <span th:text="#{ideaPocket.button.add}">추가</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-base-300">
+    <div class="card-body">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+          <i class="fa-solid fa-list text-primary"></i>
+          <span th:text="#{ideaPocket.section.list}">아이디어 목록</span>
+        </h3>
+        <div class="flex gap-2">
+          <label class="input input-sm flex-1 sm:w-64">
+            <i class="fa-solid fa-magnifying-glass text-base-content/50"></i>
+            <input type="search" id="ideaSearchInput" class="grow"
+                   th:placeholder="#{ideaPocket.placeholder.search}" placeholder="키워드·메모 검색">
+          </label>
+          <button id="refreshIdeaListButton" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-rotate"></i>
+            <span class="hidden sm:inline" th:text="#{ideaPocket.button.refresh}">새로고침</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="ideaList" class="flex flex-col gap-3">
+        <div class="skeleton h-16 w-full"></div>
+        <div class="skeleton h-16 w-full"></div>
+      </div>
+      <div id="ideaEmptyMessage" class="hidden text-center py-12">
+        <i class="fa-solid fa-lightbulb text-6xl text-base-content/30 mb-4"></i>
+        <p id="ideaEmptyText" class="text-base-content/60" th:text="#{ideaPocket.empty}">저장된 아이디어가 없습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="modal" id="ideaEditModal">
+    <div class="modal-box w-11/12 max-w-xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </form>
+      <h3 class="font-bold text-lg flex items-center gap-2 mb-6">
+        <i class="fa-solid fa-pen text-primary"></i>
+        <span th:text="#{ideaPocket.modal.editTitle}">아이디어 수정</span>
+      </h3>
+      <form id="ideaEditForm" class="space-y-4">
+        <input type="hidden" id="editIdeaItemId">
+        <div class="form-control">
+          <label class="label" for="editIdeaKeyword">
+            <span class="label-text font-medium"><span th:text="#{ideaPocket.label.keyword}">키워드</span> <span class="text-error">*</span></span>
+          </label>
+          <input type="text" id="editIdeaKeyword" class="input w-full" maxlength="200" autocomplete="off">
+        </div>
+        <div class="form-control">
+          <label class="label" for="editIdeaMemo">
+            <span class="label-text font-medium" th:text="#{ideaPocket.label.memo}">메모</span>
+          </label>
+          <textarea id="editIdeaMemo" class="textarea w-full h-28"
+                    th:placeholder="#{ideaPocket.placeholder.memo}" placeholder="자세한 내용 (선택)"></textarea>
+        </div>
+        <div class="form-control">
+          <label class="label" for="editIdeaStatus">
+            <span class="label-text font-medium" th:text="#{ideaPocket.label.status}">상태</span>
+          </label>
+          <select id="editIdeaStatus" class="select w-full">
+            <option value="IDEA" th:text="#{ideaPocket.status.IDEA}">아이디어</option>
+            <option value="IN_PROGRESS" th:text="#{ideaPocket.status.IN_PROGRESS}">진행중</option>
+            <option value="DONE" th:text="#{ideaPocket.status.DONE}">완료</option>
+            <option value="DROPPED" th:text="#{ideaPocket.status.DROPPED}">보류</option>
+          </select>
+        </div>
+      </form>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost" th:text="#{ideaPocket.button.cancel}">취소</button>
+        </form>
+        <button id="saveIdeaEditButton" class="btn btn-primary">
+          <i class="fa-solid fa-check"></i>
+          <span th:text="#{ideaPocket.button.save}">저장</span>
+        </button>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/ideaPocket.js}"></script>
+</body>
+</html>

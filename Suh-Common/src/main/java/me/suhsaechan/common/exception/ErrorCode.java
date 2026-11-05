@@ -80,7 +80,12 @@ public enum ErrorCode {
   // CLIPBOARD
   CLIPBOARD_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "클립보드 항목을 찾을 수 없습니다."),
   CLIPBOARD_EMPTY_CONTENT(HttpStatus.BAD_REQUEST, "저장할 텍스트나 파일이 없습니다."),
-  CLIPBOARD_FILE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "클립보드 파일 저장 중 오류가 발생했습니다.");
+  CLIPBOARD_FILE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "클립보드 파일 저장 중 오류가 발생했습니다."),
+
+  // IDEA
+  IDEA_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "아이디어를 찾을 수 없습니다."),
+  IDEA_EMPTY_KEYWORD(HttpStatus.BAD_REQUEST, "아이디어 키워드를 입력하세요."),
+  IDEA_KEYWORD_TOO_LONG(HttpStatus.BAD_REQUEST, "아이디어 키워드는 200자 이하로 입력하세요.");
 
   private final HttpStatus httpStatus;
   private final String message;

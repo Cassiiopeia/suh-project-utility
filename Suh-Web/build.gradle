@@ -28,6 +28,7 @@ dependencies {
     implementation project(':Suh-Domain-Somansa-Bus')
     implementation project(':Suh-Domain-Task')
     implementation project(':Suh-Domain-Clipboard')
+    implementation project(':Suh-Domain-Idea')
 
     // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

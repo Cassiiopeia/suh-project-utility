@@ -180,4 +180,9 @@ public class PageController {
 	public String clipboardPage() {
 		return "pages/clipboard";
 	}
+
+	@GetMapping("/ideas")
+	public String ideaPocketPage() {
+		return "pages/ideaPocket";
+	}
 }
