@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-11-05T08:12:58Z",
-    "currentVersion": "2.5.116",
+    "lastUpdated": "2026-11-05T08:23:00Z",
+    "currentVersion": "2.5.117",
     "projectType": "spring",
-    "totalReleases": 91
+    "totalReleases": 92
   },
   "releases": [
+    {
+      "version": "2.5.117",
+      "project_type": "spring",
+      "date": "2026-11-05",
+      "pr_number": 276,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 아이디어 보따리 추가: 떠오른 아이디어를 키워드로 저장하고 상태별로 관리\n  * 대시보드에서 아이디어를 바로 적고 최근 5개를 확인",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "아이디어 보따리 추가: 떠오른 아이디어를 키워드로 저장하고 상태별로 관리",
+            "대시보드에서 아이디어를 바로 적고 최근 5개를 확인"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.116",
       "project_type": "spring",
