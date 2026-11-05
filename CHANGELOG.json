@@ -1,11 +1,28 @@
 {
   "metadata": {
-    "lastUpdated": "2026-11-04T00:34:21Z",
-    "currentVersion": "2.5.115",
+    "lastUpdated": "2026-11-05T08:12:58Z",
+    "currentVersion": "2.5.116",
     "projectType": "spring",
-    "totalReleases": 90
+    "totalReleases": 91
   },
   "releases": [
+    {
+      "version": "2.5.116",
+      "project_type": "spring",
+      "date": "2026-11-05",
+      "pr_number": 275,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **새 기능**\n  * 웹 클립보드 추가: 텍스트·이미지·파일을 올리고 다른 PC에서 바로 복사하거나 내려받기\n  * 대시보드 도구에 웹 클립보드 바로가기 추가",
+      "parsed_changes": {
+        "새_기능": {
+          "title": "새 기능",
+          "items": [
+            "웹 클립보드 추가: 텍스트·이미지·파일을 올리고 다른 PC에서 바로 복사하거나 내려받기",
+            "대시보드 도구에 웹 클립보드 바로가기 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.115",
       "project_type": "spring",
