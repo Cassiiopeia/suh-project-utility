@@ -19,8 +19,9 @@ public interface GrassProfileRepository extends JpaRepository<GrassProfile, UUID
     // 활성화된 프로필 조회
     List<GrassProfile> findByIsActiveTrue();
 
-    // 자동 커밋이 활성화된 프로필 조회
-    List<GrassProfile> findByIsAutoCommitEnabledTrue();
+    // 자동 커밋이 활성화된 프로필 조회 (트랜잭션 밖에서 저장소명 접근 > fetch join)
+    @Query("SELECT gp FROM GrassProfile gp LEFT JOIN FETCH gp.defaultRepository WHERE gp.isAutoCommitEnabled = true")
+    List<GrassProfile> findAutoCommitEnabledWithRepository();
 
     // GitHub 사용자명 존재 여부 확인
     boolean existsByGithubUsername(String githubUsername);

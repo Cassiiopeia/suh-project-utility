@@ -471,6 +471,9 @@ function displayCommitLogs(logs) {
     statusCell.html(log.isSuccess
       ? '<span class="badge badge-success badge-sm">' + window.MSG['grass.log.success'] + '</span>'
       : '<span class="badge badge-error badge-sm">' + window.MSG['grass.log.fail'] + '</span>');
+    if (!log.isSuccess && log.errorMessage) {
+      statusCell.append($('<div class="text-xs text-error mt-1 break-all">').text(log.errorMessage));
+    }
     row.append(statusCell);
 
     // 레벨 — commitLevel 기준

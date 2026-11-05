@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.suhsaechan.grassplanter.dto.GrassRequest;
 import me.suhsaechan.grassplanter.dto.GrassResponse;
-import me.suhsaechan.grassplanter.service.GrassService;
+import me.suhsaechan.grassplanter.service.GrassCommitService;
+import me.suhsaechan.grassplanter.service.GrassGithubClient;
+import me.suhsaechan.grassplanter.service.GrassProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +30,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("")
 public class GrassController {
 
-    private final GrassService grassService;
+    private final GrassProfileService grassProfileService;
+    private final GrassCommitService grassCommitService;
+    private final GrassGithubClient grassGithubClient;
 
     // API 엔드포인트들
     @PostMapping(value = "/api/grass/profile/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
     public ResponseEntity<GrassResponse> createProfile(@ModelAttribute GrassRequest request) {
         log.info("프로필 생성 요청 - 사용자: {}", request.getGithubUsername());
-        GrassResponse response = grassService.createProfile(request);
+        GrassResponse response = grassProfileService.createProfile(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -43,7 +47,7 @@ public class GrassController {
     @ResponseBody
     public ResponseEntity<GrassResponse> updateProfile(@ModelAttribute GrassRequest request) {
         log.info("프로필 업데이트 요청 - ID: {}", request.getProfileId());
-        GrassResponse response = grassService.updateProfile(request);
+        GrassResponse response = grassProfileService.updateProfile(request);
         return ResponseEntity.ok(response);
     }
 
@@ -51,7 +55,7 @@ public class GrassController {
     @ResponseBody
     public ResponseEntity<GrassResponse> deleteProfile(@RequestParam UUID profileId) {
         log.info("프로필 삭제 요청 - ID: {}", profileId);
-        GrassResponse response = grassService.deleteProfile(profileId);
+        GrassResponse response = grassProfileService.deleteProfile(profileId);
         return ResponseEntity.ok(response);
     }
 
@@ -59,7 +63,7 @@ public class GrassController {
     @ResponseBody
     public ResponseEntity<GrassResponse> getProfiles(@ModelAttribute GrassRequest request) {
         log.info("프로필 목록 조회");
-        GrassResponse response = grassService.getProfiles(request);
+        GrassResponse response = grassProfileService.getProfiles(request);
         return ResponseEntity.ok(response);
     }
 
@@ -67,7 +71,7 @@ public class GrassController {
     @ResponseBody
     public ResponseEntity<GrassResponse> executeCommit(@ModelAttribute GrassRequest request) {
         log.info("수동 커밋 실행 요청 - 프로필 ID: {}", request.getProfileId());
-        GrassResponse response = grassService.executeCommit(request);
+        GrassResponse response = grassCommitService.executeCommit(request);
         return ResponseEntity.ok(response);
     }
 
@@ -75,7 +79,7 @@ public class GrassController {
     @ResponseBody
     public ResponseEntity<GrassResponse> getCommitLogs(@ModelAttribute GrassRequest request) {
         log.info("커밋 로그 조회 - 프로필 ID: {}", request.getProfileId());
-        GrassResponse response = grassService.getCommitLogs(request);
+        GrassResponse response = grassCommitService.getCommitLogs(request);
         return ResponseEntity.ok(response);
     }
 
@@ -88,7 +92,7 @@ public class GrassController {
         
         try {
             LocalDate checkDate = date != null ? date : LocalDate.now();
-            int level = grassService.checkContributionLevel(username, checkDate);
+            int level = grassGithubClient.checkContributionLevel(username, checkDate);
             return ResponseEntity.ok(level);
         } catch (IOException e) {
             log.error("기여도 확인 실패: {}", e.getMessage(), e);

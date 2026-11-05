@@ -9,7 +9,7 @@ import me.suhsaechan.notice.dto.NoticeResponse;
 import me.suhsaechan.notice.service.NoticeService;
 import me.suhsaechan.grassplanter.dto.GrassRequest;
 import me.suhsaechan.grassplanter.dto.GrassResponse;
-import me.suhsaechan.grassplanter.service.GrassService;
+import me.suhsaechan.grassplanter.service.GrassProfileService;
 import me.suhsaechan.somansabus.dto.SomansaBusResponse;
 import me.suhsaechan.somansabus.service.SomansaBusMemberService;
 import me.suhsaechan.somansabus.service.SomansaBusRouteService;
@@ -27,7 +27,7 @@ public class PageController {
 
 	private final UserAuthority userAuthority;
 	private final NoticeService noticeService;
-	private final GrassService grassService;
+	private final GrassProfileService grassProfileService;
 	private final SomansaBusMemberService somansaBusMemberService;
 	private final SomansaBusRouteService somansaBusRouteService;
 
@@ -116,7 +116,7 @@ public class PageController {
 	public String grassPlanterPage(Model model) {
 		// 프로필 목록 조회
 		GrassRequest request = GrassRequest.builder().build();
-		GrassResponse response = grassService.getProfiles(request);
+		GrassResponse response = grassProfileService.getProfiles(request);
 		
 		model.addAttribute("profiles", response.getProfiles());
 		model.addAttribute("totalProfiles", response.getTotalElements());

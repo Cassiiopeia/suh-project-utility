@@ -7,10 +7,9 @@ import org.junit.jupiter.api.Test;
 // extractContributionCountForDate 회귀 테스트 — GraphQL contributionsCollection 응답에서
 // 특정 날짜의 contributionCount를 정확히 추출하는지 검증(#220 자동커밋 빈도 수정).
 // 순수 파싱 로직만 검증하므로 Spring 컨텍스트 없이 직접 인스턴스화한다.
-class GrassServiceParseTest {
+class GrassGithubClientParseTest {
 
-  private final GrassService service =
-      new GrassService(null, null, null, null, null, null, null);
+  private final GrassGithubClient service = new GrassGithubClient(null, null);
 
   @Test
   void 오늘_기여_있음_파싱() {
