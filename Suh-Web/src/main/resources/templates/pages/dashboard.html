@@ -887,6 +887,29 @@
               </div>
             </a>
 
+            <!-- 웹 클립보드 -->
+            <a href="/clipboard" class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
+              <div class="card-body p-5">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <i class="fa-solid fa-clipboard text-primary text-xl"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base-content" th:text="#{dashboard.tool.clipboard}">웹 클립보드</h3>
+                    <div class="flex gap-1 mt-1">
+                      <span class="badge badge-soft badge-primary badge-xs">Clipboard</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="text-base-content/70 text-sm mb-3" th:text="#{dashboard.tool.clipboard.desc}">PC 간 텍스트·이미지·파일 주고받기</p>
+                <div class="flex flex-wrap gap-1">
+                  <span class="badge badge-ghost badge-xs">Text</span>
+                  <span class="badge badge-ghost badge-xs">Image</span>
+                  <span class="badge badge-ghost badge-xs">File</span>
+                </div>
+              </div>
+            </a>
+
             <!-- AI 서버 관리 -->
             <a href="/ai-server" class="group card bg-base-100 border border-base-300 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200">
               <div class="card-body p-5">

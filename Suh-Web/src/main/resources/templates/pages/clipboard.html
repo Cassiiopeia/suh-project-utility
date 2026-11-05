@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head th:replace="~{fragments/header :: head(title='웹 클립보드')}"></head>
+<body class="clipboard-page bg-base-200">
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="fa-solid fa-clipboard text-primary"></i>
+      <span th:text="#{clipboard.title}">웹 클립보드</span>
+    </h2>
+    <p class="text-base-content/60 mt-1" th:text="#{clipboard.subtitle}">텍스트·이미지·파일을 올리고 다른 PC에서 바로 복사하거나 내려받기</p>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-base-300 mb-6">
+    <div class="card-body gap-4">
+      <textarea id="clipboardText" class="textarea w-full h-32"
+                th:placeholder="#{clipboard.placeholder.text}" placeholder="저장할 텍스트를 입력하세요"></textarea>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="text-base-content/60 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-keyboard"></i>
+          <span th:text="#{clipboard.hint.paste}">페이지 아무 곳에서 Ctrl+V 하면 바로 저장됩니다.</span>
+        </p>
+        <button id="saveTextButton" class="btn btn-primary btn-sm sm:btn-md w-full sm:w-auto">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span th:text="#{clipboard.button.saveText}">텍스트 저장</span>
+        </button>
+      </div>
+
+      <label id="clipboardDropZone" for="clipboardFileInput"
+             class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-base-300 rounded-xl p-8 cursor-pointer bg-base-200 hover:border-primary transition-colors">
+        <i class="fa-solid fa-cloud-arrow-up text-4xl text-base-content/40"></i>
+        <span class="text-base-content/70 text-sm" th:text="#{clipboard.hint.drop}">파일을 끌어다 놓거나 눌러서 선택</span>
+        <input type="file" id="clipboardFileInput" class="hidden" multiple>
+      </label>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-sm border border-base-300">
+    <div class="card-body">
+      <div class="flex items-center justify-between gap-4 mb-4">
+        <h3 class="text-lg font-semibold text-base-content flex items-center gap-2">
+          <i class="fa-solid fa-list text-primary"></i>
+          <span th:text="#{clipboard.section.list}">저장된 항목</span>
+        </h3>
+        <button id="refreshListButton" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-rotate"></i>
+          <span th:text="#{clipboard.button.refresh}">새로고침</span>
+        </button>
+      </div>
+
+      <div id="clipboardList" class="flex flex-col gap-3">
+        <div class="skeleton h-20 w-full"></div>
+        <div class="skeleton h-20 w-full"></div>
+      </div>
+      <div id="clipboardEmptyMessage" class="hidden text-center py-12">
+        <i class="fa-solid fa-clipboard text-6xl text-base-content/30 mb-4"></i>
+        <p class="text-base-content/60" th:text="#{clipboard.empty}">저장된 항목이 없습니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/clipboard.js}"></script>
+</body>
+</html>

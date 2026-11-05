@@ -175,4 +175,9 @@ public class PageController {
 	public String taskTrackerPage() {
 		return "pages/taskTracker";
 	}
+
+	@GetMapping("/clipboard")
+	public String clipboardPage() {
+		return "pages/clipboard";
+	}
 }

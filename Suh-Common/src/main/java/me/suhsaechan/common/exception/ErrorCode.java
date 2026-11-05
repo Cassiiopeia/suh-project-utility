@@ -75,7 +75,12 @@ public enum ErrorCode {
 
   // TASK TRACKER
   TASK_GOAL_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 목표를 찾을 수 없습니다."),
-  TASK_PROGRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 진행 기록을 찾을 수 없습니다.");
+  TASK_PROGRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "Task 진행 기록을 찾을 수 없습니다."),
+
+  // CLIPBOARD
+  CLIPBOARD_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "클립보드 항목을 찾을 수 없습니다."),
+  CLIPBOARD_EMPTY_CONTENT(HttpStatus.BAD_REQUEST, "저장할 텍스트나 파일이 없습니다."),
+  CLIPBOARD_FILE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "클립보드 파일 저장 중 오류가 발생했습니다.");
 
   private final HttpStatus httpStatus;
   private final String message;
