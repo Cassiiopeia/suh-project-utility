@@ -1,11 +1,29 @@
 {
   "metadata": {
-    "lastUpdated": "2026-11-05T08:23:00Z",
-    "currentVersion": "2.5.117",
+    "lastUpdated": "2026-11-05T08:32:39Z",
+    "currentVersion": "2.5.118",
     "projectType": "spring",
-    "totalReleases": 92
+    "totalReleases": 93
   },
   "releases": [
+    {
+      "version": "2.5.118",
+      "project_type": "spring",
+      "date": "2026-11-05",
+      "pr_number": 277,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **개선**\n  * 잔디심기 커밋이 실패하면 실패 이유를 커밋 이력에서 확인 가능\n  * 자동 커밋이 한 계정에서 실패해도 다른 계정은 그대로 진행\n  * 자동 커밋에도 프로필에 저장한 커밋 메시지 사용",
+      "parsed_changes": {
+        "개선": {
+          "title": "개선",
+          "items": [
+            "잔디심기 커밋이 실패하면 실패 이유를 커밋 이력에서 확인 가능",
+            "자동 커밋이 한 계정에서 실패해도 다른 계정은 그대로 진행",
+            "자동 커밋에도 프로필에 저장한 커밋 메시지 사용"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "2.5.117",
       "project_type": "spring",
